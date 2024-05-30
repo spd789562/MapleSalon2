@@ -13,35 +13,35 @@ export function isHairId(id: number): boolean {
 }
 
 export function isCapId(id: number): boolean {
-  return id / 10000 === 100;
+  return Math.floor(id / 10000) === 100;
 }
 
 export function isCoatId(id: number): boolean {
-  return id / 10000 === 104;
+  return Math.floor(id / 10000) === 104;
 }
 
 export function isLongcoatId(id: number): boolean {
-  return id / 10000 === 105;
+  return Math.floor(id / 10000) === 105;
 }
 
 export function isPantsId(id: number): boolean {
-  return id / 10000 === 106;
+  return Math.floor(id / 10000) === 106;
 }
 
 export function isShoesId(id: number): boolean {
-  return id / 10000 === 107;
+  return Math.floor(id / 10000) === 107;
 }
 
 export function isGloveId(id: number): boolean {
-  return id / 10000 === 108;
+  return Math.floor(id / 10000) === 108;
 }
 
 export function isShieldId(id: number): boolean {
-  return id / 10000 === 109;
+  return Math.floor(id / 10000) === 109;
 }
 
 export function isCapeId(id: number): boolean {
-  return id / 10000 === 110;
+  return Math.floor(id / 10000) === 110;
 }
 
 export function getGender(id: number): Gender {
