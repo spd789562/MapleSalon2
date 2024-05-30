@@ -1,6 +1,4 @@
 import { Container, Ticker } from 'pixi.js';
-import { CharacterAction } from './const/actions';
-import { CharacterEarType } from './const/ears';
 
 import type { ItemInfo, AncherName, Vec2, PieceSlot } from './const/data';
 import type { CategorizedItem } from './categorizedItem';
@@ -9,7 +7,10 @@ import type { CharacterItemPiece } from './itemPiece';
 
 import { CharacterLoader } from './loader';
 import { CharacterItem } from './item';
+import { CharacterAction } from './const/actions';
 import { CharacterExpressions } from './const/emotions';
+import { CharacterEarType } from './const/ears';
+import { CharacterHandType } from './const/hand';
 
 type AnyCategorizedItem = CategorizedItem<string>;
 
@@ -28,6 +29,7 @@ export class Character extends Container {
   action = CharacterAction.Walk1;
   expression: CharacterExpressions = CharacterExpressions.Default;
   earType = CharacterEarType.HumanEar;
+  handType = CharacterHandType.SingleHand;
 
   frame = 0;
   /* delta to calculate is need enter next frame */

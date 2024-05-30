@@ -44,6 +44,15 @@ export function isCapeId(id: number): boolean {
   return Math.floor(id / 10000) === 110;
 }
 
+export function isWeaponId(id: number): boolean {
+  const shortId = Math.floor(id / 10000);
+  return shortId >= 121 && shortId <= 160;
+}
+
+export function isCashWeaponId(id: number): boolean {
+  return Math.floor(id / 10000) === 170;
+}
+
 export function getGender(id: number): Gender {
   const tag = (id / 1000) % 10;
   switch (tag) {

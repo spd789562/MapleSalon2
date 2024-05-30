@@ -14,10 +14,11 @@ import type {
 import type { WzItem } from './const/wz';
 
 import { CharacterAction } from './const/actions';
-import { isFaceId } from '@/utils/itemId';
+import { isFaceId, isWeaponId, isCashWeaponId } from '@/utils/itemId';
 
 import { CharacterActionItem, CharacterFaceItem } from './categorizedItem';
 import { CharacterExpressions } from './const/emotions';
+import { CharacterHandType } from './const/hand';
 
 export class CharacterItem implements RenderItemInfo {
   info: ItemInfo;
@@ -51,22 +52,23 @@ export class CharacterItem implements RenderItemInfo {
     return isFaceId(this.info.id);
   }
 
+  get isWeapon() {
+    return isWeaponId(this.info.id) || isCashWeaponId(this.info.id);
+  }
+
   get isAllAncherBuilt() {
     return Array.from(this.actionPieces.values()).every(
       (actionItem) => actionItem.isAllAncherBuilt,
     );
   }
 
-  private loadFace() {
-    if (this.wz === null) {
-      return;
-    }
+  private loadFace(wz: WzItem) {
     const expressionNeedToBuild = Object.values(CharacterExpressions);
-    const expressions = Object.keys(this.wz).filter((key) =>
+    const expressions = Object.keys(wz).filter((key) =>
       expressionNeedToBuild.includes(key as CharacterExpressions),
     ) as CharacterExpressions[];
     for (const expression of expressions) {
-      const expressionWz = this.wz[expression];
+      const expressionWz = wz[expression];
 
       if (!expressionWz) {
         continue;
@@ -77,17 +79,14 @@ export class CharacterItem implements RenderItemInfo {
       this.actionPieces.set(expression, actionItem);
     }
   }
-  private loadAction() {
-    if (this.wz === null) {
-      return;
-    }
+  private loadAction(wz: WzItem) {
     const actionNeedToBuild = Object.values(CharacterAction);
-    const actions = Object.keys(this.wz).filter((key) =>
+    const actions = Object.keys(wz).filter((key) =>
       actionNeedToBuild.includes(key as CharacterAction),
     ) as CharacterAction[];
 
     for (const action of actions) {
-      const actionWz = this.wz[action];
+      const actionWz = wz[action];
 
       if (!actionWz) {
         continue;
@@ -99,7 +98,20 @@ export class CharacterItem implements RenderItemInfo {
     }
   }
 
-  private loadWeapon() {}
+  private loadWeapon(wz: WzItem) {
+    const isSingleHand =
+      this.character.handType === CharacterHandType.SingleHand;
+    const idIncurrment = isSingleHand ? -1 : 1;
+    const [start, end] = isSingleHand ? [69, 30] : [30, 69];
+    /* single hand weapon usually has higher id */
+    for (let id = start; id !== end; id += idIncurrment) {
+      const weaponWz = wz[id];
+      if (!weaponWz) {
+        continue;
+      }
+      this.loadAction(weaponWz as unknown as WzItem);
+    }
+  }
 
   async load() {
     if (this.wz) {
@@ -116,9 +128,11 @@ export class CharacterItem implements RenderItemInfo {
     this.vslot = (this.wz.info.vslot.match(/.{1,2}/g) || []) as PieceIslot[];
 
     if (this.isFace) {
-      this.loadFace();
+      this.loadFace(this.wz);
+    } else if (this.isWeapon) {
+      this.loadWeapon(this.wz);
     } else {
-      this.loadAction();
+      this.loadAction(this.wz);
     }
 
     for await (const actionItem of this.actionPieces.values()) {
