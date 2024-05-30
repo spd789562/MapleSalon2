@@ -9,6 +9,7 @@ pub struct GetJsonParam {
     pub force_parse: Option<bool>,
     /// sort the json response
     pub sort: Option<bool>,
+    pub resolve_uol: Option<bool>,
     /// how long to cache for resoponse header
     pub cache: Option<u32>,
 }

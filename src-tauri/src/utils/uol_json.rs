@@ -12,7 +12,7 @@ pub fn uol_json(node: &WzNodeArc) -> Result<Value> {
     if node_read.children.is_empty() {
         if let Some(path) = node_read.try_as_uol() {
             let path = path.get_string()?;
-            if let Some(target) = node_read.at_path_relative(&path) {
+            if let Some(target) = node_read.at_path_relative(&format!("../{}", path)) {
                 return uol_json(&target);
             }
         }
@@ -38,15 +38,22 @@ pub fn simple_uol_json(node: &WzNodeArc) -> Result<Value> {
                 return {
                     if let WzValue::UOL(ref path) = value_type {
                         let path = path.get_string()?;
-                        if let Some(target) = node_read.at_path_relative(&path) {
+                        if let Some(target) = node_read.at_path_relative(&format!("../{}", path)) {
                             return simple_uol_json(&target);
                         }
                     }
                     Ok(value_type.clone().into())
-                }
+                };
             }
             WzObjectType::Property(WzSubProperty::PNG(inner)) => {
-                return to_value(inner).map_err(Error::from)
+                let mut dict = to_value(inner)?;
+
+                if let Value::Object(ref mut dict) = dict {
+                    let path = node_read.get_path_from_root();
+                    dict.insert(String::from("path"), Value::from(path));
+                }
+
+                return Ok(dict);
             }
             WzObjectType::Property(WzSubProperty::Sound(inner)) => {
                 return to_value(inner).map_err(Error::from)
@@ -65,6 +72,10 @@ pub fn simple_uol_json(node: &WzNodeArc) -> Result<Value> {
                 for (name, value) in dict {
                     json.insert(name, value);
                 }
+                if node_read.children.get("_outlink").is_none() {
+                    let path = node_read.get_path_from_root();
+                    json.insert(String::from("path"), Value::from(path));
+                }
             }
         }
         WzObjectType::Property(WzSubProperty::Sound(inner)) => {
@@ -80,8 +91,7 @@ pub fn simple_uol_json(node: &WzNodeArc) -> Result<Value> {
     }
 
     for (name, value) in node_read.children.iter() {
-        let child = value.read().unwrap();
-        json.insert(name.to_string(), child.to_simple_json()?);
+        json.insert(name.to_string(), simple_uol_json(value)?);
     }
 
     Ok(Value::Object(json))

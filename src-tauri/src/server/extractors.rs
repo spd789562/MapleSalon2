@@ -6,7 +6,7 @@ use axum::{
     http::request::Parts,
     response::{IntoResponse, Response},
 };
-use wz_reader::{node, WzNodeArc};
+use wz_reader::{node, util::node_util, WzNodeArc};
 
 pub struct TargetNodeExtractor(pub WzNodeArc);
 
@@ -21,10 +21,10 @@ where
     async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
         let path = Path::<String>::from_request_parts(parts, state)
             .await
-            .map_err(|e| e.into_response())?;
+            .map_err(IntoResponse::into_response)?;
         let query = Query::<GetJsonParam>::from_request_parts(parts, state)
             .await
-            .map_err(|e| e.into_response())?;
+            .map_err(IntoResponse::into_response)?;
 
         let root = WzNodeArc::from_ref(state);
 
@@ -41,9 +41,13 @@ where
             root.at_path(&path).ok_or(Error::NodeNotFound)
         };
 
-        target
-            .map(|node| TargetNodeExtractor(node))
-            .map_err(|e| e.into_response())
+        let target = target.map_err(IntoResponse::into_response)?;
+
+        node_util::parse_node(&target)
+            .map_err(Error::from)
+            .map_err(IntoResponse::into_response)?;
+
+        Ok(TargetNodeExtractor(target))
     }
 }
 
@@ -61,10 +65,10 @@ where
     async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
         let path = Path::<String>::from_request_parts(parts, state)
             .await
-            .map_err(|e| e.into_response())?;
+            .map_err(IntoResponse::into_response)?;
         let query = Query::<GetJsonParam>::from_request_parts(parts, state)
             .await
-            .map_err(|e| e.into_response())?;
+            .map_err(IntoResponse::into_response)?;
 
         let root = WzNodeArc::from_ref(state);
 

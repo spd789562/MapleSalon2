@@ -9,7 +9,7 @@ pub(crate) async fn get_server_url<R: Runtime>(
     _window: Window<R>,
     state: State<'_, AppStore>,
 ) -> Result<String> {
-    Ok(format!("http://127.0.0.1:{}", state.port))
+    Ok(format!("http://localhost:{}", state.port))
 }
 
 #[command]
