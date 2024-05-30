@@ -6,11 +6,12 @@ pub mod models;
 use crate::Error;
 
 use axum::{
-    http::StatusCode,
+    http::{HeaderValue, Method, StatusCode},
     response::{IntoResponse, Response},
     routing::get,
     serve, Router,
 };
+use tower_http::cors::CorsLayer;
 use wz_reader::WzNodeArc;
 
 pub async fn app(node: WzNodeArc, port: u16) -> crate::Result<()> {
@@ -26,6 +27,11 @@ pub async fn app(node: WzNodeArc, port: u16) -> crate::Result<()> {
         .route_layer(axum::middleware::from_fn(
             middlewares::cache_control_from_query_middleware,
         ))
+        .route_layer(
+            CorsLayer::new()
+                .allow_methods([Method::GET])
+                .allow_origin("http://localhost:1420".parse::<HeaderValue>().unwrap()),
+        )
         .with_state(node);
 
     let host = format!("127.0.0.1:{port}");
