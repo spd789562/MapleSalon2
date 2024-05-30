@@ -16,6 +16,15 @@ export const $currentCharacter = atom<CharacterData>({
     {
       id: 12000,
     },
+    {
+      id: 20001,
+    },
+    {
+      id: 47046,
+    },
+    {
+      id: 1006105,
+    },
   ],
   frame: 0,
   isAnimating: false,
