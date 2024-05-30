@@ -1,6 +1,6 @@
 use crate::server::extractors::TargetNodeExtractor;
 use crate::server::models::GetJsonParam;
-use crate::{handlers, Error, Result};
+use crate::{handlers, utils, Error, Result};
 
 use std::io::{BufWriter, Cursor};
 
@@ -38,9 +38,9 @@ pub async fn get_json(
 ) -> Result<impl IntoResponse> {
     let is_simple = param.simple.unwrap_or(false);
     let json = if is_simple {
-        node.read().unwrap().to_simple_json()
+        utils::simple_uol_json(&node)
     } else {
-        node.read().unwrap().to_json()
+        utils::uol_json(&node)
     }?;
 
     Ok((

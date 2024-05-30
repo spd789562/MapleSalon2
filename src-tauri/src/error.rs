@@ -19,6 +19,8 @@ pub enum Error {
     ImageSendError,
     #[error("sound parse error")]
     SoundParseError(#[from] property::sound::WzSoundError),
+    #[error("string parse error")]
+    StringParseError(#[from] property::string::WzStringParseError),
     #[error("node not found")]
     NodeNotFound,
     #[error("node type mismatch, can only use on {0}")]

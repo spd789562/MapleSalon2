@@ -44,14 +44,12 @@ async fn hello() -> &'static str {
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
         match self {
-            Error::Io(_) => (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()).into_response(),
-            Error::ImageParseError(_) => {
-                (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()).into_response()
-            }
-            Error::SoundParseError(_) => {
-                (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()).into_response()
-            }
-            Error::ImageSendError => {
+            Error::Io(_)
+            | Error::JsonParseError(_)
+            | Error::ImageParseError(_)
+            | Error::SoundParseError(_)
+            | Error::StringParseError(_)
+            | Error::ImageSendError => {
                 (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()).into_response()
             }
             Error::InitWzFailed => (StatusCode::BAD_REQUEST, self.to_string()).into_response(),
@@ -60,9 +58,6 @@ impl IntoResponse for Error {
             Error::NodeNotFound => (StatusCode::NOT_FOUND, self.to_string()).into_response(),
             Error::NodeTypeMismatch(_) => {
                 (StatusCode::BAD_REQUEST, self.to_string()).into_response()
-            }
-            Error::JsonParseError(_) => {
-                (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()).into_response()
             }
         }
     }
