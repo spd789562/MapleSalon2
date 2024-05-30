@@ -19,7 +19,11 @@ pub use store::AppStore;
 pub use error::{Error, Result};
 
 fn main() {
-    let port = portpicker::pick_unused_port().expect("no available port for wz server");
+    let port = if portpicker::is_free_tcp(14878) {
+        14878
+    } else {
+        portpicker::pick_unused_port().expect("no available port for wz server")
+    };
 
     let root_node = WzNode::empty().into_lock();
 
