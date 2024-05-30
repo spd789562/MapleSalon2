@@ -32,6 +32,8 @@ export function getItemFolderFromId(id: number): string {
       return 'Glove/';
     case 109:
       return 'Shield/';
+    case 110:
+      return 'Cape/';
     default: {
       if (partOfId >= 121 && partOfId <= 170) {
         return 'Weapon/';
