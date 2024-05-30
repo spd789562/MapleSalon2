@@ -1,20 +1,37 @@
-import { Container } from 'pixi.js';
-import type { ItemInfo, AncherName, Vec2, CharacterExpression } from './models';
-import { CharacterAction, AncherMap } from './models';
+import { Container, Ticker } from 'pixi.js';
+import { CharacterAction } from './const/actions';
+import { CharacterEarType } from './const/ears';
+
+import type { ItemInfo, AncherName, Vec2, PieceSlot } from './const/data';
+import type { CategorizedItem } from './categorizedItem';
+import type { AnimatablePart } from '../AnimatablePart';
+import type { CharacterItemPiece } from './itemPiece';
 
 import { CharacterLoader } from './loader';
-import {
-  CharacterItem,
-  type CharacterActionItem,
-  type CharacterItemPiece,
-} from './item';
+import { CharacterItem } from './item';
+import { CharacterExpressions } from './const/emotions';
+
+type AnyCategorizedItem = CategorizedItem<string>;
+
+class ZmapContainer extends Container {
+  name: PieceSlot;
+  constructor(name: PieceSlot, index: number) {
+    super();
+    this.name = name;
+    this.zIndex = index;
+  }
+}
 
 export class Character extends Container {
   idItems = new Map<number, CharacterItem>();
   actionAnchers = new Map<CharacterAction, Map<AncherName, Vec2>[]>();
-  action = CharacterAction.Stand1;
-  expression: CharacterExpression = 'default';
+  action = CharacterAction.Walk1;
+  expression: CharacterExpressions = CharacterExpressions.Default;
+  earType = CharacterEarType.HumanEar;
+
   frame = 0;
+  /* delta to calculate is need enter next frame */
+  currentDelta = 0;
 
   constructor() {
     super();
@@ -24,19 +41,24 @@ export class Character extends Container {
   updateItems(items: ItemInfo[]) {
     for (const item of items) {
       const chItem = new CharacterItem(item, this);
-      // chItem.load();
       this.idItems.set(item.id, chItem);
     }
   }
 
   get currentAllItem() {
     return Array.from(this.idItems.values())
-      .map((item) => item.actionPieces.get(this.action))
-      .filter((item) => item) as CharacterActionItem[];
+      .map((item) =>
+        item.isFace
+          ? item.actionPieces.get(this.expression)
+          : item.actionPieces.get(this.action),
+      )
+      .filter((item) => item) as AnyCategorizedItem[];
   }
 
-  get currentAllPieces() {
-    return this.currentAllItem.flatMap((item) => item.framePieces[this.frame]);
+  getChildrenByZmap(name: PieceSlot) {
+    return this.children.find(
+      (child) => child instanceof ZmapContainer && child.name === name,
+    );
   }
 
   render() {
@@ -44,20 +66,86 @@ export class Character extends Container {
     if (!zmap) {
       return;
     }
-    const allPieces = this.currentAllPieces;
+    const pieces: AnimatablePart[] = [];
+    let body: AnimatablePart | undefined = undefined;
     for (const layer of zmap) {
-      let piece: CharacterItemPiece;
-      for (const item of allPieces) {
-        if (item.has(layer)) {
-          piece = item.get(layer) as CharacterItemPiece;
-          const sprite = piece.sprite;
-          sprite.position.set(
-            piece.ancher.x - (piece.origin?.x || 0),
-            piece.ancher.y - (piece.origin?.y || 0),
-          );
-          this.addChild(sprite);
+      for (const item of this.currentAllItem) {
+        const piece = item.items.get(layer);
+        if (piece) {
+          let container = this.getChildrenByZmap(layer);
+          if (!container) {
+            container = new ZmapContainer(layer, zmap.indexOf(layer));
+            this.addChild(container);
+          }
+          if (layer === 'body') {
+            body = piece;
+          }
+          // not sure why need to do this while it already initialized in constructor
+          piece.frameChanges(0);
+
+          pieces.push(piece);
+
+          // TEST: for testing single frame is working
+          // const frame = piece.frames[0];
+          // const texture = piece.frames[0]?.getTexture();
+          // const sprite = new Sprite(texture);
+
+          // sprite.position.set(
+          //   frame.ancher.x - frame.position.x,
+          //   frame.ancher.x - frame.position.y,
+          // );
+          // sprite.position.copyFrom(frame.position);
+
+          // container.addChild(sprite);
+
+          container.addChild(piece);
           break;
         }
+      }
+    }
+
+    if (!body) {
+      console.error('No body found');
+      return;
+    }
+
+    this.playByBody(body, pieces);
+  }
+
+  playByBody(body: AnimatablePart, pieces: AnimatablePart[]) {
+    const maxFrame = pieces.reduce((max, piece) => {
+      return Math.max(max, piece.frames.length);
+    }, 0);
+
+    Ticker.shared.add((delta) => {
+      this.currentDelta += delta.deltaMS;
+      if (this.currentDelta > body.getCurrentDelay()) {
+        this.frame += 1;
+        this.currentDelta = 0;
+        if (this.frame >= maxFrame) {
+          this.frame = 0;
+        }
+        this.playPieces(pieces);
+      }
+    });
+  }
+  playPieces(pieces: AnimatablePart[]) {
+    const frame = this.frame;
+
+    const currentAncher = this.actionAnchers.get(this.action)?.[frame];
+
+    if (!currentAncher) {
+      return;
+    }
+    for (const piece of pieces) {
+      const pieceFrameIndex = piece.frames[frame] ? frame : 0;
+      const pieceFrame = (piece.frames[frame] ||
+        piece.frames[0]) as CharacterItemPiece;
+      if (pieceFrame) {
+        const ancherName = pieceFrame.baseAncherName;
+        const ancher = currentAncher.get(ancherName);
+        ancher && piece.parent?.position.copyFrom(ancher);
+        piece.currentFrame = pieceFrameIndex;
       }
     }
   }
@@ -69,7 +157,7 @@ export class Character extends Container {
   }
 
   async loadItems() {
-    for (const item of this.idItems.values()) {
+    for await (const item of this.idItems.values()) {
       await item.load();
     }
     const itemCount = this.idItems.size;
@@ -81,6 +169,7 @@ export class Character extends Container {
       this.buildAncher();
     }
   }
+
   buildAncher() {
     for (const action of Object.values(CharacterAction)) {
       for (const item of this.idItems.values()) {

@@ -2,7 +2,8 @@ import { invoke } from '@tauri-apps/api/core';
 import { Assets, Sprite, type Texture } from 'pixi.js';
 import { $apiHost } from '@/store/const';
 
-import type { Zmap, Smap, WzItem } from './models';
+import type { Zmap, Smap } from './const/data';
+import type { WzItem } from './const/wz';
 
 import { getItemFolderFromId } from '@/utils/itemFolder';
 

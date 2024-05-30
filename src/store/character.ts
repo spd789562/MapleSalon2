@@ -1,6 +1,6 @@
 import { atom } from 'nanostores';
 
-import type { ItemInfo } from '@/renderer/character/models';
+import type { ItemInfo } from '@/renderer/character/const/data';
 
 export interface CharacterData {
   items: ItemInfo[];
@@ -22,8 +22,25 @@ export const $currentCharacter = atom<CharacterData>({
     {
       id: 47046,
     },
+    // {
+    //   // half cover
+    //   id: 1006105,
+    // },
     {
-      id: 1006105,
+      // full cover
+      id: 1000003,
+    },
+    {
+      id: 1053576,
+    },
+    {
+      id: 1073273,
+    },
+    {
+      id: 1103580,
+    },
+    {
+      id: 1703339,
     },
   ],
   frame: 0,
