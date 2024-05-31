@@ -126,12 +126,23 @@ pub async fn resolve_base(path: &str, version: Option<WzMapleVersion>) -> Result
     };
 
     {
-        let wz_root_path = Path::new(path).parent().unwrap().parent().unwrap();
+        // let wz_root_path = Path::new(path).parent().unwrap().parent().unwrap();
+
+        let first_parent = Path::new(path).parent().unwrap();
+
+        let wz_root_path = if first_parent.file_stem().unwrap() == "Base" {
+            first_parent.parent().unwrap()
+        } else {
+            first_parent
+        };
 
         let mut entries = fs::read_dir(wz_root_path).await?;
 
         while let Some(item) = entries.next_entry().await? {
-            let file_name = item.file_name();
+            let path = item.path();
+            let file_name = path.file_stem().unwrap();
+
+            // let file_name = item.file_name();
 
             let has_dir = base_node
                 .read()
@@ -140,7 +151,12 @@ pub async fn resolve_base(path: &str, version: Option<WzMapleVersion>) -> Result
                 .is_some();
 
             if has_dir {
-                let wz_path = get_root_wz_file_path(&item).await;
+                // let wz_path = get_root_wz_file_path(&item).await;
+                let wz_path = if item.file_type().await?.is_dir() {
+                    get_root_wz_file_path(&item).await
+                } else {
+                    Some(path.to_str().unwrap().to_string())
+                };
 
                 if let Some(file_path) = wz_path {
                     let dir_node = resolve_root_wz_file_dir(

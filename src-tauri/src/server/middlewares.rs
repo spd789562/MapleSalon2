@@ -5,7 +5,7 @@ use axum::{
     middleware::Next,
     response::{IntoResponse, Response},
 };
-use wz_reader::{property::WzValue, WzNodeArc, WzObjectType};
+use wz_reader::{WzNodeArc, WzNodeCast};
 
 use super::models::GetJsonParam;
 
@@ -16,7 +16,7 @@ pub async fn root_check_middleware(
 ) -> Response {
     {
         let root_read = root.read().unwrap();
-        if matches!(root_read.object_type, WzObjectType::Value(WzValue::Null)) {
+        if root_read.is_null() {
             return Error::NotInitialized.into_response();
         }
     }
