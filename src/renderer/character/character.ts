@@ -17,28 +17,43 @@ type AnyCategorizedItem = CategorizedItem<string>;
 
 class ZmapContainer extends Container {
   name: PieceSlot;
-  _onlyDisplayId: number;
-  constructor(name: PieceSlot, index: number) {
+  character: Character;
+  requireLocks: PieceSlot[];
+  constructor(name: PieceSlot, index: number, character: Character) {
     super();
     this.name = name;
     this.zIndex = index;
-    this._onlyDisplayId = 0;
+    this.character = character;
+    this.requireLocks = (CharacterLoader.smap?.[name] || '').match(/.{1,2}/g) || [];
   }
   addCharacterPart(child: AnimatablePart) {
     super.addChild(child);
     this.refreshLock();
   }
-  get onlyDisplayId() {
-    return this._onlyDisplayId;
-  }
-  set onlyDisplayId(id: number) {
-    this._onlyDisplayId = id;
-    this.refreshLock();
+  hasAllLocks(id: number, locks: string[]) {
+    return locks.every((lock) => {
+      const requiredLock = this.character.locks.get(lock);
+      return !requiredLock || requiredLock === id;
+    });
   }
   refreshLock() {
     for (const child of this.children) {
       const frame = (child as AnimatablePart).frames[0] as CharacterItemPiece;
-      if (!this.onlyDisplayId || frame.info.id === this.onlyDisplayId) {
+      if (!frame || !frame.item) {
+        continue;
+      }
+      // using the fewer locks
+      let locks = 
+        frame.item.vslot.length < this.requireLocks.length ? frame.item.vslot : this.requireLocks;
+
+      // this logic is from maplestory.js, but why
+      if (this.name === 'mailArm') {
+        locks = ['Ma'];
+      } else if (this.name === 'pants' || this.name === 'backPants') {
+        locks = ['Pn'];
+      }
+
+      if (this.hasAllLocks(frame.info.id, locks)) {
         child.visible = true;
       } else {
         child.visible = false;
@@ -154,13 +169,12 @@ export class Character extends Container {
         if (piece) {
           let container = this.zmapLayers.get(layer);
           if (!container) {
-            container = new ZmapContainer(layer, zmap.indexOf(layer));
+            container = new ZmapContainer(layer, zmap.indexOf(layer), this);
             if (isBackAction(this.action) && layer === 'face') {
               container.visible = false;
             }
             this.addChild(container);
             this.zmapLayers.set(layer, container);
-            container.onlyDisplayId = this.locks.get(layer) || 0;
           }
           if (layer === 'body' || layer === 'backBody') {
             body = piece;
@@ -183,7 +197,7 @@ export class Character extends Container {
 
           // container.addChild(sprite);
 
-          container.addChild(piece);
+          container.addCharacterPart(piece);
           break;
         }
       }

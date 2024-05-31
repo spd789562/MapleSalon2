@@ -40,7 +40,7 @@ export type PieceSlot = PieceName | PieceZ;
 export type PieceGroup = string;
 
 export type Zmap = PieceSlot[];
-export type Smap = Record<PieceSlot, PieceSlot[]>;
+export type Smap = Record<PieceSlot, string>;
 
 export interface ItemDyeInfo {
   color: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;

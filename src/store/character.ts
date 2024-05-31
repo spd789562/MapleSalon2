@@ -23,14 +23,14 @@ export const $currentCharacter = atom<CharacterData>({
       // hair
       id: 47046,
     },
-    // {
-    //   // hat half cover
-    //   id: 1006105,
-    // },
     {
-      //  hat full cover
-      id: 1000003,
+      // hat half cover
+      id: 1006105,
     },
+    // {
+    //   //  hat full cover
+    //   id: 1000003,
+    // },
     {
       // face accessory
       id: 1012764,

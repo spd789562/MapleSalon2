@@ -11,6 +11,7 @@ import type {
 
 import { CharacterLoader } from './loader';
 import { defaultAncher } from './const/ancher';
+import type { CharacterItem } from './item';
 
 export class CharacterItemPiece implements AnimatableFrame {
   info: ItemInfo;
@@ -24,6 +25,8 @@ export class CharacterItemPiece implements AnimatableFrame {
 
   zIndex: number;
 
+  item: CharacterItem;
+
   ancher: Vec2;
   baseAncherName: AncherName = 'navel';
 
@@ -32,7 +35,7 @@ export class CharacterItemPiece implements AnimatableFrame {
 
   position = { x: 0, y: 0 };
 
-  constructor(info: ItemInfo, piece: RenderPieceInfo) {
+  constructor(info: ItemInfo, piece: RenderPieceInfo, item: CharacterItem) {
     this.info = info;
     this.url = piece.url || '';
     this.group = piece.group;
@@ -42,6 +45,7 @@ export class CharacterItemPiece implements AnimatableFrame {
     this.map = piece.map || defaultAncher;
     this.delay = piece.delay;
     this.ancher = defaultAncher.navel;
+    this.item = item;
     this.zIndex =
       CharacterLoader.zmap?.findIndex((z) => z === this.z) ||
       CharacterLoader.zmap?.findIndex((z) => z === this.slotName) ||
