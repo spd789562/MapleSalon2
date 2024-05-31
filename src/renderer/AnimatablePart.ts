@@ -15,6 +15,25 @@ export interface AnimatableFrame {
   zIndex: number;
 }
 
+export class EmptyFrame implements AnimatableFrame {
+  position = { x: 0, y: 0 };
+  delay = 100;
+  baseAncherName: AncherName = 'navel';
+  isAncherBuilt = true;
+  zIndex = 0;
+
+  getTexture() {
+    return Texture.EMPTY;
+  }
+
+  getResource() {
+    return null;
+  }
+
+  buildAncher() {}
+}
+
+
 export class AnimatablePart extends AnimatedSprite {
   frames: AnimatableFrame[] = [];
 

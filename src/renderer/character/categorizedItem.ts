@@ -6,7 +6,7 @@ import type { AncherName, Vec2, PieceName, AncherMap } from './const/data';
 import type { WzPieceFrame } from './const/wz';
 
 import { CharacterItemPiece } from './itemPiece';
-import { AnimatablePart } from '../AnimatablePart';
+import { AnimatablePart, EmptyFrame } from '../AnimatablePart';
 import { CharacterLoader } from './loader';
 
 import { CharacterAction } from './const/actions';
@@ -100,7 +100,7 @@ export abstract class CategorizedItem<Name extends string> {
       const { delay = 0, ...restOfWzData } = wzData;
       for (const pieceName in restOfWzData) {
         const piece = wzData[pieceName];
-        const pieceUrl = piece._outlink || piece.url;
+        const pieceUrl = piece._outlink || piece.path;
         if (!pieceUrl) {
           continue;
         }
@@ -118,22 +118,21 @@ export abstract class CategorizedItem<Name extends string> {
         );
 
         if (!piecesByFrame.has(name)) {
-          piecesByFrame.set(name, []);
+          const initialPieces: CharacterItemPiece[] = new Array(this.frameCount).fill(new EmptyFrame());
+          piecesByFrame.set(name, initialPieces);
         }
         const pieces = piecesByFrame.get(name) || [];
-        pieces.push(
-          new CharacterItemPiece(this.mainItem.info, {
-            info: this.mainItem.info,
-            url: pieceUrl,
-            origin: piece.origin,
-            z: piece.z,
-            slot: pieceName,
-            map: (piece.map as AncherMap) || defaultAncher,
-            delay: delay || 60,
-            group: piece.group,
-          }),
-        );
-        piecesByFrame.set(name, pieces);
+        const characterItemPiece = new CharacterItemPiece(this.mainItem.info, {
+          info: this.mainItem.info,
+          url: pieceUrl,
+          origin: piece.origin,
+          z: piece.z,
+          slot: pieceName,
+          map: (piece.map as AncherMap) || defaultAncher,
+          delay: delay || 60,
+          group: piece.group,
+        }, this.mainItem);
+        pieces[frame] = characterItemPiece;
       }
     }
 
