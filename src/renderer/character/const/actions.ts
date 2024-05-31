@@ -33,3 +33,7 @@ export enum CharacterAction {
   SwingT3 = 'swingT3',
   SwingTF = 'swingTF',
 }
+
+export function isBackAction(action: CharacterAction) {
+  return action === CharacterAction.Rope || action === CharacterAction.Ladder;
+}

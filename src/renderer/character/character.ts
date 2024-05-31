@@ -7,29 +7,57 @@ import type { CharacterItemPiece } from './itemPiece';
 
 import { CharacterLoader } from './loader';
 import { CharacterItem } from './item';
-import { CharacterAction } from './const/actions';
+import { CharacterAction, isBackAction } from './const/actions';
 import { CharacterExpressions } from './const/emotions';
 import { CharacterEarType } from './const/ears';
 import { CharacterHandType } from './const/hand';
+import type { PieceIslot } from './const/slot';
 
 type AnyCategorizedItem = CategorizedItem<string>;
 
 class ZmapContainer extends Container {
   name: PieceSlot;
+  _onlyDisplayId: number;
   constructor(name: PieceSlot, index: number) {
     super();
     this.name = name;
     this.zIndex = index;
+    this._onlyDisplayId = 0;
+  }
+  addCharacterPart(child: AnimatablePart) {
+    super.addChild(child);
+    this.refreshLock();
+  }
+  get onlyDisplayId() {
+    return this._onlyDisplayId;
+  }
+  set onlyDisplayId(id: number) {
+    this._onlyDisplayId = id;
+    this.refreshLock();
+  }
+  refreshLock() {
+    for (const child of this.children) {
+      const frame = (child as AnimatablePart).frames[0] as CharacterItemPiece;
+      if (!this.onlyDisplayId || frame.info.id === this.onlyDisplayId) {
+        child.visible = true;
+      } else {
+        child.visible = false;
+      }
+    }
   }
 }
 
 export class Character extends Container {
   idItems = new Map<number, CharacterItem>();
   actionAnchers = new Map<CharacterAction, Map<AncherName, Vec2>[]>();
+
   #_action = CharacterAction.Walk1;
   #_expression: CharacterExpressions = CharacterExpressions.Default;
   #_earType = CharacterEarType.HumanEar;
   #_handType = CharacterHandType.SingleHand;
+
+  zmapLayers = new Map<PieceSlot, ZmapContainer>();
+  locks = new Map<PieceSlot, number>();
 
   frame = 0;
   /* delta to calculate is need enter next frame */
@@ -55,6 +83,16 @@ export class Character extends Container {
   }
   set action(action: CharacterAction) {
     this.#_action = action;
+
+    const faceLayer = this.zmapLayers.get('face');
+    if (faceLayer) {
+      if (isBackAction(this.action)) {
+        faceLayer.visible = false;
+      } else {
+        faceLayer.visible = true;
+      }
+    }
+
     this.render();
   }
   set expression(expression: CharacterExpressions) {
@@ -102,12 +140,6 @@ export class Character extends Container {
       .filter((item) => item) as AnyCategorizedItem[];
   }
 
-  getChildrenByZmap(name: PieceSlot) {
-    return this.children.find(
-      (child) => child instanceof ZmapContainer && child.name === name,
-    );
-  }
-
   render() {
     const zmap = CharacterLoader?.zmap;
     if (!zmap) {
@@ -120,10 +152,15 @@ export class Character extends Container {
       for (const item of this.currentAllItem) {
         const piece = item.items.get(layer);
         if (piece) {
-          let container = this.getChildrenByZmap(layer);
+          let container = this.zmapLayers.get(layer);
           if (!container) {
             container = new ZmapContainer(layer, zmap.indexOf(layer));
+            if (isBackAction(this.action) && layer === 'face') {
+              container.visible = false;
+            }
             this.addChild(container);
+            this.zmapLayers.set(layer, container);
+            container.onlyDisplayId = this.locks.get(layer) || 0;
           }
           if (layer === 'body' || layer === 'backBody') {
             body = piece;
@@ -228,6 +265,27 @@ export class Character extends Container {
         break;
       }
       this.buildAncher();
+    }
+
+    this.buildLock();
+  }
+
+  buildLock() {
+    const orderedItems = CharacterLoader.zmap?.reduce((acc, layer) => {
+      for (const item of this.idItems.values()) {
+        if (item.islot.includes(layer as PieceIslot)) {
+          acc.push(item);
+        }
+      }
+      return acc;
+    }, [] as CharacterItem[]);
+    if (!orderedItems) {
+      return;
+    }
+    for (const item of orderedItems) {
+      for (const slot of item.vslot) {
+        this.locks.set(slot, item.info.id);
+      }
     }
   }
 
