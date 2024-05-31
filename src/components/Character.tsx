@@ -1,5 +1,5 @@
 import { useStore } from '@nanostores/solid';
-import { onMount, createEffect } from 'solid-js';
+import { onMount, onCleanup, createEffect } from 'solid-js';
 
 import { $currentCharacter } from '@/store/character';
 
@@ -15,7 +15,12 @@ export const CharacterScene = () => {
 
   async function initScene() {
     await CharacterLoader.init();
-    await app.init({ width: 300, height: 300, background: 0x00000000 });
+    await app.init({
+      width: 300,
+      height: 300,
+      background: 0x00000000,
+      backgroundAlpha: 0,
+    });
     container?.appendChild(app.canvas);
     app.stage.addChild(ch);
     ch.updateItems(characterData().items);
@@ -26,6 +31,10 @@ export const CharacterScene = () => {
 
   onMount(() => {
     initScene();
+  });
+
+  onCleanup(() => {
+    ch.reset();
   });
 
   createEffect(() => {

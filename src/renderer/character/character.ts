@@ -34,6 +34,7 @@ export class Character extends Container {
   frame = 0;
   /* delta to calculate is need enter next frame */
   currentDelta = 0;
+  currentTicker?: (delta: Ticker) => void;
 
   constructor() {
     super();
@@ -68,6 +69,7 @@ export class Character extends Container {
     if (!zmap) {
       return;
     }
+    this.reset();
     const pieces: AnimatablePart[] = [];
     let body: AnimatablePart | undefined = undefined;
     for (const layer of zmap) {
@@ -79,7 +81,7 @@ export class Character extends Container {
             container = new ZmapContainer(layer, zmap.indexOf(layer));
             this.addChild(container);
           }
-          if (layer === 'body') {
+          if (layer === 'body' || layer === 'backBody') {
             body = piece;
           }
           // not sure why need to do this while it already initialized in constructor
@@ -111,7 +113,18 @@ export class Character extends Container {
       return;
     }
 
+    this.playPieces(pieces);
     this.playByBody(body, pieces);
+  }
+
+  reset() {
+    this.currentTicker && Ticker.shared.remove(this.currentTicker);
+    this.clearnContainerChild();
+  }
+  clearnContainerChild() {
+    for (const child of this.children) {
+      child.removeChildren();
+    }
   }
 
   playByBody(body: AnimatablePart, pieces: AnimatablePart[]) {
@@ -119,7 +132,7 @@ export class Character extends Container {
       return Math.max(max, piece.frames.length);
     }, 0);
 
-    Ticker.shared.add((delta) => {
+    this.currentTicker = (delta) => {
       this.currentDelta += delta.deltaMS;
       if (this.currentDelta > body.getCurrentDelay()) {
         this.frame += 1;
@@ -129,7 +142,9 @@ export class Character extends Container {
         }
         this.playPieces(pieces);
       }
-    });
+    };
+
+    Ticker.shared.add(this.currentTicker);
   }
   playPieces(pieces: AnimatablePart[]) {
     const frame = this.frame;

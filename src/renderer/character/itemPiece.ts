@@ -28,6 +28,9 @@ export class CharacterItemPiece implements AnimatableFrame {
   baseAncherName: AncherName = 'navel';
 
   isAncherBuilt = false;
+  isIndepened = false;
+
+  position = { x: 0, y: 0 };
 
   constructor(info: ItemInfo, piece: RenderPieceInfo) {
     this.info = info;
@@ -43,21 +46,7 @@ export class CharacterItemPiece implements AnimatableFrame {
       CharacterLoader.zmap?.findIndex((z) => z === this.z) ||
       CharacterLoader.zmap?.findIndex((z) => z === this.slotName) ||
       0;
-  }
-
-  get position() {
-    const maping = this.map[this.baseAncherName] || {
-      x: 0,
-      y: 0,
-    };
-    return {
-      x: -maping.x - (this.origin?.x || 0),
-      y: -maping.y - (this.origin?.y || 0),
-    };
-    // return {
-    //   x: this.ancher.x - (this.origin?.x || 0),
-    //   y: this.ancher.y - (this.origin?.y || 0),
-    // };
+    this.isIndepened = Object.keys(this.map).length === 1;
   }
 
   get slotName() {
@@ -84,6 +73,10 @@ export class CharacterItemPiece implements AnimatableFrame {
     this.ancher = {
       x: baseAncher.x - this.map[ancherName].x,
       y: baseAncher.y - this.map[ancherName].y,
+    };
+    this.position = {
+      x: -this.map[ancherName].x - (this.origin?.x || 0),
+      y: -this.map[ancherName].y - (this.origin?.y || 0),
     };
 
     this.isAncherBuilt = true;

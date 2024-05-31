@@ -75,11 +75,11 @@ export abstract class CategorizedItem<Name extends string> {
 
   resolveUseablePieceName(name: PieceName, z: string): PieceName {
     const zmap = CharacterLoader.zmap || [];
-    if (zmap.includes(name)) {
-      return name;
-    }
     if (zmap.includes(z as PieceName)) {
       return z as PieceName;
+    }
+    if (zmap.includes(name)) {
+      return name;
     }
     return this.mainItem.islot[0];
   }
