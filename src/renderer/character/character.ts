@@ -26,10 +26,10 @@ class ZmapContainer extends Container {
 export class Character extends Container {
   idItems = new Map<number, CharacterItem>();
   actionAnchers = new Map<CharacterAction, Map<AncherName, Vec2>[]>();
-  action = CharacterAction.Walk1;
-  expression: CharacterExpressions = CharacterExpressions.Default;
-  earType = CharacterEarType.HumanEar;
-  handType = CharacterHandType.SingleHand;
+  #_action = CharacterAction.Walk1;
+  #_expression: CharacterExpressions = CharacterExpressions.Default;
+  #_earType = CharacterEarType.HumanEar;
+  #_handType = CharacterHandType.SingleHand;
 
   frame = 0;
   /* delta to calculate is need enter next frame */
@@ -39,6 +39,50 @@ export class Character extends Container {
   constructor() {
     super();
     this.sortableChildren = true;
+  }
+
+  get action() {
+    return this.#_action;
+  }
+  get expression() {
+    return this.#_expression;
+  }
+  get earType() {
+    return this.#_earType;
+  }
+  get handType() {
+    return this.#_handType;
+  }
+  set action(action: CharacterAction) {
+    this.#_action = action;
+    this.render();
+  }
+  set expression(expression: CharacterExpressions) {
+    this.#_expression = expression;
+    this.render();
+  }
+  set earType(earType: CharacterEarType) {
+    this.#_earType = earType;
+    this.render();
+  }
+  set handType(handType: CharacterHandType) {
+    this.#_handType = handType;
+    if (this.action.includes('walk')) {
+      if (handType === CharacterHandType.SingleHand) {
+        this.action = CharacterAction.Walk1;
+      } else {
+        this.action = CharacterAction.Walk2;
+      }
+    }
+    if (this.action.includes('stand')) {
+      if (handType === CharacterHandType.SingleHand) {
+        this.action = CharacterAction.Stand1;
+      } else {
+        this.action = CharacterAction.Stand2;
+      }
+    }
+
+    this.render();
   }
 
   updateItems(items: ItemInfo[]) {

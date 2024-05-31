@@ -1,11 +1,34 @@
 import { useStore } from '@nanostores/solid';
-import { onMount, onCleanup, createEffect } from 'solid-js';
+import { onMount, onCleanup, createEffect, For } from 'solid-js';
 
 import { $currentCharacter } from '@/store/character';
 
 import { Application } from 'pixi.js';
 import { Character } from '@/renderer/character/character';
 import { CharacterLoader } from '@/renderer/character/loader';
+
+import { CharacterAction } from '@/renderer/character/const/actions';
+import { CharacterExpressions } from '@/renderer/character/const/emotions';
+import { CharacterEarType } from '@/renderer/character/const/ears';
+import { CharacterHandType } from '@/renderer/character/const/hand';
+
+interface SelectionProps<T extends string> {
+  label: string;
+  values: T[];
+  onChange: (value: T) => void;
+}
+const Selection = <T extends string>(props: SelectionProps<T>) => {
+  return (
+    <label for={props.label}>
+      {props.label}:
+      <select onChange={(e) => props.onChange(e.target.value as T)}>
+        <For each={props.values}>
+          {(value) => <option value={value}>{value}</option>}
+        </For>
+      </select>
+    </label>
+  );
+};
 
 export const CharacterScene = () => {
   const characterData = useStore($currentCharacter);
@@ -41,5 +64,42 @@ export const CharacterScene = () => {
     ch.updateItems(characterData().items);
   });
 
-  return <div ref={container} />;
+  function updateAction(action: CharacterAction) {
+    ch.action = action;
+  }
+  function updateExpression(expression: CharacterExpressions) {
+    ch.expression = expression;
+  }
+  function updateEarType(earType: CharacterEarType) {
+    ch.earType = earType;
+  }
+  function updateHandType(handType: CharacterHandType) {
+    ch.handType = handType;
+  }
+
+  return (
+    <div>
+      <Selection
+        label="Action"
+        values={Object.values(CharacterAction)}
+        onChange={updateAction}
+      />
+      <Selection
+        label="Expression"
+        values={Object.values(CharacterExpressions)}
+        onChange={updateExpression}
+      />
+      <Selection
+        label="Ear Type"
+        values={Object.values(CharacterEarType)}
+        onChange={updateEarType}
+      />
+      <Selection
+        label="Hand Type"
+        values={Object.values(CharacterHandType)}
+        onChange={updateHandType}
+      />
+      <div ref={container} />
+    </div>
+  );
 };
