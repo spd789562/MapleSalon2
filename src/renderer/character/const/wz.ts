@@ -23,5 +23,5 @@ export interface WzPieceInfo {
   _inlink?: string;
   group?: PieceGroup;
   map?: AncherMap;
-  url?: string;
+  path?: string;
 }

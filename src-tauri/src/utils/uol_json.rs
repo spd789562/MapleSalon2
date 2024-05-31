@@ -49,7 +49,7 @@ pub fn simple_uol_json(node: &WzNodeArc) -> Result<Value> {
                 let mut dict = to_value(inner)?;
 
                 if let Value::Object(ref mut dict) = dict {
-                    let path = node_read.get_path_from_root();
+                    let path = node_read.get_full_path();
                     dict.insert(String::from("path"), Value::from(path));
                 }
 
@@ -73,7 +73,7 @@ pub fn simple_uol_json(node: &WzNodeArc) -> Result<Value> {
                     json.insert(name, value);
                 }
                 if node_read.children.get("_outlink").is_none() {
-                    let path = node_read.get_path_from_root();
+                    let path = node_read.get_full_path();
                     json.insert(String::from("path"), Value::from(path));
                 }
             }
