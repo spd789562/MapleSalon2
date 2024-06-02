@@ -7,6 +7,7 @@ export enum CharacterExpressions {
   Angry = 'angry',
   Bewildered = 'bewildered',
   Stunned = 'stunned',
+  Blink = 'blink',
   /* cash */
   Hum = 'hum',
   Despair = 'despair',

@@ -3,7 +3,7 @@ import { onMount, onCleanup, createEffect, For } from 'solid-js';
 
 import { $currentCharacter } from '@/store/character';
 
-import { Application } from 'pixi.js';
+import { Application, Container } from 'pixi.js';
 import { Character } from '@/renderer/character/character';
 import { CharacterLoader } from '@/renderer/character/loader';
 
@@ -45,11 +45,14 @@ export const CharacterScene = () => {
       backgroundAlpha: 0,
     });
     container?.appendChild(app.canvas);
-    app.stage.addChild(ch);
+    const characterLayer = new Container();
+    characterLayer.addChild(ch);
+    characterLayer.position.set(150, 150);
+    app.stage.addChild(characterLayer);
+
     ch.updateItems(characterData().items);
     await ch.loadItems();
     ch.render();
-    ch.position.set(150, 150);
   }
 
   onMount(() => {

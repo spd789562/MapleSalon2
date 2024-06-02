@@ -24,7 +24,8 @@ class ZmapContainer extends Container {
     this.name = name;
     this.zIndex = index;
     this.character = character;
-    this.requireLocks = (CharacterLoader.smap?.[name] || '').match(/.{1,2}/g) || [];
+    this.requireLocks =
+      (CharacterLoader.smap?.[name] || '').match(/.{1,2}/g) || [];
   }
   addCharacterPart(child: AnimatablePart) {
     super.addChild(child);
@@ -43,8 +44,10 @@ class ZmapContainer extends Container {
         continue;
       }
       // using the fewer locks
-      let locks = 
-        frame.item.vslot.length < this.requireLocks.length ? frame.item.vslot : this.requireLocks;
+      let locks =
+        frame.item.vslot.length < this.requireLocks.length
+          ? frame.item.vslot
+          : this.requireLocks;
 
       // this logic is from maplestory.js, but why
       if (this.name === 'mailArm') {
@@ -112,30 +115,16 @@ export class Character extends Container {
   }
   set expression(expression: CharacterExpressions) {
     this.#_expression = expression;
-    this.render();
+    this.loadItems().then(() => this.render());
   }
   set earType(earType: CharacterEarType) {
     this.#_earType = earType;
-    this.render();
+    this.loadItems().then(() => this.render());
   }
   set handType(handType: CharacterHandType) {
     this.#_handType = handType;
-    if (this.action.includes('walk')) {
-      if (handType === CharacterHandType.SingleHand) {
-        this.action = CharacterAction.Walk1;
-      } else {
-        this.action = CharacterAction.Walk2;
-      }
-    }
-    if (this.action.includes('stand')) {
-      if (handType === CharacterHandType.SingleHand) {
-        this.action = CharacterAction.Stand1;
-      } else {
-        this.action = CharacterAction.Stand2;
-      }
-    }
 
-    this.render();
+    this.loadItems().then(() => this.render());
   }
 
   updateItems(items: ItemInfo[]) {
@@ -208,6 +197,7 @@ export class Character extends Container {
       return;
     }
 
+    this.updateCharacterPosByBodyPiece(body);
     this.playPieces(pieces);
     this.playByBody(body, pieces);
   }
@@ -217,7 +207,7 @@ export class Character extends Container {
     this.clearnContainerChild();
   }
   clearnContainerChild() {
-    for (const child of this.children) {
+    for (const child of this.zmapLayers.values()) {
       child.removeChildren();
     }
   }
@@ -235,6 +225,7 @@ export class Character extends Container {
         if (this.frame >= maxFrame) {
           this.frame = 0;
         }
+        this.updateCharacterPosByBodyPiece(body);
         this.playPieces(pieces);
       }
     };
@@ -260,6 +251,14 @@ export class Character extends Container {
         piece.currentFrame = pieceFrameIndex;
       }
     }
+  }
+  updateCharacterPosByBodyPiece(body: AnimatablePart) {
+    const bodyCurrentFrame = body.frames[this.frame] as CharacterItemPiece;
+    if (!bodyCurrentFrame) {
+      return;
+    }
+    const bodyPos = bodyCurrentFrame.position;
+    this.position.set(-bodyPos.x, -bodyPos.y);
   }
 
   get isAllAncherBuilt() {
