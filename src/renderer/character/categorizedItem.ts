@@ -34,11 +34,12 @@ export abstract class CategorizedItem<Name extends string> {
     this.mainItem = mainItem;
     this.items = new Map();
     this.unresolvedItems = new Map();
-    const keys = Object.keys(wz).map((key) => Number.parseInt(key, 10));
+    const keys = Object.keys(wz).map((key) => Number.parseInt(key, 10) || 0);
     if (this.name === 'default' && keys.length === 0) {
       this.frameCount = 1;
     } else {
-      this.frameCount = keys.length;
+      const maxFrame = keys.reduce((a, b) => Math.max(a, b + 1), keys.length);
+      this.frameCount = maxFrame;
     }
     this.resolveFrames();
   }
@@ -118,20 +119,26 @@ export abstract class CategorizedItem<Name extends string> {
         );
 
         if (!piecesByFrame.has(name)) {
-          const initialPieces: CharacterItemPiece[] = new Array(this.frameCount).fill(new EmptyFrame());
+          const initialPieces: CharacterItemPiece[] = new Array(
+            this.frameCount,
+          ).fill(new EmptyFrame());
           piecesByFrame.set(name, initialPieces);
         }
         const pieces = piecesByFrame.get(name) || [];
-        const characterItemPiece = new CharacterItemPiece(this.mainItem.info, {
-          info: this.mainItem.info,
-          url: pieceUrl,
-          origin: piece.origin,
-          z: piece.z,
-          slot: pieceName,
-          map: (piece.map as AncherMap) || defaultAncher,
-          delay: delay || 60,
-          group: piece.group,
-        }, this.mainItem);
+        const characterItemPiece = new CharacterItemPiece(
+          this.mainItem.info,
+          {
+            info: this.mainItem.info,
+            url: pieceUrl,
+            origin: piece.origin,
+            z: piece.z,
+            slot: pieceName,
+            map: (piece.map as AncherMap) || defaultAncher,
+            delay: delay || 60,
+            group: piece.group,
+          },
+          this.mainItem,
+        );
         pieces[frame] = characterItemPiece;
       }
     }
