@@ -65,7 +65,6 @@ export interface ItemInfo {
 
 export interface RenderItemInfo {
   info: ItemInfo;
-  pieces: Map<PieceName, RenderPieceInfo[]>;
   /** the required slots of this item  */
   islot: PieceIslot[];
   /** the slots will block by current item */

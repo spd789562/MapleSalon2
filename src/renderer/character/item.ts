@@ -22,7 +22,6 @@ import { CharacterHandType } from './const/hand';
 
 export class CharacterItem implements RenderItemInfo {
   info: ItemInfo;
-  pieces: Map<PieceName, RenderPieceInfo[]>;
   islot: PieceIslot[];
   vslot: PieceVslot[];
 
@@ -31,21 +30,17 @@ export class CharacterItem implements RenderItemInfo {
     CharacterActionItem | CharacterFaceItem
   >;
 
-  action: CharacterAction;
-
   character: Character;
 
   wz: WzItem | null = null;
 
   constructor(info: ItemInfo, character: Character) {
     this.info = info;
-    this.pieces = new Map();
     this.actionPieces = new Map();
     this.islot = [];
     this.vslot = [];
 
     this.character = character;
-    this.action = character.action;
   }
 
   get isFace() {

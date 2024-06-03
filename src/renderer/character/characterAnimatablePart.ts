@@ -26,6 +26,7 @@ export class CharacterAnimatablePart extends BaseAnimatablePart<CharacterItemPie
     return !this.frames.some((frame) => !frame.isAncherBuilt);
   }
 
+  /** check this part has own delay and frame is all not joint to other pieces */
   get canIndependentlyPlay() {
     return this.frames.every((frame) => frame.isIndepened && frame.delay > 0);
   }

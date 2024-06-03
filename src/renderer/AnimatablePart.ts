@@ -1,56 +1,21 @@
-import {
-  AnimatedSprite,
-  Assets,
-  Container,
-  ContainerChild,
-  Sprite,
-  Texture,
-  Ticker,
-  type UnresolvedAsset,
-} from 'pixi.js';
-import type { AncherName, Vec2 } from './character/const/data';
+import { Container, Ticker, type Texture, type UnresolvedAsset } from 'pixi.js';
 
 export interface AnimatableFrame {
   getTexture(): Texture;
   getRenderAble(): Container;
   getResource(): UnresolvedAsset | null;
-  buildAncher(frameAncherMap: Map<AncherName, Vec2>): void;
   position: {
     x: number;
     y: number;
   };
   delay: number;
-  baseAncherName: AncherName;
-  isAncherBuilt: boolean;
   zIndex: number;
-}
-
-export class EmptyFrame implements AnimatableFrame {
-  position = { x: 0, y: 0 };
-  delay = 100;
-  baseAncherName: AncherName = 'navel';
-  isAncherBuilt = true;
-  zIndex = -1;
-
-  getTexture() {
-    return Texture.EMPTY;
-  }
-
-  getRenderAble() {
-    return Sprite.from(Texture.EMPTY);
-  }
-
-  getResource() {
-    return null;
-  }
-
-  buildAncher() {}
 }
 
 export abstract class BaseAnimatablePart<
   Frame extends AnimatableFrame,
 > extends Container {
-  frames: Frame[] = [];
+  _frames: Frame[] = [];
   textures: Container[] = [];
 
   loop = true;
@@ -71,7 +36,6 @@ export abstract class BaseAnimatablePart<
   constructor(frames: Frame[]) {
     super();
     this.frames = frames;
-    this.textures = frames.map((frame) => frame.getRenderAble());
     this._currentTime = 0;
     this._previousFrame = null;
     this._updateFrame();
@@ -103,16 +67,7 @@ export abstract class BaseAnimatablePart<
     }
   }
 
-  update(ticker: Ticker) {
-    if (!this._playing) {
-      return;
-    }
-    const deltaTime = ticker.deltaTime;
-    const elapsed = this.animationSpeed * deltaTime;
-    const previousFrame = this.currentFrame;
-
-    /* [pixi lag] start, logic from pixi.js AnimatedSprite */
-
+  private handleDelay(deltaTime: number, elapsed: number) {
     let lag = (this._currentTime % 1) * this.currentDuration;
 
     // Adjust the lag based on elapsed time.
@@ -137,7 +92,18 @@ export abstract class BaseAnimatablePart<
 
     // Adjust the current time based on the lag and current frame's duration.
     this._currentTime += lag / this.currentDuration;
+  }
 
+  update(ticker: Ticker) {
+    if (!this._playing) {
+      return;
+    }
+    const deltaTime = ticker.deltaTime;
+    const elapsed = this.animationSpeed * deltaTime;
+    const previousFrame = this.currentFrame;
+
+    /* [pixi lag] start, logic from pixi.js AnimatedSprite */
+    this.handleDelay(deltaTime, elapsed);
     /* [pixi lag] end */
 
     if (this._currentTime < 0 && !this.loop) {
@@ -150,7 +116,7 @@ export abstract class BaseAnimatablePart<
     } else if (previousFrame !== this.currentFrame) {
       if (this.loop && this.onLoop) {
         if (this.currentFrame < previousFrame) {
-          this.onLoop();
+          this.onLoop?.();
         }
       }
       this._updateFrame();
@@ -220,39 +186,21 @@ export abstract class BaseAnimatablePart<
   get currentDuration() {
     return this.frames[this.currentFrame].delay;
   }
-}
 
-export class AnimatablePart<
-  Frame extends AnimatableFrame = AnimatableFrame,
-> extends BaseAnimatablePart<Frame> {
-  constructor(frames: Frame[]) {
-    super(frames);
-    this.updatePositionByFrame(0);
-    this.onFrameChange = this.frameChanges.bind(this);
+  get frames() {
+    return this._frames;
+  }
+  set frames(value: Frame[]) {
+    this._frames = value;
+    this.textures = value.map((frame) => frame.getRenderAble());
   }
 
-  getCurrentDelay() {
-    return this.frames[this.currentFrame].delay;
-  }
+  destroy() {
+    this.stop();
+    super.destroy();
 
-  updatePositionByFrame(currentFrame: number) {
-    this.position.copyFrom(this.frames[currentFrame].position);
-  }
-  frameChanges(currentFrame: number) {
-    this.updatePositionByFrame(currentFrame);
-  }
-
-  get resources() {
-    return this.frames
-      .map((frame) => frame.getResource())
-      .filter((r) => r) as UnresolvedAsset[];
-  }
-
-  get isAllAncherBuilt() {
-    return !this.frames.some((frame) => !frame.isAncherBuilt);
-  }
-
-  async prepareResource() {
-    await Assets.load(this.resources);
+    this.onComplete = undefined;
+    this.onFrameChange = undefined;
+    this.onLoop = undefined;
   }
 }

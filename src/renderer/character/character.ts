@@ -28,7 +28,7 @@ class ZmapContainer extends Container {
       (CharacterLoader.smap?.[name] || '').match(/.{1,2}/g) || [];
   }
   addCharacterPart(child: CharacterAnimatablePart) {
-    super.addChild(child);
+    this.addChild(child);
     this.refreshLock();
   }
   hasAllLocks(id: number, locks: string[]) {
@@ -69,7 +69,7 @@ export class Character extends Container {
   idItems = new Map<number, CharacterItem>();
   actionAnchers = new Map<CharacterAction, Map<AncherName, Vec2>[]>();
 
-  #_action = CharacterAction.Walk1;
+  #_action = CharacterAction.Stand1;
   #_expression: CharacterExpressions = CharacterExpressions.Default;
   #_earType = CharacterEarType.HumanEar;
   #_handType = CharacterHandType.SingleHand;
@@ -78,6 +78,9 @@ export class Character extends Container {
   locks = new Map<PieceSlot, number>();
 
   frame = 0;
+  /** is character playing bounced action */
+  isBounce = false;
+
   /* delta to calculate is need enter next frame */
   currentDelta = 0;
   currentTicker?: (delta: Ticker) => void;
@@ -134,6 +137,7 @@ export class Character extends Container {
     }
   }
 
+  /** get current items filter by expression and action */
   get currentAllItem() {
     return Array.from(this.idItems.values())
       .map((item) =>
@@ -142,6 +146,13 @@ export class Character extends Container {
           : item.actionPieces.get(this.action),
       )
       .filter((item) => item) as AnyCategorizedItem[];
+  }
+
+  /** get current pieces in character layers */
+  get currentPieces() {
+    return Array.from(this.zmapLayers.values()).flatMap(
+      (layer) => layer.children as CharacterAnimatablePart[],
+    );
   }
 
   render() {
@@ -173,21 +184,7 @@ export class Character extends Container {
 
           pieces.push(piece);
 
-          // TEST: for testing single frame is working
-          // const frame = piece.frames[0];
-          // const texture = piece.frames[0]?.getTexture();
-          // const sprite = new Sprite(texture);
-
-          // sprite.position.set(
-          //   frame.ancher.x - frame.position.x,
-          //   frame.ancher.x - frame.position.y,
-          // );
-          // sprite.position.copyFrom(frame.position);
-
-          // container.addChild(sprite);
-
           container.addCharacterPart(piece);
-          break;
         }
       }
     }
@@ -197,44 +194,60 @@ export class Character extends Container {
       return;
     }
 
-    this.updateCharacterPosByBodyPiece(body);
-    this.playPieces(body, pieces);
-    this.playByBody(body, pieces);
+    this.playPieces(this.currentPieces);
+    this.playByBody(body);
   }
 
   reset() {
+    this.isBounce = false;
     this.currentTicker && Ticker.shared.remove(this.currentTicker);
     this.clearnContainerChild();
   }
   clearnContainerChild() {
     for (const child of this.zmapLayers.values()) {
+      for (const pieces of child.children) {
+        if ('stop' in pieces) {
+          (pieces as CharacterAnimatablePart).stop();
+        }
+      }
       child.removeChildren();
     }
   }
 
-  playByBody(body: CharacterAnimatablePart, pieces: CharacterAnimatablePart[]) {
-    const maxFrame = pieces.reduce((max, piece) => {
-      return Math.max(max, piece.frames.length);
-    }, 0);
-
-    console.log(maxFrame, pieces);
+  /** play character action by body's delay */
+  playByBody(body: CharacterAnimatablePart) {
+    const pieces = this.currentPieces;
+    const maxFrame = body.frames.length;
+    const needBounce =
+      this.action === CharacterAction.Alert || this.action.startsWith('stand');
 
     this.currentTicker = (delta) => {
       this.currentDelta += delta.deltaMS;
       if (this.currentDelta > body.currentDuration) {
-        this.frame += 1;
         this.currentDelta = 0;
-        if (this.frame >= maxFrame) {
-          this.frame = 0;
+        if (needBounce) {
+          if (this.frame >= maxFrame - 1) {
+            this.isBounce = true;
+          }
+          if (this.frame <= 0) {
+            this.isBounce = false;
+          }
+          this.frame += this.isBounce ? -1 : 1;
+        } else {
+          this.frame += 1;
+          if (this.frame >= maxFrame) {
+            this.frame = 0;
+          }
         }
-        this.updateCharacterPosByBodyPiece(body);
-        this.playPieces(body, pieces);
+        this.playPieces(pieces);
       }
     };
 
     Ticker.shared.add(this.currentTicker);
   }
-  playPieces(body: CharacterAnimatablePart, pieces: CharacterAnimatablePart[]) {
+
+  /** set pieces to current frame */
+  playPieces(pieces: CharacterAnimatablePart[]) {
     const frame = this.frame;
 
     const currentAncher = this.actionAnchers.get(this.action)?.[frame];
@@ -246,17 +259,29 @@ export class Character extends Container {
       const pieceFrameIndex = piece.frames[frame] ? frame : 0;
       const pieceFrame = (piece.frames[frame] ||
         piece.frames[0]) as CharacterItemPiece;
+      const isSkinGroup = pieceFrame.group === 'skin';
       if (pieceFrame) {
         const ancherName = pieceFrame.baseAncherName;
         const ancher = currentAncher.get(ancherName);
+        /* setting the ancher on zmapLayer */
         ancher && piece.parent?.position.copyFrom(ancher);
-        if (piece.canIndependentlyPlay) {
-          piece.play();
+        /* some part can play indenpendently */
+        if (piece.canIndependentlyPlay && !isSkinGroup) {
+          if (!piece.playing) {
+            piece.play();
+          }
         } else {
           piece.currentFrame = pieceFrameIndex;
         }
       }
     }
+    this.updateCharacterFaceVisibility();
+    /* update pivot after all pieces is set */
+    this.updateCharacterPivotByBodyPiece();
+  }
+
+  /** update face when character turn to back */
+  updateCharacterFaceVisibility() {
     const faceLayer = this.zmapLayers.get('face');
     if (faceLayer) {
       if (this.isCurrentFrameIsBackAction) {
@@ -266,13 +291,10 @@ export class Character extends Container {
       }
     }
   }
-  updateCharacterPosByBodyPiece(body: CharacterAnimatablePart) {
-    const bodyCurrentFrame = body.frames[this.frame] as CharacterItemPiece;
-    if (!bodyCurrentFrame) {
-      return;
-    }
-    const bodyPos = bodyCurrentFrame.position;
-    this.position.set(-bodyPos.x, -bodyPos.y);
+  updateCharacterPivotByBodyPiece() {
+    /* use the ancher to set actual character offset */
+    const bodyPos = this.currentBodyFrame?.ancher || { x: 0, y: 0 };
+    this.pivot.set(bodyPos.x, bodyPos.y);
   }
 
   /** use backBody to check current action is turn character to back  */
@@ -283,6 +305,18 @@ export class Character extends Container {
       | undefined;
     const isEmptyNode = backBodyNode?.frames[this.frame]?.zIndex !== -1;
     return backBodyNode && isEmptyNode;
+  }
+
+  get currentBodyFrame() {
+    const body = this.zmapLayers.get('body');
+    const bodyNode = body?.children[0] as CharacterAnimatablePart;
+    const bodyFrame = bodyNode?.frames[this.frame];
+    if (bodyFrame && bodyFrame.zIndex !== -1) {
+      return bodyFrame;
+    }
+    const back = this.zmapLayers.get('backBody');
+    const backNode = back?.children[0] as CharacterAnimatablePart;
+    return backNode?.frames[this.frame];
   }
 
   get isAllAncherBuilt() {

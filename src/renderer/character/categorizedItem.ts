@@ -5,8 +5,7 @@ import type { CharacterExpressions } from './const/emotions';
 import type { AncherName, Vec2, PieceName, AncherMap } from './const/data';
 import type { WzPieceFrame } from './const/wz';
 
-import { CharacterItemPiece } from './itemPiece';
-import { AnimatablePart, EmptyFrame } from '../AnimatablePart';
+import { CharacterItemPiece, EMPTY } from './itemPiece';
 import { CharacterLoader } from './loader';
 import { CharacterAnimatablePart } from './characterAnimatablePart';
 
@@ -52,7 +51,7 @@ export abstract class CategorizedItem<Name extends string> {
     );
   }
 
-  /* do something before build ancher on each pieces */
+  /** do something before build ancher on each pieces */
   abstract ancherSetup(ancherMap: Map<AncherName, Vec2>, frame: number): void;
 
   tryBuildAncher(
@@ -69,13 +68,14 @@ export abstract class CategorizedItem<Name extends string> {
       for (const item of this.items.values()) {
         const piece = item.frames[frame];
         if (piece && !piece.isAncherBuilt) {
-          item.frames[frame].buildAncher(currentFrameAnchers);
+          item.frames[frame].buildAncher?.(currentFrameAnchers);
         }
       }
     }
     return ancherMapByFrame;
   }
 
+  /** get piece name that validate in Zmap.img */
   resolveUseablePieceName(name: PieceName, z: string): PieceName {
     const zmap = CharacterLoader.zmap || [];
     if (zmap.includes(z as PieceName)) {
@@ -87,7 +87,7 @@ export abstract class CategorizedItem<Name extends string> {
     return this.mainItem.islot[0];
   }
 
-  /* resolve all frames and build CharacterAnimatablePart */
+  /** resolve all frames and build CharacterAnimatablePart Later */
   resolveFrames() {
     const piecesByFrame = new Map<PieceName, CharacterItemPiece[]>();
     const isDefault = this.name === 'default' && this.frameCount === 1;
@@ -123,7 +123,7 @@ export abstract class CategorizedItem<Name extends string> {
         if (!piecesByFrame.has(name)) {
           const initialPieces: CharacterItemPiece[] = new Array(
             this.frameCount,
-          ).fill(new EmptyFrame());
+          ).fill(EMPTY);
           piecesByFrame.set(name, initialPieces);
         }
         const pieces = piecesByFrame.get(name) || [];

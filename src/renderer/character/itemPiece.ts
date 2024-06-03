@@ -1,4 +1,4 @@
-import { Assets, Sprite } from 'pixi.js';
+import { Assets, Sprite, Texture } from 'pixi.js';
 
 import type { AnimatableFrame } from '../AnimatablePart';
 import type {
@@ -27,12 +27,16 @@ export class CharacterItemPiece implements AnimatableFrame {
 
   item: CharacterItem;
 
+  /** calcualted ancher use to calculate for new joint */
   ancher: Vec2;
   baseAncherName: AncherName = 'navel';
 
   isAncherBuilt = false;
+
+  /* pieces not create new joint, means there is no other one can rely on this piece's ancher */
   isIndepened = false;
 
+  /** offset of piece */
   position = { x: 0, y: 0 };
 
   constructor(info: ItemInfo, piece: RenderPieceInfo, item: CharacterItem) {
@@ -63,7 +67,6 @@ export class CharacterItemPiece implements AnimatableFrame {
   getRenderAble() {
     return new Sprite(this.getTexture());
   }
-
   getResource() {
     if (!this.url) {
       return null;
@@ -121,3 +124,26 @@ export class CharacterItemPiece implements AnimatableFrame {
     }
   }
 }
+
+class CharacterEmptyPiece implements AnimatableFrame {
+  position = { x: 0, y: 0 };
+  delay = 100;
+  baseAncherName: AncherName = 'navel';
+  isAncherBuilt = true;
+  zIndex = -1;
+  group = 'empty';
+
+  getTexture() {
+    return Texture.EMPTY;
+  }
+
+  getRenderAble() {
+    return Sprite.from(Texture.EMPTY);
+  }
+
+  getResource() {
+    return null;
+  }
+}
+
+export const EMPTY = new CharacterEmptyPiece();
