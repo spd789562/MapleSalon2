@@ -1,4 +1,4 @@
-import { Assets, Sprite, Texture } from 'pixi.js';
+import { Assets, type Container, Sprite, Texture } from 'pixi.js';
 
 import type { AnimatableFrame } from '../AnimatablePart';
 import type {
@@ -39,6 +39,8 @@ export class CharacterItemPiece implements AnimatableFrame {
   /** offset of piece */
   position = { x: 0, y: 0 };
 
+  _srpite: Container | null = null;
+
   constructor(info: ItemInfo, piece: RenderPieceInfo, item: CharacterItem) {
     this.info = info;
     this.url = piece.url || '';
@@ -62,10 +64,17 @@ export class CharacterItemPiece implements AnimatableFrame {
   }
 
   getTexture() {
+    if (!this.url) {
+      return Texture.EMPTY;
+    }
     return Assets.get(this.url);
   }
   getRenderAble() {
-    return new Sprite(this.getTexture());
+    if (this._srpite) {
+      return this._srpite;
+    }
+    this._srpite = new Sprite(this.getTexture());
+    return this._srpite;
   }
   getResource() {
     if (!this.url) {
