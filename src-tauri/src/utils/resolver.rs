@@ -29,9 +29,7 @@ pub fn resolve_root_wz_file_dir<'a>(
 ) -> BoxFuture<'a, Result<WzNodeArc>> {
     async move {
         let root_node: WzNodeArc =
-            WzNode::from_wz_file_full(dir, version, patch_version, parent, default_keys)
-                .unwrap()
-                .into();
+            WzNode::from_wz_file_full(dir, version, patch_version, parent, default_keys)?.into();
         let wz_dir = Path::new(dir).parent().unwrap();
 
         block_parse(&root_node).await?;
@@ -141,6 +139,11 @@ pub async fn resolve_base(path: &str, version: Option<WzMapleVersion>) -> Result
         while let Some(item) = entries.next_entry().await? {
             let path = item.path();
             let file_name = path.file_stem().unwrap();
+            let is_wz_file = path
+                .extension()
+                .and_then(|ext| if ext == "wz" { Some(ext) } else { None })
+                .is_some();
+            let is_valid = path.is_dir() || is_wz_file;
 
             // let file_name = item.file_name();
 
@@ -150,7 +153,7 @@ pub async fn resolve_base(path: &str, version: Option<WzMapleVersion>) -> Result
                 .at(file_name.to_str().unwrap())
                 .is_some();
 
-            if has_dir {
+            if has_dir && is_valid {
                 // let wz_path = get_root_wz_file_path(&item).await;
                 let wz_path = if item.file_type().await?.is_dir() {
                     get_root_wz_file_path(&item).await
