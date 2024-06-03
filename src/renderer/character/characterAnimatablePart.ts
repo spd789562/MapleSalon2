@@ -27,7 +27,7 @@ export class CharacterAnimatablePart extends BaseAnimatablePart<CharacterItemPie
   }
 
   get canIndependentlyPlay() {
-    return this.frames.every((frame) => frame.isIndepened);
+    return this.frames.every((frame) => frame.isIndepened && frame.delay > 0);
   }
 
   async prepareResource() {

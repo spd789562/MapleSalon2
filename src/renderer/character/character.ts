@@ -70,7 +70,7 @@ export class Character extends Container {
   actionAnchers = new Map<CharacterAction, Map<AncherName, Vec2>[]>();
 
   #_action = CharacterAction.Walk1;
-  #_expression: CharacterExpressions = CharacterExpressions.Blink;
+  #_expression: CharacterExpressions = CharacterExpressions.Default;
   #_earType = CharacterEarType.HumanEar;
   #_handType = CharacterHandType.SingleHand;
 
@@ -198,7 +198,7 @@ export class Character extends Container {
     }
 
     this.updateCharacterPosByBodyPiece(body);
-    this.playPieces(pieces);
+    this.playPieces(body, pieces);
     this.playByBody(body, pieces);
   }
 
@@ -228,13 +228,13 @@ export class Character extends Container {
           this.frame = 0;
         }
         this.updateCharacterPosByBodyPiece(body);
-        this.playPieces(pieces);
+        this.playPieces(body, pieces);
       }
     };
 
     Ticker.shared.add(this.currentTicker);
   }
-  playPieces(pieces: CharacterAnimatablePart[]) {
+  playPieces(body: CharacterAnimatablePart, pieces: CharacterAnimatablePart[]) {
     const frame = this.frame;
 
     const currentAncher = this.actionAnchers.get(this.action)?.[frame];
@@ -250,7 +250,11 @@ export class Character extends Container {
         const ancherName = pieceFrame.baseAncherName;
         const ancher = currentAncher.get(ancherName);
         ancher && piece.parent?.position.copyFrom(ancher);
-        piece.currentFrame = pieceFrameIndex;
+        if (piece.canIndependentlyPlay) {
+          piece.play();
+        } else {
+          piece.currentFrame = pieceFrameIndex;
+        }
       }
     }
     const faceLayer = this.zmapLayers.get('face');

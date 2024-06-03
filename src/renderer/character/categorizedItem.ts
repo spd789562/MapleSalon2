@@ -127,6 +127,7 @@ export abstract class CategorizedItem<Name extends string> {
           piecesByFrame.set(name, initialPieces);
         }
         const pieces = piecesByFrame.get(name) || [];
+
         const characterItemPiece = new CharacterItemPiece(
           this.mainItem.info,
           {
@@ -136,7 +137,7 @@ export abstract class CategorizedItem<Name extends string> {
             z: piece.z,
             slot: pieceName,
             map: (piece.map as AncherMap) || defaultAncher,
-            delay: delay || 60,
+            delay: delay,
             group: piece.group,
           },
           this.mainItem,

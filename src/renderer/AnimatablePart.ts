@@ -104,7 +104,7 @@ export abstract class BaseAnimatablePart<
   }
 
   update(ticker: Ticker) {
-    if (this._playing) {
+    if (!this._playing) {
       return;
     }
     const deltaTime = ticker.deltaTime;
@@ -218,12 +218,13 @@ export abstract class BaseAnimatablePart<
   }
 
   get currentDuration() {
-    return this.frames[this.currentFrame].delay || 60;
+    return this.frames[this.currentFrame].delay;
   }
 }
 
-export class AnimatablePart<Frame extends AnimatableFrame = AnimatableFrame> extends BaseAnimatablePart<Frame> {
-
+export class AnimatablePart<
+  Frame extends AnimatableFrame = AnimatableFrame,
+> extends BaseAnimatablePart<Frame> {
   constructor(frames: Frame[]) {
     super(frames);
     this.updatePositionByFrame(0);
