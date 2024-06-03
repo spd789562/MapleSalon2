@@ -251,6 +251,14 @@ export class Character extends Container {
         piece.currentFrame = pieceFrameIndex;
       }
     }
+    const faceLayer = this.zmapLayers.get('face');
+    if (faceLayer) {
+      if (this.isCurrentFrameIsBackAction) {
+        faceLayer.visible = false;
+      } else {
+        faceLayer.visible = true;
+      }
+    }
   }
   updateCharacterPosByBodyPiece(body: AnimatablePart) {
     const bodyCurrentFrame = body.frames[this.frame] as CharacterItemPiece;
@@ -259,6 +267,14 @@ export class Character extends Container {
     }
     const bodyPos = bodyCurrentFrame.position;
     this.position.set(-bodyPos.x, -bodyPos.y);
+  }
+
+  /** use backBody to check current action is turn character to back  */
+  get isCurrentFrameIsBackAction() {
+    const backLayer = this.zmapLayers.get('backBody');
+    const backBodyNode = backLayer?.children[0] as AnimatablePart | undefined;
+    const isEmptyNode = backBodyNode?.frames[this.frame]?.zIndex !== -1;
+    return backBodyNode && isEmptyNode;
   }
 
   get isAllAncherBuilt() {
