@@ -2,7 +2,7 @@ import { Container, Ticker } from 'pixi.js';
 
 import type { ItemInfo, AncherName, Vec2, PieceSlot } from './const/data';
 import type { CategorizedItem } from './categorizedItem';
-import type { AnimatablePart } from '../AnimatablePart';
+import type { CharacterAnimatablePart } from './characterAnimatablePart';
 import type { CharacterItemPiece } from './itemPiece';
 
 import { CharacterLoader } from './loader';
@@ -27,7 +27,7 @@ class ZmapContainer extends Container {
     this.requireLocks =
       (CharacterLoader.smap?.[name] || '').match(/.{1,2}/g) || [];
   }
-  addCharacterPart(child: AnimatablePart) {
+  addCharacterPart(child: CharacterAnimatablePart) {
     super.addChild(child);
     this.refreshLock();
   }
@@ -39,7 +39,7 @@ class ZmapContainer extends Container {
   }
   refreshLock() {
     for (const child of this.children) {
-      const frame = (child as AnimatablePart).frames[0] as CharacterItemPiece;
+      const frame = (child as CharacterAnimatablePart).frames[0];
       if (!frame || !frame.item) {
         continue;
       }
@@ -70,7 +70,7 @@ export class Character extends Container {
   actionAnchers = new Map<CharacterAction, Map<AncherName, Vec2>[]>();
 
   #_action = CharacterAction.Walk1;
-  #_expression: CharacterExpressions = CharacterExpressions.Default;
+  #_expression: CharacterExpressions = CharacterExpressions.Blink;
   #_earType = CharacterEarType.HumanEar;
   #_handType = CharacterHandType.SingleHand;
 
@@ -150,8 +150,8 @@ export class Character extends Container {
       return;
     }
     this.reset();
-    const pieces: AnimatablePart[] = [];
-    let body: AnimatablePart | undefined = undefined;
+    const pieces: CharacterAnimatablePart[] = [];
+    let body: CharacterAnimatablePart | undefined = undefined;
     for (const layer of zmap) {
       for (const item of this.currentAllItem) {
         const piece = item.items.get(layer);
@@ -212,14 +212,16 @@ export class Character extends Container {
     }
   }
 
-  playByBody(body: AnimatablePart, pieces: AnimatablePart[]) {
+  playByBody(body: CharacterAnimatablePart, pieces: CharacterAnimatablePart[]) {
     const maxFrame = pieces.reduce((max, piece) => {
       return Math.max(max, piece.frames.length);
     }, 0);
 
+    console.log(maxFrame, pieces);
+
     this.currentTicker = (delta) => {
       this.currentDelta += delta.deltaMS;
-      if (this.currentDelta > body.getCurrentDelay()) {
+      if (this.currentDelta > body.currentDuration) {
         this.frame += 1;
         this.currentDelta = 0;
         if (this.frame >= maxFrame) {
@@ -232,7 +234,7 @@ export class Character extends Container {
 
     Ticker.shared.add(this.currentTicker);
   }
-  playPieces(pieces: AnimatablePart[]) {
+  playPieces(pieces: CharacterAnimatablePart[]) {
     const frame = this.frame;
 
     const currentAncher = this.actionAnchers.get(this.action)?.[frame];
@@ -260,7 +262,7 @@ export class Character extends Container {
       }
     }
   }
-  updateCharacterPosByBodyPiece(body: AnimatablePart) {
+  updateCharacterPosByBodyPiece(body: CharacterAnimatablePart) {
     const bodyCurrentFrame = body.frames[this.frame] as CharacterItemPiece;
     if (!bodyCurrentFrame) {
       return;
@@ -272,7 +274,9 @@ export class Character extends Container {
   /** use backBody to check current action is turn character to back  */
   get isCurrentFrameIsBackAction() {
     const backLayer = this.zmapLayers.get('backBody');
-    const backBodyNode = backLayer?.children[0] as AnimatablePart | undefined;
+    const backBodyNode = backLayer?.children[0] as
+      | CharacterAnimatablePart
+      | undefined;
     const isEmptyNode = backBodyNode?.frames[this.frame]?.zIndex !== -1;
     return backBodyNode && isEmptyNode;
   }

@@ -1,4 +1,4 @@
-import { Assets } from 'pixi.js';
+import { Assets, Sprite } from 'pixi.js';
 
 import type { AnimatableFrame } from '../AnimatablePart';
 import type {
@@ -59,6 +59,9 @@ export class CharacterItemPiece implements AnimatableFrame {
 
   getTexture() {
     return Assets.get(this.url);
+  }
+  getRenderAble() {
+    return new Sprite(this.getTexture());
   }
 
   getResource() {

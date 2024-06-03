@@ -8,6 +8,7 @@ import type { WzPieceFrame } from './const/wz';
 import { CharacterItemPiece } from './itemPiece';
 import { AnimatablePart, EmptyFrame } from '../AnimatablePart';
 import { CharacterLoader } from './loader';
+import { CharacterAnimatablePart } from './characterAnimatablePart';
 
 import { CharacterAction } from './const/actions';
 import { defaultAncher, handMoveDefaultAnchers } from './const/ancher';
@@ -17,7 +18,7 @@ export abstract class CategorizedItem<Name extends string> {
 
   unresolvedItems: Map<PieceName, CharacterItemPiece[]>;
 
-  items: Map<PieceName, AnimatablePart>;
+  items: Map<PieceName, CharacterAnimatablePart>;
 
   wz: Record<number, WzPieceFrame>;
   frameCount = 0;
@@ -38,6 +39,7 @@ export abstract class CategorizedItem<Name extends string> {
     if (this.name === 'default' && keys.length === 0) {
       this.frameCount = 1;
     } else {
+      /* some item only contain spcific frame, must calculate it */
       const maxFrame = keys.reduce((a, b) => Math.max(a, b + 1), keys.length);
       this.frameCount = maxFrame;
     }
@@ -85,7 +87,7 @@ export abstract class CategorizedItem<Name extends string> {
     return this.mainItem.islot[0];
   }
 
-  /* resolve all frames and build AnimatablePart */
+  /* resolve all frames and build CharacterAnimatablePart */
   resolveFrames() {
     const piecesByFrame = new Map<PieceName, CharacterItemPiece[]>();
     const isDefault = this.name === 'default' && this.frameCount === 1;
@@ -158,7 +160,10 @@ export abstract class CategorizedItem<Name extends string> {
     await Assets.load(Array.from(assets));
 
     for (const [pieceName, pieces] of this.unresolvedItems) {
-      this.items.set(pieceName as PieceName, new AnimatablePart(pieces));
+      this.items.set(
+        pieceName as PieceName,
+        new CharacterAnimatablePart(pieces),
+      );
     }
 
     this.unresolvedItems.clear();
