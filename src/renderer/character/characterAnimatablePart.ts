@@ -1,15 +1,43 @@
 import { BaseAnimatablePart } from '../AnimatablePart';
-import { Assets, type UnresolvedAsset } from 'pixi.js';
+import { Assets, ColorMatrixFilter, type UnresolvedAsset } from 'pixi.js';
 import type { CharacterItemPiece } from './itemPiece';
 import type { CharacterItem } from './item';
 
 export class CharacterAnimatablePart extends BaseAnimatablePart<CharacterItemPiece> {
   item: CharacterItem;
+
+  colorFilter?: ColorMatrixFilter;
+
   constructor(item: CharacterItem, frames: CharacterItemPiece[]) {
     super(frames);
     this.item = item;
     this.updatePositionByFrame(0);
     this.onFrameChange = this.frameChanges.bind(this);
+    this.updateFilter();
+  }
+
+  updateFilter() {
+    const colorFilter = this.colorFilter || new ColorMatrixFilter();
+
+    this.colorFilter?.reset();
+
+    if (this.item.info.brightness !== undefined) {
+      colorFilter.brightness(this.item.info.brightness, true);
+    }
+    if (this.item.info.contrast !== undefined) {
+      colorFilter.contrast(this.item.info.contrast, true);
+    }
+    if (this.item.info.saturation !== undefined) {
+      colorFilter.saturate(this.item.info.saturation, true);
+    }
+    if (this.item.info.hue !== undefined) {
+      colorFilter.hue(this.item.info.hue, true);
+    }
+
+    if (this.colorFilter !== colorFilter) {
+      this.filters = colorFilter;
+      this.colorFilter = colorFilter;
+    }
   }
 
   updatePositionByFrame(currentFrame: number) {
@@ -18,7 +46,6 @@ export class CharacterAnimatablePart extends BaseAnimatablePart<CharacterItemPie
   frameChanges(currentFrame: number) {
     this.updatePositionByFrame(currentFrame);
   }
-
   get resources() {
     return this.frames
       .flatMap((frame) => frame.getResource())
