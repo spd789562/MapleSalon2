@@ -41,7 +41,7 @@ export class CharacterItem implements RenderItemInfo {
 
   wz: WzItem | null = null;
 
-  filters: (ColorMatrixFilter | Filter)[] = [];
+  filters: (HslAdjustmentFilter | Filter)[] = [];
 
   avaliableDye = new Map<ItemDyeInfo['color'], number>();
 
@@ -174,20 +174,12 @@ export class CharacterItem implements RenderItemInfo {
 
   updateFilter() {
     if (this.filters.length === 0) {
-      this.filters = [
-        new HslAdjustmentFilter(),
-        // new ColorMatrixFilter({ blendMode: 'multiply' }),
-        // new ColorMatrixFilter({ blendMode: 'multiply' }),
-        // new ColorMatrixFilter({ blendMode: 'lighten' }),
-      ];
+      this.filters = [new HslAdjustmentFilter()];
     }
     const filter = this.filters[0] as HslAdjustmentFilter;
-    // const satFilter = this.filters[1] as ColorMatrixFilter;
-    // // const brightFilter = this.filters[2] as ColorMatrixFilter;
-    // const brightFilter = this.filters[2] as HslAdjustmentFilter;
 
     if (this.info.hue !== undefined) {
-      // hueFilter.hue(this.info.hue, true);
+      // convert 0 ~ 360 to 0 ~ 180 -> -180 ~ 0
       filter.hue = this.info.hue > 180 ? this.info.hue - 360 : this.info.hue;
     }
     if (this.info.saturation !== undefined) {
@@ -201,9 +193,5 @@ export class CharacterItem implements RenderItemInfo {
       const brightness = (this.info.brightness / 100) * 0.5;
       filter.lightness = brightness;
     }
-    // if (this.info.contrast !== undefined) {
-    // disable for now
-    //   filter.contrast(this.info.contrast, true);
-    // }
   }
 }
