@@ -21,7 +21,7 @@ export class CharacterAnimatablePart extends BaseAnimatablePart<CharacterItemPie
 
   get resources() {
     return this.frames
-      .map((frame) => frame.getResource())
+      .flatMap((frame) => frame.getResource())
       .filter((r) => r) as UnresolvedAsset[];
   }
 

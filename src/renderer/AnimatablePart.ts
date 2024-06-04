@@ -3,7 +3,7 @@ import { Container, Ticker, type Texture, type UnresolvedAsset } from 'pixi.js';
 export interface AnimatableFrame {
   getTexture(): Texture;
   getRenderAble(): Container;
-  getResource(): UnresolvedAsset | null;
+  getResource(): UnresolvedAsset[] | null;
   position: {
     x: number;
     y: number;

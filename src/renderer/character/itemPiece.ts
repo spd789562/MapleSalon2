@@ -1,6 +1,13 @@
-import { Assets, type Container, Sprite, Texture } from 'pixi.js';
+import {
+  Assets,
+  type Container,
+  Sprite,
+  Texture,
+  type UnresolvedAsset,
+} from 'pixi.js';
 
 import type { AnimatableFrame } from '../AnimatablePart';
+import type { CharacterItem } from './item';
 import type {
   AncherMap,
   AncherName,
@@ -8,10 +15,19 @@ import type {
   RenderPieceInfo,
   Vec2,
 } from './const/data';
+import {
+  changeFaceColorId,
+  changeHairColorId,
+  vaildFaceColor,
+  vaildHairColor,
+} from '@/utils/mixDye';
+import { replaceIdInPath } from '@/utils/itemId';
 
 import { CharacterLoader } from './loader';
+import { DyeableSprite } from './dyeableSprite';
+
 import { defaultAncher } from './const/ancher';
-import type { CharacterItem } from './item';
+import type { HairColorId } from './const/hair';
 
 export class CharacterItemPiece implements AnimatableFrame {
   info: ItemInfo;
@@ -63,6 +79,10 @@ export class CharacterItemPiece implements AnimatableFrame {
     return this.slot === 'default' ? this.z : this.z || this.slot;
   }
 
+  isDyable(): this is DyeableCharacterItemPiece {
+    return this.info.dye !== undefined;
+  }
+
   getTexture() {
     if (!this.url) {
       return Texture.EMPTY;
@@ -80,12 +100,14 @@ export class CharacterItemPiece implements AnimatableFrame {
     if (!this.url) {
       return null;
     }
-    return {
-      alias: this.url,
-      src: CharacterLoader.getPieceUrl(this.url),
-      loadParser: 'loadTextures',
-      format: '.webp',
-    };
+    return [
+      {
+        alias: this.url,
+        src: CharacterLoader.getPieceUrl(this.url),
+        loadParser: 'loadTextures',
+        format: '.webp',
+      } as UnresolvedAsset,
+    ];
   }
 
   setAncher(ancherName: AncherName, baseAncher: Vec2) {
@@ -134,6 +156,16 @@ export class CharacterItemPiece implements AnimatableFrame {
   }
 }
 
+export class DyeableCharacterItemPiece extends CharacterItemPiece {
+  getRenderAble() {
+    if (this._srpite) {
+      return this._srpite;
+    }
+    this._srpite = new DyeableSprite(this.item, this.url);
+    return this._srpite;
+  }
+}
+
 class CharacterEmptyPiece implements AnimatableFrame {
   position = { x: 0, y: 0 };
   delay = 100;
@@ -151,7 +183,7 @@ class CharacterEmptyPiece implements AnimatableFrame {
   }
 
   getResource() {
-    return null;
+    return [];
   }
 }
 

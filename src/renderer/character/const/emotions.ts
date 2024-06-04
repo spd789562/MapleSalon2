@@ -27,3 +27,11 @@ export enum CharacterExpressions {
   /* gms */
   QBlue = 'qBlue',
 }
+
+export const ExpressionsHasEye = [
+  CharacterExpressions.Default,
+  CharacterExpressions.Hit,
+  CharacterExpressions.Blink,
+  CharacterExpressions.Wink,
+  CharacterExpressions.Glitter,
+];

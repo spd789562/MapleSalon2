@@ -72,3 +72,7 @@ export function getGender(id: number): Gender {
       return Gender.Share;
   }
 }
+
+export function replaceIdInPath(path: string, id: number): string {
+  return path.replace(/\d{8}/, String(id).padStart(8, '0'));
+}

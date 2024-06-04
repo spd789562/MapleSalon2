@@ -5,12 +5,17 @@ import type { CharacterExpressions } from './const/emotions';
 import type { AncherName, Vec2, PieceName, AncherMap } from './const/data';
 import type { WzPieceFrame } from './const/wz';
 
-import { CharacterItemPiece, EMPTY } from './itemPiece';
+import {
+  CharacterItemPiece,
+  DyeableCharacterItemPiece,
+  EMPTY,
+} from './itemPiece';
 import { CharacterLoader } from './loader';
 import { CharacterAnimatablePart } from './characterAnimatablePart';
 
 import { CharacterAction } from './const/actions';
 import { defaultAncher, handMoveDefaultAnchers } from './const/ancher';
+import { ExpressionsHasEye } from './const/emotions';
 
 export abstract class CategorizedItem<Name extends string> {
   name: Name;
@@ -53,6 +58,8 @@ export abstract class CategorizedItem<Name extends string> {
 
   /** do something before build ancher on each pieces */
   abstract ancherSetup(ancherMap: Map<AncherName, Vec2>, frame: number): void;
+
+  abstract isDyeable(): boolean;
 
   tryBuildAncher(
     currentAnchers: Map<AncherName, Vec2>[],
@@ -128,19 +135,20 @@ export abstract class CategorizedItem<Name extends string> {
         }
         const pieces = piecesByFrame.get(name) || [];
 
-        const characterItemPiece = new CharacterItemPiece(
-          {
-            info: this.mainItem.info,
-            url: pieceUrl,
-            origin: piece.origin,
-            z: piece.z,
-            slot: pieceName,
-            map: (piece.map as AncherMap) || defaultAncher,
-            delay: delay,
-            group: piece.group,
-          },
-          this.mainItem,
-        );
+        const renderPiecesInfo = {
+          info: this.mainItem.info,
+          url: pieceUrl,
+          origin: piece.origin,
+          z: piece.z,
+          slot: pieceName,
+          map: (piece.map as AncherMap) || defaultAncher,
+          delay: delay,
+          group: piece.group,
+        };
+
+        const characterItemPiece = this.isDyeable()
+          ? new DyeableCharacterItemPiece(renderPiecesInfo, this.mainItem)
+          : new CharacterItemPiece(renderPiecesInfo, this.mainItem);
         pieces[frame] = characterItemPiece;
       }
     }
@@ -153,7 +161,11 @@ export abstract class CategorizedItem<Name extends string> {
     for (const items of this.unresolvedItems.values()) {
       for (const resources of items) {
         const res = resources.getResource();
-        res && assets.add(res);
+        if (res) {
+          for (const asset of res) {
+            assets.add(asset);
+          }
+        }
       }
     }
 
@@ -183,10 +195,17 @@ export class CharacterActionItem extends CategorizedItem<CharacterAction> {
       );
     }
   }
+  isDyeable() {
+    return this.mainItem.info.dye !== undefined;
+  }
 }
 
 export class CharacterFaceItem extends CategorizedItem<CharacterExpressions> {
   ancherSetup(_: Map<AncherName, Vec2>, __: number) {
     // do nothing
+  }
+  isDyeable() {
+    const hasDye = this.mainItem.info.dye !== undefined;
+    return hasDye && ExpressionsHasEye.includes(this.name);
   }
 }

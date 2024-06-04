@@ -42,6 +42,10 @@ class Loader {
   get apiHost() {
     return $apiHost.get();
   }
+  checkPathExist(path: string) {
+    const imgPath = (path.split('.img') || [])[0];
+    return this.wzImageFolder.includes(imgPath);
+  }
   getPiecePathIfExist(id: number, folder?: string) {
     let getfolder = folder;
     if (!folder) {
@@ -60,7 +64,9 @@ class Loader {
     if (!path) {
       return null;
     }
-
+    return await this.getPieceWzByPath(path);
+  }
+  async getPieceWzByPath(path: string): Promise<WzItem | null> {
     await invoke('parse_node', { path });
 
     const data: WzItem = await fetch(

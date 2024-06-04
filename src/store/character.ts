@@ -17,11 +17,19 @@ export const $currentCharacter = atom<CharacterData>({
       id: 12000,
     },
     {
-      id: 20001,
+      id: 56772,
+      dye: {
+        color: 6,
+        alpha: 50,
+      },
     },
     {
       // hair
       id: 47046,
+      dye: {
+        color: 0,
+        alpha: 50,
+      },
     },
     {
       // hat half cover

@@ -4,17 +4,22 @@ import type { Character } from './character';
 import type {
   ItemInfo,
   RenderItemInfo,
-  PieceName,
-  RenderPieceInfo,
   PieceIslot,
   PieceVslot,
   AncherName,
   Vec2,
+  ItemDyeInfo,
 } from './const/data';
 import type { WzItem } from './const/wz';
 
 import { CharacterAction } from './const/actions';
-import { isFaceId, isWeaponId, isCashWeaponId } from '@/utils/itemId';
+import { isFaceId, isWeaponId, isCashWeaponId, isHairId } from '@/utils/itemId';
+import {
+  gatFaceAvailableColorIds,
+  gatHairAvailableColorIds,
+  getFaceColorId,
+  getHairColorId,
+} from '@/utils/mixDye';
 
 import { CharacterActionItem, CharacterFaceItem } from './categorizedItem';
 import { CharacterExpressions } from './const/emotions';
@@ -34,6 +39,8 @@ export class CharacterItem implements RenderItemInfo {
 
   wz: WzItem | null = null;
 
+  avaliableDye = new Map<ItemDyeInfo['color'], number>();
+
   constructor(info: ItemInfo, character: Character) {
     this.info = info;
     this.actionPieces = new Map();
@@ -45,6 +52,10 @@ export class CharacterItem implements RenderItemInfo {
 
   get isFace() {
     return isFaceId(this.info.id);
+  }
+
+  get isHair() {
+    return isHairId(this.info.id);
   }
 
   get isWeapon() {
@@ -92,7 +103,6 @@ export class CharacterItem implements RenderItemInfo {
       this.actionPieces.set(action, actionItem);
     }
   }
-
   private loadWeapon(wz: WzItem) {
     const isSingleHand =
       this.character.handType === CharacterHandType.SingleHand;
@@ -119,6 +129,15 @@ export class CharacterItem implements RenderItemInfo {
 
     this.islot = (this.wz.info.islot.match(/.{1,2}/g) || []) as PieceIslot[];
     this.vslot = (this.wz.info.vslot.match(/.{1,2}/g) || []) as PieceIslot[];
+
+    /* resolve dye */
+    if (this.isFace) {
+      const ids = gatFaceAvailableColorIds(this.info.id);
+      this.avaliableDye = new Map(ids.map((id) => [getFaceColorId(id), id]));
+    } else if (this.isHair) {
+      const ids = gatHairAvailableColorIds(this.info.id);
+      this.avaliableDye = new Map(ids.map((id) => [getHairColorId(id), id]));
+    }
 
     if (this.isFace) {
       this.loadFace(this.wz);

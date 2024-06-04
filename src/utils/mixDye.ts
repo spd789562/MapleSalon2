@@ -3,7 +3,7 @@ import { CharacterLoader } from '@/renderer/character/loader';
 import { FaceColor, type FaceColorId } from '@/renderer/character/const/face';
 import { HairColor, type HairColorId } from '@/renderer/character/const/hair';
 
-export const vaildFaceColor = (id: FaceColorId) => {
+export const vaildFaceColor = (id: FaceColorId): id is FaceColorId => {
   return id >= 0 && id <= 8;
 };
 
@@ -24,7 +24,7 @@ export const formatFaceId = (id: number) =>
  *  formatFaceId(40100, 2) // -> 40200
  *  formatFaceId(52301, 4) // -> 52401
  */
-export const changeFaceColorId = (id: number, changeColorId: FaceColor) =>
+export const changeFaceColorId = (id: number, changeColorId: FaceColorId) =>
   Number(
     id
       .toString()
@@ -48,7 +48,9 @@ export const getFaceColorId = (id: number) =>
  *  formatFaceId(40100) // -> [40000, 40100, 40200, 40300, 40400, 40500...]
  */
 export const getFaceAllColorIds = (id: number) => {
-  return Object.values(FaceColor).map((color) => changeFaceColorId(id, color));
+  return Object.values(FaceColor).map((color) =>
+    changeFaceColorId(id, Number(color) as FaceColorId),
+  );
 };
 
 /**
@@ -60,7 +62,7 @@ export const getFaceAllColorIds = (id: number) => {
 export const getFaceAllColorPath = (id: number) => {
   const allColorIds = getFaceAllColorIds(id);
   return allColorIds
-    .map((colorId) => CharacterLoader.getPiecePathIfExist(colorId, 'Face'))
+    .map((colorId) => CharacterLoader.getPiecePathIfExist(colorId, 'Face/'))
     .filter(Boolean);
 };
 
@@ -73,11 +75,11 @@ export const getFaceAllColorPath = (id: number) => {
 export const gatFaceAvailableColorIds = (id: number) => {
   const allColorIds = getFaceAllColorIds(id);
   return allColorIds.filter((colorId) =>
-    CharacterLoader.getPiecePathIfExist(colorId, 'Face'),
+    CharacterLoader.getPiecePathIfExist(colorId, 'Face/'),
   );
 };
 
-export const vaildHairColor = (id: HairColorId) => {
+export const vaildHairColor = (id: HairColorId): id is HairColorId => {
   return id >= 0 && id <= 7;
 };
 
@@ -97,8 +99,8 @@ export const formatHairId = (id: number) => id && Math.floor(+id / 10);
  *  formatHairId(30000, 2) // -> 30002
  *  formatHairId(34503, 4) // -> 34504
  */
-export const changeHairColorId = (id: number, changeColorId: HairColor) =>
-  Number(`${formatHairId(id) * 10}${changeColorId}`);
+export const changeHairColorId = (id: number, changeColorId: HairColorId) =>
+  formatHairId(id) * 10 + changeColorId;
 
 /**
  * getHairColorId
@@ -116,7 +118,9 @@ export const getHairColorId = (id: number) => (id % 10) as HairColorId;
  *  formatHairId(34503) // -> [34500, 34501, 34502, 34503, 34504, 34505...]
  */
 export const getHairAllColorIds = (id: number) => {
-  return Object.values(HairColor).map((color) => changeHairColorId(id, color));
+  return Object.values(HairColor).map((color) =>
+    changeHairColorId(id, Number(color) as HairColorId),
+  );
 };
 
 /**
@@ -128,7 +132,7 @@ export const getHairAllColorIds = (id: number) => {
 export const getHairAllColorPath = (id: number) => {
   const allColorIds = getHairAllColorIds(id);
   return allColorIds
-    .map((colorId) => CharacterLoader.getPiecePathIfExist(colorId, 'Hair'))
+    .map((colorId) => CharacterLoader.getPiecePathIfExist(colorId, 'Hair/'))
     .filter(Boolean);
 };
 
@@ -141,6 +145,6 @@ export const getHairAllColorPath = (id: number) => {
 export const gatHairAvailableColorIds = (id: number) => {
   const allColorIds = getHairAllColorIds(id);
   return allColorIds.filter((colorId) =>
-    CharacterLoader.getPiecePathIfExist(colorId, 'Hair'),
+    CharacterLoader.getPiecePathIfExist(colorId, 'Hair/'),
   );
 };
