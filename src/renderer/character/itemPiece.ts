@@ -41,8 +41,8 @@ export class CharacterItemPiece implements AnimatableFrame {
 
   _srpite: Container | null = null;
 
-  constructor(info: ItemInfo, piece: RenderPieceInfo, item: CharacterItem) {
-    this.info = info;
+  constructor(piece: RenderPieceInfo, item: CharacterItem) {
+    this.info = piece.info;
     this.url = piece.url || '';
     this.group = piece.group;
     this.z = piece.z;

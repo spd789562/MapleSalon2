@@ -129,7 +129,6 @@ export abstract class CategorizedItem<Name extends string> {
         const pieces = piecesByFrame.get(name) || [];
 
         const characterItemPiece = new CharacterItemPiece(
-          this.mainItem.info,
           {
             info: this.mainItem.info,
             url: pieceUrl,
@@ -163,7 +162,7 @@ export abstract class CategorizedItem<Name extends string> {
     for (const [pieceName, pieces] of this.unresolvedItems) {
       this.items.set(
         pieceName as PieceName,
-        new CharacterAnimatablePart(pieces),
+        new CharacterAnimatablePart(this.mainItem, pieces),
       );
     }
 

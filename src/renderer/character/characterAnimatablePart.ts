@@ -1,10 +1,13 @@
 import { BaseAnimatablePart } from '../AnimatablePart';
 import { Assets, type UnresolvedAsset } from 'pixi.js';
 import type { CharacterItemPiece } from './itemPiece';
+import type { CharacterItem } from './item';
 
 export class CharacterAnimatablePart extends BaseAnimatablePart<CharacterItemPiece> {
-  constructor(frames: CharacterItemPiece[]) {
+  item: CharacterItem;
+  constructor(item: CharacterItem, frames: CharacterItemPiece[]) {
     super(frames);
+    this.item = item;
     this.updatePositionByFrame(0);
     this.onFrameChange = this.frameChanges.bind(this);
   }
