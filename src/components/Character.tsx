@@ -41,8 +41,8 @@ export const CharacterScene = () => {
     await app.init({
       width: 300,
       height: 300,
-      background: 0x00000000,
-      backgroundAlpha: 0,
+      background: 0x000000,
+      backgroundAlpha: 1,
     });
     container?.appendChild(app.canvas);
     const characterLayer = new Container();

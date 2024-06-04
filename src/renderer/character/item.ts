@@ -1,3 +1,4 @@
+import { ColorMatrixFilter } from 'pixi.js';
 import { CharacterLoader } from './loader';
 
 import type { Character } from './character';
@@ -39,6 +40,8 @@ export class CharacterItem implements RenderItemInfo {
 
   wz: WzItem | null = null;
 
+  filters: ColorMatrixFilter[] = [];
+
   avaliableDye = new Map<ItemDyeInfo['color'], number>();
 
   constructor(info: ItemInfo, character: Character) {
@@ -48,6 +51,7 @@ export class CharacterItem implements RenderItemInfo {
     this.vslot = [];
 
     this.character = character;
+    this.updateFilter();
   }
 
   get isFace() {
@@ -165,5 +169,36 @@ export class CharacterItem implements RenderItemInfo {
       return currentAnchers;
     }
     return item.tryBuildAncher(currentAnchers);
+  }
+
+  updateFilter() {
+    if (this.filters.length === 0) {
+      this.filters = [
+        new ColorMatrixFilter({ blendMode: 'multiply' }),
+        new ColorMatrixFilter({ blendMode: 'multiply' }),
+        new ColorMatrixFilter({ blendMode: 'multiply' }),
+      ];
+    }
+    const hueFilter = this.filters[0];
+    const satFilter = this.filters[1];
+    const brightFilter = this.filters[2];
+
+    if (this.info.hue !== undefined) {
+      hueFilter.hue(this.info.hue, true);
+    }
+    if (this.info.saturation !== undefined) {
+      // convert -99 ~ 99 to -1 ~ 0
+      const saturation = (this.info.saturation + 100) / 200 - 1;
+      satFilter.saturate(saturation, true);
+    }
+    if (this.info.brightness !== undefined) {
+      // convert -99 ~ 99 to 0 ~ 2
+      const brightness = (this.info.brightness / 2 + 100) / 100;
+      brightFilter.brightness(brightness, true);
+    }
+    // if (this.info.contrast !== undefined) {
+    // disable for now
+    //   filter.contrast(this.info.contrast, true);
+    // }
   }
 }

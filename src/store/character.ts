@@ -62,14 +62,35 @@ export const $currentCharacter = atom<CharacterData>({
     {
       // cap
       id: 1103580,
-      hue: 180,
-      brightness: 0.1,
-      saturation: 0.5,
     },
     {
       // weapon
-      id: 1703339,
+      id: 1703126,
+      hue: 23,
+      saturation: 15,
+      brightness: 66,
     },
+    // {
+    //   // weapon
+    //   id: 1703126,
+    //   hue: 63,
+    //   saturation: 84,
+    //   brightness: 60,
+    // },
+    // {
+    //   // weapon
+    //   id: 1702858,
+    //   hue: 160,
+    //   saturation: 55,
+    //   brightness: 66,
+    // },
+    // {
+    //   // weapon
+    //   id: 1702858,
+    //   hue: 344,
+    //   saturation: -42,
+    //   brightness: -17,
+    // },
   ],
   frame: 0,
   isAnimating: false,

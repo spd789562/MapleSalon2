@@ -69,7 +69,7 @@ export class Character extends Container {
   idItems = new Map<number, CharacterItem>();
   actionAnchers = new Map<CharacterAction, Map<AncherName, Vec2>[]>();
 
-  #_action = CharacterAction.Stand1;
+  #_action = CharacterAction.Stand2;
   #_expression: CharacterExpressions = CharacterExpressions.Default;
   #_earType = CharacterEarType.HumanEar;
   #_handType = CharacterHandType.SingleHand;
