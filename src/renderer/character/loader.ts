@@ -42,12 +42,22 @@ class Loader {
   get apiHost() {
     return $apiHost.get();
   }
-  async getPieceWz(id: number): Promise<WzItem | null> {
-    const folder = getItemFolderFromId(id);
-    const path = `Character/${folder}${id.toString().padStart(8, '0')}.img`;
+  getPiecePathIfExist(id: number, folder?: string) {
+    let getfolder = folder;
+    if (!folder) {
+      getfolder = getItemFolderFromId(id);
+    }
+    const path = `Character/${getfolder}${id.toString().padStart(8, '0')}.img`;
 
     const exists = this.wzImageFolder.includes(path);
     if (!exists) {
+      return null;
+    }
+    return path;
+  }
+  async getPieceWz(id: number): Promise<WzItem | null> {
+    const path = this.getPiecePathIfExist(id);
+    if (!path) {
       return null;
     }
 
