@@ -8,7 +8,7 @@ import type { WzItem } from './const/wz';
 import { getItemFolderFromId } from '@/utils/itemFolder';
 
 class Loader {
-  zmap?: Zmap;
+  zmap?: Zmap = [];
   smap?: Smap;
   wzImageFolder: string[] = [];
 
@@ -24,6 +24,7 @@ class Loader {
       res.json(),
     );
     this.zmap?.reverse();
+    this.zmap?.push('effect');
   }
   async loadSmap() {
     this.smap = await fetch(`${this.apiHost}/mapping/smap`).then((res) =>
