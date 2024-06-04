@@ -15,19 +15,11 @@ import type {
   RenderPieceInfo,
   Vec2,
 } from './const/data';
-import {
-  changeFaceColorId,
-  changeHairColorId,
-  vaildFaceColor,
-  vaildHairColor,
-} from '@/utils/mixDye';
-import { replaceIdInPath } from '@/utils/itemId';
 
 import { CharacterLoader } from './loader';
 import { DyeableSprite } from './dyeableSprite';
 
 import { defaultAncher } from './const/ancher';
-import type { HairColorId } from './const/hair';
 
 export class CharacterItemPiece implements AnimatableFrame {
   info: ItemInfo;
@@ -80,7 +72,7 @@ export class CharacterItemPiece implements AnimatableFrame {
   }
 
   isDyable(): this is DyeableCharacterItemPiece {
-    return this.info.dye !== undefined;
+    return this instanceof DyeableCharacterItemPiece;
   }
 
   getTexture() {
