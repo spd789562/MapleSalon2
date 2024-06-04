@@ -1,4 +1,5 @@
-import { ColorMatrixFilter } from 'pixi.js';
+import type { Filter } from 'pixi.js';
+import { HslAdjustmentFilter } from 'pixi-filters';
 import { CharacterLoader } from './loader';
 
 import type { Character } from './character';
@@ -40,7 +41,7 @@ export class CharacterItem implements RenderItemInfo {
 
   wz: WzItem | null = null;
 
-  filters: ColorMatrixFilter[] = [];
+  filters: (ColorMatrixFilter | Filter)[] = [];
 
   avaliableDye = new Map<ItemDyeInfo['color'], number>();
 
@@ -174,29 +175,32 @@ export class CharacterItem implements RenderItemInfo {
   updateFilter() {
     if (this.filters.length === 0) {
       this.filters = [
-        new ColorMatrixFilter({ blendMode: 'multiply' }),
-        new ColorMatrixFilter({ blendMode: 'multiply' }),
-        new ColorMatrixFilter({ blendMode: 'multiply' }),
+        new HslAdjustmentFilter(),
+        // new ColorMatrixFilter({ blendMode: 'multiply' }),
+        // new ColorMatrixFilter({ blendMode: 'multiply' }),
+        // new ColorMatrixFilter({ blendMode: 'lighten' }),
       ];
     }
-    const hueFilter = this.filters[0];
-    const satFilter = this.filters[1];
-    const brightFilter = this.filters[2];
+    const filter = this.filters[0] as HslAdjustmentFilter;
+    // const satFilter = this.filters[1] as ColorMatrixFilter;
+    // // const brightFilter = this.filters[2] as ColorMatrixFilter;
+    // const brightFilter = this.filters[2] as HslAdjustmentFilter;
 
     if (this.info.hue !== undefined) {
-      hueFilter.hue(this.info.hue, true);
+      // hueFilter.hue(this.info.hue, true);
+      filter.hue = this.info.hue > 180 ? this.info.hue - 360 : this.info.hue;
     }
     if (this.info.saturation !== undefined) {
-      // convert -99 ~ 99 to -1 ~ 1
-      const saturation = this.info.saturation / 100;
-      satFilter.saturate(saturation, true);
+      // convert -99 ~ 99 to -0.8 ~ 0.8
+      const saturation = (this.info.saturation / 100) * 0.8;
+      filter.saturation = saturation;
     }
     // current not working
-    // if (this.info.brightness !== undefined) {
-    //   // convert -99 ~ 99 to 0 ~ 2
-    //   const brightness = (this.info.brightness / 2 + 100) / 100;
-    //   brightFilter.brightness(brightness, true);
-    // }
+    if (this.info.brightness !== undefined) {
+      // convert -99 ~ 99 to -0.5 ~ 0.5
+      const brightness = (this.info.brightness / 100) * 0.5;
+      filter.lightness = brightness;
+    }
     // if (this.info.contrast !== undefined) {
     // disable for now
     //   filter.contrast(this.info.contrast, true);
