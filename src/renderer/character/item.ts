@@ -187,15 +187,16 @@ export class CharacterItem implements RenderItemInfo {
       hueFilter.hue(this.info.hue, true);
     }
     if (this.info.saturation !== undefined) {
-      // convert -99 ~ 99 to -1 ~ 0
-      const saturation = (this.info.saturation + 100) / 200 - 1;
+      // convert -99 ~ 99 to -1 ~ 1
+      const saturation = this.info.saturation / 100;
       satFilter.saturate(saturation, true);
     }
-    if (this.info.brightness !== undefined) {
-      // convert -99 ~ 99 to 0 ~ 2
-      const brightness = (this.info.brightness / 2 + 100) / 100;
-      brightFilter.brightness(brightness, true);
-    }
+    // current not working
+    // if (this.info.brightness !== undefined) {
+    //   // convert -99 ~ 99 to 0 ~ 2
+    //   const brightness = (this.info.brightness / 2 + 100) / 100;
+    //   brightFilter.brightness(brightness, true);
+    // }
     // if (this.info.contrast !== undefined) {
     // disable for now
     //   filter.contrast(this.info.contrast, true);
