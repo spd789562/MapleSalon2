@@ -173,7 +173,17 @@ export class CharacterItem implements RenderItemInfo {
   }
 
   updateFilter() {
-    if (this.filters.length === 0) {
+    const hasAnyDye =
+      this.info.hue !== undefined ||
+      this.info.saturation !== undefined ||
+      this.info.brightness !== undefined;
+
+    if (!hasAnyDye) {
+      this.filters = [];
+      return;
+    }
+
+    if (this.filters.length === 0 && hasAnyDye) {
       this.filters = [new HslAdjustmentFilter()];
     }
     const filter = this.filters[0] as HslAdjustmentFilter;
