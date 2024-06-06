@@ -1,4 +1,4 @@
-use crate::{models, utils, AppStore, Error, Result};
+use crate::{handlers, models, utils, AppStore, Error, Result};
 use serde_json::to_string;
 use tauri::{command, AppHandle, Runtime, State, Window};
 use wz_reader::{util::node_util, version::WzMapleVersion};
@@ -125,6 +125,42 @@ pub(crate) async fn get_childs_info<R: Runtime>(
                 name: node_read.name.to_string(),
                 _type: to_string(&node_read.object_type).unwrap(),
                 has_child: !node_read.children.is_empty(),
+            }
+        })
+        .collect())
+}
+
+#[command]
+pub(crate) async fn search_by_equip_name<R: Runtime>(
+    _app: AppHandle<R>,
+    _window: Window<R>,
+    state: State<'_, AppStore>,
+    name: String,
+    _category: Option<String>,
+) -> Result<Vec<(String, String)>> {
+    let equip_node = handlers::get_equip_string(&state.node)?;
+
+    let node = equip_node
+        .read()
+        .unwrap()
+        .at("Eqp")
+        .ok_or(Error::NodeNotFound)?;
+
+    if let Ok(ref mut string_read) = state.string.write() {
+        if string_read.len() == 0 {
+            string_read.extend(handlers::resolve_equip_string(&node)?);
+        }
+    }
+
+    let string_dict = state.string.read().unwrap();
+
+    Ok(string_dict
+        .iter()
+        .filter_map(|(_, id, text)| {
+            if text.contains(&name) {
+                Some((id.clone(), text.clone()))
+            } else {
+                None
             }
         })
         .collect())

@@ -3,7 +3,7 @@ pub mod extractors;
 pub mod middlewares;
 pub mod models;
 
-use crate::Error;
+use crate::{store::StringDict, Error};
 
 use axum::{
     http::{HeaderValue, Method, StatusCode},
@@ -14,7 +14,7 @@ use axum::{
 use tower_http::cors::CorsLayer;
 use wz_reader::WzNodeArc;
 
-pub async fn app(node: WzNodeArc, port: u16) -> crate::Result<()> {
+pub async fn app(node: WzNodeArc, _string_dict: StringDict, port: u16) -> crate::Result<()> {
     let layer_state = node.clone();
     let app = Router::new()
         .route("/", get(hello))

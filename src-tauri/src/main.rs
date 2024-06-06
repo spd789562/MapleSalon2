@@ -14,7 +14,7 @@ pub mod handlers;
 pub mod models;
 pub mod utils;
 
-pub use store::AppStore;
+pub use store::{AppStore, StringDict};
 
 pub use error::{Error, Result};
 
@@ -25,15 +25,22 @@ fn main() {
         portpicker::pick_unused_port().expect("no available port for wz server")
     };
 
+    let string_dict = StringDict::default();
+
     let root_node = WzNode::empty().into_lock();
 
-    async_runtime::spawn(server::app(Arc::clone(&root_node), port));
+    async_runtime::spawn(server::app(
+        Arc::clone(&root_node),
+        Arc::clone(&string_dict),
+        port,
+    ));
 
     tauri::Builder::default()
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_dialog::init())
         .manage(AppStore {
             node: root_node,
+            string: string_dict,
             port,
         })
         .invoke_handler(tauri::generate_handler![
@@ -43,6 +50,7 @@ fn main() {
             commands::unparse_node,
             commands::get_node_info,
             commands::get_childs_info,
+            commands::search_by_equip_name
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

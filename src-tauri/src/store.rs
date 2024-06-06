@@ -1,9 +1,16 @@
+use std::sync::{Arc, RwLock};
+
 use wz_reader::util::resolve_base;
 use wz_reader::version::WzMapleVersion;
 use wz_reader::{property::WzValue, WzNodeArc, WzObjectType};
 
+use crate::handlers::EquipCategory;
+
+pub type StringDict = Arc<RwLock<Vec<(EquipCategory, String, String)>>>;
+
 pub struct AppStore {
     pub node: WzNodeArc,
+    pub string: StringDict,
     pub port: u16,
 }
 impl AppStore {
