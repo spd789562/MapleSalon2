@@ -5,6 +5,7 @@ import { $apiHost, $wzReady } from '@/store/const';
 
 import { BaseWzSelector } from './components/BaseWzSelector';
 import { CharacterScene } from './components/Character';
+import { ItemNameSearch } from './components/ItemNameSearch';
 import './App.css';
 
 function App() {
@@ -21,7 +22,12 @@ function App() {
   return (
     <div class="container">
       <BaseWzSelector />
-      {ready() && <CharacterScene />}
+      {ready() && (
+        <>
+          <ItemNameSearch />
+          <CharacterScene />
+        </>
+      )}
     </div>
   );
 }
