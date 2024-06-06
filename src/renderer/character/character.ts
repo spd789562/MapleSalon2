@@ -1,4 +1,4 @@
-import { Container, Ticker } from 'pixi.js';
+import { type Application, Container, Ticker } from 'pixi.js';
 
 import type { ItemInfo, AncherName, Vec2, PieceSlot } from './const/data';
 import type { CategorizedItem } from './categorizedItem';
@@ -69,10 +69,10 @@ export class Character extends Container {
   idItems = new Map<number, CharacterItem>();
   actionAnchers = new Map<CharacterAction, Map<AncherName, Vec2>[]>();
 
-  #_action = CharacterAction.Stand2;
+  #_action = CharacterAction.Jump;
   #_expression: CharacterExpressions = CharacterExpressions.Default;
   #_earType = CharacterEarType.HumanEar;
-  #_handType = CharacterHandType.SingleHand;
+  #_handType = CharacterHandType.DoubleHand;
 
   zmapLayers = new Map<PieceSlot, ZmapContainer>();
   locks = new Map<PieceSlot, number>();
@@ -85,9 +85,12 @@ export class Character extends Container {
   currentDelta = 0;
   currentTicker?: (delta: Ticker) => void;
 
-  constructor() {
+  app: Application;
+
+  constructor(app: Application) {
     super();
     this.sortableChildren = true;
+    this.app = app;
   }
 
   get action() {
@@ -135,6 +138,15 @@ export class Character extends Container {
       const chItem = new CharacterItem(item, this);
       this.idItems.set(item.id, chItem);
     }
+  }
+
+  updateFilter(id: number, info: ItemInfo) {
+    const item = this.idItems.get(id);
+    if (!item) {
+      return;
+    }
+    item.info = info;
+    item.updateFilter();
   }
 
   /** get current items filter by expression and action */

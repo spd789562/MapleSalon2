@@ -16,8 +16,12 @@ class Loader {
     return Promise.all([
       this.loadZmap(),
       this.loadSmap(),
+      this.loadString(),
       this.loadWzImageFolder(),
     ]);
+  }
+  async loadString() {
+    await invoke('parse_node', { path: 'String/Eqp.img' });
   }
   async loadZmap() {
     this.zmap = await fetch(`${this.apiHost}/mapping/zmap`).then((res) =>

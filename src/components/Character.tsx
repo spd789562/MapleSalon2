@@ -2,6 +2,7 @@ import { useStore } from '@nanostores/solid';
 import { onMount, onCleanup, createEffect, For } from 'solid-js';
 
 import { $currentCharacter } from '@/store/character';
+import type { ItemInfo } from '@/renderer/character/const/data';
 
 import { Application, Container } from 'pixi.js';
 import { Character } from '@/renderer/character/character';
@@ -11,6 +12,20 @@ import { CharacterAction } from '@/renderer/character/const/actions';
 import { CharacterExpressions } from '@/renderer/character/const/emotions';
 import { CharacterEarType } from '@/renderer/character/const/ears';
 import { CharacterHandType } from '@/renderer/character/const/hand';
+
+function updateCurrentCharacterDyeable(character: Character,field: keyof ItemInfo, value: number) {
+  const dyeableIds = $currentCharacter
+    .get()
+    .items.map((item, index) => (item[field] !== undefined ? index : -1))
+    .filter((item) => item !== -1);
+
+  for (const index of dyeableIds) {
+    const id = $currentCharacter.get().items[index].id;
+    $currentCharacter.setKey(`items[${index}].${field}`, value);
+    const info = $currentCharacter.get().items[index];
+    character.updateFilter(id, info);
+  }
+}
 
 interface SelectionProps<T extends string> {
   label: string;
@@ -30,11 +45,36 @@ const Selection = <T extends string>(props: SelectionProps<T>) => {
   );
 };
 
+interface SliderProps<T extends number> {
+  label: string;
+  min: number;
+  max: number;
+  step: number;
+  onChange: (value: T) => void;
+}
+const Slider = <T extends number>(props: SliderProps<T>) => {
+  return (
+    <div>
+      <label for={props.label}>
+        {props.label}:{props.min}
+        <input
+          type="range"
+          min={props.min}
+          max={props.max}
+          step={props.step}
+          onInput={(e) => props.onChange(Number.parseInt(e.target.value) as T)}
+        />
+        {props.max}
+      </label>
+    </div>
+  );
+};
+
 export const CharacterScene = () => {
   const characterData = useStore($currentCharacter);
   let container!: HTMLDivElement;
   const app = new Application();
-  const ch = new Character();
+  const ch = new Character(app);
 
   async function initScene() {
     await CharacterLoader.init();
@@ -43,6 +83,7 @@ export const CharacterScene = () => {
       height: 300,
       background: 0x000000,
       backgroundAlpha: 1,
+      useBackBuffer: true,
     });
     container?.appendChild(app.canvas);
     const characterLayer = new Container();
@@ -80,6 +121,16 @@ export const CharacterScene = () => {
     ch.handType = handType;
   }
 
+  function updateHue(hue: number) {
+    updateCurrentCharacterDyeable(ch, 'hue', hue);
+  }
+  function updateSaturation(saturation: number) {
+    updateCurrentCharacterDyeable(ch, 'saturation', saturation);
+  }
+  function updateLightness(lightness: number) {
+    updateCurrentCharacterDyeable(ch, 'brightness', lightness);
+  }
+
   return (
     <div>
       <Selection
@@ -101,6 +152,21 @@ export const CharacterScene = () => {
         label="Hand Type"
         values={Object.values(CharacterHandType)}
         onChange={updateHandType}
+      />
+      <Slider label="Hue" min={0} max={360} step={1} onChange={updateHue} />
+      <Slider
+        label="Saturation"
+        min={-100}
+        max={100}
+        step={1}
+        onChange={updateSaturation}
+      />
+      <Slider
+        label="Lightness"
+        min={-100}
+        max={100}
+        step={1}
+        onChange={updateLightness}
       />
       <div ref={container} />
     </div>

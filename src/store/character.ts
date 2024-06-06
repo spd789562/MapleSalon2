@@ -1,14 +1,14 @@
-import { atom } from 'nanostores';
+import { atom, deepMap } from 'nanostores';
 
 import type { ItemInfo } from '@/renderer/character/const/data';
 
-export interface CharacterData {
+export interface CharacterData extends Record<string, unknown>{
   items: ItemInfo[];
   frame?: number;
   isAnimating: boolean;
 }
 
-export const $currentCharacter = atom<CharacterData>({
+export const $currentCharacter = deepMap<CharacterData>({
   items: [
     {
       id: 2000,
@@ -65,11 +65,18 @@ export const $currentCharacter = atom<CharacterData>({
     },
     {
       // weapon
-      id: 1703126,
-      hue: 23,
-      saturation: 15,
-      brightness: 66,
+      id: 1703017,
+      hue: 0,
+      saturation: 0,
+      brightness: -66,
     },
+    // {
+    //   // weapon
+    //   id: 1703126,
+    //   // hue: 23,
+    //   // saturation: 15,
+    //   brightness: 66,
+    // },
     // {
     //   // weapon
     //   id: 1703126,
