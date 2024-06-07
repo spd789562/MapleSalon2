@@ -16,5 +16,6 @@ pub fn mapping_router() -> Router<State> {
 pub fn node_router() -> Router<State> {
     Router::new()
         .route("/image/*path", get(node::get_image))
+        .route("/image_unparsed/*path", get(node::get_image_unparsed))
         .route("/json/*path", get(node::get_json))
 }
