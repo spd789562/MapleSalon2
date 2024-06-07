@@ -12,8 +12,13 @@ import { CharacterAction } from '@/renderer/character/const/actions';
 import { CharacterExpressions } from '@/renderer/character/const/emotions';
 import { CharacterEarType } from '@/renderer/character/const/ears';
 import { CharacterHandType } from '@/renderer/character/const/hand';
+import { getIconPath } from '@/utils/itemId';
 
-function updateCurrentCharacterDyeable(character: Character,field: keyof ItemInfo, value: number) {
+function updateCurrentCharacterDyeable(
+  character: Character,
+  field: keyof ItemInfo,
+  value: number,
+) {
   const dyeableIds = $currentCharacter
     .get()
     .items.map((item, index) => (item[field] !== undefined ? index : -1))
@@ -169,6 +174,9 @@ export const CharacterScene = () => {
         onChange={updateLightness}
       />
       <div ref={container} />
+      <For each={characterData().items}>
+        {(item) => <img src={getIconPath(item.id)} alt={item.id.toString()} />}
+      </For>
     </div>
   );
 };

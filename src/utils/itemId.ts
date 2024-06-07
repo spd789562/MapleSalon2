@@ -1,7 +1,18 @@
+import { $apiHost } from '@/store/const';
+import { getItemFolderFromId } from './itemFolder';
+
 export enum Gender {
   Male = 0,
   Female = 1,
   Share = 2,
+}
+
+export function isBodyId(id: number): boolean {
+  return Math.floor(id / 2000) === 1;
+}
+
+export function isHeadId(id: number): boolean {
+  return Math.floor(id / 12000) === 1;
 }
 
 export function isFaceId(id: number): boolean {
@@ -75,4 +86,26 @@ export function getGender(id: number): Gender {
 
 export function replaceIdInPath(path: string, id: number): string {
   return path.replace(/\d{8}/, String(id).padStart(8, '0'));
+}
+
+export function getIconPath(id: number, folder?: string) {
+  let getfolder = folder;
+  if (!folder) {
+    getfolder = getItemFolderFromId(id);
+  }
+  let iconPath = 'info/icon';
+  if (getfolder === 'Face/') {
+    iconPath = 'blink/0/face';
+  } else if (getfolder === 'Hair/') {
+    iconPath = 'default/hair';
+  } else if (getfolder === '') {
+    if (isBodyId(id)) {
+      iconPath = 'stand1/0/body';
+    } else if (isHeadId(id)) {
+      iconPath = 'front/head';
+    }
+  }
+  return `${$apiHost.get()}/node/image_unparsed/Character/${getfolder}${id
+    .toString()
+    .padStart(8, '0')}.img/${iconPath}`;
 }
