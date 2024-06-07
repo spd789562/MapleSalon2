@@ -27,6 +27,18 @@ export function isCapId(id: number): boolean {
   return Math.floor(id / 10000) === 100;
 }
 
+export function isFaceAccessoryId(id: number): boolean {
+  return Math.floor(id / 10000) === 101;
+}
+
+export function isEyeAccessoryId(id: number): boolean {
+  return Math.floor(id / 10000) === 103;
+}
+
+export function isEarAccessoryId(id: number): boolean {
+  return Math.floor(id / 10000) === 103;
+}
+
 export function isCoatId(id: number): boolean {
   return Math.floor(id / 10000) === 104;
 }
