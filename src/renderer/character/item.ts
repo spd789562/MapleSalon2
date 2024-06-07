@@ -15,7 +15,13 @@ import type {
 import type { WzItem } from './const/wz';
 
 import { CharacterAction } from './const/actions';
-import { isFaceId, isWeaponId, isCashWeaponId, isHairId } from '@/utils/itemId';
+import {
+  isFaceId,
+  isWeaponId,
+  isCashWeaponId,
+  isHairId,
+  isFaceAccessoryId,
+} from '@/utils/itemId';
 import {
   gatFaceAvailableColorIds,
   gatHairAvailableColorIds,
@@ -57,6 +63,14 @@ export class CharacterItem implements RenderItemInfo {
 
   get isFace() {
     return isFaceId(this.info.id);
+  }
+
+  get isFaceAccessory() {
+    return isFaceAccessoryId(this.info.id);
+  }
+
+  get isUseExpressionItem() {
+    return this.isFace || this.isFaceAccessory;
   }
 
   get isHair() {
@@ -144,7 +158,7 @@ export class CharacterItem implements RenderItemInfo {
       this.avaliableDye = new Map(ids.map((id) => [getHairColorId(id), id]));
     }
 
-    if (this.isFace) {
+    if (this.isUseExpressionItem) {
       this.loadFace(this.wz);
     } else if (this.isWeapon) {
       this.loadWeapon(this.wz);
@@ -161,7 +175,7 @@ export class CharacterItem implements RenderItemInfo {
     currentAnchers: Map<AncherName, Vec2>[],
   ): Map<AncherName, Vec2>[] {
     let item: CharacterActionItem | CharacterFaceItem | undefined;
-    if (this.isFace) {
+    if (this.isUseExpressionItem) {
       item = this.actionPieces.get(this.character.expression);
     } else {
       item = this.actionPieces.get(action);
@@ -194,13 +208,13 @@ export class CharacterItem implements RenderItemInfo {
     }
     if (this.info.saturation !== undefined) {
       // convert -99 ~ 99 to -0.8 ~ 0.8
-      const saturation = (this.info.saturation / 100) * 0.8;
+      const saturation = (this.info.saturation / 100) * 0.9;
       filter.saturation = saturation;
     }
     // current not working
     if (this.info.brightness !== undefined) {
       // convert -99 ~ 99 to -0.5 ~ 0.5
-      const brightness = (this.info.brightness / 100) * 0.5;
+      const brightness = (this.info.brightness / 100) * 0.9;
       filter.lightness = brightness;
     }
   }

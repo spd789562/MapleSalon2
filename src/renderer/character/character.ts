@@ -152,11 +152,11 @@ export class Character extends Container {
   /** get current items filter by expression and action */
   get currentAllItem() {
     return Array.from(this.idItems.values())
-      .map((item) =>
-        item.isFace
+      .map((item) => {
+        return item.isUseExpressionItem
           ? item.actionPieces.get(this.expression)
-          : item.actionPieces.get(this.action),
-      )
+          : item.actionPieces.get(this.action);
+      })
       .filter((item) => item) as AnyCategorizedItem[];
   }
 
@@ -175,8 +175,9 @@ export class Character extends Container {
     this.reset();
     const pieces: CharacterAnimatablePart[] = [];
     let body: CharacterAnimatablePart | undefined = undefined;
+    const items = this.currentAllItem;
     for (const layer of zmap) {
-      for (const item of this.currentAllItem) {
+      for (const item of items) {
         const piece = item.items.get(layer);
         if (piece) {
           let container = this.zmapLayers.get(layer);
@@ -208,6 +209,12 @@ export class Character extends Container {
 
     this.playPieces(this.currentPieces);
     this.playByBody(body);
+
+    for (const p of this.currentPieces) {
+      if (p.item.info.brightness === undefined) {
+        // p.visible = false;
+      }
+    }
   }
 
   reset() {
