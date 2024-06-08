@@ -57,7 +57,6 @@ void main() {
     tohsv = rgb2hsv(resultRGB);
 
     bool isTransparent = color.a == 0.;
-    bool notEffect = isTransparent || (!isTransparent && tohsv.y <= .1);
 
     if (h >= uColorStart && h <= uColorEnd) {
         // value
@@ -66,16 +65,18 @@ void main() {
           tohsv.z += v * value * tohsv.y;
         } else if (value > 0.) {
           tohsv.y *= max(.0, .82 - value);
-          tohsv.z = clamp(tohsv.z * (1. + value * 0.4), 0., 0.99);
+          // this still not right
+          tohsv.z = clamp(tohsv.z * (1. + value * 0.1), 0., 0.99);
         }
         // saturation
         if (saturation > 0.) {
           tohsv.y += tohsv.y * saturation * 6.;
-        } else if (value > 0.) {
-          tohsv.y += tohsv.y * saturation;
+        } else if (saturation < 0.) {
+          tohsv.y += tohsv.y * saturation * 0.8;
+          tohsv.z += (saturation * 0.4) * tohsv.y;
         }
         resultRGB = hsv2rgb(tohsv);
     }
-
+  
     finalColor = vec4(resultRGB, color.a);
 }
