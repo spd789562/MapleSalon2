@@ -1,10 +1,11 @@
 import { defineConfig } from 'vite';
 import path from 'node:path';
 import solid from 'vite-plugin-solid';
+import glsl from 'vite-plugin-glsl';
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  plugins: [solid()],
+  plugins: [solid(), glsl()],
 
   resolve: {
     alias: {
