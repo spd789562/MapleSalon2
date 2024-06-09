@@ -65,8 +65,7 @@ void main() {
           tohsv.z += v * value * tohsv.y;
         } else if (value > 0.) {
           tohsv.y *= max(.0, .82 - value);
-          // this still not right
-          tohsv.z = clamp(tohsv.z * (1. + value * 0.1), 0., 0.99);
+          tohsv.z += value * 0.4 * color.a;
         }
         // saturation
         if (saturation > 0.) {
