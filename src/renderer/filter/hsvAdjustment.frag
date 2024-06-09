@@ -56,12 +56,10 @@ void main() {
     resultRGB = hueShift(resultRGB, hue);
     tohsv = rgb2hsv(resultRGB);
 
-    bool isTransparent = color.a == 0.;
-
     if (h >= uColorStart && h <= uColorEnd) {
         // value
         if (value < 0.) {
-          // why multuply by lightness tho?
+          // why multuply by value(brightness) tho?
           tohsv.z += v * value * tohsv.y;
         } else if (value > 0.) {
           tohsv.y *= max(.0, .82 - value);
@@ -69,9 +67,15 @@ void main() {
         }
         // saturation
         if (saturation > 0.) {
-          tohsv.y += tohsv.y * saturation * 6.;
-        } else if (saturation < 0.) {
+          // weird, but it really works
+          if (s > 0.1 && v < 0.80) {
+            tohsv.y = clamp(s + saturation * color.a, 0., 1.);
+            // it also incress the brightness
+            tohsv.z = clamp(v + saturation * 0.5 * v, 0., 1.);
+          }
+        } else if (saturation < 0.) {              
           tohsv.y += tohsv.y * saturation * 0.8;
+          // it also decress the brightness
           tohsv.z += (saturation * 0.4) * tohsv.y;
         }
         resultRGB = hsv2rgb(tohsv);
