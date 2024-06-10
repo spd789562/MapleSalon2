@@ -1,5 +1,4 @@
 import type { Filter } from 'pixi.js';
-import { HslAdjustmentFilter } from 'pixi-filters';
 import { CharacterLoader } from './loader';
 
 import type { Character } from './character';
@@ -14,7 +13,6 @@ import type {
 } from './const/data';
 import type { WzItem } from './const/wz';
 
-import { CharacterAction } from './const/actions';
 import {
   isFaceId,
   isWeaponId,
@@ -29,7 +27,9 @@ import {
   getHairColorId,
 } from '@/utils/mixDye';
 
+import { HsvAdjustmentFilter } from '@/renderer/filter/hsvAdjustmentFilter';
 import { CharacterActionItem, CharacterFaceItem } from './categorizedItem';
+import { CharacterAction } from './const/actions';
 import { CharacterExpressions } from './const/emotions';
 import { CharacterHandType } from './const/hand';
 
@@ -47,7 +47,7 @@ export class CharacterItem implements RenderItemInfo {
 
   wz: WzItem | null = null;
 
-  filters: (HslAdjustmentFilter | Filter)[] = [];
+  filters: (HsvAdjustmentFilter | Filter)[] = [];
 
   avaliableDye = new Map<ItemDyeInfo['color'], number>();
 
@@ -198,24 +198,24 @@ export class CharacterItem implements RenderItemInfo {
     }
 
     if (this.filters.length === 0 && hasAnyDye) {
-      this.filters = [new HslAdjustmentFilter()];
+      this.filters = [new HsvAdjustmentFilter()];
     }
-    const filter = this.filters[0] as HslAdjustmentFilter;
+    const hsvFilter = this.filters[0] as HsvAdjustmentFilter;
 
     if (this.info.hue !== undefined) {
       // convert 0 ~ 360 to 0 ~ 180 -> -180 ~ 0
-      filter.hue = this.info.hue > 180 ? this.info.hue - 360 : this.info.hue;
+      hsvFilter.hue = this.info.hue > 180 ? this.info.hue - 360 : this.info.hue;
     }
     if (this.info.saturation !== undefined) {
-      // convert -99 ~ 99 to -0.8 ~ 0.8
-      const saturation = (this.info.saturation / 100) * 0.9;
-      filter.saturation = saturation;
+      // convert -99 ~ 99 to -1 ~ 1
+      const saturation = this.info.saturation / 100;
+      hsvFilter.saturation = saturation;
     }
     // current not working
     if (this.info.brightness !== undefined) {
-      // convert -99 ~ 99 to -0.5 ~ 0.5
-      const brightness = (this.info.brightness / 100) * 0.9;
-      filter.lightness = brightness;
+      // convert -99 ~ 99 to -1 ~ 1
+      const brightness = this.info.brightness / 100;
+      hsvFilter.lightness = brightness;
     }
   }
 }

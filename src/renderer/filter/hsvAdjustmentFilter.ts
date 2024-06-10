@@ -24,9 +24,9 @@ const MapleColorRange = {
 };
 
 /**
- * Options for the hsvAdjustmentFilter constructor.
+ * Options for the HsvAdjustmentFilter constructor.
  */
-export interface hsvAdjustmentFilterOptions {
+export interface HsvAdjustmentFilterOptions {
   /**
    * The amount of hue in degrees (-180 to 180)
    * @default 0
@@ -57,9 +57,9 @@ export interface hsvAdjustmentFilterOptions {
  * @class
  * @extends Filter
  */
-export class hsvAdjustmentFilter extends Filter {
+export class HsvAdjustmentFilter extends Filter {
   /** Default values for options. */
-  public static readonly DEFAULT_OPTIONS: hsvAdjustmentFilterOptions = {
+  public static readonly DEFAULT_OPTIONS: HsvAdjustmentFilterOptions = {
     hue: 0,
     saturation: 0,
     lightness: 0,
@@ -77,10 +77,10 @@ export class hsvAdjustmentFilter extends Filter {
   private _colorRange: ColorRange = ColorRange.All;
 
   /**
-   * @param options - Options for the hsvAdjustmentFilter constructor.
+   * @param options - Options for the HsvAdjustmentFilter constructor.
    */
-  constructor(options?: Partial<hsvAdjustmentFilterOptions>) {
-    const localOption = { ...hsvAdjustmentFilter.DEFAULT_OPTIONS, ...options };
+  constructor(options?: Partial<HsvAdjustmentFilterOptions>) {
+    const localOption = { ...HsvAdjustmentFilter.DEFAULT_OPTIONS, ...options };
 
     // const gpuProgram = GpuProgram.from({
     //     vertex: {
