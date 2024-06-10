@@ -1,15 +1,18 @@
 use crate::{handlers, models, utils, AppStore, Error, Result};
-use serde_json::to_string;
+use serde_json::{to_string, Value, Map};
 use tauri::{command, AppHandle, Runtime, State, Window};
-use wz_reader::{util::node_util, version::WzMapleVersion};
+use wz_reader::{util::node_util, version::WzMapleVersion, WzNodeCast};
 
 #[command]
 pub(crate) async fn get_server_url<R: Runtime>(
     _app: AppHandle<R>,
     _window: Window<R>,
     state: State<'_, AppStore>,
-) -> Result<String> {
-    Ok(format!("http://localhost:{}", state.port))
+) -> Result<Value> {
+    let mut map = Map::new();
+    map.insert("url".to_string(), Value::String(format!("http://localhost:{}", state.port)));
+    map.insert("is_initialized".to_string(), Value::Bool(!state.node.read().unwrap().is_null()));
+    Ok(Value::Object(map))
 }
 
 #[command]
