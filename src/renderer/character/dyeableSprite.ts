@@ -30,20 +30,17 @@ export class DyeableSprite extends Container {
     this._dyeSprite && this.removeChild(this._dyeSprite);
     const dyePath = this.dyePath;
     /* if dye piece load faild then just render mainSprite */
-    if (!(dyePath && this.item.info.dye) || this._failedToGetDye) {
-      if (this._mainSprite) {
-        this._mainSprite.alpha = 1;
-      }
+    if (
+      !(dyePath && this.item.info.dye) ||
+      this._failedToGetDye ||
+      this.item.info.dye.alpha === 0
+    ) {
       return;
     }
     this._dyeSprite = Sprite.from(dyePath);
     this.addChild(this._dyeSprite);
-    const mainAlpha = 100 - this.item.info.dye.alpha;
     const dyeAlpha = this.item.info.dye.alpha;
 
-    if (this._mainSprite) {
-      this._mainSprite.alpha = mainAlpha / 100;
-    }
     if (this._dyeSprite) {
       this._dyeSprite.alpha = dyeAlpha / 100;
     }
