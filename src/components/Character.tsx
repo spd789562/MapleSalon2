@@ -67,6 +67,7 @@ const Slider = <T extends number>(props: SliderProps<T>) => {
           min={props.min}
           max={props.max}
           step={props.step}
+          value={0}
           onInput={(e) => props.onChange(Number.parseInt(e.target.value) as T)}
         />
         {props.max}
@@ -173,7 +174,7 @@ export const CharacterScene = () => {
         step={1}
         onChange={updateLightness}
       />
-      <div ref={container} />
+      <div class="alpha-bg" ref={container} />
       <For each={characterData().items}>
         {(item) => <img src={getIconPath(item.id)} alt={item.id.toString()} />}
       </For>

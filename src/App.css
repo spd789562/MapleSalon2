@@ -93,6 +93,12 @@ button {
   outline: none;
 }
 
+.alpha-bg {
+  background-image: conic-gradient(white 90deg, #999 90deg, #999 180deg, white 180deg, white 270deg, #999 270deg, #999 360deg, white 360deg);
+  background-size: 16px 16px;
+  background-repeat: repeat;
+}
+
 #greet-input {
   margin-right: 5px;
 }
