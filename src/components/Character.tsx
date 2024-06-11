@@ -1,5 +1,5 @@
 import { useStore } from '@nanostores/solid';
-import { onMount, onCleanup, createEffect, For } from 'solid-js';
+import { onMount, onCleanup, createEffect, For, createSignal } from 'solid-js';
 
 import { $currentCharacter } from '@/store/character';
 import type { ItemInfo } from '@/renderer/character/const/data';
@@ -56,8 +56,24 @@ interface SliderProps<T extends number> {
   max: number;
   step: number;
   onChange: (value: T) => void;
+  initialValue?: T;
 }
 const Slider = <T extends number>(props: SliderProps<T>) => {
+  const [value, setValue] = createSignal(props.initialValue ?? 0);
+
+  function updateValue(newValue: number) {
+    setValue(newValue);
+    props.onChange(newValue as T);
+  }
+
+  function handleInput(e: InputEvent & { target: HTMLInputElement }) {
+    updateValue(Number.parseInt(e.target.value));
+  }
+
+  function resetValue() {
+    updateValue(0);
+  }
+
   return (
     <div>
       <label for={props.label}>
@@ -67,10 +83,13 @@ const Slider = <T extends number>(props: SliderProps<T>) => {
           min={props.min}
           max={props.max}
           step={props.step}
-          value={0}
-          onInput={(e) => props.onChange(Number.parseInt(e.target.value) as T)}
+          value={value()}
+          onInput={handleInput}
         />
         {props.max}
+        <button type="reset" onClick={resetValue}>
+          Reset
+        </button>
       </label>
     </div>
   );
