@@ -66,73 +66,59 @@ void main() {
 
     vec2 currSat = getSatAndValue(resultRGB);
 
-    if (h >= uColorStart && h <= uColorEnd) {
-      float average = (resultRGB.r + resultRGB.g + resultRGB.b) / 3.0;
-      // brightness
-      if (value < 0.) {
-        // in order to make sure the lower saturate will less effect
-        resultRGB += value * currSat.x * currSat.y;
-        // rgbSaturation += rgbSaturation * value * rgbValue;
-      } else if (value > 0.) {
-        // tohsv.y *= max(.0, .82 - value);
-        // tohsv.z += value * 0.4 * color.a;
-        resultRGB *= 1. + value * color.a;
-        resultRGB += (average - color.rgb) * value;
-      }
-      // saturation
-      average = (resultRGB.r + resultRGB.g + resultRGB.b) / 3.0;
-      if (saturation > 0.) {
-        if (currSat.x > 0.1 && currSat.y < 0.80) {
-          resultRGB += (average - color.rgb) * (1.0 - 1.0 / (1.001 - saturation));
-        }
-      } else if (saturation < 0.) {
-        resultRGB += (average - color.rgb) * (-saturation) * 0.9;
-        resultRGB = clamp(resultRGB + (saturation * 0.1 * currSat.x), 0., 1.);
-      }
-    }
-
-    // tohsv = rgb2hsv(resultRGB);
-
     // if (h >= uColorStart && h <= uColorEnd) {
-    //     // saturation
-    //     if (saturation > 0.) {
-    //       // weird, but it really works
-    //       // if (tohsv.y > 0.1 && v < 0.80) {
-    //       //   tohsv.y = clamp(tohsv.y + saturation * color.a, 0., 1.);
-    //       //   // it also incress the brightness
-    //       //   tohsv.z = clamp(tohsv.z + saturation * 0.5 * v, 0., 1.);
-    //       // }
-    //     } else if (saturation < 0.) {
-    //       tohsv.y += tohsv.y * saturation * 0.8;
-    //       // // it also decress the brightness
-    //       // tohsv.z += saturation * 0.1 * s;
+    //   float average = (resultRGB.r + resultRGB.g + resultRGB.b) / 3.0;
+    //   // brightness
+    //   if (value < 0.) {
+    //     // in order to make sure the lower saturate will less effect
+    //     resultRGB += value * currSat.x * currSat.y;
+    //     // rgbSaturation += rgbSaturation * value * rgbValue;
+    //   } else if (value > 0.) {
+    //     // tohsv.y *= max(.0, .82 - value);
+    //     // tohsv.z += value * 0.4 * color.a;
+    //     resultRGB *= 1. + value * color.a;
+    //     resultRGB += (average - color.rgb) * value;
+    //   }
+    //   // saturation
+    //   average = (resultRGB.r + resultRGB.g + resultRGB.b) / 3.0;
+    //   if (saturation > 0.) {
+    //     if (currSat.x > 0.1 && currSat.y < 0.80) {
+    //       resultRGB += (average - color.rgb) * (1.0 - 1.0 / (1.001 - saturation));
     //     }
-
-    //     /* 
-        
-    //     if (h >= uColorStart && h <= uColorEnd) {
-    //       float average = (color.r + color.g + color.b) / 3.0;
-    //       if (value > 0.) {
-    //         resultRGB += (average - color.rgb) * (1.0 - 1.0 / (1.001 - saturation));
-    //       } else {
-    //         resultRGB += (average - color.rgb) * (-saturation) * 0.9;
-    //         resultRGB = clamp(resultRGB + (saturation * 0.1 * currSat.x), 0., 1.);
-    //       }
-    //     }
-
-    //      */
-        
-    //     // value
-    //     if (value < 0.) {
-    //       // in order to make sure the lower saturate will less effect
-    //       tohsv.z += v * value * tohsv.y;
-    //     } else if (value > 0.) {
-    //       tohsv.y = tohsv.y * (1. - value);
-    //       tohsv.z += tohsv.z * value * color.a * (1. - s);
-    //       // tohsv.z += v * value * color.a * 0.1;
-    //     }
-    //     resultRGB = hsv2rgb(tohsv);
+    //   } else if (saturation < 0.) {
+    //     resultRGB += (average - color.rgb) * (-saturation) * 0.9;
+    //     resultRGB = clamp(resultRGB + (saturation * 0.1 * currSat.x), 0., 1.);
+    //   }
     // }
+
+    tohsv = rgb2hsv(resultRGB);
+
+    if (h >= uColorStart && h <= uColorEnd) {
+        // saturation
+        if (saturation > 0.) {
+          // weird, but it really works
+          if (tohsv.y > 0.1 && v < 0.80) {
+            tohsv.y = clamp(tohsv.y + saturation, 0.0, 1.0);
+          // it also incress the brightness
+            tohsv.z = clamp(tohsv.z + saturation * 0.1 * v, 0.0, 1.0);
+          }
+        } else if (saturation < 0.) {
+          tohsv.y = clamp(tohsv.y + (tohsv.y * saturation * 0.8), 0.0, 1.0);
+          // it also decress the brightness
+          tohsv.z = clamp(tohsv.z + (saturation * 0.15 * s), 0.0, 1.0);
+        }
+
+        // value
+        if (value < 0.) {
+          // in order to make sure the lower saturate will less effect
+          tohsv.z += v * value * s;
+        } else if (value > 0.) {
+          tohsv.z = clamp(tohsv.z + value * color.a * (1. - s) * 0.5, 0., 1.);
+          // also decrease the saturation but not too much
+          tohsv.y = tohsv.y * max((1. - value), 0.05);
+        }
+        resultRGB = hsv2rgb(tohsv);
+    }
   
-    finalColor = vec4(resultRGB, color.a);
+    finalColor = mix(color, vec4(resultRGB, color.a), 1.0);
 }
