@@ -77,7 +77,7 @@ const Slider = <T extends number>(props: SliderProps<T>) => {
   return (
     <div>
       <label for={props.label}>
-        {props.label}:{props.min}
+        {props.label}({value()}):{props.min}
         <input
           type="range"
           min={props.min}

@@ -64,8 +64,7 @@ void main() {
     // hue
     resultRGB = hueShift(resultRGB, hue);
 
-    vec2 currSat = getSatAndValue(resultRGB);
-
+    // vec2 currSat = getSatAndValue(resultRGB);
     // if (h >= uColorStart && h <= uColorEnd) {
     //   float average = (resultRGB.r + resultRGB.g + resultRGB.b) / 3.0;
     //   // brightness
@@ -94,18 +93,21 @@ void main() {
     tohsv = rgb2hsv(resultRGB);
 
     if (h >= uColorStart && h <= uColorEnd) {
+        // all related of brightness modification will need to multiply with color.a, 
+        // prevent alpha channel from being modified and been to bright
+
         // saturation
         if (saturation > 0.) {
           // weird, but it really works
           if (tohsv.y > 0.1 && v < 0.80) {
             tohsv.y = clamp(tohsv.y + saturation, 0.0, 1.0);
-          // it also incress the brightness
-            tohsv.z = clamp(tohsv.z + saturation * 0.1 * v, 0.0, 1.0);
+            // it also incress the brightness
+            tohsv.z = clamp(tohsv.z + saturation * 0.1 * v * color.a, 0.0, 1.0);
           }
         } else if (saturation < 0.) {
           tohsv.y = clamp(tohsv.y + (tohsv.y * saturation * 0.8), 0.0, 1.0);
           // it also decress the brightness
-          tohsv.z = clamp(tohsv.z + (saturation * 0.15 * s), 0.0, 1.0);
+          tohsv.z = clamp(tohsv.z + (saturation * 0.15 * s) * color.a, 0.0, 1.0);
         }
 
         // value
@@ -113,7 +115,8 @@ void main() {
           // in order to make sure the lower saturate will less effect
           tohsv.z += v * value * s;
         } else if (value > 0.) {
-          tohsv.z = clamp(tohsv.z + value * color.a * (1. - s) * 0.5, 0., 1.);
+          // * (1. - s) means the higher saturation of original color will less effect
+          tohsv.z = clamp(tohsv.z + value * color.a * (1. - s) * 0.6, 0., 1.);
           // also decrease the saturation but not too much
           tohsv.y = tohsv.y * max((1. - value), 0.05);
         }
