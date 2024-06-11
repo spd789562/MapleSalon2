@@ -36,7 +36,6 @@ pub async fn get_image_unparsed(
     State(root): State<WzNodeArc>,
     Path(path): Path<String>,
 ) -> Result<impl IntoResponse> {
-    println!("get_image_unparsed, {}", path);
     let (image_node, path) =
         node_util::get_image_node_from_path(&root, &path).ok_or(Error::NodeNotFound)?;
 

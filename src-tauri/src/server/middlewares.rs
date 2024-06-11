@@ -1,7 +1,7 @@
 use crate::Error;
 use axum::{
     extract::{Query, Request, State},
-    http::header,
+    http::{header, StatusCode},
     middleware::Next,
     response::{IntoResponse, Response},
 };
@@ -34,6 +34,11 @@ pub async fn cache_control_from_query_middleware(
         return next.run(req).await;
     }
     let mut res = next.run(req).await;
+
+    if res.status() != StatusCode::OK {
+        res.headers_mut().remove(header::CACHE_CONTROL);
+        return res;
+    }
 
     let cache_time = query.cache.unwrap_or(0);
 

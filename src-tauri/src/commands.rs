@@ -1,5 +1,5 @@
 use crate::{handlers, models, utils, AppStore, Error, Result};
-use serde_json::{to_string, Value, Map};
+use serde_json::{to_string, Map, Value};
 use tauri::{command, AppHandle, Runtime, State, Window};
 use wz_reader::{util::node_util, version::WzMapleVersion, WzNodeCast};
 
@@ -10,8 +10,24 @@ pub(crate) async fn get_server_url<R: Runtime>(
     state: State<'_, AppStore>,
 ) -> Result<Value> {
     let mut map = Map::new();
-    map.insert("url".to_string(), Value::String(format!("http://localhost:{}", state.port)));
-    map.insert("is_initialized".to_string(), Value::Bool(!state.node.read().unwrap().is_null()));
+    map.insert(
+        "url".to_string(),
+        Value::String(format!("http://localhost:{}", state.port)),
+    );
+    map.insert(
+        "is_initialized".to_string(),
+        Value::Bool(!state.node.read().unwrap().is_null()),
+    );
+    let patch_version = state
+        .node
+        .read()
+        .unwrap()
+        .try_as_file()
+        .map(|f| f.wz_file_meta.patch_version);
+    map.insert(
+        "patch_version".to_string(),
+        patch_version.map_or(Value::Null, |v| Value::Number(v.into())),
+    );
     Ok(Value::Object(map))
 }
 
@@ -23,6 +39,19 @@ pub(crate) async fn init<R: Runtime>(
     path: String,
     version: Option<String>,
 ) -> Result<()> {
+    let current_root_path = state
+        .node
+        .read()
+        .unwrap()
+        .try_as_file()
+        .map(|f| f.wz_file_meta.path.clone());
+
+    if let Some(current_root_path) = current_root_path {
+        if current_root_path == path {
+            return Ok(());
+        }
+    }
+
     let version = version.map(|s| match s.as_str() {
         "GMS" => WzMapleVersion::GMS,
         "EMS" => WzMapleVersion::EMS,
