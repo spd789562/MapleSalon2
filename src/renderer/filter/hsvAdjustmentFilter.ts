@@ -1,7 +1,7 @@
 import { Filter, GlProgram, GpuProgram } from 'pixi.js';
 import { vertex, wgslVertex } from 'pixi-filters';
 import fragment from './hsvAdjustment.frag';
-// import source from './hsvAdjustment.wgsl';
+import source from './hsvAdjustment.wgsl';
 
 export enum ColorRange {
   All = 0,
@@ -50,9 +50,9 @@ export interface HsvAdjustmentFilterOptions {
 }
 
 /**
- * ![original](../screenshots/original.png)![filter](../screenshots/hsl-adjustment.png)
  *
  * This WebGPU filter has been ported from the WebGL renderer that was originally created by Viktor Persson (@vikpe)
+ * the code is original from [pixi-filters/hsl-adjustment](https://github.com/pixijs/filters/blob/main/src/hsl-adjustment/HslAdjustmentFilter.ts)
  *
  * @class
  * @extends Filter
@@ -67,7 +67,7 @@ export class HsvAdjustmentFilter extends Filter {
   };
 
   public uniforms: {
-    uHsl: Float32Array;
+    uHsv: Float32Array;
     uColorStart: number;
     uColorEnd: number;
   };
@@ -82,37 +82,38 @@ export class HsvAdjustmentFilter extends Filter {
   constructor(options?: Partial<HsvAdjustmentFilterOptions>) {
     const localOption = { ...HsvAdjustmentFilter.DEFAULT_OPTIONS, ...options };
 
-    // const gpuProgram = GpuProgram.from({
-    //     vertex: {
-    //         source: wgslVertex,
-    //         entryPoint: 'mainVertex',
-    //     },
-    //     fragment: {
-    //         source,
-    //         entryPoint: 'mainFragment',
-    //     },
-    // });
+    const gpuProgram = GpuProgram.from({
+      vertex: {
+        source: wgslVertex,
+        entryPoint: 'mainVertex',
+      },
+      fragment: {
+        source,
+        entryPoint: 'mainFragment',
+      },
+    });
 
     const glProgram = GlProgram.from({
       vertex,
       fragment,
-      name: 'hsl-adjustment-filter',
+      name: 'hsv-adjustment-filter',
     });
 
     const range = MapleColorRange[localOption.colorRange];
 
     super({
+      gpuProgram,
       glProgram,
       resources: {
-        hslUniforms: {
-          uHsl: { value: new Float32Array(3), type: 'vec3<f32>' },
+        hsvUniforms: {
+          uHsv: { value: new Float32Array(3), type: 'vec3<f32>' },
           uColorStart: { value: range[0], type: 'f32' },
           uColorEnd: { value: range[1], type: 'f32' },
         },
       },
     });
 
-    this.uniforms = this.resources.hslUniforms.uniforms;
+    this.uniforms = this.resources.hsvUniforms.uniforms;
     this.hue = localOption.hue;
   }
 
@@ -125,7 +126,7 @@ export class HsvAdjustmentFilter extends Filter {
   }
   set hue(value: number) {
     this._hue = value;
-    this.resources.hslUniforms.uniforms.uHsl[0] = value * (Math.PI / 180);
+    this.resources.hsvUniforms.uniforms.uHsv[0] = value * (Math.PI / 180);
   }
 
   /**
@@ -133,10 +134,10 @@ export class HsvAdjustmentFilter extends Filter {
    * @default 0
    */
   get saturation(): number {
-    return this.resources.hslUniforms.uniforms.uHsl[1];
+    return this.resources.hsvUniforms.uniforms.uHsv[1];
   }
   set saturation(value: number) {
-    this.resources.hslUniforms.uniforms.uHsl[1] = value;
+    this.resources.hsvUniforms.uniforms.uHsv[1] = value;
   }
 
   /**
@@ -144,10 +145,10 @@ export class HsvAdjustmentFilter extends Filter {
    * @default 0
    */
   get lightness(): number {
-    return this.resources.hslUniforms.uniforms.uHsl[2];
+    return this.resources.hsvUniforms.uniforms.uHsv[2];
   }
   set lightness(value: number) {
-    this.resources.hslUniforms.uniforms.uHsl[2] = value;
+    this.resources.hsvUniforms.uniforms.uHsv[2] = value;
   }
 
   get colorRange(): ColorRange {
@@ -156,7 +157,7 @@ export class HsvAdjustmentFilter extends Filter {
   set colorRange(value: ColorRange) {
     this._colorRange = value;
     const range = MapleColorRange[value];
-    this.resources.hslUniforms.uniforms.uColorStart = range[0];
-    this.resources.hslUniforms.uniforms.uColorEnd = range[1];
+    this.resources.hsvUniforms.uniforms.uColorStart = range[0];
+    this.resources.hsvUniforms.uniforms.uColorEnd = range[1];
   }
 }

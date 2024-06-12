@@ -2,7 +2,7 @@ in vec2 vTextureCoord;
 out vec4 finalColor;
 
 uniform sampler2D uTexture;
-uniform vec3 uHsl;
+uniform vec3 uHsv;
 uniform float uColorStart;
 uniform float uColorEnd;
 
@@ -51,9 +51,9 @@ void main() {
     
     vec3 resultRGB = color.rgb;
 
-    float hue = uHsl[0];
-    float saturation = uHsl[1];
-    float value = uHsl[2];
+    float hue = uHsv[0];
+    float saturation = uHsv[1];
+    float value = uHsv[2];
 
     vec3 tohsv = rgb2hsv(resultRGB);
     
