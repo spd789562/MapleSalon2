@@ -21,14 +21,14 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["*"],
+      "@/*": ["./src/*"],
     },
     "types": [
       "vite-plugin-glsl/ext"
     ]
   },
-  "include": ["src"],
+  "include": ["src", "styled-system"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
