@@ -19,6 +19,7 @@
     "@tauri-apps/api": ">=2.0.0-beta.0",
     "@tauri-apps/plugin-dialog": "^2.0.0-beta.3",
     "@tauri-apps/plugin-store": "^2.0.0-beta.3",
+    "lucide-solid": "^0.394.0",
     "nanostores": "^0.10.3",
     "pixi-filters": "^6.0.3",
     "pixi.js": "^8.1.5",
