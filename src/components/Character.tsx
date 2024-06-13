@@ -1,6 +1,11 @@
 import { useStore } from '@nanostores/solid';
 import { onMount, onCleanup, createEffect, For, createSignal } from 'solid-js';
 
+import type { SliderValueChangeDetails } from '@ark-ui/solid';
+import { Flex } from 'styled-system/jsx';
+import { Slider as UiSlider } from '@/components/ui/slider';
+import { Button } from '@/components/ui/button';
+
 import { $currentCharacter } from '@/store/character';
 import type { ItemInfo } from '@/renderer/character/const/data';
 
@@ -66,8 +71,8 @@ const Slider = <T extends number>(props: SliderProps<T>) => {
     props.onChange(newValue as T);
   }
 
-  function handleInput(e: InputEvent & { target: HTMLInputElement }) {
-    updateValue(Number.parseInt(e.target.value));
+  function handleInput(value: SliderValueChangeDetails) {
+    updateValue(value.value[0]);
   }
 
   function resetValue() {
@@ -75,23 +80,23 @@ const Slider = <T extends number>(props: SliderProps<T>) => {
   }
 
   return (
-    <div>
-      <label for={props.label}>
-        {props.label}({value()}):{props.min}
-        <input
-          type="range"
-          min={props.min}
-          max={props.max}
-          step={props.step}
-          value={value()}
-          onInput={handleInput}
-        />
-        {props.max}
-        <button type="reset" onClick={resetValue}>
-          Reset
-        </button>
-      </label>
-    </div>
+    <Flex style={{ 'max-width': '300px' }}>
+      <UiSlider
+        value={[value()]}
+        min={props.min}
+        max={props.max}
+        onValueChange={handleInput}
+        marks={[
+          { value: props.min, label: props.min.toString() },
+          { value: props.max, label: props.max.toString() },
+        ]}
+      >
+        {props.label}({value()})
+      </UiSlider>
+      <Button type="reset" size="sm" variant="subtle" onClick={resetValue}>
+        Reset
+      </Button>
+    </Flex>
   );
 };
 
