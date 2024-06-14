@@ -65,14 +65,15 @@ export function RowVirtualizer<Item>(props: RowVirtualizerProps<Item>) {
                           virtualRow.index * props.columnCount + index()
                         ];
                       return (
-                        <div
+                        <Flex
+                          justify="center"
+                          flex={1}
                           style={{
-                            width: `${columnWidth()}%`,
                             'min-height': `${defaultItemHeight}px`,
                           }}
                         >
                           <Show when={data()}>{props.renderItem(data())}</Show>
-                        </div>
+                        </Flex>
                       );
                     }}
                   </For>

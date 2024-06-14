@@ -12,6 +12,8 @@ export const $equipmentDrawerEquipCategory = atom<
 export const $equipmentDrawerHairColor = atom<HairColor>(HairColor.Black);
 export const $equipmentDrawerFaceColor = atom<FaceColor>(FaceColor.Black);
 
+export const $equipmentDrawerHover = atom<string | null>(null);
+
 export const $equipmentDrawerSearch = map<
   Partial<Record<EquipCategory | typeof AllCategory, string>>
 >({});

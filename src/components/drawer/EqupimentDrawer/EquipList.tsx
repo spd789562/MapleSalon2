@@ -1,24 +1,28 @@
 import { usePureStore } from '@/store';
-import { $equipmentDrawerEquipFilteredString } from '@/store/equipDrawer';
+
+import {
+  $equipmentDrawerEquipFilteredString,
+  $equipmentDrawerHover,
+} from '@/store/equipDrawer';
 
 import { RowVirtualizer } from '@/components/ui/rowVirtualizer';
 import { LoadableEquipIcon } from '@/components/LoadableEquipIcon';
-import { EllipsisText as Text } from '@/components/ui/ellipsisText';
-import { VStack } from 'styled-system/jsx/vstack';
+import { Box } from 'styled-system/jsx/box';
 
 export const EquipList = () => {
   const equipStrings = usePureStore($equipmentDrawerEquipFilteredString);
 
+  const handleHover = (item: string) => {
+    $equipmentDrawerHover.set(item);
+  };
+
   return (
     <RowVirtualizer
-      columnCount={5}
+      columnCount={7}
       renderItem={(item) => (
-        <VStack>
+        <Box p={1} onMouseEnter={() => handleHover(item.name)}>
           <LoadableEquipIcon id={item.id} name={item.name} />
-          <Text clamp={2} size="xs">
-            {item.name}
-          </Text>
-        </VStack>
+        </Box>
       )}
       data={equipStrings()}
     />
