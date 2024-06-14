@@ -1,11 +1,13 @@
 use axum::{extract::State, http::header, response::IntoResponse};
 use serde_json::{map::Map, Value};
-use wz_reader::{util::node_util, WzNodeArc};
+use wz_reader::util::node_util;
 
 use crate::{handlers, Result};
 
-pub async fn get_smap(State(root): State<WzNodeArc>) -> Result<impl IntoResponse> {
-    let smap = handlers::get_smap(&root)?;
+use super::super::AppState;
+
+pub async fn get_smap(State(root): State<AppState>) -> Result<impl IntoResponse> {
+    let smap = handlers::get_smap(&root.0)?;
 
     node_util::parse_node(&smap)?;
 
@@ -23,8 +25,8 @@ pub async fn get_smap(State(root): State<WzNodeArc>) -> Result<impl IntoResponse
     ))
 }
 
-pub async fn get_zmap(State(root): State<WzNodeArc>) -> Result<impl IntoResponse> {
-    let zmap = handlers::get_zmap(&root)?;
+pub async fn get_zmap(State(root): State<AppState>) -> Result<impl IntoResponse> {
+    let zmap = handlers::get_zmap(&root.0)?;
 
     let mut zmap_vec = handlers::resolve_zmap(&zmap)?;
 
@@ -36,10 +38,10 @@ pub async fn get_zmap(State(root): State<WzNodeArc>) -> Result<impl IntoResponse
     ))
 }
 
-pub async fn get_images(State(root): State<WzNodeArc>) -> Result<impl IntoResponse> {
+pub async fn get_images(State(root): State<AppState>) -> Result<impl IntoResponse> {
     let mut nodes = Vec::new();
 
-    handlers::get_image_nodes(&root, &mut nodes);
+    handlers::get_image_nodes(&root.0, &mut nodes);
 
     let json_array: Value = nodes
         .drain(..)

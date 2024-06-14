@@ -7,13 +7,15 @@ use std::io::{BufWriter, Cursor};
 use axum::extract::{Path, Query};
 use axum::{body::Body, extract::State, http::header, response::IntoResponse};
 use image::ImageFormat;
-use wz_reader::{util::node_util, WzNodeArc};
+use wz_reader::util::node_util;
+
+use super::super::AppState;
 
 pub async fn get_image(
-    State(root): State<WzNodeArc>,
+    State(root): State<AppState>,
     TargetNodeExtractor(node): TargetNodeExtractor,
 ) -> Result<impl IntoResponse> {
-    let image = handlers::resolve_png(&node, Some(&root))?;
+    let image = handlers::resolve_png(&node, Some(&root.0))?;
 
     let mut buf = BufWriter::new(Cursor::new(Vec::new()));
     // maybe use ImageFormat::Webp is better it quicker and smaller.
@@ -33,13 +35,13 @@ pub async fn get_image(
 }
 
 pub async fn get_image_unparsed(
-    State(root): State<WzNodeArc>,
+    State(root): State<AppState>,
     Path(path): Path<String>,
 ) -> Result<impl IntoResponse> {
     let (image_node, path) =
-        node_util::get_image_node_from_path(&root, &path).ok_or(Error::NodeNotFound)?;
+        node_util::get_image_node_from_path(&root.0, &path).ok_or(Error::NodeNotFound)?;
 
-    let image = handlers::resolve_png_unparsed(&image_node, &path, Some(&root))?;
+    let image = handlers::resolve_png_unparsed(&image_node, &path, Some(&root.0))?;
 
     let mut buf = BufWriter::new(Cursor::new(Vec::new()));
     // maybe use ImageFormat::Webp is better it quicker and smaller.

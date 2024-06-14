@@ -1,6 +1,9 @@
 use wz_reader::{WzNodeArc, WzNodeCast};
 
 use super::path::EQUIP_STRING_PATH;
+
+use serde::Serialize;
+
 use crate::Result;
 
 const EQUIP_CATEGORY_NEEDS: [&str; 14] = [
@@ -20,6 +23,7 @@ const EQUIP_CATEGORY_NEEDS: [&str; 14] = [
     "Skin",
 ];
 
+#[derive(Eq, PartialEq, Debug, Serialize, Clone)]
 pub enum EquipCategory {
     Cap,
     Cape,
@@ -45,6 +49,39 @@ pub enum EquipCategory {
     Skin,
     SkillSkin,
     Unknown,
+}
+
+impl std::fmt::Display for EquipCategory {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let repr_number = match self {
+            EquipCategory::Cap => 1,
+            EquipCategory::Cape => 2,
+            EquipCategory::Coat => 3,
+            EquipCategory::Dragon => 4,
+            EquipCategory::Mechanic => 5,
+            EquipCategory::Face => 6,
+            EquipCategory::Glove => 7,
+            EquipCategory::Hair => 8,
+            EquipCategory::Longcoat => 9,
+            EquipCategory::Pants => 10,
+            EquipCategory::PetEquip => 11,
+            EquipCategory::Ring => 12,
+            EquipCategory::Shield => 13,
+            EquipCategory::Shoes => 14,
+            EquipCategory::Taming => 15,
+            EquipCategory::Weapon => 16,
+            EquipCategory::Android => 17,
+            EquipCategory::Accessory => 18,
+            EquipCategory::Bit => 19,
+            EquipCategory::ArcaneForce => 20,
+            EquipCategory::AuthenticForce => 21,
+            EquipCategory::Skin => 22,
+            EquipCategory::SkillSkin => 23,
+            EquipCategory::Unknown => 24,
+        };
+
+        write!(f, "{}", repr_number)
+    }
 }
 
 pub fn get_equip_category_from_str(category: &str) -> EquipCategory {

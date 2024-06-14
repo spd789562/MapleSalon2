@@ -14,12 +14,15 @@ use axum::{
 use tower_http::cors::CorsLayer;
 use wz_reader::WzNodeArc;
 
-pub async fn app(node: WzNodeArc, _string_dict: StringDict, port: u16) -> crate::Result<()> {
+pub type AppState = (WzNodeArc, StringDict);
+
+pub async fn app(node: WzNodeArc, string_dict: StringDict, port: u16) -> crate::Result<()> {
     let layer_state = node.clone();
     let app = Router::new()
         .route("/", get(hello))
         .nest("/mapping", controller::mapping_router())
         .nest("/node", controller::node_router())
+        .nest("/string", controller::string_router())
         .route_layer(axum::middleware::from_fn_with_state(
             layer_state,
             middlewares::root_check_middleware,
@@ -32,7 +35,7 @@ pub async fn app(node: WzNodeArc, _string_dict: StringDict, port: u16) -> crate:
                 .allow_methods([Method::GET])
                 .allow_origin("http://localhost:1420".parse::<HeaderValue>().unwrap()),
         )
-        .with_state(node);
+        .with_state((node, string_dict));
 
     let host = format!("127.0.0.1:{port}");
 
@@ -44,7 +47,7 @@ pub async fn app(node: WzNodeArc, _string_dict: StringDict, port: u16) -> crate:
 }
 
 async fn hello() -> &'static str {
-    "Hello, World!"
+    "Hi"
 }
 
 impl IntoResponse for Error {

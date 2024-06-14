@@ -8,12 +8,14 @@ use axum::{
 };
 use wz_reader::{node, util::node_util, WzNodeArc};
 
+use super::AppState;
+
 pub struct TargetNodeExtractor(pub WzNodeArc);
 
 #[async_trait]
 impl<S> FromRequestParts<S> for TargetNodeExtractor
 where
-    WzNodeArc: FromRef<S>,
+    AppState: FromRef<S>,
     S: Send + Sync,
 {
     type Rejection = Response;
@@ -26,7 +28,7 @@ where
             .await
             .map_err(IntoResponse::into_response)?;
 
-        let root = WzNodeArc::from_ref(state);
+        let (root, _) = AppState::from_ref(state);
 
         let root = root.read().unwrap();
 
@@ -57,7 +59,7 @@ pub struct TargetNodeOptionExtractor(pub Option<WzNodeArc>);
 #[async_trait]
 impl<S> FromRequestParts<S> for TargetNodeOptionExtractor
 where
-    WzNodeArc: FromRef<S>,
+    AppState: FromRef<S>,
     S: Send + Sync,
 {
     type Rejection = Response;
@@ -70,7 +72,7 @@ where
             .await
             .map_err(IntoResponse::into_response)?;
 
-        let root = WzNodeArc::from_ref(state);
+        let (root, _) = AppState::from_ref(state);
 
         let root = root.read().unwrap();
 
