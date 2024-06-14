@@ -7,6 +7,7 @@ import { Flex } from 'styled-system/jsx/flex';
 export interface RowVirtualizerProps<Item> {
   columnCount: number;
   data: Item[];
+  defaultItemHeight?: number;
   renderItem: (item: Item) => JSX.Element;
 }
 export function RowVirtualizer<Item>(props: RowVirtualizerProps<Item>) {
@@ -20,10 +21,14 @@ export function RowVirtualizer<Item>(props: RowVirtualizerProps<Item>) {
 
   const timesArray = Array.from({ length: props.columnCount });
 
+  const defaultItemHeight = props.defaultItemHeight ?? 45;
+
   const virtualizer = createVirtualizer({
-    count: count(),
+    get count() {
+      return count();
+    },
     getScrollElement: () => parentRef,
-    estimateSize: () => 45,
+    estimateSize: () => defaultItemHeight,
   });
 
   const items = virtualizer.getVirtualItems();
@@ -55,19 +60,18 @@ export function RowVirtualizer<Item>(props: RowVirtualizerProps<Item>) {
                 <Flex ref={ref} data-index={virtualRow.index}>
                   <For each={timesArray}>
                     {(_, index) => {
-                      const data =
+                      const data = () =>
                         props.data[
                           virtualRow.index * props.columnCount + index()
                         ];
                       return (
-                        <div style={{ width: `${columnWidth()}%` }}>
-                          <Show when={data}>
-                            {props.renderItem(
-                              props.data[
-                                virtualRow.index * props.columnCount + index()
-                              ],
-                            )}
-                          </Show>
+                        <div
+                          style={{
+                            width: `${columnWidth()}%`,
+                            'min-height': `${defaultItemHeight}px`,
+                          }}
+                        >
+                          <Show when={data()}>{props.renderItem(data())}</Show>
                         </div>
                       );
                     }}

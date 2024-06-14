@@ -1,4 +1,4 @@
-import { atom, computed } from 'nanostores';
+import { atom, map, computed } from 'nanostores';
 
 import { $equipmentStrings } from './string';
 
@@ -12,23 +12,32 @@ export const $equipmentDrawerEquipCategory = atom<
 export const $equipmentDrawerHairColor = atom<HairColor>(HairColor.Black);
 export const $equipmentDrawerFaceColor = atom<FaceColor>(FaceColor.Black);
 
-export const $equipmentDrawerSearch = atom<
+export const $equipmentDrawerSearch = map<
   Partial<Record<EquipCategory | typeof AllCategory, string>>
 >({});
 
 /* computed */
+export const $categoryFilteredString = computed(
+  [$equipmentDrawerEquipCategory, $equipmentStrings],
+  (category, strings) => {
+    return category !== AllCategory
+      ? strings.filter((item) => item.category === category)
+      : strings;
+  },
+);
 export const $equipmentDrawerEquipFilteredString = computed(
-  [$equipmentDrawerEquipCategory, $equipmentStrings, $equipmentDrawerSearch],
+  [
+    $equipmentDrawerEquipCategory,
+    $categoryFilteredString,
+    $equipmentDrawerSearch,
+  ],
   (category, strings, searchString) => {
-    let result = strings;
-    if (category !== AllCategory) {
-      result = result.filter((item) => item.category === category);
-    }
-    const searchKey = searchString[AllCategory];
+    const searchKey = searchString[category];
+
     if (searchKey) {
-      result = result.filter((item) => item.name.includes(searchKey));
+      return strings.filter((item) => item.name.includes(searchKey));
     }
 
-    return result;
+    return strings;
   },
 );

@@ -1,5 +1,4 @@
-import { useStore } from '@nanostores/solid';
-
+import { usePureStore } from '@/store';
 import { $equipmentDrawerEquipFilteredString } from '@/store/equipDrawer';
 
 import { RowVirtualizer } from '@/components/ui/rowVirtualizer';
@@ -8,7 +7,7 @@ import { EllipsisText as Text } from '@/components/ui/ellipsisText';
 import { VStack } from 'styled-system/jsx/vstack';
 
 export const EquipList = () => {
-  const equipStrings = useStore($equipmentDrawerEquipFilteredString);
+  const equipStrings = usePureStore($equipmentDrawerEquipFilteredString);
 
   return (
     <RowVirtualizer
