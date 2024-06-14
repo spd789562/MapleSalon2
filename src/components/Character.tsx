@@ -13,10 +13,10 @@ import { Application, Container } from 'pixi.js';
 import { Character } from '@/renderer/character/character';
 import { CharacterLoader } from '@/renderer/character/loader';
 
-import { CharacterAction } from '@/renderer/character/const/actions';
-import { CharacterExpressions } from '@/renderer/character/const/emotions';
-import { CharacterEarType } from '@/renderer/character/const/ears';
-import { CharacterHandType } from '@/renderer/character/const/hand';
+import { CharacterAction } from '@/const/actions';
+import { CharacterExpressions } from '@/const/emotions';
+import { CharacterEarType } from '@/const/ears';
+import { CharacterHandType } from '@/const/hand';
 import { getIconPath } from '@/utils/itemId';
 
 function updateCurrentCharacterDyeable(
