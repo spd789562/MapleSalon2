@@ -1,4 +1,4 @@
-import { For, createMemo, onMount, type JSX } from 'solid-js';
+import { For, createMemo, onMount, type JSX, Show } from 'solid-js';
 
 import { createVirtualizer } from '@tanstack/solid-virtual';
 
@@ -54,15 +54,23 @@ export function RowVirtualizer<Item>(props: RowVirtualizerProps<Item>) {
               return (
                 <Flex ref={ref} data-index={virtualRow.index}>
                   <For each={timesArray}>
-                    {(_, index) => (
-                      <div style={{ width: `${columnWidth()}%` }}>
-                        {props.renderItem(
-                          props.data[
-                            virtualRow.index * props.columnCount + index()
-                          ],
-                        )}
-                      </div>
-                    )}
+                    {(_, index) => {
+                      const data =
+                        props.data[
+                          virtualRow.index * props.columnCount + index()
+                        ];
+                      return (
+                        <div style={{ width: `${columnWidth()}%` }}>
+                          <Show when={data}>
+                            {props.renderItem(
+                              props.data[
+                                virtualRow.index * props.columnCount + index()
+                              ],
+                            )}
+                          </Show>
+                        </div>
+                      );
+                    }}
                   </For>
                 </Flex>
               );

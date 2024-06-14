@@ -16,7 +16,7 @@ export const EquipList = () => {
       renderItem={(item) => (
         <VStack>
           <LoadableEquipIcon id={item.id} name={item.name} />
-          <Text clamp={2} size="sm">
+          <Text clamp={2} size="xs">
             {item.name}
           </Text>
         </VStack>
