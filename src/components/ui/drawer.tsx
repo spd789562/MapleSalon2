@@ -4,7 +4,7 @@ import {
   type HTMLArkProps,
   ark,
 } from '@ark-ui/solid';
-import { type DrawerVariantProps, drawer } from 'styled-system/recipes';
+import { type DrawerVariantProps, drawer } from 'styled-system/recipes/drawer';
 import type { JsxStyleProps } from 'styled-system/types';
 import { createStyleContext } from '@/utils/create-style-context';
 
