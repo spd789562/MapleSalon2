@@ -7,10 +7,10 @@ import type { CharacterItemPiece } from './itemPiece';
 
 import { CharacterLoader } from './loader';
 import { CharacterItem } from './item';
-import { CharacterAction, isBackAction } from './const/actions';
-import { CharacterExpressions } from './const/emotions';
-import { CharacterEarType } from './const/ears';
-import { CharacterHandType } from './const/hand';
+import { CharacterAction, isBackAction } from '@/const/actions';
+import { CharacterExpressions } from '@/const/emotions';
+import { CharacterEarType } from '@/const/ears';
+import { CharacterHandType } from '@/const/hand';
 import type { PieceIslot } from './const/slot';
 
 type AnyCategorizedItem = CategorizedItem<string>;

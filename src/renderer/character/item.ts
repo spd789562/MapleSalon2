@@ -29,9 +29,9 @@ import {
 
 import { HsvAdjustmentFilter } from '@/renderer/filter/hsvAdjustmentFilter';
 import { CharacterActionItem, CharacterFaceItem } from './categorizedItem';
-import { CharacterAction } from './const/actions';
-import { CharacterExpressions } from './const/emotions';
-import { CharacterHandType } from './const/hand';
+import { CharacterAction } from '@/const/actions';
+import { CharacterExpressions } from '@/const/emotions';
+import { CharacterHandType } from '@/const/hand';
 
 export class CharacterItem implements RenderItemInfo {
   info: ItemInfo;

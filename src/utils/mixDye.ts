@@ -1,7 +1,7 @@
 import { CharacterLoader } from '@/renderer/character/loader';
 
-import { FaceColor, type FaceColorId } from '@/renderer/character/const/face';
-import { HairColor, type HairColorId } from '@/renderer/character/const/hair';
+import { FaceColor, type FaceColorId } from '@/const/face';
+import { HairColor, type HairColorId } from '@/const/hair';
 
 export const vaildFaceColor = (id: FaceColorId): id is FaceColorId => {
   return id >= 0 && id <= 8;

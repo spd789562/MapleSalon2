@@ -1,7 +1,7 @@
 import { Assets, type UnresolvedAsset } from 'pixi.js';
 
 import type { CharacterItem } from './item';
-import type { CharacterExpressions } from './const/emotions';
+import type { CharacterExpressions } from '@/const/emotions';
 import type { AncherName, Vec2, PieceName, AncherMap } from './const/data';
 import type { WzPieceFrame } from './const/wz';
 
@@ -13,9 +13,9 @@ import {
 import { CharacterLoader } from './loader';
 import { CharacterAnimatablePart } from './characterAnimatablePart';
 
-import { CharacterAction } from './const/actions';
+import { CharacterAction } from '@/const/actions';
+import { ExpressionsHasEye } from '@/const/emotions';
 import { defaultAncher, handMoveDefaultAnchers } from './const/ancher';
-import { ExpressionsHasEye } from './const/emotions';
 
 export abstract class CategorizedItem<Name extends string> {
   name: Name;
