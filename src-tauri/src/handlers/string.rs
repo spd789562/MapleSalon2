@@ -132,8 +132,9 @@ pub fn resolve_equip_string(node: &WzNodeArc) -> Result<Vec<(EquipCategory, Stri
         let category_node_read = category_node.read().unwrap();
 
         let category_name = category_node_read.name.as_str();
+        let category = get_equip_category_from_str(category_name);
 
-        result.reserve(category_node_read.children.len());
+        let mut category_result = Vec::with_capacity(category_node_read.children.len());
 
         for child in category_node_read.children.values() {
             let child_read = child.read().unwrap();
@@ -149,9 +150,13 @@ pub fn resolve_equip_string(node: &WzNodeArc) -> Result<Vec<(EquipCategory, Stri
 
             if let Some(string) = text_node_read.try_as_string() {
                 let text = string.get_string()?;
-                result.push((get_equip_category_from_str(category_name), name, text));
+                category_result.push((category.clone(), name, text));
             }
         }
+
+        category_result.sort_by(|a, b| a.1.cmp(&b.1));
+
+        result.extend(category_result);
     }
 
     Ok(result)
