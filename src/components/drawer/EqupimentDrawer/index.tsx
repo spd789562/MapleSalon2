@@ -13,10 +13,11 @@ import {
   Title,
   Body,
   Footer,
-  type RootProps,
 } from '@/components/ui/drawer';
+import { EquipSearchInput } from './EqupiSearchInput';
+import { EquipList } from './EquipList';
 
-export const EqupimentDrawer = (props: RootProps) => {
+export const EqupimentDrawer = () => {
   const isOpen = useStore($equpimentDrawerOpen);
 
   function handleClose(_: unknown) {
@@ -30,12 +31,13 @@ export const EqupimentDrawer = (props: RootProps) => {
       closeOnInteractOutside={false}
       trapFocus={false}
       onEscapeKeyDown={handleClose}
+      lazyMount={true}
     >
       <Portal>
         <Positioner>
           <Content>
             <Header>
-              <Title>Title</Title>
+              <Title>外觀物品</Title>
               <IconButton
                 variant="ghost"
                 position="absolute"
@@ -46,7 +48,10 @@ export const EqupimentDrawer = (props: RootProps) => {
                 <XIcon />
               </IconButton>
             </Header>
-            <Body>{/* Content */}</Body>
+            <Body>
+              <EquipSearchInput />
+              <EquipList />
+            </Body>
             <Footer />
           </Content>
         </Positioner>

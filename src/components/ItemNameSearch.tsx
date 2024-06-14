@@ -18,6 +18,7 @@ export const ItemNameSearch = () => {
         id="item-search"
         type="text"
         onInput={(e) => debouncedSearch(e.target.value)}
+        autocomplete="off"
       />
     </label>
   );

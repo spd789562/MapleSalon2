@@ -2,7 +2,8 @@ import { createSignal } from 'solid-js';
 import { invoke } from '@tauri-apps/api/core';
 import { open } from '@tauri-apps/plugin-dialog';
 
-import { $isInitialized } from '@/store/const';
+import { $isInitialized, $apiHost } from '@/store/const';
+import { $equipmentStrings, type EquipItem } from '@/store/string';
 
 export const BaseWzSelector = () => {
   const [isLoading, setIsLoading] = createSignal(false);
@@ -19,6 +20,17 @@ export const BaseWzSelector = () => {
       setIsLoading(true);
       try {
         await invoke('init', { path });
+
+        await fetch(`${$apiHost.get()}/string/equip/prepare`);
+        const strings = await fetch(`${$apiHost.get()}/string/equip`)
+          .then((res) => res.json())
+          .then((res: [string, string, string][]) =>
+            res.map(
+              ([category, id, name]) =>
+                ({ category, id: Number.parseInt(id), name }) as EquipItem,
+            ),
+          );
+        $equipmentStrings.set(strings);
       } catch (e) {
         if (e instanceof Error) {
           setError(JSON.stringify(e.message));

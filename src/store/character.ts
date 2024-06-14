@@ -63,12 +63,26 @@ export const $currentCharacter = deepMap<CharacterData>({
       // cap
       id: 1103580,
     },
+    // {
+    //   // weapon
+    //   id: 1703024,
+    //   hue: 0,
+    //   saturation: 0,
+    //   brightness: 0,
+    // },
+    // {
+    //   // weapon
+    //   id: 1703017,
+    //   hue: 0,
+    //   saturation: 0,
+    //   brightness: 0,
+    // },
     {
       // weapon
-      id: 1703017,
-      hue: 0,
-      saturation: 0,
-      brightness: 0,
+      id: 1703126,
+      hue: 297,
+      saturation: -64,
+      brightness: 54,
     },
     // {
     //   // weapon
