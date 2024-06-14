@@ -1,5 +1,6 @@
 use axum::{extract::State, http::header, response::IntoResponse};
 use serde_json::Value;
+use wz_reader::util::node_util;
 
 use crate::{handlers, Error, Result};
 
@@ -9,6 +10,8 @@ pub async fn prepare_equip(
     State((root, string_dict)): State<AppState>,
 ) -> Result<impl IntoResponse> {
     let equip_node = handlers::get_equip_string(&root)?;
+
+    node_util::parse_node(&equip_node)?;
 
     let node = equip_node
         .read()
