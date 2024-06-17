@@ -160,7 +160,7 @@ export class Character extends Container {
     let isAddItem = false;
     for (const item of items) {
       if (this.idItems.has(item.id)) {
-        this.idItems.get(item.id)?.updateFilter();
+        this.updateFilter(item.id, item);
       } else {
         isAddItem = true;
         const chItem = new CharacterItem(item, this);

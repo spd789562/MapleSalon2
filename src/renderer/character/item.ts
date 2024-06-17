@@ -193,12 +193,13 @@ export class CharacterItem implements RenderItemInfo {
       this.info.brightness !== undefined;
 
     if (!hasAnyDye) {
-      this.filters = [];
+      this.filters.length = 0;
       return;
     }
 
     if (this.filters.length === 0 && hasAnyDye) {
-      this.filters = [new HsvAdjustmentFilter()];
+      this.filters.push(new HsvAdjustmentFilter());
+      this.applyFilter();
     }
     const hsvFilter = this.filters[0] as HsvAdjustmentFilter;
 
@@ -216,6 +217,16 @@ export class CharacterItem implements RenderItemInfo {
       // convert -99 ~ 99 to -1 ~ 1
       const brightness = this.info.brightness / 100;
       hsvFilter.lightness = brightness;
+    }
+  }
+
+  applyFilter() {
+    for (const actionItem of this.actionPieces.values()) {
+      for (const part of actionItem.items.values()) {
+        if (part.filters !== this.filters) {
+          part.filters = this.filters;
+        }
+      }
     }
   }
 
