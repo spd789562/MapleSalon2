@@ -1,118 +1,135 @@
-import { atom, deepMap } from 'nanostores';
+import { atom, deepMap, computed, onSet } from 'nanostores';
 
+import { getSubCategory } from '@/utils/itemId';
+
+import type { EquipSubCategory } from '@/const/equipments';
 import type { ItemInfo } from '@/renderer/character/const/data';
 
+export type CharacterItems = Record<EquipSubCategory, ItemInfo>;
+
 export interface CharacterData extends Record<string, unknown> {
-  items: ItemInfo[];
+  items: Partial<CharacterItems>;
   frame?: number;
   isAnimating: boolean;
 }
 
 export const $currentCharacter = deepMap<CharacterData>({
-  items: [
-    {
+  items: {
+    Head: {
       id: 2000,
     },
-    {
+    Body: {
       id: 12000,
     },
-    {
+    Face: {
       id: 56772,
       dye: {
         color: 6,
         alpha: 50,
       },
     },
-    {
-      // hair
+    Hair: {
       id: 47046,
       dye: {
         color: 0,
         alpha: 50,
       },
     },
-    {
+    Cap: {
       // hat half cover
       id: 1006105,
     },
-    // {
+    // Cap: {
     //   //  hat full cover
     //   id: 1000003,
     // },
-    {
-      // face accessory
+    'Face Accessory': {
       id: 1012764,
     },
-    {
-      // glass/eye accessory
+    'Eye Decoration': {
       id: 1022285,
     },
-    {
-      // earring
+    Earrings: {
       id: 1032331,
     },
-    {
-      // overall
+    Overall: {
       id: 1053576,
     },
-    {
-      // shoe
+    Shoes: {
       id: 1073273,
     },
-    {
-      // cap
+    Cape: {
       id: 1103580,
     },
-    // {
-    //   // weapon
-    //   id: 1703024,
-    //   hue: 0,
-    //   saturation: 0,
-    //   brightness: 0,
-    // },
-    // {
-    //   // weapon
-    //   id: 1703017,
-    //   hue: 0,
-    //   saturation: 0,
-    //   brightness: 0,
-    // },
-    {
-      // weapon
-      id: 1703126,
-      hue: 297,
-      saturation: -64,
-      brightness: 54,
+    Weapon: {
+      id: 1703024,
+      hue: 0,
+      saturation: 0,
+      brightness: 0,
     },
-    // {
-    //   // weapon
-    //   id: 1703126,
-    //   hue: 71,
-    //   saturation: 37,
-    //   brightness: 59,
-    // },
-    // {
-    //   // weapon
-    //   id: 1703126,
-    //   hue: 63,
-    //   saturation: 84,
-    //   brightness: 60,
-    // },
-    // {
-    //   // weapon
-    //   id: 1702858,
-    //   hue: 160,
-    //   saturation: 55,
-    //   brightness: 66,
-    // },
-    // {
-    //   // weapon
-    //   id: 1702858,
-    //   hue: 344,
-    //   saturation: -42,
-    //   brightness: -17,
-    // },
-  ],
+  },
   frame: 0,
   isAnimating: false,
 });
+
+export const $currentItem = atom<
+  | {
+      id: number;
+      name: string;
+    }
+  | undefined
+>(undefined);
+
+onSet($currentItem, ({ newValue, abort }) => {
+  if (!newValue) {
+    return abort();
+  }
+  const category = getSubCategory(newValue.id);
+  if (!category) {
+    return abort();
+  }
+
+  if ($currentItemChanges.get()[category]) {
+    $currentItemChanges.setKey(`${category}.id`, newValue.id);
+  } else {
+    $currentItemChanges.setKey(category, { id: newValue.id });
+  }
+});
+
+export const $currentItemChanges = deepMap<
+  Partial<CharacterItems & Record<string, unknown>>
+>({});
+
+export const $previewCharacter = computed(
+  [$currentCharacter, $currentItemChanges],
+  (ch, changes) => {
+    const items = { ...ch.items, ...changes };
+    return {
+      ...ch,
+      items,
+    };
+  },
+);
+
+export function createGetItemChangeById(id: number) {
+  return computed($currentItemChanges, (changes) => {
+    const category = getSubCategory(id);
+    if (!category) {
+      return null;
+    }
+    return { item: (changes[category] || {}) as ItemInfo, category };
+  });
+}
+
+export function applyCharacterChanges() {
+  const changes = $currentItemChanges.get();
+  const currentCharacter = $currentCharacter.get();
+  $currentCharacter.set({
+    ...currentCharacter,
+    items: {
+      ...currentCharacter.items,
+      ...changes,
+    },
+  });
+  $currentItemChanges.set({});
+}
