@@ -6,7 +6,7 @@ import { Flex } from 'styled-system/jsx';
 import { Slider as UiSlider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 
-import { $currentCharacter } from '@/store/character';
+import { $previewCharacter } from '@/store/character';
 import type { ItemInfo } from '@/renderer/character/const/data';
 
 import { Application, Container } from 'pixi.js';
@@ -17,24 +17,22 @@ import { CharacterAction } from '@/const/actions';
 import { CharacterExpressions } from '@/const/emotions';
 import { CharacterEarType } from '@/const/ears';
 import { CharacterHandType } from '@/const/hand';
-import { getIconPath } from '@/utils/itemId';
 
 function updateCurrentCharacterDyeable(
   character: Character,
   field: keyof ItemInfo,
   value: number,
 ) {
-  const dyeableIds = $currentCharacter
-    .get()
-    .items.map((item, index) => (item[field] !== undefined ? index : -1))
-    .filter((item) => item !== -1);
-
-  for (const index of dyeableIds) {
-    const id = $currentCharacter.get().items[index].id;
-    $currentCharacter.setKey(`items[${index}].${field}`, value);
-    const info = $currentCharacter.get().items[index];
-    character.updateFilter(id, info);
-  }
+  // const dyeableIds = $previewCharacter
+  //   .get()
+  //   .items.map((item, index) => (item[field] !== undefined ? index : -1))
+  //   .filter((item) => item !== -1);
+  // for (const index of dyeableIds) {
+  //   const id = $previewCharacter.get().items[index].id;
+  //   $previewCharacter.setKey(`items[${index}].${field}`, value);
+  //   const info = $previewCharacter.get().items[index];
+  //   character.updateFilter(id, info);
+  // }
 }
 
 interface SelectionProps<T extends string> {
@@ -101,7 +99,7 @@ const Slider = <T extends number>(props: SliderProps<T>) => {
 };
 
 export const CharacterScene = () => {
-  const characterData = useStore($currentCharacter);
+  const characterData = useStore($previewCharacter);
   let container!: HTMLDivElement;
   const app = new Application();
   const ch = new Character(app);
@@ -121,7 +119,7 @@ export const CharacterScene = () => {
     characterLayer.position.set(150, 150);
     app.stage.addChild(characterLayer);
 
-    ch.updateItems(characterData().items);
+    ch.updateItems(Object.values(characterData().items));
     await ch.loadItems();
     ch.render();
   }
@@ -135,7 +133,7 @@ export const CharacterScene = () => {
   });
 
   createEffect(() => {
-    ch.updateItems(characterData().items);
+    ch.updateItems(Object.values(characterData().items));
   });
 
   function updateAction(action: CharacterAction) {
@@ -149,16 +147,6 @@ export const CharacterScene = () => {
   }
   function updateHandType(handType: CharacterHandType) {
     ch.handType = handType;
-  }
-
-  function updateHue(hue: number) {
-    updateCurrentCharacterDyeable(ch, 'hue', hue);
-  }
-  function updateSaturation(saturation: number) {
-    updateCurrentCharacterDyeable(ch, 'saturation', saturation);
-  }
-  function updateLightness(lightness: number) {
-    updateCurrentCharacterDyeable(ch, 'brightness', lightness);
   }
 
   return (
@@ -183,25 +171,10 @@ export const CharacterScene = () => {
         values={Object.values(CharacterHandType)}
         onChange={updateHandType}
       />
-      <Slider label="Hue" min={0} max={360} step={1} onChange={updateHue} />
-      <Slider
-        label="Saturation"
-        min={-100}
-        max={100}
-        step={1}
-        onChange={updateSaturation}
-      />
-      <Slider
-        label="Lightness"
-        min={-100}
-        max={100}
-        step={1}
-        onChange={updateLightness}
-      />
       <div class="alpha-bg" ref={container} />
-      <For each={characterData().items}>
+      {/* <For each={characterData().items}>
         {(item) => <img src={getIconPath(item.id)} alt={item.id.toString()} />}
-      </For>
+      </For> */}
     </div>
   );
 };

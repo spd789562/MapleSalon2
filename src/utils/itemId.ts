@@ -136,7 +136,7 @@ export function getSubCategory(id: number): EquipSubCategory | null {
     case 110:
       return 'Cape';
     case 170:
-      return 'CashWeapon';
+      return 'Weapon';
   }
 
   if (partOfId >= 121 && partOfId < 170) {

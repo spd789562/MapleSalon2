@@ -10,10 +10,9 @@ import {
   Positioner,
   Content,
   Header,
-  Title,
   Body,
-  Footer,
 } from '@/components/ui/drawer';
+import { EquipEdit } from '@/components/EquipEdit';
 import { EquipSearchInput } from './EqupiSearchInput';
 import { EquipList } from './EquipList';
 
@@ -37,7 +36,7 @@ export const EqupimentDrawer = () => {
         <Positioner>
           <Content>
             <Header>
-              <Title>外觀物品</Title>
+              <EquipEdit />
               <IconButton
                 variant="ghost"
                 position="absolute"
@@ -52,7 +51,6 @@ export const EqupimentDrawer = () => {
               <EquipSearchInput />
               <EquipList />
             </Body>
-            <Footer />
           </Content>
         </Positioner>
       </Portal>

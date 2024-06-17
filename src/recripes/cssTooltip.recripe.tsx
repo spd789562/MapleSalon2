@@ -7,7 +7,7 @@ export const cssTooltipRecripe = defineRecipe({
     _after: {
       content: 'attr(data-tooltip-content)',
       position: 'absolute',
-      zIndex: '1',
+      zIndex: '-1',
       top: '100%',
       left: '50%',
       background: 'gray.a12',
@@ -25,6 +25,7 @@ export const cssTooltipRecripe = defineRecipe({
       transitionDuration: '0.2s',
       transitionTimingFunction: 'ease-out',
       _hover: {
+        zIndex: '1',
         opacity: 1,
         transform: 'translate(-50%, -55%)',
       },
