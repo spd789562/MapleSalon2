@@ -109,6 +109,9 @@ export class Character extends Container {
     this.#_action = action;
 
     const faceLayer = this.zmapLayers.get('face');
+
+    let isChangeHand = false;
+
     if (faceLayer) {
       if (isBackAction(this.action)) {
         faceLayer.visible = false;
@@ -117,26 +120,62 @@ export class Character extends Container {
       }
     }
 
-    this.render();
+    if (
+      (this.action === CharacterAction.Walk1 ||
+        this.action === CharacterAction.Stand1) &&
+      this.handType === CharacterHandType.DoubleHand
+    ) {
+      isChangeHand = true;
+      this.handType = CharacterHandType.SingleHand;
+    } else if (
+      (this.action === CharacterAction.Walk2 ||
+        this.action === CharacterAction.Stand2) &&
+      this.handType === CharacterHandType.SingleHand
+    ) {
+      isChangeHand = true;
+      this.handType = CharacterHandType.DoubleHand;
+    }
+
+    if (isChangeHand) {
+      this.loadItems();
+    } else {
+      this.render();
+    }
   }
   set expression(expression: CharacterExpressions) {
     this.#_expression = expression;
-    this.loadItems().then(() => this.render());
+    this.loadItems();
   }
   set earType(earType: CharacterEarType) {
     this.#_earType = earType;
-    this.loadItems().then(() => this.render());
+    this.loadItems();
   }
   set handType(handType: CharacterHandType) {
     this.#_handType = handType;
 
-    this.loadItems().then(() => this.render());
+    this.loadItems();
   }
 
   updateItems(items: ItemInfo[]) {
+    let isAddItem = false;
     for (const item of items) {
-      const chItem = new CharacterItem(item, this);
-      this.idItems.set(item.id, chItem);
+      if (this.idItems.has(item.id)) {
+        this.idItems.get(item.id)?.updateFilter();
+      } else {
+        isAddItem = true;
+        const chItem = new CharacterItem(item, this);
+        this.idItems.set(item.id, chItem);
+      }
+    }
+    for (const item of this.idItems.keys()) {
+      if (!items.find((i) => i.id === item)) {
+        const removedItem = this.idItems.get(item);
+        removedItem?.destroy();
+        this.idItems.delete(item);
+      }
+    }
+    if (isAddItem) {
+      this.loadItems();
     }
   }
 
@@ -358,6 +397,8 @@ export class Character extends Container {
     }
 
     this.buildLock();
+
+    this.render();
   }
 
   buildLock() {

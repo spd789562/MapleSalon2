@@ -218,4 +218,10 @@ export class CharacterItem implements RenderItemInfo {
       hsvFilter.lightness = brightness;
     }
   }
+
+  destroy() {
+    for (const actionItem of this.actionPieces.values()) {
+      actionItem.destroy();
+    }
+  }
 }

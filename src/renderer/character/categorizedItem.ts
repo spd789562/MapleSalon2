@@ -180,6 +180,13 @@ export abstract class CategorizedItem<Name extends string> {
 
     this.unresolvedItems.clear();
   }
+
+  destroy() {
+    for (const item of this.items.values()) {
+      item.removeFromParent();
+      item.destroy();
+    }
+  }
 }
 
 export class CharacterActionItem extends CategorizedItem<CharacterAction> {
