@@ -1,5 +1,6 @@
 import { $apiHost } from '@/store/const';
 import { getItemFolderFromId } from './itemFolder';
+import type { EquipSubCategory } from '@/const/equipments';
 
 export enum Gender {
   Male = 0,
@@ -94,6 +95,55 @@ export function getGender(id: number): Gender {
     default:
       return Gender.Share;
   }
+}
+
+export function getSubCategory(id: number): EquipSubCategory | null {
+  if (isBodyId(id)) {
+    return 'Body';
+  }
+  if (isHeadId(id)) {
+    return 'Head';
+  }
+
+  const partOfId = Math.floor(id / 10000);
+
+  switch (partOfId) {
+    case 2:
+    case 5:
+      return 'Face';
+    case 3:
+    case 4:
+    case 6:
+      return 'Hair';
+    case 100:
+      return 'Cap';
+    case 101:
+      return 'Face Accessory';
+    case 102:
+      return 'Eye Decoration';
+    case 103:
+      return 'Earrings';
+    case 105:
+      return 'Overall';
+    case 106:
+      return 'Pants';
+    case 107:
+      return 'Shoes';
+    case 108:
+      return 'Glove';
+    case 109:
+      return 'Shield';
+    case 110:
+      return 'Cape';
+    case 170:
+      return 'CashWeapon';
+  }
+
+  if (partOfId >= 121 && partOfId < 170) {
+    return 'Weapon';
+  }
+
+  return null;
 }
 
 export function replaceIdInPath(path: string, id: number): string {

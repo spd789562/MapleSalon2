@@ -26,3 +26,54 @@ export enum EquipCategory {
   SkillSkin = '23',
   Unknown = '24',
 }
+
+export type EquipSubCategory =
+  | 'Head'
+  | 'Body'
+  | 'Cap'
+  | 'Hat'
+  | 'Cape'
+  | 'Coat'
+  // 'Dragon' |
+  // 'Mechanic' |
+  | 'Face'
+  | 'Glove'
+  | 'Hair'
+  | 'Longcoat'
+  | 'Overall'
+  | 'Pants'
+  // 'PetEquip' |
+  // 'Ring' |
+  | 'Shield'
+  | 'Shoes'
+  // 'Taming' |
+  | 'Weapon'
+  | 'CashWeapon'
+  // 'Android' |
+  // 'Bit' |
+  // 'ArcaneForce' |
+  // 'AuthenticForce' |
+  // 'Skin' |
+  // 'SkillSkin' |
+  // 'Unknown' |
+  | 'Face Accessory'
+  | 'Eye Decoration'
+  | 'Earrings';
+
+export type UnavailableEquipCategory =
+  | EquipCategory.Dragon
+  | EquipCategory.Mechanic
+  | EquipCategory.PetEquip
+  | EquipCategory.Ring
+  | EquipCategory.Taming
+  | EquipCategory.Android
+  | EquipCategory.Bit
+  | EquipCategory.ArcaneForce
+  | EquipCategory.AuthenticForce
+  | EquipCategory.Skin
+  | EquipCategory.SkillSkin
+  | EquipCategory.Unknown;
+export type AvaialbeEquipCategory = Exclude<
+  EquipCategory,
+  UnavailableEquipCategory
+>;
