@@ -18,6 +18,11 @@ export interface SliderProps
   }[];
 }
 
+/**
+ * Park UI Slider component,
+ * use `--ui-slider-track-background` to set the background of the track and
+ * use `--ui-slider-range-background` to set the background of the range bar
+ */
 export const Slider = (props: SliderProps) => {
   const [variantProps, ratingGroupProps] = slider.splitVariantProps(props);
   const [cssProps, elementProps] = splitCssProps(ratingGroupProps);
@@ -43,8 +48,24 @@ export const Slider = (props: SliderProps) => {
               </ArkSlider.Label>
             </Show>
             <ArkSlider.Control class={styles.control}>
-              <ArkSlider.Track class={styles.track}>
-                <ArkSlider.Range class={styles.range} />
+              <ArkSlider.Track
+                class={cx(
+                  css({
+                    background:
+                      'var(--ui-slider-track-background, var(--colors-bg-emphasized))',
+                  }),
+                  styles.track,
+                )}
+              >
+                <ArkSlider.Range
+                  class={cx(
+                    css({
+                      background:
+                        'var(--ui-slider-range-background, var(--colors-colorPalette-default))',
+                    }),
+                    styles.range,
+                  )}
+                />
               </ArkSlider.Track>
               <Index each={api().value}>
                 {(_, index) => (
