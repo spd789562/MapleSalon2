@@ -8,7 +8,7 @@ export interface RowVirtualizerProps<Item> {
   columnCount: number;
   data: Item[];
   defaultItemHeight?: number;
-  renderItem: (item: Item) => JSX.Element;
+  renderItem: (item: Item, index: number) => JSX.Element;
 }
 export function RowVirtualizer<Item>(props: RowVirtualizerProps<Item>) {
   let parentRef!: HTMLDivElement;
@@ -72,7 +72,9 @@ export function RowVirtualizer<Item>(props: RowVirtualizerProps<Item>) {
                             'min-height': `${defaultItemHeight}px`,
                           }}
                         >
-                          <Show when={data()}>{props.renderItem(data())}</Show>
+                          <Show when={data()}>
+                            {props.renderItem(data(), index())}
+                          </Show>
                         </Flex>
                       );
                     }}

@@ -1,6 +1,9 @@
 import { defineConfig } from '@pandacss/dev';
 import { createPreset } from '@park-ui/panda-preset';
 
+/* custom recripe */
+import { cssTooltipRecripe } from './src/recripes/cssTooltip.recripe';
+
 export default defineConfig({
   // Whether to use css reset
   preflight: true,
@@ -25,7 +28,11 @@ export default defineConfig({
 
   // Useful for theme customization
   theme: {
-    extend: {},
+    extend: {
+      recipes: {
+        cssTooltip: cssTooltipRecripe,
+      },
+    },
   },
 
   // The output directory for your css system

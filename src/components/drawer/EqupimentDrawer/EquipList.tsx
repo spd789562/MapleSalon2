@@ -5,9 +5,11 @@ import {
   $equipmentDrawerHover,
 } from '@/store/equipDrawer';
 
+import { CssTooltip } from '@/components/ui/cssTooltip';
 import { RowVirtualizer } from '@/components/ui/rowVirtualizer';
 import { LoadableEquipIcon } from '@/components/LoadableEquipIcon';
-import { Box } from 'styled-system/jsx/box';
+
+const ColumnCount = 7;
 
 export const EquipList = () => {
   const equipStrings = usePureStore($equipmentDrawerEquipFilteredString);
@@ -18,11 +20,21 @@ export const EquipList = () => {
 
   return (
     <RowVirtualizer
-      columnCount={7}
-      renderItem={(item) => (
-        <Box p={1} onMouseEnter={() => handleHover(item.name)}>
+      columnCount={ColumnCount}
+      renderItem={(item, index) => (
+        <CssTooltip
+          p={1}
+          placement={
+            index === 0
+              ? 'right'
+              : index + 1 === ColumnCount
+                ? 'left'
+                : 'center'
+          }
+          data-tooltip-content={item.name}
+        >
           <LoadableEquipIcon id={item.id} name={item.name} />
-        </Box>
+        </CssTooltip>
       )}
       data={equipStrings()}
     />
