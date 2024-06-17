@@ -12,8 +12,6 @@ export const $equipmentDrawerEquipCategory = atom<
 export const $equipmentDrawerHairColor = atom<HairColor>(HairColor.Black);
 export const $equipmentDrawerFaceColor = atom<FaceColor>(FaceColor.Black);
 
-export const $equipmentDrawerHover = atom<string | null>(null);
-
 export const $equipmentDrawerSearch = map<
   Partial<Record<EquipCategory | typeof AllCategory, string>>
 >({});
@@ -37,7 +35,10 @@ export const $equipmentDrawerEquipFilteredString = computed(
     const searchKey = searchString[category];
 
     if (searchKey) {
-      return strings.filter((item) => item.name.includes(searchKey));
+      return strings.filter(
+        (item) =>
+          item.name.includes(searchKey) || item.id.toString() === searchKey,
+      );
     }
 
     return strings;
