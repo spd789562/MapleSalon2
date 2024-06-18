@@ -34,10 +34,12 @@ export function getItemFolderFromId(id: number): string {
       return 'Shield/';
     case 110:
       return 'Cape/';
+    case 111:
+      return 'Ring/';
     case 120:
       return 'Totem/';
     default: {
-      if (partOfId >= 111 && partOfId <= 119) {
+      if (partOfId >= 112 && partOfId <= 119) {
         return 'Accessory/';
       }
       if (partOfId >= 121 && partOfId <= 170) {
