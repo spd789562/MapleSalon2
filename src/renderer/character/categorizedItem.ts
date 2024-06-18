@@ -157,6 +157,11 @@ export abstract class CategorizedItem<Name extends string> {
   }
 
   async prepareResourece() {
+    // if unresolvedItems is empty, it means the item is already loaded
+    if (this.unresolvedItems.size === 0) {
+      return;
+    }
+
     const assets = new Set<UnresolvedAsset>();
     for (const items of this.unresolvedItems.values()) {
       for (const resources of items) {

@@ -165,11 +165,16 @@ export class CharacterItem implements RenderItemInfo {
     } else {
       this.loadAction(this.wz);
     }
-
-    for await (const actionItem of this.actionPieces.values()) {
-      await actionItem.prepareResourece();
-    }
   }
+
+  async prepareActionResource(name: CharacterAction | CharacterExpressions) {
+    const actionItem = this.actionPieces.get(name);
+    if (!actionItem) {
+      return;
+    }
+    await actionItem.prepareResourece();
+  }
+
   tryBuildAncher(
     action: CharacterAction,
     currentAnchers: Map<AncherName, Vec2>[],

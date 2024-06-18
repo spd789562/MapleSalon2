@@ -1,4 +1,4 @@
-import { type Application, Container, Ticker } from 'pixi.js';
+import { type Application, Container, Ticker, EventEmitter } from 'pixi.js';
 
 import type { ItemInfo, AncherName, Vec2, PieceSlot } from './const/data';
 import type { CategorizedItem } from './categorizedItem';
@@ -19,6 +19,7 @@ class ZmapContainer extends Container {
   name: PieceSlot;
   character: Character;
   requireLocks: PieceSlot[];
+
   constructor(name: PieceSlot, index: number, character: Character) {
     super();
     this.name = name;
@@ -92,6 +93,10 @@ export class Character extends Container {
 
   app: Application;
 
+  isLoading = false;
+  loadFlashTimer = 0;
+  loadEvent = new EventEmitter<'loading' | 'loaded'>();
+
   constructor(app: Application) {
     super();
     this.sortableChildren = true;
@@ -141,11 +146,7 @@ export class Character extends Container {
       this.handType = CharacterHandType.DoubleHand;
     }
 
-    if (isChangeHand) {
-      this.loadItems();
-    } else {
-      this.render();
-    }
+    this.loadItems();
   }
   set expression(expression: CharacterExpressions) {
     this.#_expression = expression;
@@ -254,11 +255,8 @@ export class Character extends Container {
     this.playPieces(this.currentPieces);
     this.playByBody(body);
 
-    for (const p of this.currentPieces) {
-      if (p.item.info.brightness === undefined) {
-        // p.visible = false;
-      }
-    }
+    this.isLoading = false;
+    this.loadEvent.emit('loaded');
   }
 
   reset() {
@@ -389,8 +387,20 @@ export class Character extends Container {
   }
 
   async loadItems() {
+    this.isLoading = true;
+    // only show loading after 100ms
+    this.loadFlashTimer = setTimeout(() => {
+      if (this.isLoading) {
+        this.loadEvent.emit('loading');
+      }
+    }, 100);
     for await (const item of this.idItems.values()) {
       await item.load();
+      if (item.isUseExpressionItem) {
+        await item.prepareActionResource(this.expression);
+      } else {
+        await item.prepareActionResource(this.action);
+      }
     }
     const itemCount = this.idItems.size;
     // try to build ancher but up to 2 times of item count
