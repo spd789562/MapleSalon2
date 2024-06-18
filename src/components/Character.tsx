@@ -1,39 +1,27 @@
 import { useStore } from '@nanostores/solid';
-import { onMount, onCleanup, createEffect, For, createSignal } from 'solid-js';
+import {
+  onMount,
+  onCleanup,
+  createEffect,
+  createSignal,
+  For,
+  Show,
+} from 'solid-js';
 
-import type { SliderValueChangeDetails } from '@ark-ui/solid';
-import { Flex } from 'styled-system/jsx';
-import { Slider as UiSlider } from '@/components/ui/slider';
-import { Button } from '@/components/ui/button';
+import { css } from 'styled-system/css';
 
 import { $previewCharacter } from '@/store/character';
-import type { ItemInfo } from '@/renderer/character/const/data';
 
 import { Application, Container } from 'pixi.js';
 import { Character } from '@/renderer/character/character';
 import { CharacterLoader } from '@/renderer/character/loader';
 
+import LoaderCircle from 'lucide-solid/icons/loader-circle';
+
 import { CharacterAction } from '@/const/actions';
 import { CharacterExpressions } from '@/const/emotions';
 import { CharacterEarType } from '@/const/ears';
 import { CharacterHandType } from '@/const/hand';
-
-function updateCurrentCharacterDyeable(
-  character: Character,
-  field: keyof ItemInfo,
-  value: number,
-) {
-  // const dyeableIds = $previewCharacter
-  //   .get()
-  //   .items.map((item, index) => (item[field] !== undefined ? index : -1))
-  //   .filter((item) => item !== -1);
-  // for (const index of dyeableIds) {
-  //   const id = $previewCharacter.get().items[index].id;
-  //   $previewCharacter.setKey(`items[${index}].${field}`, value);
-  //   const info = $previewCharacter.get().items[index];
-  //   character.updateFilter(id, info);
-  // }
-}
 
 interface SelectionProps<T extends string> {
   label: string;
@@ -53,56 +41,15 @@ const Selection = <T extends string>(props: SelectionProps<T>) => {
   );
 };
 
-interface SliderProps<T extends number> {
-  label: string;
-  min: number;
-  max: number;
-  step: number;
-  onChange: (value: T) => void;
-  initialValue?: T;
-}
-const Slider = <T extends number>(props: SliderProps<T>) => {
-  const [value, setValue] = createSignal(props.initialValue ?? 0);
-
-  function updateValue(newValue: number) {
-    setValue(newValue);
-    props.onChange(newValue as T);
-  }
-
-  function handleInput(value: SliderValueChangeDetails) {
-    updateValue(value.value[0]);
-  }
-
-  function resetValue() {
-    updateValue(0);
-  }
-
-  return (
-    <Flex style={{ 'max-width': '300px' }}>
-      <UiSlider
-        value={[value()]}
-        min={props.min}
-        max={props.max}
-        onValueChange={handleInput}
-        marks={[
-          { value: props.min, label: props.min.toString() },
-          { value: props.max, label: props.max.toString() },
-        ]}
-      >
-        {props.label}({value()})
-      </UiSlider>
-      <Button type="reset" size="sm" variant="subtle" onClick={resetValue}>
-        Reset
-      </Button>
-    </Flex>
-  );
-};
-
 export const CharacterScene = () => {
   const characterData = useStore($previewCharacter);
+  const [isLoading, setIsLoading] = createSignal(false);
   let container!: HTMLDivElement;
   const app = new Application();
   const ch = new Character(app);
+
+  ch.loadEvent.addListener('loading', () => setIsLoading(true));
+  ch.loadEvent.addListener('loaded', () => setIsLoading(false));
 
   async function initScene() {
     await CharacterLoader.init();
@@ -121,7 +68,7 @@ export const CharacterScene = () => {
 
     ch.updateItems(Object.values(characterData().items));
     await ch.loadItems();
-    ch.render();
+    // ch.render();
   }
 
   onMount(() => {
@@ -150,7 +97,7 @@ export const CharacterScene = () => {
   }
 
   return (
-    <div>
+    <div class={css({ position: 'relative' })}>
       <Selection
         label="Action"
         values={Object.values(CharacterAction)}
@@ -172,9 +119,25 @@ export const CharacterScene = () => {
         onChange={updateHandType}
       />
       <div class="alpha-bg" ref={container} />
-      {/* <For each={characterData().items}>
-        {(item) => <img src={getIconPath(item.id)} alt={item.id.toString()} />}
-      </For> */}
+      <Show when={isLoading()}>
+        <div
+          class={css({
+            position: 'absolute',
+            top: '0',
+            left: '0',
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'gray.12',
+            opacity: 0.5,
+            fontSize: '4rem',
+          })}
+        >
+          <LoaderCircle />
+        </div>
+      </Show>
     </div>
   );
 };
