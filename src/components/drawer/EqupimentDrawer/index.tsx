@@ -3,7 +3,7 @@ import { useStore } from '@nanostores/solid';
 
 import { $equpimentDrawerOpen } from '@/store/trigger';
 
-import { XIcon } from 'lucide-solid';
+import CloseIcon from 'lucide-solid/icons/x';
 import { IconButton } from '@/components/ui/icon-button';
 import {
   Root,
@@ -44,7 +44,7 @@ export const EqupimentDrawer = () => {
                 right="4"
                 onClick={handleClose}
               >
-                <XIcon />
+                <CloseIcon />
               </IconButton>
             </Header>
             <Body>

@@ -3,7 +3,7 @@ import { useStore } from '@nanostores/solid';
 
 import { $currentItem } from '@/store/character';
 
-import { Box } from 'styled-system/jsx';
+import { Box } from 'styled-system/jsx/box';
 import { EquipTitle } from './EquipTitle';
 import { EquipHsvAdjust } from './EquipHsvAdjust';
 

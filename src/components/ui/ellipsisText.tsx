@@ -2,8 +2,8 @@ import type { Assign, HTMLArkProps } from '@ark-ui/solid';
 import { mergeProps, splitProps } from 'solid-js';
 import { Dynamic } from 'solid-js/web';
 import { css, cx } from 'styled-system/css';
-import { splitCssProps } from 'styled-system/jsx';
-import { type TextVariantProps, text } from 'styled-system/recipes';
+import { splitCssProps } from 'styled-system/jsx/is-valid-prop';
+import { type TextVariantProps, text } from 'styled-system/recipes/text';
 import type { JsxStyleProps } from 'styled-system/types';
 
 export interface EllipsisTextProps

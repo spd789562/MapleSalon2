@@ -1,4 +1,4 @@
-import { HStack } from 'styled-system/jsx';
+import { HStack } from 'styled-system/jsx/hstack';
 import { LoadableEquipIcon } from '@/components/LoadableEquipIcon';
 
 export interface EquipTitleProps {

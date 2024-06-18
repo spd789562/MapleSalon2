@@ -5,7 +5,7 @@ import {
 } from '@ark-ui/solid';
 import { Index, type JSX, Show, children, splitProps } from 'solid-js';
 import { css, cx } from 'styled-system/css';
-import { splitCssProps } from 'styled-system/jsx';
+import { splitCssProps } from 'styled-system/jsx/is-valid-prop';
 import { type SliderVariantProps, slider } from 'styled-system/recipes/slider';
 import type { JsxStyleProps } from 'styled-system/types';
 

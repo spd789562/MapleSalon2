@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import path from 'node:path';
+import { fileURLToPath, URL } from 'node:url';
 import solid from 'vite-plugin-solid';
 import glsl from 'vite-plugin-glsl';
 
@@ -11,6 +12,12 @@ export default defineConfig(async () => ({
     alias: {
       '@': path.resolve(__dirname, 'src'),
       'styled-system': path.resolve(__dirname, 'styled-system'),
+      'lucide-solid/icons': fileURLToPath(
+        new URL(
+          './node_modules/lucide-solid/dist/source/icons',
+          import.meta.url,
+        ),
+      ),
     },
   },
 
