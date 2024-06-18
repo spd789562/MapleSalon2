@@ -9,11 +9,11 @@ export enum Gender {
 }
 
 export function isBodyId(id: number): boolean {
-  return Math.floor(id / 2000) === 1;
+  return id < 3000 && Math.floor(id / 2000) === 1;
 }
 
 export function isHeadId(id: number): boolean {
-  return Math.floor(id / 12000) === 1;
+  return id < 13000 && Math.floor(id / 12000) === 1;
 }
 
 export function isFaceId(id: number): boolean {
