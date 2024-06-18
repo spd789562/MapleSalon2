@@ -126,14 +126,14 @@ export class CharacterItem implements RenderItemInfo {
     const isSingleHand =
       this.character.handType === CharacterHandType.SingleHand;
     const idIncurrment = isSingleHand ? -1 : 1;
-    const [start, end] = isSingleHand ? [69, 30] : [30, 69];
+    const [start, end] = isSingleHand ? [69, 29] : [30, 70];
     /* single hand weapon usually has higher id */
     for (let id = start; id !== end; id += idIncurrment) {
       const weaponWz = wz[id];
-      if (!weaponWz) {
-        continue;
+      if (weaponWz) {
+        this.loadAction(weaponWz as unknown as WzItem);
+        return;
       }
-      this.loadAction(weaponWz as unknown as WzItem);
     }
   }
 
