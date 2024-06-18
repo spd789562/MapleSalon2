@@ -49,6 +49,11 @@ class ZmapContainer extends Container {
           ? frame.item.vslot
           : this.requireLocks;
 
+      // force Cap using vslot
+      if (frame.item.islot.includes('Cp')) {
+        locks = frame.item.vslot;
+      }
+
       // this logic is from maplestory.js, but why
       if (this.name === 'mailArm') {
         locks = ['Ma'];
@@ -410,6 +415,7 @@ export class Character extends Container {
       }
       return acc;
     }, [] as CharacterItem[]);
+
     if (!orderedItems) {
       return;
     }
