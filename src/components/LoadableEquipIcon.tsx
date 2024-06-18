@@ -8,6 +8,8 @@ import { getIconPath } from '@/utils/itemId';
 export interface LoadableEquipIconProps {
   id: number;
   name?: string;
+  width?: string;
+  height?: string;
 }
 export const LoadableEquipIcon = (props: LoadableEquipIconProps) => {
   const [isLoaded, setIsLoaded] = createSignal(false);
@@ -18,7 +20,12 @@ export const LoadableEquipIcon = (props: LoadableEquipIconProps) => {
 
   return (
     <Skeleton isLoaded={isLoaded()}>
-      <Flex width="32px" height="32px" justify="center" align="center">
+      <Flex
+        width={/* @once */ props.width || '8'}
+        height={/* @once */ props.height || '8'}
+        justify="center"
+        align="center"
+      >
         <img
           src={getIconPath(props.id)}
           alt={props.name || props.id.toString()}

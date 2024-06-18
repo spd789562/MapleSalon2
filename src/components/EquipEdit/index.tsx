@@ -3,15 +3,23 @@ import { useStore } from '@nanostores/solid';
 
 import { $currentItem } from '@/store/character';
 
+import { Box } from 'styled-system/jsx';
+import { EquipTitle } from './EquipTitle';
 import { EquipHsvAdjust } from './EquipHsvAdjust';
 
 export const EquipEdit = () => {
   const item = useStore($currentItem);
 
   return (
-    <div>
-      <p>{item()?.name}</p>
-      <Show when={item()}>{(item) => <EquipHsvAdjust id={item().id} />}</Show>
-    </div>
+    <Box h="48">
+      <Show when={item()}>
+        {(item) => (
+          <>
+            <EquipTitle id={item().id} name={item().name} />
+            <EquipHsvAdjust id={item().id} />
+          </>
+        )}
+      </Show>
+    </Box>
   );
 };

@@ -50,14 +50,14 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
         <label for="saturation">Saturation:</label>
         <Slider
           id="saturation"
-          min={0}
+          min={-100}
           max={100}
           step={1}
           value={[itemChange()?.item.saturation || 0]}
           onValueChange={(e) => handleSaturationChange(e.value[0])}
           class={css({
             '--ui-slider-track-background':
-              'linear-gradient(90deg, #666, #fff, #f00)',
+              'linear-gradient(90deg, #999, #f00)',
             '--ui-slider-range-background': 'transparent',
           })}
         />
@@ -66,7 +66,7 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
         <label for="brightness">Brightness:</label>
         <Slider
           id="brightness"
-          min={0}
+          min={-100}
           max={100}
           step={1}
           value={[itemChange()?.item.brightness || 0]}
