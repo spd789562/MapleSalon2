@@ -22,6 +22,8 @@ export function getItemFolderFromId(id: number): string {
     case 102:
     case 103:
       return 'Accessory/';
+    case 104:
+      return 'Coat/';
     case 105:
       return 'Longcoat/';
     case 106:

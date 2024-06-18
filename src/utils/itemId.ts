@@ -123,6 +123,8 @@ export function getSubCategory(id: number): EquipSubCategory | null {
       return 'Eye Decoration';
     case 103:
       return 'Earrings';
+    case 104:
+      return 'Coat';
     case 105:
       return 'Overall';
     case 106:
