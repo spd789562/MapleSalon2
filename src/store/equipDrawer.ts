@@ -2,10 +2,17 @@ import { atom, map, computed } from 'nanostores';
 
 import { $equipmentStrings } from './string';
 
-import { type EquipCategory, AllCategory } from '@/const/equipments';
+import { EquipCategory, AllCategory } from '@/const/equipments';
 import { HairColor } from '@/const/hair';
 import { FaceColor } from '@/const/face';
 
+export enum EquipTab {
+  Equip = 'equip',
+  Hair = 'hair',
+  Face = 'face',
+}
+
+export const $equipmentDrawerEquipTab = atom<EquipTab>(EquipTab.Equip);
 export const $equipmentDrawerEquipCategory = atom<
   EquipCategory | typeof AllCategory
 >(AllCategory);
@@ -17,8 +24,25 @@ export const $equipmentDrawerSearch = map<
 >({});
 
 /* computed */
+export const $currentEquipmentDrawerCategory = computed(
+  [$equipmentDrawerEquipCategory, $equipmentDrawerEquipTab],
+  (category, tab) => {
+    if (tab === EquipTab.Hair) {
+      return EquipCategory.Hair;
+    }
+    if (tab === EquipTab.Face) {
+      return EquipCategory.Face;
+    }
+    return category;
+  },
+);
+export const $currentEquipmentDrawerSearch = computed(
+  [$currentEquipmentDrawerCategory, $equipmentDrawerSearch],
+  (category, search) => search[category] || '',
+);
+
 export const $categoryFilteredString = computed(
-  [$equipmentDrawerEquipCategory, $equipmentStrings],
+  [$currentEquipmentDrawerCategory, $equipmentStrings],
   (category, strings) => {
     return category !== AllCategory
       ? strings.filter((item) => item.category === category)
@@ -26,14 +50,8 @@ export const $categoryFilteredString = computed(
   },
 );
 export const $equipmentDrawerEquipFilteredString = computed(
-  [
-    $equipmentDrawerEquipCategory,
-    $categoryFilteredString,
-    $equipmentDrawerSearch,
-  ],
-  (category, strings, searchString) => {
-    const searchKey = searchString[category];
-
+  [$categoryFilteredString, $currentEquipmentDrawerSearch],
+  (strings, searchKey) => {
     if (searchKey) {
       return strings.filter(
         (item) =>
