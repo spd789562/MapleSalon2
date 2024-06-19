@@ -71,6 +71,13 @@ class ZmapContainer extends Container {
   }
 }
 
+export interface CharacterAttributes {
+  action: CharacterAction;
+  expression: CharacterExpressions;
+  earType: CharacterEarType;
+  handType: CharacterHandType;
+}
+
 export class Character extends Container {
   idItems = new Map<number, CharacterItem>();
   actionAnchers = new Map<CharacterAction, Map<AncherName, Vec2>[]>();
@@ -118,33 +125,8 @@ export class Character extends Container {
   set action(action: CharacterAction) {
     this.#_action = action;
 
-    const faceLayer = this.zmapLayers.get('face');
-
-    let isChangeHand = false;
-
-    if (faceLayer) {
-      if (isBackAction(this.action)) {
-        faceLayer.visible = false;
-      } else {
-        faceLayer.visible = true;
-      }
-    }
-
-    if (
-      (this.action === CharacterAction.Walk1 ||
-        this.action === CharacterAction.Stand1) &&
-      this.handType === CharacterHandType.DoubleHand
-    ) {
-      isChangeHand = true;
-      this.handType = CharacterHandType.SingleHand;
-    } else if (
-      (this.action === CharacterAction.Walk2 ||
-        this.action === CharacterAction.Stand2) &&
-      this.handType === CharacterHandType.SingleHand
-    ) {
-      isChangeHand = true;
-      this.handType = CharacterHandType.DoubleHand;
-    }
+    this.updateFaceVisibilityByAction();
+    this.updateHandTypeByAction();
 
     this.loadItems();
   }
@@ -159,6 +141,26 @@ export class Character extends Container {
   set handType(handType: CharacterHandType) {
     this.#_handType = handType;
 
+    this.updateActionByHandType();
+
+    this.loadItems();
+  }
+  batchUpdateAttribute(attributes: Partial<CharacterAttributes>) {
+    if (attributes.action) {
+      this.#_action = attributes.action;
+      this.updateFaceVisibilityByAction();
+      this.updateHandTypeByAction();
+    }
+    if (attributes.expression) {
+      this.#_expression = attributes.expression;
+    }
+    if (attributes.earType) {
+      this.#_earType = attributes.earType;
+    }
+    if (attributes.handType) {
+      this.#_handType = attributes.handType;
+      this.updateActionByHandType();
+    }
     this.loadItems();
   }
 
@@ -261,6 +263,7 @@ export class Character extends Container {
 
   reset() {
     this.isBounce = false;
+    this.isLoading = false;
     this.currentTicker && Ticker.shared.remove(this.currentTicker);
     this.clearnContainerChild();
   }
@@ -445,6 +448,47 @@ export class Character extends Container {
           item.tryBuildAncher(action, ancher || []),
         );
       }
+    }
+  }
+
+  private updateFaceVisibilityByAction() {
+    const faceLayer = this.zmapLayers.get('face');
+    if (faceLayer) {
+      if (isBackAction(this.action)) {
+        faceLayer.visible = false;
+      } else {
+        faceLayer.visible = true;
+      }
+    }
+  }
+  private updateActionByHandType() {
+    if (this.#_handType === CharacterHandType.SingleHand) {
+      if (this.action === CharacterAction.Walk2) {
+        this.#_action = CharacterAction.Walk1;
+      } else if (this.action === CharacterAction.Stand2) {
+        this.#_action = CharacterAction.Stand1;
+      }
+    } else if (this.#_handType === CharacterHandType.DoubleHand) {
+      if (this.action === CharacterAction.Walk1) {
+        this.#_action = CharacterAction.Walk2;
+      } else if (this.action === CharacterAction.Stand1) {
+        this.#_action = CharacterAction.Stand2;
+      }
+    }
+  }
+  private updateHandTypeByAction() {
+    if (
+      (this.action === CharacterAction.Walk1 ||
+        this.action === CharacterAction.Stand1) &&
+      this.#_handType === CharacterHandType.DoubleHand
+    ) {
+      this.#_handType = CharacterHandType.SingleHand;
+    } else if (
+      (this.action === CharacterAction.Walk2 ||
+        this.action === CharacterAction.Stand2) &&
+      this.#_handType === CharacterHandType.SingleHand
+    ) {
+      this.#_handType = CharacterHandType.DoubleHand;
     }
   }
 }
