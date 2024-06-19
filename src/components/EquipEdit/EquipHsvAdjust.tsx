@@ -1,11 +1,11 @@
 import { Show, createMemo } from 'solid-js';
-import { useStore } from '@nanostores/solid';
 import { css } from 'styled-system/css';
 
 import {
   createGetItemChangeById,
   $currentItemChanges,
 } from '@/store/character';
+import { useDynamicPureStore } from '@/store';
 
 import { Slider } from '@/components/ui/slider';
 
@@ -14,7 +14,7 @@ export interface EquipHsvAdjustProps {
 }
 export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
   const getItemChangeById = createMemo(() => createGetItemChangeById(props.id));
-  const itemChange = useStore(getItemChangeById());
+  const itemChange = useDynamicPureStore(getItemChangeById);
 
   const createItemChange =
     (property: 'hue' | 'saturation' | 'brightness') => (value: number) => {

@@ -5,7 +5,10 @@ import { getSubCategory } from '@/utils/itemId';
 import type { EquipSubCategory } from '@/const/equipments';
 import type { ItemInfo } from '@/renderer/character/const/data';
 
-export type CharacterItems = Record<EquipSubCategory, ItemInfo>;
+export type CharacterItems = Record<
+  EquipSubCategory,
+  ItemInfo & Partial<{ isDeleted: boolean }>
+>;
 
 export interface CharacterData extends Record<string, unknown> {
   items: Partial<CharacterItems>;
@@ -103,7 +106,7 @@ export const $currentItemChanges = deepMap<
 export const $previewCharacter = computed(
   [$currentCharacter, $currentItemChanges],
   (ch, changes) => {
-    const items = { ...ch.items, ...changes };
+    const items = getUpdateItems(ch.items, changes);
     return {
       ...ch,
       items,
@@ -111,9 +114,41 @@ export const $previewCharacter = computed(
   },
 );
 
+export function getUpdateItems(
+  before: Partial<CharacterItems>,
+  changes: Partial<CharacterItems>,
+): Partial<CharacterItems> {
+  const result: Partial<CharacterItems> = {};
+  /* add not delete item to result  */
+  for (const key in before) {
+    const k = key as EquipSubCategory;
+    const changeItem = changes[k];
+    const isNotDeleted = !changes[k]?.isDeleted;
+    if (isNotDeleted) {
+      if (changeItem) {
+        result[k] = {
+          ...before[k],
+          ...changes[k],
+        } as ItemInfo & Partial<{ isDeleted: boolean }>;
+      } else {
+        result[k] = before[k];
+      }
+    }
+  }
+  /* add new item to result  */
+  for (const key in changes) {
+    const k = key as EquipSubCategory;
+    const isNewItem = !before[k];
+    if (isNewItem) {
+      result[k] = changes[k] as ItemInfo;
+    }
+  }
+  return result;
+}
+
 export function createGetItemChangeById(id: number) {
+  const category = getSubCategory(id);
   return computed($currentItemChanges, (changes) => {
-    const category = getSubCategory(id);
     if (!category) {
       return null;
     }
@@ -122,14 +157,6 @@ export function createGetItemChangeById(id: number) {
 }
 
 export function applyCharacterChanges() {
-  const changes = $currentItemChanges.get();
-  const currentCharacter = $currentCharacter.get();
-  $currentCharacter.set({
-    ...currentCharacter,
-    items: {
-      ...currentCharacter.items,
-      ...changes,
-    },
-  });
+  $currentCharacter.set($previewCharacter.get());
   $currentItemChanges.set({});
 }
