@@ -2,7 +2,8 @@ import { defineConfig } from '@pandacss/dev';
 import { createPreset } from '@park-ui/panda-preset';
 
 /* custom recripe */
-import { cssTooltipRecripe } from './src/recripes/cssTooltip.recripe';
+import { keyframes } from './src/recipes/keyframes';
+import { cssTooltipRecipe } from './src/recipes/cssTooltip.recipe';
 
 export default defineConfig({
   // Whether to use css reset
@@ -30,8 +31,9 @@ export default defineConfig({
   theme: {
     extend: {
       recipes: {
-        cssTooltip: cssTooltipRecripe,
+        cssTooltip: cssTooltipRecipe,
       },
+      keyframes: keyframes,
     },
   },
 

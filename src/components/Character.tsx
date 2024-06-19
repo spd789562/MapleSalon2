@@ -130,12 +130,18 @@ export const CharacterScene = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: 'gray.12',
-            opacity: 0.5,
-            fontSize: '4rem',
+            backgroundColor: 'bg.muted',
+            opacity: 0.75,
           })}
         >
-          <LoaderCircle />
+          <div
+            class={css({
+              animation: 'rotate infinite 1s linear',
+              color: 'fg.muted',
+            })}
+          >
+            <LoaderCircle size="48px" />
+          </div>
         </div>
       </Show>
     </div>
