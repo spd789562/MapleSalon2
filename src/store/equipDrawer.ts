@@ -3,8 +3,13 @@ import { atom, map, computed } from 'nanostores';
 import { $equipmentStrings } from './string';
 
 import { getCategoryBySubCategory, getSubCategory } from '@/utils/itemId';
+import { getFaceColorId, getHairColorId } from '@/utils/mixDye';
 
-import { AllCategory, type EquipSubCategory } from '@/const/equipments';
+import {
+  AllCategory,
+  EquipCategory,
+  type EquipSubCategory,
+} from '@/const/equipments';
 import { HairColor } from '@/const/hair';
 import { FaceColor } from '@/const/face';
 
@@ -56,6 +61,24 @@ export const $categoryFilteredString = computed(
     if (category === AllCategory) {
       return strings;
     }
+    if (category === 'Hair') {
+      return strings.filter((item) => {
+        if (item.category === EquipCategory.Hair) {
+          return getHairColorId(item.id).toString() === HairColor.Black;
+        }
+        return false;
+      });
+    }
+
+    if (category === 'Face') {
+      return strings.filter((item) => {
+        if (item.category === EquipCategory.Face) {
+          return getFaceColorId(item.id).toString() === FaceColor.Black;
+        }
+        return false;
+      });
+    }
+
     const mainCategory = getCategoryBySubCategory(category);
     return strings.filter((item) => {
       if (item.category === mainCategory) {
