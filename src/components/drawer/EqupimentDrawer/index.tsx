@@ -13,6 +13,7 @@ import {
   Body,
 } from '@/components/ui/drawer';
 import { EquipEdit } from '@/components/EquipEdit';
+import { EquipTabs } from './EquipTabs';
 import { EquipSearchInput } from './EqupiSearchInput';
 import { EquipList } from './EquipList';
 
@@ -48,6 +49,7 @@ export const EqupimentDrawer = () => {
               </IconButton>
             </Header>
             <Body>
+              <EquipTabs />
               <EquipSearchInput />
               <EquipList />
             </Body>

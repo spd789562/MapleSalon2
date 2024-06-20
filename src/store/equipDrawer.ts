@@ -10,6 +10,7 @@ export enum EquipTab {
   Equip = 'equip',
   Hair = 'hair',
   Face = 'face',
+  History = 'history',
 }
 
 export const $equipmentDrawerEquipTab = atom<EquipTab>(EquipTab.Equip);
