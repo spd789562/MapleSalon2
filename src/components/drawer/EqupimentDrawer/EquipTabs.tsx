@@ -3,7 +3,24 @@ import { useStore } from '@nanostores/solid';
 
 import { $equipmentDrawerEquipTab, EquipTab } from '@/store/equipDrawer';
 
-import * as SegmentGroup from '@/components/ui/segmentGroup';
+import {
+  Root,
+  Indicator,
+  Item,
+  ItemText,
+  ItemControl,
+  ItemHiddenInput,
+  type ValueChangeDetails,
+} from '@/components/ui/segmentGroup';
+
+const SegmentGroup = {
+  Root,
+  Indicator,
+  Item,
+  ItemText,
+  ItemControl,
+  ItemHiddenInput,
+};
 
 const options = [
   {
@@ -27,7 +44,7 @@ const options = [
 export const EquipTabs = () => {
   const equipTab = useStore($equipmentDrawerEquipTab);
 
-  function handleChange(value: SegmentGroup.ValueChangeDetails) {
+  function handleChange(value: ValueChangeDetails) {
     $equipmentDrawerEquipTab.set(value.value as EquipTab);
   }
 
@@ -36,9 +53,6 @@ export const EquipTabs = () => {
       value={equipTab()}
       onValueChange={handleChange}
       orientation="horizontal"
-      mt={-2}
-      mb={2}
-      mx={-2}
     >
       <Index each={options}>
         {(option) => (

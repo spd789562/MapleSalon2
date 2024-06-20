@@ -1,61 +1,34 @@
-import { Portal } from 'solid-js/web';
-import { useStore } from '@nanostores/solid';
-
-import { $equpimentDrawerOpen } from '@/store/trigger';
-
-import CloseIcon from 'lucide-solid/icons/x';
-import { IconButton } from '@/components/ui/icon-button';
-import {
-  Root,
-  Positioner,
-  Content,
-  Header,
-  Body,
-} from '@/components/ui/drawer';
+import { Grid } from 'styled-system/jsx/grid';
+import { EquipDrawer } from './EquipDrawer';
 import { EquipEdit } from '@/components/EquipEdit';
 import { EquipTabs } from './EquipTabs';
 import { EquipSearchInput } from './EqupiSearchInput';
 import { EquipList } from './EquipList';
+import { CategorySelectionDialog } from './CategorySelectionDialog';
+import {
+  CategorySelection,
+  CategorySelectionToggle,
+} from './CategorySelection';
 
 export const EqupimentDrawer = () => {
-  const isOpen = useStore($equpimentDrawerOpen);
-
-  function handleClose(_: unknown) {
-    $equpimentDrawerOpen.set(false);
-  }
-
   return (
-    <Root
-      open={isOpen()}
-      modal={false}
-      closeOnInteractOutside={false}
-      trapFocus={false}
-      onEscapeKeyDown={handleClose}
-      lazyMount={true}
-    >
-      <Portal>
-        <Positioner>
-          <Content>
-            <Header>
-              <EquipEdit />
-              <IconButton
-                variant="ghost"
-                position="absolute"
-                top="3"
-                right="4"
-                onClick={handleClose}
-              >
-                <CloseIcon />
-              </IconButton>
-            </Header>
-            <Body>
-              <EquipTabs />
+    <EquipDrawer
+      header={<EquipEdit />}
+      body={
+        <Grid gridTemplateRows="auto 1fr" height="[100%]">
+          <EquipTabs />
+          <Grid position="relative" overflow="auto" gridTemplateRows="auto 1fr">
+            <Grid gridTemplateColumns="1fr auto">
+              <CategorySelectionToggle />
               <EquipSearchInput />
-              <EquipList />
-            </Body>
-          </Content>
-        </Positioner>
-      </Portal>
-    </Root>
+            </Grid>
+            <EquipList />
+            <CategorySelectionDialog>
+              <CategorySelection />
+            </CategorySelectionDialog>
+          </Grid>
+        </Grid>
+      }
+    />
   );
 };

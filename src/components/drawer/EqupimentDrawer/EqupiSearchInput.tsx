@@ -18,10 +18,10 @@ export const EquipSearchInput = () => {
 
   return (
     <Input
-      size="sm"
       placeholder="Search..."
       value={search().All}
       onInput={(e) => handleSearch(e.target.value)}
+      minWidth={6}
     />
   );
 };
