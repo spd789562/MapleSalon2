@@ -1,4 +1,4 @@
-import { For, createMemo, onMount, type JSX, Show } from 'solid-js';
+import { For, createMemo, type JSX, Show } from 'solid-js';
 
 import { createVirtualizer } from '@tanstack/solid-virtual';
 
@@ -29,9 +29,10 @@ export function RowVirtualizer<Item>(props: RowVirtualizerProps<Item>) {
     },
     getScrollElement: () => parentRef,
     estimateSize: () => defaultItemHeight,
+    overscan: 3,
   });
 
-  const items = virtualizer.getVirtualItems();
+  // const items = virtualizer.getVirtualItems();
 
   return (
     <div ref={parentRef} style={{ height: '100%', overflow: 'auto' }}>
@@ -42,48 +43,39 @@ export function RowVirtualizer<Item>(props: RowVirtualizerProps<Item>) {
           position: 'relative',
         }}
       >
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            transform: `translateY(${items[0]?.start ?? 0}px)`,
+        <For each={virtualizer.getVirtualItems()}>
+          {(virtualRow) => {
+            return (
+              <Flex
+                data-index={virtualRow.index}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: `${virtualRow.size}px`,
+                  transform: `translateY(${virtualRow.start}px)`,
+                }}
+              >
+                <For each={timesArray}>
+                  {(_, index) => {
+                    const data = () =>
+                      props.data[
+                        virtualRow.index * props.columnCount + index()
+                      ];
+                    return (
+                      <Flex justify="center" flex={1}>
+                        <Show when={data()}>
+                          {props.renderItem(data(), index())}
+                        </Show>
+                      </Flex>
+                    );
+                  }}
+                </For>
+              </Flex>
+            );
           }}
-        >
-          <For each={items}>
-            {(virtualRow) => {
-              let ref!: HTMLDivElement;
-              onMount(() => virtualizer.measureElement(ref));
-
-              return (
-                <Flex ref={ref} data-index={virtualRow.index}>
-                  <For each={timesArray}>
-                    {(_, index) => {
-                      const data = () =>
-                        props.data[
-                          virtualRow.index * props.columnCount + index()
-                        ];
-                      return (
-                        <Flex
-                          justify="center"
-                          flex={1}
-                          style={{
-                            'min-height': `${defaultItemHeight}px`,
-                          }}
-                        >
-                          <Show when={data()}>
-                            {props.renderItem(data(), index())}
-                          </Show>
-                        </Flex>
-                      );
-                    }}
-                  </For>
-                </Flex>
-              );
-            }}
-          </For>
-        </div>
+        </For>
       </div>
     </div>
   );
