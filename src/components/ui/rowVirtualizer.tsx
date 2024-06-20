@@ -1,4 +1,4 @@
-import { For, createMemo, type JSX, Show } from 'solid-js';
+import { For, createMemo, type JSX, Show, createEffect } from 'solid-js';
 
 import { createVirtualizer } from '@tanstack/solid-virtual';
 
@@ -30,6 +30,11 @@ export function RowVirtualizer<Item>(props: RowVirtualizerProps<Item>) {
     getScrollElement: () => parentRef,
     estimateSize: () => defaultItemHeight,
     overscan: 3,
+  });
+
+  createEffect(() => {
+    const _ = count();
+    virtualizer.scrollToOffset(0);
   });
 
   // const items = virtualizer.getVirtualItems();
