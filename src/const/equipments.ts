@@ -28,6 +28,7 @@ export enum EquipCategory {
 }
 
 export type EquipSubCategory =
+  | 'Skin'
   | 'Head'
   | 'Body'
   | 'Cap'

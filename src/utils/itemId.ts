@@ -1,6 +1,6 @@
 import { $apiHost } from '@/store/const';
 import { getItemFolderFromId } from './itemFolder';
-import type { EquipSubCategory } from '@/const/equipments';
+import { EquipCategory, type EquipSubCategory } from '@/const/equipments';
 
 export enum Gender {
   Male = 0,
@@ -98,11 +98,8 @@ export function getGender(id: number): Gender {
 }
 
 export function getSubCategory(id: number): EquipSubCategory | null {
-  if (isBodyId(id)) {
-    return 'Body';
-  }
-  if (isHeadId(id)) {
-    return 'Head';
+  if (isBodyId(id) || isHeadId(id)) {
+    return 'Skin';
   }
 
   const partOfId = Math.floor(id / 10000);
@@ -138,13 +135,50 @@ export function getSubCategory(id: number): EquipSubCategory | null {
     case 110:
       return 'Cape';
     case 170:
-      return 'Weapon';
+      return 'CashWeapon';
   }
 
   if (partOfId >= 121 && partOfId < 170) {
     return 'Weapon';
   }
 
+  return null;
+}
+
+export function getCategoryBySubCategory(
+  subCategory: EquipSubCategory,
+): EquipCategory | null {
+  switch (subCategory) {
+    case 'Skin':
+      return EquipCategory.Skin;
+    case 'Face':
+      return EquipCategory.Face;
+    case 'Hair':
+      return EquipCategory.Hair;
+    case 'Cap':
+      return EquipCategory.Cap;
+    case 'Face Accessory':
+    case 'Eye Decoration':
+    case 'Earrings':
+      return EquipCategory.Accessory;
+    case 'Coat':
+      return EquipCategory.Coat;
+    case 'Overall':
+      return EquipCategory.Longcoat;
+    case 'Pants':
+      return EquipCategory.Pants;
+    case 'Shoes':
+      return EquipCategory.Shoes;
+    case 'Glove':
+      return EquipCategory.Glove;
+    case 'Shield':
+      return EquipCategory.Shield;
+    case 'Cape':
+      return EquipCategory.Cape;
+    case 'Weapon':
+    case 'CashWeapon':
+      return EquipCategory.Weapon;
+  }
   return null;
 }
 
