@@ -1,4 +1,4 @@
-import { Show } from 'solid-js';
+import { Show, Switch, Match } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 
 import { $currentItem } from '@/store/character';
@@ -6,6 +6,8 @@ import { $currentItem } from '@/store/character';
 import { Box } from 'styled-system/jsx/box';
 import { EquipTitle } from './EquipTitle';
 import { EquipHsvAdjust } from './EquipHsvAdjust';
+
+import { getSubCategory } from '@/utils/itemId';
 
 export const EquipEdit = () => {
   const item = useStore($currentItem);
@@ -16,7 +18,14 @@ export const EquipEdit = () => {
         {(item) => (
           <>
             <EquipTitle id={item().id} name={item().name} />
-            <EquipHsvAdjust id={item().id} />
+            <Switch fallback={<EquipHsvAdjust id={item().id} />}>
+              <Match when={getSubCategory(item().id) === 'Hair'}>
+                <div>1</div>
+              </Match>
+              <Match when={getSubCategory(item().id) === 'Face'}>
+                <div>1</div>
+              </Match>
+            </Switch>
           </>
         )}
       </Show>
