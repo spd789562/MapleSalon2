@@ -8,6 +8,14 @@ export enum Gender {
   Share = 2,
 }
 
+export function getBodyId(id: number): number {
+  return id % 10000;
+}
+
+export function getHeadIdFromBodyId(skinId: number): number {
+  return skinId + 10000;
+}
+
 export function isBodyId(id: number): boolean {
   return id < 3000 && Math.floor(id / 2000) === 1;
 }

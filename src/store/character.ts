@@ -1,6 +1,6 @@
 import { atom, deepMap, computed, onSet } from 'nanostores';
 
-import { getSubCategory } from '@/utils/itemId';
+import { getSubCategory, getBodyId, getHeadIdFromBodyId } from '@/utils/itemId';
 
 import type { EquipSubCategory } from '@/const/equipments';
 import type { ItemInfo } from '@/renderer/character/const/data';
@@ -93,6 +93,16 @@ onSet($currentItem, ({ newValue, abort }) => {
   }
 
   category = getCharacterSubCategory(category);
+
+  if (category === 'Skin') {
+    const bodyId = getBodyId(newValue.id);
+    const headId = getHeadIdFromBodyId(bodyId);
+
+    $currentItemChanges.setKey('Body.id', bodyId);
+    $currentItemChanges.setKey('Head.id', headId);
+
+    return abort();
+  }
 
   if ($currentItemChanges.get()[category]) {
     $currentItemChanges.setKey(`${category}.id`, newValue.id);
