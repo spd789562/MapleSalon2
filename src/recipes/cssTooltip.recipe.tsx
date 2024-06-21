@@ -20,6 +20,7 @@ export const cssTooltipRecipe = defineRecipe({
       textStyle: 'xs',
       minWidth: '16',
       opacity: 0,
+      pointerEvents: 'none',
       transform: 'translate(-50%, -50%)',
       transitionProperty: 'opacity, transform',
       transitionDuration: '0.2s',

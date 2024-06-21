@@ -49,7 +49,7 @@ export function RowVirtualizer<Item>(props: RowVirtualizerProps<Item>) {
         }}
       >
         <For each={virtualizer.getVirtualItems()}>
-          {(virtualRow) => {
+          {(virtualRow, i) => {
             return (
               <Flex
                 data-index={virtualRow.index}
@@ -60,6 +60,7 @@ export function RowVirtualizer<Item>(props: RowVirtualizerProps<Item>) {
                   width: '100%',
                   height: `${virtualRow.size}px`,
                   transform: `translateY(${virtualRow.start}px)`,
+                  'z-index': virtualizer.getVirtualItems().length - i(),
                 }}
               >
                 <For each={timesArray}>
