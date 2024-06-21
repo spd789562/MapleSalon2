@@ -87,10 +87,12 @@ onSet($currentItem, ({ newValue, abort }) => {
   if (!newValue) {
     return abort();
   }
-  const category = getSubCategory(newValue.id);
+  let category = getSubCategory(newValue.id);
   if (!category) {
     return abort();
   }
+
+  category = getCharacterSubCategory(category);
 
   if ($currentItemChanges.get()[category]) {
     $currentItemChanges.setKey(`${category}.id`, newValue.id);
@@ -113,6 +115,13 @@ export const $previewCharacter = computed(
     };
   },
 );
+
+export function getCharacterSubCategory(category: EquipSubCategory) {
+  if (category === 'CashWeapon') {
+    return 'Weapon';
+  }
+  return category;
+}
 
 export function getUpdateItems(
   before: Partial<CharacterItems>,
@@ -147,7 +156,8 @@ export function getUpdateItems(
 }
 
 export function createGetItemChangeById(id: number) {
-  const category = getSubCategory(id);
+  const c = getSubCategory(id);
+  const category = c && getCharacterSubCategory(c);
   return computed($currentItemChanges, (changes) => {
     if (!category) {
       return null;

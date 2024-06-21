@@ -4,6 +4,7 @@ import { css } from 'styled-system/css';
 import {
   createGetItemChangeById,
   $currentItemChanges,
+  getCharacterSubCategory,
 } from '@/store/character';
 import { useDynamicPureStore } from '@/store';
 
@@ -20,7 +21,10 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
     (property: 'hue' | 'saturation' | 'brightness') => (value: number) => {
       const category = itemChange()?.category;
       if (category) {
-        $currentItemChanges.setKey(`${category}.${property}`, value);
+        $currentItemChanges.setKey(
+          `${getCharacterSubCategory(category)}.${property}`,
+          value,
+        );
       }
     };
 
