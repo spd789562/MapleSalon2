@@ -9,7 +9,8 @@
     "build": "vite build",
     "serve": "vite preview",
     "tauri": "tauri",
-    "prepare": "panda codegen"
+    "prepare": "panda codegen",
+    "poststart": "panda codegen"
   },
   "license": "MIT",
   "dependencies": {
@@ -20,6 +21,7 @@
     "@tauri-apps/plugin-dialog": "^2.0.0-beta.3",
     "@tauri-apps/plugin-store": "^2.0.0-beta.3",
     "lucide-solid": "^0.394.0",
+    "mingcute_icon": "^2.9.4",
     "nanostores": "^0.10.3",
     "pixi-filters": "^6.0.3",
     "pixi.js": "^8.1.5",
@@ -34,6 +36,7 @@
     "typescript": "^5.0.2",
     "vite": "^5.0.0",
     "vite-plugin-glsl": "^1.3.0",
-    "vite-plugin-solid": "^2.8.0"
+    "vite-plugin-solid": "^2.8.0",
+    "vite-plugin-solid-svg": "^0.8.1"
   }
 }

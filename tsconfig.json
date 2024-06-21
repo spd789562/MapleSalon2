@@ -26,7 +26,9 @@
       "@/*": ["./src/*"],
     },
     "types": [
-      "vite-plugin-glsl/ext"
+      "vite-plugin-glsl/ext",
+      "vite-plugin-solid-svg/types-component-solid",
+      "vite/client"
     ]
   },
   "include": ["src", "styled-system"],

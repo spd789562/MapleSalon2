@@ -3,10 +3,32 @@ import path from 'node:path';
 import { fileURLToPath, URL } from 'node:url';
 import solid from 'vite-plugin-solid';
 import glsl from 'vite-plugin-glsl';
+import solidSvg from 'vite-plugin-solid-svg';
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  plugins: [solid(), glsl()],
+  plugins: [
+    solid(),
+    glsl(),
+    solidSvg({
+      defaultAsComponent: true,
+      svgo: {
+        enabled: true,
+        svgoConfig: {
+          plugins: [
+            {
+              name: 'convertColors',
+              params: {
+                currentColor: true,
+              },
+            },
+            'removeDimensions',
+            // 'preset-default',
+          ],
+        },
+      },
+    }),
+  ],
 
   resolve: {
     alias: {
