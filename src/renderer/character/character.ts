@@ -1,3 +1,4 @@
+import { createUniqueId } from 'solid-js';
 import { type Application, Container, Ticker, EventEmitter } from 'pixi.js';
 
 import type { ItemInfo, AncherName, Vec2, PieceSlot } from './const/data';
@@ -86,6 +87,7 @@ export class Character extends Container {
   #_expression: CharacterExpressions = CharacterExpressions.Default;
   #_earType = CharacterEarType.HumanEar;
   #_handType = CharacterHandType.DoubleHand;
+  #_renderId = '';
 
   zmapLayers = new Map<PieceSlot, ZmapContainer>();
   locks = new Map<PieceSlot, number>();
@@ -390,6 +392,14 @@ export class Character extends Container {
   }
 
   async loadItems() {
+    const renderId = createUniqueId();
+    this.#_renderId = renderId;
+
+    if (this.isLoading) {
+      clearTimeout(this.loadFlashTimer);
+      this.loadEvent.emit('loading');
+    }
+
     this.isLoading = true;
     // only show loading after 100ms
     this.loadFlashTimer = setTimeout(() => {
@@ -405,6 +415,11 @@ export class Character extends Container {
         await item.prepareActionResource(this.action);
       }
     }
+
+    if (this.#_renderId !== renderId) {
+      return;
+    }
+
     const itemCount = this.idItems.size;
     // try to build ancher but up to 2 times of item count
     for (let i = 0; i < itemCount * 4; i++) {
