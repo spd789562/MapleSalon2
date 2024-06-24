@@ -52,7 +52,7 @@ export const $currentEquipmentDrawerCategory = computed(
 );
 export const $currentEquipmentDrawerSearch = computed(
   [$currentEquipmentDrawerCategory, $equipmentDrawerSearch],
-  (category, search) => search[category] || '',
+  (category, search) => (search[category] as EquipCategorySelections) || '',
 );
 
 export const $categoryFilteredString = computed(

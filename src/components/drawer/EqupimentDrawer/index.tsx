@@ -18,7 +18,7 @@ export const EqupimentDrawer = () => {
         <Grid gridTemplateRows="auto 1fr" height="[100%]">
           <EquipTabs />
           <Grid position="relative" overflow="auto" gridTemplateRows="auto 1fr">
-            <Grid gridTemplateColumns="1fr auto">
+            <Grid gridTemplateColumns="1fr auto" p={1}>
               <CategorySelectionToggle />
               <EquipSearchInput />
             </Grid>

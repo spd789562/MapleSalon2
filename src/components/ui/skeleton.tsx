@@ -1,7 +1,10 @@
 import type { Assign, HTMLArkProps } from '@ark-ui/solid';
 import { Show, splitProps } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
-import { type SkeletonVariantProps, skeleton } from 'styled-system/recipes';
+import {
+  type SkeletonVariantProps,
+  skeleton,
+} from 'styled-system/recipes/skeleton';
 import type { JsxStyleProps } from 'styled-system/types';
 
 const StyledSkeleton = styled('div', skeleton);

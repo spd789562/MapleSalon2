@@ -1,6 +1,6 @@
 import { type Assign, type HTMLArkProps, ark } from '@ark-ui/solid';
 import { styled } from 'styled-system/jsx/factory';
-import { type InputVariantProps, input } from 'styled-system/recipes';
+import { type InputVariantProps, input } from 'styled-system/recipes/input';
 import type { JsxStyleProps } from 'styled-system/types';
 
 export interface InputProps

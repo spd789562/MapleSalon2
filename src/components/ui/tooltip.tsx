@@ -1,5 +1,8 @@
 import { type Assign, Tooltip } from '@ark-ui/solid';
-import { type TooltipVariantProps, tooltip } from 'styled-system/recipes';
+import {
+  type TooltipVariantProps,
+  tooltip,
+} from 'styled-system/recipes/tooltip';
 import type { JsxStyleProps } from 'styled-system/types';
 import { createStyleContext } from '@/utils/create-style-context';
 

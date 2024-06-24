@@ -35,6 +35,8 @@ const contentStyle = css({
   mx: 'auto',
   p: 4,
   minWidth: 'unset',
+  borderWidth: '2px',
+  borderColor: 'accent.4',
 });
 
 interface CategorySelectionDialogProps {
@@ -63,8 +65,8 @@ export const CategorySelectionDialog = (
     >
       <Dialog.Backdrop
         class={overlayStyle}
-        mx="-5"
-        width="[calc(100% + var(--spacing-10))]"
+        mx="-2"
+        width="[calc(100% + var(--spacing-2))]"
       />
       <Dialog.Positioner class={overlayStyle} mx="auto" alignItems="flex-start">
         <Dialog.Content class={contentStyle}>
