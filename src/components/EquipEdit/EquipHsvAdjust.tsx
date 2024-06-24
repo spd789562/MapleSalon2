@@ -8,7 +8,8 @@ import {
 } from '@/store/character';
 import { useDynamicPureStore } from '@/store';
 
-import { Slider } from '@/components/ui/slider';
+import { VStack } from 'styled-system/jsx/vstack';
+import { EquipHsvSlider } from './EquipHsvSlider';
 
 export interface EquipHsvAdjustProps {
   id: number;
@@ -34,54 +35,41 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
 
   return (
     <Show when={itemChange()}>
-      <div>
-        <label for="hue">Hue:</label>
-        <Slider
-          id="hue"
-          min={0}
-          max={360}
-          step={1}
-          value={[itemChange()?.item.hue || 0]}
-          onValueChange={(e) => handleHueChange(e.value[0])}
+      <VStack>
+        <EquipHsvSlider
+          property={/* @once */ 'hue'}
+          value={itemChange()?.item.hue || 0}
+          onValueChange={handleHueChange}
           class={css({
             '--ui-slider-track-background':
               'linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)',
             '--ui-slider-range-background': 'trasparent',
+            w: 'full',
           })}
         />
-      </div>
-      <div>
-        <label for="saturation">Saturation:</label>
-        <Slider
-          id="saturation"
-          min={-100}
-          max={100}
-          step={1}
-          value={[itemChange()?.item.saturation || 0]}
-          onValueChange={(e) => handleSaturationChange(e.value[0])}
+        <EquipHsvSlider
+          property={/* @once */ 'saturation'}
+          value={itemChange()?.item.saturation || 0}
+          onValueChange={handleSaturationChange}
           class={css({
             '--ui-slider-track-background':
               'linear-gradient(90deg, #999, #f00)',
             '--ui-slider-range-background': 'transparent',
+            w: 'full',
           })}
         />
-      </div>
-      <div>
-        <label for="brightness">Brightness:</label>
-        <Slider
-          id="brightness"
-          min={-100}
-          max={100}
-          step={1}
-          value={[itemChange()?.item.brightness || 0]}
-          onValueChange={(e) => handleBrightnessChange(e.value[0])}
+        <EquipHsvSlider
+          property={/* @once */ 'brightness'}
+          value={itemChange()?.item.brightness || 0}
+          onValueChange={handleBrightnessChange}
           class={css({
             '--ui-slider-track-background':
               'linear-gradient(90deg, #000000, #ffffff)',
             '--ui-slider-range-background': 'transparent',
+            w: 'full',
           })}
         />
-      </div>
+      </VStack>
     </Show>
   );
 };
