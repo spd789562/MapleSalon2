@@ -30,6 +30,28 @@ export default defineConfig({
   // Useful for theme customization
   theme: {
     extend: {
+      slotRecipes: {
+        numberInput: {
+          defaultVariants: {
+            size: 'sm',
+          },
+          variants: {
+            size: {
+              sm: {
+                control: {
+                  ps: '2',
+                  h: '9',
+                  minW: '8',
+                  fontSize: 'sm',
+                },
+                label: {
+                  textStyle: 'sm',
+                },
+              },
+            },
+          },
+        },
+      },
       recipes: {
         cssTooltip: cssTooltipRecipe,
       },
