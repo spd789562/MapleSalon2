@@ -1,11 +1,20 @@
 import { atom } from 'nanostores';
 
 import type { EquipCategory } from '@/const/equipments';
+import type { Gender } from '@/utils/itemId';
 
-export interface EquipItem {
+export interface ItemExtraInfo {
+  isDyeable: boolean;
+  isCash: boolean;
+}
+
+export interface EquipItem extends Partial<ItemExtraInfo> {
   category: EquipCategory;
   id: number;
   name: string;
+  gender?: Gender;
+  /* the item is got extra item info such as can dye or cash item */
+  isFetchExtra?: boolean;
 }
 
 export const $equipmentStrings = atom<EquipItem[]>([]);
