@@ -29,12 +29,11 @@ fn mainFragment(
     let s: f32 = tohsv.y;
     let v: f32 = tohsv.z;
 
-    // hue
-    resultRGB = hueShift(resultRGB, hue);
-
-    tohsv = rgb2hsv(resultRGB);
-
     if (h >= uColorStart && h <= uColorEnd) {
+        // hue
+        resultRGB = hueShift(resultRGB, hue);
+
+        tohsv = rgb2hsv(resultRGB);
         // all related of brightness modification will need to multiply with color.a, 
         // prevent alpha channel from being modified and been to bright
 

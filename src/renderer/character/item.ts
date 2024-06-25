@@ -150,10 +150,10 @@ export class CharacterItem implements RenderItemInfo {
     this.vslot = (this.wz.info.vslot.match(/.{1,2}/g) || []) as PieceIslot[];
 
     /* resolve dye */
-    if (this.isFace) {
+    if (this.isFace && this.avaliableDye.size === 0) {
       const ids = gatFaceAvailableColorIds(this.info.id);
       this.avaliableDye = new Map(ids.map((id) => [getFaceColorId(id), id]));
-    } else if (this.isHair) {
+    } else if (this.isHair && this.avaliableDye.size === 0) {
       const ids = gatHairAvailableColorIds(this.info.id);
       this.avaliableDye = new Map(ids.map((id) => [getHairColorId(id), id]));
     }
@@ -208,20 +208,32 @@ export class CharacterItem implements RenderItemInfo {
     }
     const hsvFilter = this.filters[0] as HsvAdjustmentFilter;
 
+    if (this.info.colorRange !== undefined) {
+      hsvFilter.colorRange = this.info.colorRange;
+    } else if (hsvFilter.colorRange !== 0) {
+      hsvFilter.colorRange = 0;
+    }
+
     if (this.info.hue !== undefined) {
       // convert 0 ~ 360 to 0 ~ 180 -> -180 ~ 0
       hsvFilter.hue = this.info.hue > 180 ? this.info.hue - 360 : this.info.hue;
+    } else if (hsvFilter.hue !== 0) {
+      hsvFilter.hue = 0;
     }
     if (this.info.saturation !== undefined) {
       // convert -99 ~ 99 to -1 ~ 1
       const saturation = this.info.saturation / 100;
       hsvFilter.saturation = saturation;
+    } else if (hsvFilter.saturation !== 0) {
+      hsvFilter.saturation = 0;
     }
     // current not working
     if (this.info.brightness !== undefined) {
       // convert -99 ~ 99 to -1 ~ 1
       const brightness = this.info.brightness / 100;
       hsvFilter.lightness = brightness;
+    } else if (hsvFilter.lightness !== 0) {
+      hsvFilter.lightness = 0;
     }
   }
 

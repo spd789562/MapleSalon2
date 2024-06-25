@@ -1,3 +1,5 @@
+import type { ColorRange } from '@/renderer/filter/hsvAdjustmentFilter';
+
 export interface Vec2 {
   x: number;
   y: number;
@@ -55,6 +57,7 @@ export interface ItemInfo {
 
   alpha?: number;
 
+  colorRange?: ColorRange;
   hue?: number;
   saturation?: number;
   brightness?: number;

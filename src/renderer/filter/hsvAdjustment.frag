@@ -61,9 +61,6 @@ void main() {
     float s = tohsv.y;
     float v = tohsv.z;
 
-    // hue
-    resultRGB = hueShift(resultRGB, hue);
-
     // vec2 currSat = getSatAndValue(resultRGB);
     // if (h >= uColorStart && h <= uColorEnd) {
     //   float average = (resultRGB.r + resultRGB.g + resultRGB.b) / 3.0;
@@ -90,9 +87,12 @@ void main() {
     //   }
     // }
 
-    tohsv = rgb2hsv(resultRGB);
-
     if (h >= uColorStart && h <= uColorEnd) {
+        // hue
+        resultRGB = hueShift(resultRGB, hue);
+        
+        tohsv = rgb2hsv(resultRGB);
+
         // all related of brightness modification will need to multiply with color.a, 
         // prevent alpha channel from being modified and been to bright
 
