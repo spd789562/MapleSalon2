@@ -31,6 +31,9 @@ export default defineConfig({
   theme: {
     extend: {
       slotRecipes: {
+        drawer: {
+          jsx: ['Drawer', /.*Drawer$/],
+        },
         numberInput: {
           defaultVariants: {
             size: 'sm',
