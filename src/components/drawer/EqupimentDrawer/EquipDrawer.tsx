@@ -33,6 +33,7 @@ export const EquipDrawer = (props: EquipDrawerProps) => {
       trapFocus={false}
       onEscapeKeyDown={handleClose}
       lazyMount={true}
+      preventScroll={false}
     >
       <Portal>
         <Positioner>

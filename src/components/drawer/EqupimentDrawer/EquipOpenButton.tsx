@@ -1,6 +1,6 @@
 import { $equpimentDrawerOpen } from '@/store/trigger';
 
-import ShirtIcon from 'lucide-solid/icons/shirt';
+import HangerIcon from 'mingcute_icon/svg/other/coathanger_line.svg';
 import { SideOpenButton } from '@/components/ui/sideOpenButton';
 
 export const EquipOpenButton = () => {
@@ -10,7 +10,12 @@ export const EquipOpenButton = () => {
 
   return (
     <SideOpenButton onClick={handleOpen}>
-      <ShirtIcon />
+      <HangerIcon
+        style={{
+          width: '1.2rem',
+          height: '1.2rem',
+        }}
+      />
     </SideOpenButton>
   );
 };
