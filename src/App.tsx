@@ -8,8 +8,10 @@ import { $equipmentStrings, type EquipItem } from '@/store/string';
 import { BaseWzSelector } from './components/BaseWzSelector';
 import { CharacterScene } from './components/Character';
 import { ItemNameSearch } from './components/ItemNameSearch';
-import { EqupimentDrawer as Drawer } from './components/drawer/EqupimentDrawer';
+import { EqupimentDrawer } from './components/drawer/EqupimentDrawer';
+import { CurrentEquipmentDrawer } from './components/drawer/CurrentEquipmentDrawer';
 import { EquipOpenButton } from './components/drawer/EqupimentDrawer/EquipOpenButton';
+import { CurrentEquipOpenButton } from './components/drawer/CurrentEquipmentDrawer/CurrentEquipOpenButton';
 
 import './App.css';
 
@@ -50,7 +52,9 @@ function App() {
         <ItemNameSearch />
         <CharacterScene />
         <EquipOpenButton />
-        <Drawer />
+        <CurrentEquipOpenButton />
+        <CurrentEquipmentDrawer />
+        <EqupimentDrawer />
       </Show>
     </div>
   );
