@@ -240,3 +240,7 @@ export function getIconPath(id: number, folder?: string) {
     .toString()
     .padStart(8, '0')}.img/${iconPath}`;
 }
+
+export function isDyeableId(id: number) {
+  return !(isBodyId(id) || isHeadId(id) || isFaceId(id) || isHairId(id));
+}
