@@ -1,79 +1,102 @@
-import { atom, deepMap, computed, onSet } from 'nanostores';
+import { atom, deepMap, computed, batched, onSet, map } from 'nanostores';
 
 import { getSubCategory, getBodyId, getHeadIdFromBodyId } from '@/utils/itemId';
 
 import type { EquipSubCategory } from '@/const/equipments';
 import type { ItemInfo } from '@/renderer/character/const/data';
+import { CharacterAction } from '@/const/actions';
+import { CharacterExpressions } from '@/const/emotions';
+import { CharacterEarType } from '@/const/ears';
 
-export type CharacterItems = Record<
-  EquipSubCategory,
-  ItemInfo & Partial<{ isDeleted: boolean }>
->;
+export type CharacterItemInfo = ItemInfo &
+  Partial<{ isDeleted: boolean; name: string }>;
 
-export interface CharacterData extends Record<string, unknown> {
-  items: Partial<CharacterItems>;
-  frame?: number;
+export type CharacterItems = Record<EquipSubCategory, CharacterItemInfo>;
+
+export interface CharacterInfo {
+  frame: number;
   isAnimating: boolean;
+  action: CharacterAction;
+  expression: CharacterExpressions;
+  earType: CharacterEarType;
 }
 
-export const $currentCharacter = deepMap<CharacterData>({
-  items: {
-    Head: {
-      id: 2000,
-    },
-    Body: {
-      id: 12000,
-    },
-    Face: {
-      id: 56772,
-      dye: {
-        color: 6,
-        alpha: 50,
-      },
-    },
-    Hair: {
-      id: 47046,
-      dye: {
-        color: 0,
-        alpha: 50,
-      },
-    },
-    Cap: {
-      // hat half cover
-      id: 1006105,
-    },
-    // Cap: {
-    //   //  hat full cover
-    //   id: 1000003,
-    // },
-    'Face Accessory': {
-      id: 1012764,
-    },
-    'Eye Decoration': {
-      id: 1022285,
-    },
-    Earrings: {
-      id: 1032331,
-    },
-    Overall: {
-      id: 1053576,
-    },
-    Shoes: {
-      id: 1073273,
-    },
-    Cape: {
-      id: 1103580,
-    },
-    Weapon: {
-      id: 1703024,
-      hue: 0,
-      saturation: 0,
-      brightness: 0,
+export interface CharacterData extends Record<string, unknown>, CharacterInfo {
+  items: Partial<CharacterItems>;
+}
+
+export const $currentCharacterItems = deepMap<Partial<CharacterItems>>({
+  Head: {
+    id: 2000,
+  },
+  Body: {
+    id: 12000,
+  },
+  Face: {
+    id: 56772,
+    dye: {
+      color: 6,
+      alpha: 50,
     },
   },
+  Hair: {
+    id: 47046,
+    dye: {
+      color: 0,
+      alpha: 50,
+    },
+  },
+  Cap: {
+    // hat half cover
+    id: 1006105,
+  },
+  // Cap: {
+  //   //  hat full cover
+  //   id: 1000003,
+  // },
+  'Face Accessory': {
+    id: 1012764,
+  },
+  'Eye Decoration': {
+    id: 1022285,
+  },
+  Earrings: {
+    id: 1032331,
+  },
+  Overall: {
+    id: 1053576,
+  },
+  Shoes: {
+    id: 1073273,
+  },
+  Cape: {
+    id: 1103580,
+  },
+  Weapon: {
+    id: 1703024,
+    hue: 0,
+    saturation: 0,
+    brightness: 0,
+  },
+});
+
+export const $currentCharacterInfo = map({
   frame: 0,
   isAnimating: false,
+  action: CharacterAction.Stand1,
+  expression: CharacterExpressions.Default,
+  earType: CharacterEarType.HumanEar,
 });
+
+export const $currentCharacter = batched(
+  [$currentCharacterItems, $currentCharacterInfo],
+  (items, info) => {
+    return {
+      items,
+      ...info,
+    } as CharacterData;
+  },
+);
 
 export const $currentItem = atom<
   | {
@@ -99,15 +122,22 @@ onSet($currentItem, ({ newValue, abort }) => {
     const headId = getHeadIdFromBodyId(bodyId);
 
     $currentItemChanges.setKey('Body.id', bodyId);
+    $currentItemChanges.setKey('Body.name', newValue.name);
+
     $currentItemChanges.setKey('Head.id', headId);
+    $currentItemChanges.setKey('Head.name', newValue.name);
 
     return abort();
   }
 
   if ($currentItemChanges.get()[category]) {
     $currentItemChanges.setKey(`${category}.id`, newValue.id);
+    $currentItemChanges.setKey(`${category}.name`, newValue.name);
   } else {
-    $currentItemChanges.setKey(category, { id: newValue.id });
+    $currentItemChanges.setKey(category, {
+      id: newValue.id,
+      name: newValue.name,
+    });
   }
 });
 
@@ -115,14 +145,18 @@ export const $currentItemChanges = deepMap<
   Partial<CharacterItems & Record<string, unknown>>
 >({});
 
+export const $totalItems = batched(
+  [$currentCharacterItems, $currentItemChanges],
+  getUpdateItems,
+);
+
 export const $previewCharacter = computed(
-  [$currentCharacter, $currentItemChanges],
-  (ch, changes) => {
-    const items = getUpdateItems(ch.items, changes);
+  [$currentCharacterInfo, $totalItems],
+  (info, items) => {
     return {
-      ...ch,
+      ...info,
       items,
-    };
+    } as CharacterData;
   },
 );
 
@@ -176,7 +210,11 @@ export function createGetItemChangeById(id: number) {
   });
 }
 
+export function createEquipItemByCategory(category: EquipSubCategory) {
+  return computed($totalItems, (items) => items[category]);
+}
+
 export function applyCharacterChanges() {
-  $currentCharacter.set($previewCharacter.get());
+  $currentCharacterItems.set($currentItemChanges.get());
   $currentItemChanges.set({});
 }
