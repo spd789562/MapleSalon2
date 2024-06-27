@@ -23,6 +23,11 @@
   background-repeat: repeat;
 }
 
+html[data-theme="dark"] {
+  background: var(--colors-bg-canvas);
+  color: var(--colors-fg-default);
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     color: #f6f6f6;

@@ -103,6 +103,7 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
           />
         </HStack>
         <EquipHsvSlider
+          title="色相"
           property="hue"
           value={itemChange()?.item.hue || 0}
           onValueChange={handleHueChange}
@@ -113,6 +114,7 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
           })}
         />
         <EquipHsvSlider
+          title="飽和度"
           property="saturation"
           value={itemChange()?.item.saturation || 0}
           onValueChange={handleSaturationChange}
@@ -123,6 +125,7 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
           })}
         />
         <EquipHsvSlider
+          title="亮度"
           property="brightness"
           value={itemChange()?.item.brightness || 0}
           onValueChange={handleBrightnessChange}

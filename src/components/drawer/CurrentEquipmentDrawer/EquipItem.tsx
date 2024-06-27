@@ -65,7 +65,11 @@ export const EquipItem = (props: EquipItemProps) => {
           gridTemplateColumns="auto 1fr auto"
           alignItems="center"
         >
-          <Box backgroundColor="bg.subtle" p={1} borderRadius="sm">
+          <Box
+            backgroundColor={{ base: 'bg.subtle', _dark: 'neutral.12' }}
+            p={1}
+            borderRadius="sm"
+          >
             <LoadableEquipIcon id={item().id} name={item().name} />
           </Box>
           <VStack

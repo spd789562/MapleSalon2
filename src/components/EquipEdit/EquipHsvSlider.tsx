@@ -27,6 +27,7 @@ const SliderProperyMap = {
 
 export interface EquipHsvSliderProps {
   class?: string;
+  title: string;
   property: 'hue' | 'saturation' | 'brightness';
   value: number;
   onValueChange: (value: number) => void;
@@ -40,6 +41,7 @@ export const EquipHsvSlider = (props: EquipHsvSliderProps) => {
         <IconButton
           variant="outline"
           size="xs"
+          title={`重製${props.title}`}
           onClick={() => props.onValueChange(0)}
         >
           <ResetIcon />
@@ -50,6 +52,7 @@ export const EquipHsvSlider = (props: EquipHsvSliderProps) => {
           max={propery.max}
           step={propery.step}
           value={[props.value]}
+          title={`${props.title}調整`}
           onValueChange={(e) => props.onValueChange(e.value[0])}
         />
         <NumberInput
