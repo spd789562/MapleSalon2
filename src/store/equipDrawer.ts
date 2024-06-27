@@ -1,4 +1,4 @@
-import { atom, map, computed } from 'nanostores';
+import { atom, map, computed, onSet } from 'nanostores';
 
 import { $equipmentStrings } from './string';
 
@@ -32,6 +32,13 @@ export const $equipmentDrawerEquipCategorySelectionOpen = atom(true);
 export const $equipmentDrawerSearch = map<
   Partial<Record<EquipCategorySelections, string>>
 >({});
+
+/* effect */
+onSet($equipmentDrawerEquipTab, () => {
+  if ($equipmentDrawerEquipCategorySelectionOpen.get()) {
+    $equipmentDrawerEquipCategorySelectionOpen.set(false);
+  }
+});
 
 /* computed */
 export const $isShowEquipCategorySelection = computed(
