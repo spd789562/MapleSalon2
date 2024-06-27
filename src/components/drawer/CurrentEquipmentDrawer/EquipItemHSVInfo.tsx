@@ -62,17 +62,7 @@ export const EquipItemHSVValueInfo = (props: EquipItemHSVValueInfoProps) => {
         alignItems: 'center',
       })}
     >
-      <div
-        class={css({
-          borderRadius: 'sm',
-          width: '3',
-          height: '3',
-          display: 'inline-block',
-          marginRight: '1',
-          boxShadow: 'md',
-          backgroundGradient: props.backgroundGradient,
-        })}
-      />
+      <ColorBlock backgroundGradient={props.backgroundGradient} />
       <NumberSign value={props.value} />
       {Math.abs(props.value)}
     </span>
@@ -96,7 +86,7 @@ export const NumberSign = (props: NumberSignProps) => {
 };
 
 interface ColorBlockProps {
-  color: string;
+  backgroundGradient: string;
 }
 const ColorBlock = (props: ColorBlockProps) => {
   return (
@@ -106,7 +96,10 @@ const ColorBlock = (props: ColorBlockProps) => {
         width: '3',
         height: '3',
         display: 'inline-block',
-        backgroundImage: 'gradient.hue',
+        marginRight: '1',
+        boxShadow: 'md',
+        backgroundGradient: props.backgroundGradient,
+        position: 'relative',
       })}
     />
   );
