@@ -41,7 +41,11 @@ export const CurrentEquipDrawer = (props: EquipDrawerProps) => {
     >
       <Portal>
         <Positioner height="unset" width="xs" maxWidth="full" top="4">
-          <Content maxHeight="[90vh]">
+          <Content
+            maxHeight="[90vh]"
+            borderTopRightRadius="md"
+            borderBottomRightRadius="md"
+          >
             <Header>
               {props.header}
               <IconButton
@@ -49,7 +53,7 @@ export const CurrentEquipDrawer = (props: EquipDrawerProps) => {
                 position="absolute"
                 top="1"
                 right="1"
-                size="sm"
+                size="xs"
                 onClick={handleClose}
               >
                 <CloseIcon />
