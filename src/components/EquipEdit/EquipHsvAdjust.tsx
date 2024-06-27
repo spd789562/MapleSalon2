@@ -93,7 +93,7 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
           <Select
             width="[40%]"
             placeholder="染色區間"
-            items={/* @once */ ColorOtions}
+            items={ColorOtions}
             positioning={{ sameWidth: true }}
             size="sm"
             value={[(itemChange()?.item.colorRange || 0) as unknown as string]}
@@ -103,34 +103,31 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
           />
         </HStack>
         <EquipHsvSlider
-          property={/* @once */ 'hue'}
+          property="hue"
           value={itemChange()?.item.hue || 0}
           onValueChange={handleHueChange}
           class={css({
-            '--ui-slider-track-background':
-              'linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)',
+            '--ui-slider-track-background': 'gradients.hue',
             '--ui-slider-range-background': 'trasparent',
             w: 'full',
           })}
         />
         <EquipHsvSlider
-          property={/* @once */ 'saturation'}
+          property="saturation"
           value={itemChange()?.item.saturation || 0}
           onValueChange={handleSaturationChange}
           class={css({
-            '--ui-slider-track-background':
-              'linear-gradient(90deg, #999, #f00)',
+            '--ui-slider-track-background': 'gradients.saturation',
             '--ui-slider-range-background': 'transparent',
             w: 'full',
           })}
         />
         <EquipHsvSlider
-          property={/* @once */ 'brightness'}
+          property="brightness"
           value={itemChange()?.item.brightness || 0}
           onValueChange={handleBrightnessChange}
           class={css({
-            '--ui-slider-track-background':
-              'linear-gradient(90deg, #000000, #ffffff)',
+            '--ui-slider-track-background': 'gradients.brightness',
             '--ui-slider-range-background': 'transparent',
             w: 'full',
           })}
