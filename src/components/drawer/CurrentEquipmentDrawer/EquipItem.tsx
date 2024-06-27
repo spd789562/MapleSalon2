@@ -1,12 +1,22 @@
-import { Show } from 'solid-js';
+import { Show, Switch, Match, createMemo } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 
 import { createEquipItemByCategory } from '@/store/character';
-
-import { HStack } from 'styled-system/jsx/hstack';
+import {
+  openSkinSelection,
+  editCurrentItem,
+  removeItems,
+} from '@/store/currentEquipDrawer';
 import { VStack } from 'styled-system/jsx/vstack';
+import { Grid } from 'styled-system/jsx/grid';
 import { Box } from 'styled-system/jsx/box';
 import { LoadableEquipIcon } from '@/components/LoadableEquipIcon';
+import { EllipsisText } from '@/components/ui/ellipsisText';
+import { EqipItemActions } from './EquipItemActions';
+import { EquipItemHSVInfo } from './EquipItemHSVInfo';
+import { EquipItemMixDyeInfo } from './EquipItemMixDyeInfo';
+
+import { isDyeableId, isMixDyeableId, isSkinPartId } from '@/utils/itemId';
 
 import type { EquipSubCategory } from '@/const/equipments';
 
@@ -16,28 +26,77 @@ export interface EquipItemProps {
 export const EquipItem = (props: EquipItemProps) => {
   const item = useStore(createEquipItemByCategory(props.category));
 
+  function handleEdit() {
+    const itemInfo = item();
+    if (!itemInfo) {
+      return;
+    }
+    if (isSkinPartId(itemInfo.id)) {
+      return openSkinSelection();
+    }
+    return editCurrentItem({
+      id: itemInfo.id,
+      name: itemInfo.name || itemInfo.id.toString(),
+    });
+  }
+
+  function _handleDelete() {
+    removeItems(props.category);
+  }
+
+  const handleDelete = createMemo(() => {
+    const id = item()?.id;
+    if (!id || (id && isSkinPartId(id))) {
+      return undefined;
+    }
+    return _handleDelete;
+  });
+
   return (
     <Show when={item()}>
       {(item) => (
-        <HStack
-          p="1"
+        <Grid
+          py="1"
+          px="2"
           borderRadius="md"
           bg="bg.default"
           width="full"
           shadow="sm"
+          gridTemplateColumns="auto 1fr auto"
+          alignItems="center"
         >
-          <LoadableEquipIcon id={item().id} name={item().name} />
-          <VStack flex="1" gap={1} alignItems="flex-start">
-            <Box flex="1" fontSize="sm">
+          <Box backgroundColor="bg.subtle" p={1} borderRadius="sm">
+            <LoadableEquipIcon id={item().id} name={item().name} />
+          </Box>
+          <VStack
+            flex="1"
+            gap={1}
+            alignItems="flex-start"
+            overflow="hidden"
+            color="colorPalette.text"
+          >
+            <Box flex="1" fontSize="sm" width="full">
               <Show when={item().name} fallback={item().id}>
-                {item().name}
+                <EllipsisText as="div" title={item().name}>
+                  {item().name}
+                </EllipsisText>
               </Show>
             </Box>
-            <Box flex="1" fontSize="sm">
-              1
-            </Box>
+            <Switch>
+              <Match when={isDyeableId(item().id)}>
+                <EquipItemHSVInfo
+                  hue={item().hue}
+                  saturation={item().saturation}
+                  value={item().brightness}
+                />
+              </Match>
+              <Match when={isMixDyeableId(item().id) && item().dye}>
+                <EquipItemMixDyeInfo id={item().id} dyeInfo={item().dye} />
+              </Match>
+            </Switch>
           </VStack>
-        </HStack>
+          <EqipItemActions onEdit={handleEdit} onDelete={handleDelete()} />
+        </Grid>
       )}
     </Show>
   );
