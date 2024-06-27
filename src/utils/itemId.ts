@@ -16,6 +16,10 @@ export function getHeadIdFromBodyId(skinId: number): number {
   return skinId + 10000;
 }
 
+export function isSkinPartId(id: number): boolean {
+  return isBodyId(id) || isHeadId(id);
+}
+
 export function isBodyId(id: number): boolean {
   return id < 3000 && Math.floor(id / 2000) === 1;
 }
@@ -241,6 +245,9 @@ export function getIconPath(id: number, folder?: string) {
     .padStart(8, '0')}.img/${iconPath}`;
 }
 
+export function isMixDyeableId(id: number) {
+  return isFaceId(id) || isHairId(id);
+}
 export function isDyeableId(id: number) {
-  return !(isBodyId(id) || isHeadId(id) || isFaceId(id) || isHairId(id));
+  return !(isMixDyeableId(id) || isSkinPartId(id));
 }
