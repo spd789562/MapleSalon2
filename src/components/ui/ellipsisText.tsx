@@ -22,14 +22,16 @@ export const EllipsisText = (props: EllipsisTextProps) => {
   const [cssProps, elementProps] = splitCssProps(textProps);
   const [localProps, rootProps] = splitProps(elementProps, ['as', 'class']);
   const className = text(variantProps);
+  const ellipsisStyle = css({
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  });
 
   return (
     <Dynamic
       component={localProps.as}
-      class={cx(className, css(cssProps), localProps.class)}
-      whiteSpace="nowrap"
-      overflow="hidden"
-      textOverflow="ellipsis"
+      class={cx(className, css(cssProps), ellipsisStyle, localProps.class)}
       {...rootProps}
     />
   );
