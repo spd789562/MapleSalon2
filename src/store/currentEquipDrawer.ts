@@ -56,4 +56,8 @@ export function removeItems(category: EquipSubCategory) {
   } else if (targetItem) {
     $currentItemChanges.setKey(`${category}.isDeleted`, true);
   }
+
+  if ($currentItem.get()?.id === targetItem?.id) {
+    $currentItem.set(undefined);
+  }
 }

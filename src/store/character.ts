@@ -108,7 +108,7 @@ export const $currentItem = atom<
 
 onSet($currentItem, ({ newValue, abort }) => {
   if (!newValue) {
-    return abort();
+    return;
   }
   let category = getSubCategory(newValue.id);
   if (!category) {
@@ -118,27 +118,12 @@ onSet($currentItem, ({ newValue, abort }) => {
   category = getCharacterSubCategory(category);
 
   if (category === 'Skin') {
-    const bodyId = getBodyId(newValue.id);
-    const headId = getHeadIdFromBodyId(bodyId);
-
-    $currentItemChanges.setKey('Body.id', bodyId);
-    $currentItemChanges.setKey('Body.name', newValue.name);
-
-    $currentItemChanges.setKey('Head.id', headId);
-    $currentItemChanges.setKey('Head.name', newValue.name);
+    updateChangesSkin(newValue);
 
     return abort();
   }
 
-  if ($currentItemChanges.get()[category]) {
-    $currentItemChanges.setKey(`${category}.id`, newValue.id);
-    $currentItemChanges.setKey(`${category}.name`, newValue.name);
-  } else {
-    $currentItemChanges.setKey(category, {
-      id: newValue.id,
-      name: newValue.name,
-    });
-  }
+  addItemToChanges(category, newValue);
 });
 
 export const $currentItemChanges = deepMap<
@@ -214,7 +199,42 @@ export function createEquipItemByCategory(category: EquipSubCategory) {
   return computed($totalItems, (items) => items[category]);
 }
 
+/* actions */
 export function applyCharacterChanges() {
   $currentCharacterItems.set($currentItemChanges.get());
   $currentItemChanges.set({});
+}
+
+export function updateChangesSkin(item: {
+  id: number;
+  name: string;
+}) {
+  const bodyId = getBodyId(item.id);
+  const headId = getHeadIdFromBodyId(bodyId);
+
+  $currentItemChanges.setKey('Body.id', bodyId);
+  $currentItemChanges.setKey('Body.name', item.name);
+
+  $currentItemChanges.setKey('Head.id', headId);
+  $currentItemChanges.setKey('Head.name', item.name);
+}
+
+export function addItemToChanges(
+  category: EquipSubCategory,
+  item: {
+    id: number;
+    name: string;
+  },
+) {
+  if ($currentItemChanges.get()[category]) {
+    $currentItemChanges.setKey(`${category}.id`, item.id);
+    $currentItemChanges.setKey(`${category}.name`, item.name);
+    $currentItemChanges.setKey(`${category}.isDeleted`, undefined);
+  } else {
+    $currentItemChanges.setKey(category, {
+      id: item.id,
+      name: item.name,
+      isDeleted: false,
+    });
+  }
 }
