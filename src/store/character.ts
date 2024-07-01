@@ -9,7 +9,7 @@ import { CharacterExpressions } from '@/const/emotions';
 import { CharacterEarType } from '@/const/ears';
 
 export type CharacterItemInfo = ItemInfo &
-  Partial<{ isDeleted: boolean; name: string }>;
+  Partial<{ isDeleted: boolean; isDeleteDye: boolean; name: string }>;
 
 export type CharacterItems = Record<EquipSubCategory, CharacterItemInfo>;
 
@@ -135,7 +135,6 @@ export const $totalItems = batched(
   getUpdateItems,
 );
 
-
 export const $previewCharacter = computed(
   [$currentCharacterInfo, $totalItems],
   (info, items) => {
@@ -171,6 +170,10 @@ export function getUpdateItems(
         } as ItemInfo & Partial<{ isDeleted: boolean }>;
       } else {
         result[k] = before[k];
+      }
+      const updated = result[k];
+      if (updated?.isDeleteDye) {
+        updated.dye = undefined;
       }
     }
   }
