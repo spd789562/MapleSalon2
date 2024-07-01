@@ -15,7 +15,18 @@ export const vaildFaceColor = (id: FaceColorId): id is FaceColorId => {
  *  formatFaceId(52301) // -> 5201
  */
 export const formatFaceId = (id: number) =>
-  Number(id.toString().replace(/([0-9][0-9])([0-9])([0-9][0-9])/, '$1$3'));
+  Math.floor(id / 1000) * 100 + id % 100;
+
+/**
+ * changeFormatedFaceColorId
+ * @description change generic face id to other color
+ * @example
+ *  formatFaceId(4000, 2) // -> 40200
+ *  formatFaceId(5201, 4) // -> 52401
+ */
+export const changeFormatedFaceColorId = (id: number, changeColorId: FaceColorId) =>
+  /* 52400 + 01 */
+  (Math.floor(id / 100) * 10 + changeColorId) * 100 + id % 100
 
 /**
  * changeFaceColorId
@@ -25,11 +36,8 @@ export const formatFaceId = (id: number) =>
  *  formatFaceId(52301, 4) // -> 52401
  */
 export const changeFaceColorId = (id: number, changeColorId: FaceColorId) =>
-  Number(
-    id
-      .toString()
-      .replace(/([0-9][0-9])([0-9])([0-9][0-9])/, `$1${changeColorId}$3`),
-  );
+  /* 52400 + 01 */
+  (Math.floor(id / 1000) * 10 + changeColorId) * 100 + id % 100
 
 /**
  * getFaceColorId
@@ -91,6 +99,16 @@ export const vaildHairColor = (id: HairColorId): id is HairColorId => {
  *  formatHairId(34503) // -> 3450
  */
 export const formatHairId = (id: number) => id && Math.floor(+id / 10);
+
+/**
+ * changeFormatedHairColorId
+ * @description change face id to other color
+ * @example
+ *  formatHairId(3000, 2) // -> 30002
+ *  formatHairId(3450, 4) // -> 34504
+ */
+export const changeFormatedHairColorId = (id: number, changeColorId: HairColorId) =>
+  id * 10 + changeColorId;
 
 /**
  * changeHairColorId
