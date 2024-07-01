@@ -14,6 +14,7 @@ export interface MixDyeAlphaSliderProps {
   onValueChange: (value: number) => void;
   baseColor: string;
   rangeColor: string;
+  disabled?: boolean;
 }
 export const MixDyeAlphaSlider = (props: MixDyeAlphaSliderProps) => {
   return (
@@ -22,6 +23,7 @@ export const MixDyeAlphaSlider = (props: MixDyeAlphaSliderProps) => {
       style={{
         '--ui-slider-track-background': props.baseColor,
         '--ui-slider-range-background': props.rangeColor,
+        opacity: props.disabled ? 0.2 : 1,
       }}
     >
       <Grid gridTemplateColumns="auto 1fr 4.5rem" alignItems="center">
@@ -30,6 +32,7 @@ export const MixDyeAlphaSlider = (props: MixDyeAlphaSliderProps) => {
           size="xs"
           title={`重製${props.title}`}
           onClick={() => props.onValueChange(50)}
+          disabled={props.disabled}
         >
           <ResetIcon />
         </IconButton>
@@ -41,6 +44,7 @@ export const MixDyeAlphaSlider = (props: MixDyeAlphaSliderProps) => {
           value={[props.value]}
           title={`${props.title}調整`}
           onValueChange={(e) => props.onValueChange(e.value[0])}
+          disabled={props.disabled}
         />
         <NumberInput
           min={ALPHA_MIN}
@@ -48,6 +52,7 @@ export const MixDyeAlphaSlider = (props: MixDyeAlphaSliderProps) => {
           value={props.value.toString()}
           onValueChange={(e) => props.onValueChange(e.valueAsNumber)}
           allowOverflow={false}
+          disabled={props.disabled}
         />
       </Grid>
     </div>

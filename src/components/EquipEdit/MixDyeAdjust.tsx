@@ -136,25 +136,24 @@ export const MixDyeAdjust = (props: MixDyeAdjustProps) => {
               ml={2}
             />
           </HStack>
-          <Show when={item().item.dye}>
-            {(dyeInfo) => (
-              <>
-                <MixDyeColorSelection
-                  value={getMixDyeId(props.id, dyeInfo().color).toString()}
-                  onChange={handleMixDyeColorChange}
-                  options={options()}
-                />
-                <MixDyeAlphaSlider
-                  title="混染"
-                  value={dyeInfo()?.alpha || 50}
-                  onValueChange={handleMixDyeAlphaChange}
-                  class={css({ width: 'full', mt: 1 })}
-                  baseColor={baseColor()}
-                  rangeColor={rangeColor()}
-                />
-              </>
-            )}
-          </Show>
+          <MixDyeColorSelection
+            value={getMixDyeId(
+              props.id,
+              item().item.dye?.color || 0,
+            ).toString()}
+            onChange={handleMixDyeColorChange}
+            options={options()}
+            disabled={!item().item.dye}
+          />
+          <MixDyeAlphaSlider
+            title="混染"
+            value={item().item.dye?.alpha || 50}
+            onValueChange={handleMixDyeAlphaChange}
+            class={css({ width: 'full', mt: 1 })}
+            baseColor={baseColor()}
+            rangeColor={rangeColor()}
+            disabled={!item().item.dye}
+          />
         </VStack>
       )}
     </Show>

@@ -19,6 +19,7 @@ export interface MixDyeColorSelectionProps {
   value: string;
   onChange: (value: number) => void;
   options: { color: number; colorHex: string; disabled?: boolean }[];
+  disabled?: boolean;
 }
 export const MixDyeColorSelection = (props: MixDyeColorSelectionProps) => {
   return (
@@ -27,6 +28,8 @@ export const MixDyeColorSelection = (props: MixDyeColorSelectionProps) => {
       size="sm"
       value={props.value}
       onValueChange={(d) => props.onChange(Number(d.value))}
+      disabled={props.disabled}
+      opacity={props.disabled ? 0.2 : 1}
     >
       <Grid columns={9} gap={1}>
         <Index each={props.options}>
