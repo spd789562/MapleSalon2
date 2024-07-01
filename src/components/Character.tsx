@@ -1,4 +1,3 @@
-import { useStore } from '@nanostores/solid';
 import {
   onMount,
   onCleanup,
@@ -11,6 +10,7 @@ import {
 import { css } from 'styled-system/css';
 
 import { $previewCharacter } from '@/store/character';
+import { usePureStore } from '@/store';
 
 import { Application, Container } from 'pixi.js';
 import { Character } from '@/renderer/character/character';
@@ -42,7 +42,7 @@ const Selection = <T extends string>(props: SelectionProps<T>) => {
 };
 
 export const CharacterScene = () => {
-  const characterData = useStore($previewCharacter);
+  const characterData = usePureStore($previewCharacter);
   const [isLoading, setIsLoading] = createSignal(false);
   let container!: HTMLDivElement;
   const app = new Application();
