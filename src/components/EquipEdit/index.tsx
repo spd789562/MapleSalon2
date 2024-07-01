@@ -6,6 +6,7 @@ import { $currentItem } from '@/store/character';
 import { Box } from 'styled-system/jsx/box';
 import { EquipTitle } from './EquipTitle';
 import { EquipHsvAdjust } from './EquipHsvAdjust';
+import { MixDyeAdjust } from './MixDye';
 
 import { getSubCategory } from '@/utils/itemId';
 
@@ -20,10 +21,10 @@ export const EquipEdit = () => {
             <EquipTitle id={item().id} name={item().name} />
             <Switch fallback={<EquipHsvAdjust id={item().id} />}>
               <Match when={getSubCategory(item().id) === 'Hair'}>
-                <div>1</div>
+                <MixDyeAdjust id={item().id} category="Hair" />
               </Match>
               <Match when={getSubCategory(item().id) === 'Face'}>
-                <div>1</div>
+                <MixDyeAdjust id={item().id} category="Face" />
               </Match>
             </Switch>
           </>
