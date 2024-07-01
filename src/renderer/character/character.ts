@@ -257,11 +257,14 @@ export class Character extends Container {
           let container = this.zmapLayers.get(layer);
           if (!container) {
             container = new ZmapContainer(layer, zmap.indexOf(layer), this);
-            if (isBackAction(this.action) && layer === 'face') {
-              container.visible = false;
-            }
             this.addChild(container);
             this.zmapLayers.set(layer, container);
+          }
+          if (
+            isBackAction(this.action) &&
+            layer.toLocaleLowerCase().includes('face')
+          ) {
+            container.visible = false;
           }
           if (layer === 'body' || layer === 'backBody') {
             body = piece;
