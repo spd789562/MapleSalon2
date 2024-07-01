@@ -71,7 +71,7 @@ export class CharacterItemPiece implements AnimatableFrame {
     return this.slot === 'default' ? this.z : this.z || this.slot;
   }
 
-  isDyable(): this is DyeableCharacterItemPiece {
+  isDyeable(): this is DyeableCharacterItemPiece {
     return this instanceof DyeableCharacterItemPiece;
   }
 
@@ -155,6 +155,9 @@ export class DyeableCharacterItemPiece extends CharacterItemPiece {
     }
     this._srpite = new DyeableSprite(this.item, this.url);
     return this._srpite;
+  }
+  updateDye() {
+    (this._srpite as DyeableSprite)?.updateDye?.();
   }
 }
 

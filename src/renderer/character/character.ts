@@ -4,10 +4,16 @@ import { type Application, Container, Ticker, EventEmitter } from 'pixi.js';
 import type { ItemInfo, AncherName, Vec2, PieceSlot } from './const/data';
 import type { CategorizedItem } from './categorizedItem';
 import type { CharacterAnimatablePart } from './characterAnimatablePart';
-import type { CharacterItemPiece } from './itemPiece';
+import type {
+  CharacterItemPiece,
+  DyeableCharacterItemPiece,
+} from './itemPiece';
 
 import { CharacterLoader } from './loader';
 import { CharacterItem } from './item';
+
+import { isMixDyeableId } from '@/utils/itemId';
+
 import { CharacterAction, isBackAction } from '@/const/actions';
 import { CharacterExpressions } from '@/const/emotions';
 import { CharacterEarType } from '@/const/ears';
@@ -171,6 +177,9 @@ export class Character extends Container {
     for (const item of items) {
       if (this.idItems.has(item.id)) {
         this.updateFilter(item.id, item);
+        if (isMixDyeableId(item.id)) {
+          this.updateMixDye(item.id, item);
+        }
       } else {
         isAddItem = true;
         const chItem = new CharacterItem(item, this);
@@ -196,6 +205,22 @@ export class Character extends Container {
     }
     item.info = info;
     item.updateFilter();
+  }
+  updateMixDye(id: number, info: ItemInfo) {
+    const item = this.idItems.get(id);
+    if (!item) {
+      return;
+    }
+    item.info = info;
+    /* only update sprite already in render */
+    const dyeableSprites = this.currentPieces
+      .filter((piece) => piece.item.info.id === id)
+      .flatMap((piece) =>
+        piece.frames.filter((frame) => frame.isDyeable()),
+      ) as DyeableCharacterItemPiece[];
+    for (const sprites of dyeableSprites) {
+      sprites.updateDye();
+    }
   }
 
   /** get current items filter by expression and action */
