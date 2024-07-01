@@ -135,6 +135,7 @@ export const $totalItems = batched(
   getUpdateItems,
 );
 
+
 export const $previewCharacter = computed(
   [$currentCharacterInfo, $totalItems],
   (info, items) => {
@@ -187,7 +188,7 @@ export function getUpdateItems(
 export function createGetItemChangeById(id: number) {
   const c = getSubCategory(id);
   const category = c && getCharacterSubCategory(c);
-  return computed($currentItemChanges, (changes) => {
+  return computed($totalItems, (changes) => {
     if (!category) {
       return null;
     }

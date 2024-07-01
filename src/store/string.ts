@@ -18,3 +18,8 @@ export interface EquipItem extends Partial<ItemExtraInfo> {
 }
 
 export const $equipmentStrings = atom<EquipItem[]>([]);
+
+/* actions */
+export function getEquipById(id: number) {
+  return $equipmentStrings.get().find((e) => e.id === id);
+}
