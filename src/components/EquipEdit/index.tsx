@@ -6,7 +6,7 @@ import { $currentItem } from '@/store/character';
 import { Box } from 'styled-system/jsx/box';
 import { EquipTitle } from './EquipTitle';
 import { EquipHsvAdjust } from './EquipHsvAdjust';
-import { MixDyeAdjust } from './MixDye';
+import { MixDyeAdjust } from './MixDyeAdjust';
 
 import { getSubCategory } from '@/utils/itemId';
 

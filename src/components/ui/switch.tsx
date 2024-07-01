@@ -16,7 +16,7 @@ export interface SwitchProps
   extends Assign<JsxStyleProps, SwitchRootProps>,
     SwitchRecipeVariantProps {}
 
-export type { SwitchCheckedChangeDetails } from '@ark-ui/solid';
+export type { SwitchCheckedChangeDetails as ChangeDetails } from '@ark-ui/solid';
 
 export const Switch = (props: SwitchProps) => {
   const [variantProps, switchProps] = switchRecipe.splitVariantProps(props);

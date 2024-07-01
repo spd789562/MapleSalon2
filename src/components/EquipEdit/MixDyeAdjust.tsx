@@ -9,7 +9,10 @@ import {
 import { getEquipById } from '@/store/string';
 import { useDynamicPureStore } from '@/store';
 
+import { Box } from 'styled-system/jsx/box';
+import { HStack } from 'styled-system/jsx/hstack';
 import { VStack } from 'styled-system/jsx/vstack';
+import { Switch, type ChangeDetails } from '@/components/ui/switch';
 import {
   MixDyeColorSelection,
   generateHairColorOptions,
@@ -68,6 +71,17 @@ export const MixDyeAdjust = (props: MixDyeAdjustProps) => {
     getColor(getMixDyeId(props.id, itemChange()?.item?.dye?.color || 0)),
   );
 
+  function handleToggleMixDye(details: ChangeDetails) {
+    if (details.checked) {
+      $currentItemChanges.setKey(`${props.category}.isDeleteDye`, false);
+      if (itemChange()?.item.dye) {
+        handleMixDyeColorChange(0);
+      }
+    } else {
+      $currentItemChanges.setKey(`${props.category}.isDeleteDye`, true);
+    }
+  }
+
   function handleColorChange(value: number) {
     const equipInfo = getEquipById(value);
     $currentItemChanges.setKey(`${props.category}.id`, value);
@@ -104,12 +118,24 @@ export const MixDyeAdjust = (props: MixDyeAdjustProps) => {
   return (
     <Show when={itemChange()}>
       {(item) => (
-        <VStack pt={1}>
+        <VStack pt={1} gap={1}>
+          <Box alignSelf="flex-start" ml={2}>
+            顏色
+          </Box>
           <MixDyeColorSelection
             value={item().item.id.toString()}
             onChange={handleColorChange}
             options={options()}
           />
+          <HStack alignSelf="flex-start" alignItems="center" ml={2}>
+            混染
+            <Switch
+              checked={!!item().item.dye}
+              onCheckedChange={handleToggleMixDye}
+              alignSelf="flex-start"
+              ml={2}
+            />
+          </HStack>
           <Show when={item().item.dye}>
             {(dyeInfo) => (
               <>
@@ -122,7 +148,7 @@ export const MixDyeAdjust = (props: MixDyeAdjustProps) => {
                   title="混染"
                   value={dyeInfo()?.alpha || 50}
                   onValueChange={handleMixDyeAlphaChange}
-                  class={css({ width: 'full' })}
+                  class={css({ width: 'full', mt: 1 })}
                   baseColor={baseColor()}
                   rangeColor={rangeColor()}
                 />
