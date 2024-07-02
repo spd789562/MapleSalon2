@@ -18,5 +18,5 @@ pub fn resolve_zmap(node: &WzNodeArc) -> Result<Vec<String>> {
 
     let child = image.resolve_children(None).map_err(node::Error::from)?;
 
-    Ok(child.iter().map(|(name, _)| name.to_string()).collect())
+    Ok(child.0.iter().map(|(name, _)| name.to_string()).collect())
 }
