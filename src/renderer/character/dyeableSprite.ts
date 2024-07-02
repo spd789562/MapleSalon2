@@ -52,13 +52,11 @@ export class DyeableSprite extends Container {
     return this.item.avaliableDye.get(this.item.info.dye.color);
   }
   get dyePath() {
-    if (!this.dyeId) {
+    const dyeId = this.dyeId;
+    if (!dyeId) {
       return undefined;
     }
-    if (this.mainUrl.includes(this.item.info.id.toString())) {
-      return replaceIdInPath(this.mainUrl, this.dyeId);
-    }
-    return this.mainUrl;
+    return replaceIdInPath(this.mainUrl, dyeId);
   }
   async loadDyeAssets() {
     if (!this.item.info.dye) {
