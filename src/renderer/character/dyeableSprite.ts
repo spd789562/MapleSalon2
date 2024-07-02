@@ -72,7 +72,10 @@ export class DyeableSprite extends Container {
     try {
       await Assets.load({
         alias: dyeUrl,
-        src: CharacterLoader.getPieceUrl(dyeUrl),
+        /* if image is under _Canvas, it sometime can't change id directly, 
+           so use normal path here and let it _oulink to dest path
+         */
+        src: CharacterLoader.getPieceUrl(dyeUrl.replace('_Canvas/', '')),
         loadParser: 'loadTextures',
         format: '.webp',
       });
