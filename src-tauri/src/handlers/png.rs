@@ -60,6 +60,12 @@ pub fn resolve_png_unparsed(
 
     let node_read = target.read().unwrap();
 
+    if let Some(uol_node) = node_read.try_as_uol() {
+        let uol_path = uol_node.get_string()?;
+        let target_path = node_util::get_resolved_uol_path(path, &uol_path);
+        return resolve_png_unparsed(image_node, &target_path, root);
+    }
+
     if let Some(png) = node_read.try_as_png() {
         let inlink = node_read
             .at("_inlink")
