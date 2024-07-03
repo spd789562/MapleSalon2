@@ -13,6 +13,7 @@ export class DyeableSprite extends Container {
 
   _mainSprite: Container | null = null;
   _dyeSprite: Container | null = null;
+  _prevDyeId: number | undefined = undefined;
 
   _failedToGetDye = false;
 
@@ -25,20 +26,28 @@ export class DyeableSprite extends Container {
     this.updateDye();
   }
   async updateDye() {
-    this._failedToGetDye = false;
-    await this.loadDyeAssets();
-    this._dyeSprite && this.removeChild(this._dyeSprite);
+    const dyeId = this.dyeId;
+    const isNeedToLoad = this._prevDyeId !== dyeId;
+
+    if (isNeedToLoad) {
+      this._failedToGetDye = false;
+      await this.loadDyeAssets();
+
+      this._prevDyeId = dyeId;
+    }
+
     const dyePath = this.dyePath;
     /* if dye piece load faild then just render mainSprite */
-    if (
-      !(dyePath && this.item.info.dye) ||
-      this._failedToGetDye ||
-      this.item.info.dye.alpha === 0
-    ) {
+    if (!dyePath || this._failedToGetDye || !this.item.info.dye) {
+      this._dyeSprite && this.removeChild(this._dyeSprite);
       return;
     }
-    this._dyeSprite = Sprite.from(dyePath);
-    this.addChild(this._dyeSprite);
+
+    if (isNeedToLoad) {
+      this._dyeSprite && this.removeChild(this._dyeSprite);
+      this._dyeSprite = Sprite.from(dyePath);
+      this.addChild(this._dyeSprite);
+    }
     const dyeAlpha = this.item.info.dye.alpha;
 
     if (this._dyeSprite) {

@@ -74,7 +74,7 @@ export const MixDyeAdjust = (props: MixDyeAdjustProps) => {
   function handleToggleMixDye(details: ChangeDetails) {
     if (details.checked) {
       $currentItemChanges.setKey(`${props.category}.isDeleteDye`, false);
-      if (itemChange()?.item.dye) {
+      if (!itemChange()?.item.dye) {
         handleMixDyeColorChange(0);
       }
     } else {
@@ -147,7 +147,7 @@ export const MixDyeAdjust = (props: MixDyeAdjustProps) => {
           />
           <MixDyeAlphaSlider
             title="混染"
-            value={item().item.dye?.alpha || 50}
+            value={item().item.dye?.alpha ?? 50}
             onValueChange={handleMixDyeAlphaChange}
             class={css({ width: 'full', mt: 1 })}
             baseColor={baseColor()}
