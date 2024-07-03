@@ -1,6 +1,6 @@
 import { atom, map, computed, onSet } from 'nanostores';
 
-import { $equipmentStrings } from './string';
+import { $equipmentStrings, $equipmentHistory } from './string';
 
 import { getCategoryBySubCategory, getSubCategory } from '@/utils/itemId';
 import { getFaceColorId, getHairColorId } from '@/utils/mixDye';
@@ -45,6 +45,10 @@ export const $isShowEquipCategorySelection = computed(
   $equipmentDrawerEquipTab,
   (tab) => tab === EquipTab.Equip,
 );
+export const $isOnHistoryTab = computed(
+  $equipmentDrawerEquipTab,
+  (tab) => tab === EquipTab.History,
+);
 export const $currentEquipmentDrawerCategory = computed(
   [$equipmentDrawerEquipCategory, $equipmentDrawerEquipTab],
   (category, tab) => {
@@ -53,6 +57,9 @@ export const $currentEquipmentDrawerCategory = computed(
     }
     if (tab === EquipTab.Face) {
       return 'Face';
+    }
+    if (tab === EquipTab.History) {
+      return AllCategory;
     }
     return category;
   },
@@ -63,12 +70,18 @@ export const $currentEquipmentDrawerSearch = computed(
 );
 
 export const $categoryFilteredString = computed(
-  [$currentEquipmentDrawerCategory, $equipmentStrings],
-  (category, strings) => {
-    if (category === AllCategory) {
-      return strings;
+  [
+    $equipmentDrawerEquipTab,
+    $currentEquipmentDrawerCategory,
+    $equipmentStrings,
+  ],
+  (tab, category, strings) => {
+    if (tab === EquipTab.History) {
+      /* not subscribe $equipmentHistory here */
+      return $equipmentHistory.get();
     }
-    if (category === 'Hair') {
+
+    if (tab === EquipTab.Hair) {
       return strings.filter((item) => {
         if (item.category === EquipCategory.Hair) {
           return getHairColorId(item.id).toString() === HairColor.Black;
@@ -77,13 +90,17 @@ export const $categoryFilteredString = computed(
       });
     }
 
-    if (category === 'Face') {
+    if (tab === EquipTab.Face) {
       return strings.filter((item) => {
         if (item.category === EquipCategory.Face) {
           return getFaceColorId(item.id).toString() === FaceColor.Black;
         }
         return false;
       });
+    }
+
+    if (category === AllCategory) {
+      return strings;
     }
 
     const mainCategory = getCategoryBySubCategory(category);

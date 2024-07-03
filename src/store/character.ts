@@ -1,8 +1,10 @@
 import { atom, deepMap, computed, batched, onSet, map } from 'nanostores';
 
+import { appendHistory } from './string';
+
 import { getSubCategory, getBodyId, getHeadIdFromBodyId } from '@/utils/itemId';
 
-import type { EquipSubCategory } from '@/const/equipments';
+import { EquipCategory, type EquipSubCategory } from '@/const/equipments';
 import type { ItemInfo } from '@/renderer/character/const/data';
 import { CharacterAction } from '@/const/actions';
 import { CharacterExpressions } from '@/const/emotions';
@@ -114,6 +116,13 @@ onSet($currentItem, ({ newValue, abort }) => {
   if (!category) {
     return abort();
   }
+
+  /* append to history */
+  appendHistory({
+    category: EquipCategory.Unknown,
+    id: newValue.id,
+    name: newValue.name,
+  });
 
   category = getCharacterSubCategory(category);
 
