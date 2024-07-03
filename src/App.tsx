@@ -5,6 +5,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { $apiHost, $isInitialized, $wzReady } from '@/store/const';
 import { $equipmentStrings, type EquipItem } from '@/store/string';
 
+import { AppContainer } from './components/AppContainer';
 import { BaseWzSelector } from './components/BaseWzSelector';
 import { CharacterScene } from './components/Character';
 import { EqupimentDrawer } from './components/drawer/EqupimentDrawer';
@@ -45,16 +46,18 @@ function App() {
   init();
 
   return (
-    <div class="container">
+    <>
       <BaseWzSelector />
       <Show when={ready()}>
-        <CharacterScene />
+        <AppContainer>
+          <CharacterScene />
+        </AppContainer>
         <EquipOpenButton />
         <CurrentEquipOpenButton />
         <CurrentEquipmentDrawer />
         <EqupimentDrawer />
       </Show>
-    </div>
+    </>
   );
 }
 

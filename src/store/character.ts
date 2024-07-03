@@ -9,6 +9,7 @@ import type { ItemInfo } from '@/renderer/character/const/data';
 import { CharacterAction } from '@/const/actions';
 import { CharacterExpressions } from '@/const/emotions';
 import { CharacterEarType } from '@/const/ears';
+import { CharacterHandType } from '@/const/hand';
 
 export type CharacterItemInfo = ItemInfo &
   Partial<{ isDeleted: boolean; isDeleteDye: boolean; name: string }>;
@@ -21,6 +22,7 @@ export interface CharacterInfo {
   action: CharacterAction;
   expression: CharacterExpressions;
   earType: CharacterEarType;
+  handType: CharacterHandType;
 }
 
 export interface CharacterData extends Record<string, unknown>, CharacterInfo {
@@ -88,6 +90,7 @@ export const $currentCharacterInfo = map({
   action: CharacterAction.Stand1,
   expression: CharacterExpressions.Default,
   earType: CharacterEarType.HumanEar,
+  handType: CharacterHandType.SingleHand,
 });
 
 export const $currentCharacter = batched(

@@ -1,6 +1,7 @@
 import { createUniqueId } from 'solid-js';
 import { type Application, Container, Ticker, EventEmitter } from 'pixi.js';
 
+import type { CharacterData } from '@/store/character';
 import type { ItemInfo, AncherName, Vec2, PieceSlot } from './const/data';
 import type { CategorizedItem } from './categorizedItem';
 import type { CharacterAnimatablePart } from './characterAnimatablePart';
@@ -134,26 +135,27 @@ export class Character extends Container {
     this.#_action = action;
 
     this.updateFaceVisibilityByAction();
-    this.updateHandTypeByAction();
-
-    this.loadItems();
+    // this.updateHandTypeByAction();
   }
   set expression(expression: CharacterExpressions) {
     this.#_expression = expression;
-    this.loadItems();
   }
   set earType(earType: CharacterEarType) {
     this.#_earType = earType;
-    this.loadItems();
   }
   set handType(handType: CharacterHandType) {
     this.#_handType = handType;
 
     this.updateActionByHandType();
-
-    this.loadItems();
   }
-  batchUpdateAttribute(attributes: Partial<CharacterAttributes>) {
+
+  async update(characterData: CharacterData) {
+    this.updateAttribute(characterData);
+    await this.updateItems(Object.values(characterData.items));
+    await this.loadItems();
+  }
+
+  updateAttribute(attributes: Partial<CharacterAttributes>) {
     if (attributes.action) {
       this.#_action = attributes.action;
       this.updateFaceVisibilityByAction();
@@ -169,10 +171,9 @@ export class Character extends Container {
       this.#_handType = attributes.handType;
       this.updateActionByHandType();
     }
-    this.loadItems();
   }
 
-  updateItems(items: ItemInfo[]) {
+  async updateItems(items: ItemInfo[]) {
     let isAddItem = false;
     for (const item of items) {
       if (this.idItems.has(item.id)) {
@@ -193,9 +194,9 @@ export class Character extends Container {
         this.idItems.delete(item);
       }
     }
-    if (isAddItem) {
-      this.loadItems();
-    }
+    // if (isAddItem) {
+    //   await this.loadItems();
+    // }
   }
 
   updateFilter(id: number, info: ItemInfo) {

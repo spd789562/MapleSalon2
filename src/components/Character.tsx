@@ -9,7 +9,7 @@ import {
 
 import { css } from 'styled-system/css';
 
-import { $previewCharacter } from '@/store/character';
+import { $previewCharacter, $currentCharacterInfo } from '@/store/character';
 import { usePureStore } from '@/store';
 
 import { Application, Container } from 'pixi.js';
@@ -43,6 +43,8 @@ const Selection = <T extends string>(props: SelectionProps<T>) => {
 
 export const CharacterScene = () => {
   const characterData = usePureStore($previewCharacter);
+  const [isInit, setIsInit] = createSignal<boolean>(false);
+  const [url, setUrl] = createSignal<string>('');
   const [isLoading, setIsLoading] = createSignal(false);
   let container!: HTMLDivElement;
   const app = new Application();
@@ -57,18 +59,16 @@ export const CharacterScene = () => {
       width: 300,
       height: 300,
       background: 0x000000,
-      backgroundAlpha: 1,
+      backgroundAlpha: 0,
       useBackBuffer: true,
     });
-    container?.appendChild(app.canvas);
+    container.appendChild(app.canvas);
     const characterLayer = new Container();
     characterLayer.addChild(ch);
     characterLayer.position.set(150, 150);
     app.stage.addChild(characterLayer);
 
-    ch.updateItems(Object.values(characterData().items));
-    await ch.loadItems();
-    // ch.render();
+    setIsInit(true);
   }
 
   onMount(() => {
@@ -79,21 +79,27 @@ export const CharacterScene = () => {
     ch.reset();
   });
 
-  createEffect(() => {
-    ch.updateItems(Object.values(characterData().items));
+  createEffect(async () => {
+    if (isInit()) {
+      await ch.update(characterData());
+      if (app?.renderer?.extract) {
+        const image = await app.renderer.extract.base64(ch);
+        setUrl(image);
+      }
+    }
   });
 
   function updateAction(action: CharacterAction) {
-    ch.action = action;
+    $currentCharacterInfo.setKey('action', action);
   }
   function updateExpression(expression: CharacterExpressions) {
-    ch.expression = expression;
+    $currentCharacterInfo.setKey('expression', expression);
   }
   function updateEarType(earType: CharacterEarType) {
-    ch.earType = earType;
+    $currentCharacterInfo.setKey('earType', earType);
   }
   function updateHandType(handType: CharacterHandType) {
-    ch.handType = handType;
+    $currentCharacterInfo.setKey('handType', handType);
   }
 
   return (
@@ -119,6 +125,9 @@ export const CharacterScene = () => {
         onChange={updateHandType}
       />
       <div class="alpha-bg" ref={container} />
+      <Show when={url()}>
+        <img src={url()} alt="test" />
+      </Show>
       <Show when={isLoading()}>
         <div
           class={css({
