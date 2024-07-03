@@ -22,7 +22,9 @@ export const BaseWzSelector = () => {
         await invoke('init', { path });
 
         await fetch(`${$apiHost.get()}/string/equip/prepare`);
-        const strings = await fetch(`${$apiHost.get()}/string/equip`)
+        const strings = await fetch(
+          `${$apiHost.get()}/string/equip?cache=14400`,
+        )
           .then((res) => res.json())
           .then((res: [string, string, string][]) =>
             res.map(

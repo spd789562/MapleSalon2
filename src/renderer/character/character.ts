@@ -435,14 +435,17 @@ export class Character extends Container {
         this.loadEvent.emit('loading');
       }
     }, 100);
-    for await (const item of this.idItems.values()) {
+
+    const loadItems = Array.from(this.idItems.values()).map(async (item) => {
       await item.load();
       if (item.isUseExpressionItem) {
         await item.prepareActionResource(this.expression);
       } else {
         await item.prepareActionResource(this.action);
       }
-    }
+    });
+
+    await Promise.all(loadItems);
 
     if (this.#_renderId !== renderId) {
       return;

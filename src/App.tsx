@@ -25,7 +25,7 @@ function App() {
 
     if (is_initialized) {
       await fetch(`${url}/string/equip/prepare`);
-      const strings = await fetch(`${url}/string/equip`)
+      const strings = await fetch(`${url}/string/equip?cache=14400`)
         .then((res) => res.json())
         .then((res: [string, string, string][]) =>
           res.map(
