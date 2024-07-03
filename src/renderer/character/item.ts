@@ -46,6 +46,7 @@ export class CharacterItem implements RenderItemInfo {
   character: Character;
 
   wz: WzItem | null = null;
+  isCleanedWz = false;
 
   filters: (HsvAdjustmentFilter | Filter)[] = [];
 
@@ -103,6 +104,17 @@ export class CharacterItem implements RenderItemInfo {
 
       this.actionPieces.set(expression, actionItem);
     }
+    if (!this.isCleanedWz) {
+      for (const key of Object.keys(wz)) {
+        if (
+          !expressions.includes(key as CharacterExpressions) &&
+          key !== 'info'
+        ) {
+          delete wz[key];
+        }
+      }
+      this.isCleanedWz = true;
+    }
   }
   private loadAction(wz: WzItem) {
     const actionNeedToBuild = Object.values(CharacterAction);
@@ -120,6 +132,15 @@ export class CharacterItem implements RenderItemInfo {
       const actionItem = new CharacterActionItem(action, actionWz, this);
 
       this.actionPieces.set(action, actionItem);
+    }
+
+    if (!this.isCleanedWz) {
+      for (const key of Object.keys(wz)) {
+        if (!actions.includes(key as CharacterAction) && key !== 'info') {
+          delete wz[key];
+        }
+      }
+      this.isCleanedWz = true;
     }
   }
   private loadWeapon(wz: WzItem) {
