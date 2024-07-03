@@ -106,13 +106,13 @@ export class Character extends Container {
   currentDelta = 0;
   currentTicker?: (delta: Ticker) => void;
 
-  app: Application;
+  app?: Application;
 
   isLoading = false;
   loadFlashTimer = 0;
   loadEvent = new EventEmitter<'loading' | 'loaded'>();
 
-  constructor(app: Application) {
+  constructor(app?: Application) {
     super();
     this.sortableChildren = true;
     this.app = app;
