@@ -4,6 +4,7 @@ import { open } from '@tauri-apps/plugin-dialog';
 
 import { $isInitialized, $apiHost } from '@/store/const';
 import { $equipmentStrings, type EquipItem } from '@/store/string';
+import { initialGlobalRenderer } from '@/store/renderer';
 
 export const BaseWzSelector = () => {
   const [isLoading, setIsLoading] = createSignal(false);
@@ -33,6 +34,8 @@ export const BaseWzSelector = () => {
             ),
           );
         $equipmentStrings.set(strings);
+
+        await initialGlobalRenderer();
       } catch (e) {
         if (e instanceof Error) {
           setError(JSON.stringify(e.message));

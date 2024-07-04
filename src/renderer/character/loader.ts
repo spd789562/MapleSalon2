@@ -72,7 +72,9 @@ class Loader {
     return await this.getPieceWzByPath(path);
   }
   async getPieceWzByPath(path: string): Promise<WzItem | null> {
-    await invoke('parse_node', { path });
+    if (!Assets.cache.has(path)) {
+      await fetch(`${this.apiHost}/node/parse/${path}`).catch(() => null);
+    }
 
     const data = await Assets.load<WzItem>({
       alias: path,

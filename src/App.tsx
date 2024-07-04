@@ -1,9 +1,10 @@
-import { Show } from 'solid-js';
+import { Show, onMount } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 import { invoke } from '@tauri-apps/api/core';
 
 import { $apiHost, $isInitialized, $wzReady } from '@/store/const';
 import { $equipmentStrings, type EquipItem } from '@/store/string';
+import { initialGlobalRenderer } from '@/store/renderer';
 
 import { AppContainer } from './components/AppContainer';
 import { BaseWzSelector } from './components/BaseWzSelector';
@@ -24,6 +25,8 @@ function App() {
       is_initialized: boolean;
     }>('get_server_url');
 
+    $apiHost.set(url);
+
     if (is_initialized) {
       await fetch(`${url}/string/equip/prepare`);
       const strings = await fetch(`${url}/string/equip?cache=14400`)
@@ -35,15 +38,22 @@ function App() {
           ),
         );
       $equipmentStrings.set(strings);
+
+      try {
+        await initialGlobalRenderer();
+      } catch (e) {
+        console.error('initialGlobalRenderer failed', e);
+      }
     }
 
-    $apiHost.set(url);
     $isInitialized.set(is_initialized);
 
     console.info('API host:', url);
   }
 
-  init();
+  onMount(() => {
+    init();
+  });
 
   return (
     <>

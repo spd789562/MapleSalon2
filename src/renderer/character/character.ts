@@ -102,6 +102,8 @@ export class Character extends Container {
   frame = 0;
   /** is character playing bounced action */
   isBounce = false;
+  isPlaying = false;
+  isAnimating = false;
 
   /* delta to calculate is need enter next frame */
   currentDelta = 0;
@@ -150,6 +152,8 @@ export class Character extends Container {
   }
 
   async update(characterData: CharacterData) {
+    this.frame = characterData.frame || 0;
+    this.isAnimating = characterData.isAnimating;
     this.updateAttribute(characterData);
     await this.updateItems(Object.values(characterData.items));
     await this.loadItems();
@@ -286,7 +290,9 @@ export class Character extends Container {
     }
 
     this.playPieces(this.currentPieces);
-    this.playByBody(body);
+    if (this.isAnimating) {
+      this.playByBody(body);
+    }
 
     this.isLoading = false;
     this.loadEvent.emit('loaded');
@@ -295,6 +301,7 @@ export class Character extends Container {
   reset() {
     this.isBounce = false;
     this.isLoading = false;
+    this.isPlaying = false;
     this.currentTicker && Ticker.shared.remove(this.currentTicker);
     this.clearnContainerChild();
   }
