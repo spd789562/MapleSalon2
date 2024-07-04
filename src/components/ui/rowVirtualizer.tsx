@@ -19,16 +19,18 @@ export function RowVirtualizer<Item>(props: RowVirtualizerProps<Item>) {
 
   const columnWidth = createMemo(() => 100 / props.columnCount);
 
-  const timesArray = Array.from({ length: props.columnCount });
+  const timesArray = createMemo(() =>
+    Array.from({ length: props.columnCount }),
+  );
 
-  const defaultItemHeight = props.defaultItemHeight ?? 45;
+  const defaultItemHeight = createMemo(() => props.defaultItemHeight ?? 45);
 
   const virtualizer = createVirtualizer({
     get count() {
       return count();
     },
     getScrollElement: () => parentRef,
-    estimateSize: () => defaultItemHeight,
+    estimateSize: () => defaultItemHeight(),
     overscan: 3,
   });
 
@@ -63,7 +65,7 @@ export function RowVirtualizer<Item>(props: RowVirtualizerProps<Item>) {
                   'z-index': virtualizer.getVirtualItems().length - i(),
                 }}
               >
-                <For each={timesArray}>
+                <For each={timesArray()}>
                   {(_, index) => {
                     const data = () =>
                       props.data[

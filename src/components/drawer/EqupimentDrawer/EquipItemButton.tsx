@@ -1,14 +1,16 @@
+import { Switch, Match } from 'solid-js';
 import { $currentItem } from '@/store/character';
 import type { EquipItem } from '@/store/string';
 
 import { CssTooltip } from '@/components/ui/cssTooltip';
 import { LoadableEquipIcon } from '@/components/LoadableEquipIcon';
-
-const ColumnCount = 7;
+import { PreviewCharacter } from './PreviewCharacter';
 
 export interface EquipItemButtonProps {
   item: EquipItem;
   index: number;
+  columnCount: number;
+  type: 'icon' | 'character';
 }
 export const EquipItemButton = (props: EquipItemButtonProps) => {
   function handleClick() {
@@ -22,13 +24,20 @@ export const EquipItemButton = (props: EquipItemButtonProps) => {
         placement={
           props.index === 0
             ? 'right'
-            : props.index + 1 === ColumnCount
+            : props.index + 1 === props.columnCount
               ? 'left'
               : 'center'
         }
         data-tooltip-content={props.item.name}
       >
-        <LoadableEquipIcon id={props.item.id} name={props.item.name} />
+        <Switch>
+          <Match when={props.type === 'character'}>
+            <PreviewCharacter id={props.item.id} name={props.item.name} />
+          </Match>
+          <Match when={props.type === 'icon'}>
+            <LoadableEquipIcon id={props.item.id} name={props.item.name} />
+          </Match>
+        </Switch>
       </CssTooltip>
     </button>
   );

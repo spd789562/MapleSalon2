@@ -86,7 +86,7 @@ export const $currentCharacterItems = deepMap<Partial<CharacterItems>>({
 
 export const $currentCharacterInfo = map({
   frame: 0,
-  isAnimating: false,
+  isAnimating: true,
   action: CharacterAction.Stand1,
   expression: CharacterExpressions.Default,
   earType: CharacterEarType.HumanEar,

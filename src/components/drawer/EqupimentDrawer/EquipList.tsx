@@ -1,19 +1,45 @@
+import { createMemo } from 'solid-js';
+import { computed } from 'nanostores';
+import { useStore } from '@nanostores/solid';
 import { usePureStore } from '@/store';
 
-import { $equipmentDrawerEquipFilteredString } from '@/store/equipDrawer';
+import {
+  $equipmentDrawerEquipFilteredString,
+  $equipmentDrawerEquipTab,
+  EquipTab,
+} from '@/store/equipDrawer';
 import { RowVirtualizer } from '@/components/ui/rowVirtualizer';
 import { EquipItemButton } from './EquipItemButton';
 
-const ColumnCount = 7;
+const $equipRenderType = computed($equipmentDrawerEquipTab, (equipTab) => {
+  if (equipTab === EquipTab.Face || equipTab === EquipTab.Hair) {
+    return 'character';
+  }
+  return 'icon';
+});
 
 export const EquipList = () => {
+  const equipRenderType = useStore($equipRenderType);
   const equipStrings = usePureStore($equipmentDrawerEquipFilteredString);
+
+  const columnCount = createMemo(() =>
+    equipRenderType() === 'character' ? 5 : 7,
+  );
+  const defaultItemHeight = createMemo(() =>
+    equipRenderType() === 'character' ? 90 : 45,
+  );
 
   return (
     <RowVirtualizer
-      columnCount={ColumnCount}
+      defaultItemHeight={defaultItemHeight()}
+      columnCount={columnCount()}
       renderItem={(item, index) => (
-        <EquipItemButton item={item} index={index} />
+        <EquipItemButton
+          item={item}
+          index={index}
+          columnCount={columnCount()}
+          type={equipRenderType()}
+        />
       )}
       data={equipStrings()}
     />
