@@ -79,3 +79,30 @@ pub async fn get_json(
         json.to_string(),
     ))
 }
+
+pub async fn parse(
+    State(root): State<AppState>,
+    Path(path): Path<String>,
+) -> Result<impl IntoResponse> {
+    let node_read = root.0.read().unwrap();
+
+    let _ = node_read
+        .at_path(&path)
+        .map(|n| node_util::parse_node(&n))
+        .ok_or(Error::NodeNotFound)?;
+
+    Ok(())
+}
+
+pub async fn unparse(
+    State(root): State<AppState>,
+    Path(path): Path<String>,
+) -> Result<impl IntoResponse> {
+    let node = root.0.read().unwrap();
+
+    node.at_path(&path)
+        .map(|n| n.write().unwrap().unparse())
+        .ok_or(Error::NodeNotFound)?;
+
+    Ok(())
+}
