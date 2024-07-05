@@ -110,6 +110,9 @@ export abstract class CategorizedItem<Name extends string> {
       const { delay = 0, ...restOfWzData } = wzData;
       for (const pieceName in restOfWzData) {
         const piece = wzData[pieceName];
+        if (!piece) {
+          continue;
+        }
         const pieceUrl = piece._outlink || piece.path;
         if (!pieceUrl) {
           continue;

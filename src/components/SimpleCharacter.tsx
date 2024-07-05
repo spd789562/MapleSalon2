@@ -1,13 +1,18 @@
-import { createEffect, createSignal, Show } from 'solid-js';
+import { createEffect, createSignal, onCleanup, Show } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 
 import {
   $isGlobalRendererInitialized,
   $globalRenderer,
+  $simpleCharacterCache,
 } from '@/store/renderer';
 import type { CharacterItems, CharacterInfo } from '@/store/character';
 
+import { Skeleton } from './ui/skeleton';
+
 import { Character } from '@/renderer/character/character';
+
+import { makeCharacterHash } from '@/utils/characterHash';
 
 import { CharacterAction } from '@/const/actions';
 import { CharacterExpressions } from '@/const/emotions';
@@ -22,16 +27,12 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
   const isInit = useStore($isGlobalRendererInitialized);
   const [url, setUrl] = createSignal<string>('');
 
-  const [isLoading, setIsLoading] = createSignal(false);
-
   const character = new Character();
-  character.loadEvent.addListener('loading', () => setIsLoading(true));
-  character.loadEvent.addListener('loaded', () => setIsLoading(false));
 
   createEffect(async () => {
     if (isInit()) {
       const app = $globalRenderer.get();
-      await character.update({
+      const characterData = {
         frame: props.frame || 0,
         isAnimating: !!props.isAnimating,
         action: props.action || CharacterAction.Stand1,
@@ -39,16 +40,37 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
         earType: props.earType || CharacterEarType.HumanEar,
         handType: props.handType || CharacterHandType.SingleHand,
         items: props.items,
-      });
-      if (app.renderer?.extract) {
-        const image = await app.renderer.extract.base64(character);
-        setUrl(image);
+      };
+      const hash = makeCharacterHash(characterData);
+      const existCache: string | undefined = $simpleCharacterCache.get()[hash];
+      if (existCache) {
+        setUrl(existCache);
+      } else {
+        await character.update(characterData);
+        if (app.renderer?.extract) {
+          /* prevent pixi's error */
+          character.effects = [];
+          const canvas = app.renderer.extract.canvas(character);
+          canvas.toBlob?.((blob) => {
+            if (blob) {
+              const url = URL.createObjectURL(blob);
+              $simpleCharacterCache.setKey(hash, url);
+              setUrl(url);
+            }
+          });
+        }
       }
     }
   });
 
+  onCleanup(() => {
+    character.reset();
+    character.loadEvent.removeAllListeners();
+    character.destroy();
+  });
+
   return (
-    <Show when={url()}>
+    <Show when={url()} fallback={<Skeleton width="3.5rem" height="5rem" />}>
       <img src={url()} alt={props.title} />
     </Show>
   );

@@ -1,4 +1,4 @@
-import { atom } from 'nanostores';
+import { atom, map } from 'nanostores';
 import { Application } from 'pixi.js';
 
 import { CharacterLoader } from '@/renderer/character/loader';
@@ -6,6 +6,8 @@ import { CharacterLoader } from '@/renderer/character/loader';
 export const $globalRenderer = atom<Application>(new Application());
 
 export const $isGlobalRendererInitialized = atom<boolean>(false);
+
+export const $simpleCharacterCache = map<Record<string, string>>({});
 
 export async function initialGlobalRenderer() {
   const app = $globalRenderer.get();

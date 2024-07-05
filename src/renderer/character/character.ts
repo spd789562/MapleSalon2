@@ -396,7 +396,7 @@ export class Character extends Container {
   updateCharacterPivotByBodyPiece() {
     /* use the ancher to set actual character offset */
     const bodyPos = this.currentBodyFrame?.ancher || { x: 0, y: 0 };
-    this.pivot.set(bodyPos.x, bodyPos.y);
+    this.pivot?.set(bodyPos.x, bodyPos.y);
   }
 
   /** use backBody to check current action is turn character to back  */
