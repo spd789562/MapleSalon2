@@ -1,3 +1,5 @@
+import type { JSX } from 'solid-js';
+import { Portal } from 'solid-js/web';
 import { type Assign, Tooltip } from '@ark-ui/solid';
 import {
   type TooltipVariantProps,
@@ -40,3 +42,24 @@ export {
   TooltipContext as Context,
   type TooltipContextProps as ContextProps,
 } from '@ark-ui/solid';
+
+export interface SimpleTooltipProps {
+  children: JSX.Element;
+  tooltip: string;
+  zIndex?: number;
+}
+export const SimpleTooltip = (props: SimpleTooltipProps) => {
+  return (
+    <Root openDelay={100}>
+      <Trigger>{props.children}</Trigger>
+      <Portal>
+        <Positioner style={{ 'z-index': props.zIndex || 1 }}>
+          <Arrow>
+            <ArrowTip />
+          </Arrow>
+          <Content>{props.tooltip}</Content>
+        </Positioner>
+      </Portal>
+    </Root>
+  );
+};

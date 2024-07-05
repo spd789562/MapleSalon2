@@ -9,6 +9,7 @@ import {
   CategorySelection,
   CategorySelectionToggle,
 } from './CategorySelection';
+import { CharacterRenderingSwitch } from './CharacterRenderingSwitch';
 import { HideOnHistoryTab } from './HideOnHistoryTab';
 
 export const EqupimentDrawer = () => {
@@ -21,6 +22,7 @@ export const EqupimentDrawer = () => {
           <Grid position="relative" overflow="auto" gridTemplateRows="auto 1fr">
             <Grid gridTemplateColumns="1fr auto" p={1}>
               <CategorySelectionToggle />
+              <CharacterRenderingSwitch />
               <HideOnHistoryTab>
                 <EquipSearchInput />
               </HideOnHistoryTab>

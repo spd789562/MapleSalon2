@@ -33,6 +33,9 @@ export const $equipmentDrawerSearch = map<
   Partial<Record<EquipCategorySelections, string>>
 >({});
 
+/** enable character rendering featering in equipment drawer */
+export const $equipmentDrawerExperimentCharacterRender = atom(false);
+
 /* effect */
 onSet($equipmentDrawerEquipTab, () => {
   if ($equipmentDrawerEquipCategorySelectionOpen.get()) {
@@ -44,6 +47,10 @@ onSet($equipmentDrawerEquipTab, () => {
 export const $isShowEquipCategorySelection = computed(
   $equipmentDrawerEquipTab,
   (tab) => tab === EquipTab.Equip,
+);
+export const $isShowExperimentCharacterRenderSwitch = computed(
+  $equipmentDrawerEquipTab,
+  (tab) => tab === EquipTab.Face || tab === EquipTab.Hair,
 );
 export const $isOnHistoryTab = computed(
   $equipmentDrawerEquipTab,

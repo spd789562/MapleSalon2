@@ -6,17 +6,24 @@ import { usePureStore } from '@/store';
 import {
   $equipmentDrawerEquipFilteredString,
   $equipmentDrawerEquipTab,
+  $equipmentDrawerExperimentCharacterRender,
   EquipTab,
 } from '@/store/equipDrawer';
 import { RowVirtualizer } from '@/components/ui/rowVirtualizer';
 import { EquipItemButton } from './EquipItemButton';
 
-const $equipRenderType = computed($equipmentDrawerEquipTab, (equipTab) => {
-  if (equipTab === EquipTab.Face || equipTab === EquipTab.Hair) {
-    return 'character';
-  }
-  return 'icon';
-});
+const $equipRenderType = computed(
+  [$equipmentDrawerEquipTab, $equipmentDrawerExperimentCharacterRender],
+  (equipTab, experimentalCharacterRendering) => {
+    if (
+      experimentalCharacterRendering &&
+      (equipTab === EquipTab.Face || equipTab === EquipTab.Hair)
+    ) {
+      return 'character';
+    }
+    return 'icon';
+  },
+);
 
 export const EquipList = () => {
   const equipRenderType = useStore($equipRenderType);

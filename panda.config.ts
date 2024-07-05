@@ -57,6 +57,9 @@ export default defineConfig({
         },
       },
       slotRecipes: {
+        tooltip: {
+          jsx: ['Tooltip', /.*Tooltip$/],
+        },
         drawer: {
           jsx: ['Drawer', /.*Drawer$/],
         },
