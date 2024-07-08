@@ -11,33 +11,30 @@ use axum::{
     routing::get,
     serve, Router,
 };
-use tower_http::cors::{AllowOrigin, CorsLayer};
+use tower_http::cors::CorsLayer;
 use wz_reader::WzNodeArc;
 
 pub type AppState = (WzNodeArc, StringDict);
 
 pub async fn app(node: WzNodeArc, string_dict: StringDict, port: u16) -> crate::Result<()> {
     let layer_state = node.clone();
-    let app =
-        Router::new()
-            .route("/", get(hello))
-            .nest("/mapping", controller::mapping_router())
-            .nest("/node", controller::node_router())
-            .nest("/string", controller::string_router())
-            .route_layer(axum::middleware::from_fn_with_state(
-                layer_state,
-                middlewares::root_check_middleware,
-            ))
-            .route_layer(axum::middleware::from_fn(
-                middlewares::cache_control_from_query_middleware,
-            ))
-            .route_layer(CorsLayer::new().allow_methods([Method::GET]).allow_origin(
-                AllowOrigin::list([
-                    "http://localhost:1420".parse::<HeaderValue>().unwrap(),
-                    "http://tauri.localhost".parse::<HeaderValue>().unwrap(),
-                ]),
-            ))
-            .with_state((node, string_dict));
+    let app = Router::new()
+        .route("/", get(hello))
+        .nest("/mapping", controller::mapping_router())
+        .nest("/node", controller::node_router())
+        .nest("/string", controller::string_router())
+        .route_layer(axum::middleware::from_fn_with_state(
+            layer_state,
+            middlewares::root_check_middleware,
+        ))
+        .route_layer(axum::middleware::from_fn(
+            middlewares::cache_control_from_query_middleware,
+        ))
+        .route_layer(CorsLayer::new().allow_methods([Method::GET]).allow_origin([
+            HeaderValue::from_static("http://localhost:1420"),
+            HeaderValue::from_static("http://tauri.localhost"),
+        ]))
+        .with_state((node, string_dict));
 
     let host = format!("127.0.0.1:{port}");
 
