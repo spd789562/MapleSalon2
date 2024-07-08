@@ -426,6 +426,11 @@ export class Character extends Container {
       (item) => item.isAllAncherBuilt,
     );
   }
+  get isCurrentActionAncherBuilt() {
+    return Array.from(this.idItems.values()).every((item) =>
+      item.isActionAncherBuilt(this.action),
+    );
+  }
 
   async loadItems() {
     const renderId = createUniqueId();
@@ -446,10 +451,16 @@ export class Character extends Container {
 
     const loadItems = Array.from(this.idItems.values()).map(async (item) => {
       await item.load();
-      if (item.isUseExpressionItem) {
-        await item.prepareActionResource(this.expression);
+      if (this.isAnimating) {
+        if (item.isUseExpressionItem) {
+          await item.prepareActionResource(this.expression);
+        } else {
+          await item.prepareActionResource(this.action);
+        }
+      } else if (item.isUseExpressionItem) {
+        await item.prepareActionResourceByFrame(this.expression, this.frame);
       } else {
-        await item.prepareActionResource(this.action);
+        await item.prepareActionResourceByFrame(this.action, this.frame);
       }
     });
 
@@ -462,10 +473,10 @@ export class Character extends Container {
     const itemCount = this.idItems.size;
     // try to build ancher but up to 2 times of item count
     for (let i = 0; i < itemCount * 4; i++) {
-      if (this.isAllAncherBuilt) {
+      if (this.isCurrentActionAncherBuilt) {
         break;
       }
-      this.buildAncher();
+      this.buildAncherByAction(this.action);
     }
 
     this.buildLock();
@@ -493,7 +504,7 @@ export class Character extends Container {
     }
   }
 
-  buildAncher() {
+  buildAllAncher() {
     for (const action of Object.values(CharacterAction)) {
       for (const item of this.idItems.values()) {
         const ancher = this.actionAnchers.get(action);
@@ -502,6 +513,12 @@ export class Character extends Container {
           item.tryBuildAncher(action, ancher || []),
         );
       }
+    }
+  }
+  buildAncherByAction(action: CharacterAction) {
+    for (const item of this.idItems.values()) {
+      const ancher = this.actionAnchers.get(action);
+      this.actionAnchers.set(action, item.tryBuildAncher(action, ancher || []));
     }
   }
 

@@ -87,6 +87,13 @@ export class CharacterItem implements RenderItemInfo {
       (actionItem) => actionItem.isAllAncherBuilt,
     );
   }
+  isActionAncherBuilt(action: CharacterAction) {
+    const actionItem = this.actionPieces.get(action);
+    if (!actionItem) {
+      return true;
+    }
+    return actionItem.isAllAncherBuilt;
+  }
 
   private loadFace(wz: WzItem) {
     const expressionNeedToBuild = Object.values(CharacterExpressions);
@@ -195,6 +202,13 @@ export class CharacterItem implements RenderItemInfo {
       return;
     }
     await actionItem.prepareResourece();
+  }
+  async prepareActionResourceByFrame(name: CharacterAction | CharacterExpressions, frame: number) {
+    const actionItem = this.actionPieces.get(name);
+    if (!actionItem) {
+      return;
+    }
+    await actionItem.prepareResoureceByFrame(frame);
   }
 
   tryBuildAncher(

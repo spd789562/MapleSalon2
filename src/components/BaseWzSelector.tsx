@@ -36,13 +36,14 @@ export const BaseWzSelector = () => {
         $equipmentStrings.set(strings);
 
         await initialGlobalRenderer();
+
+        $isInitialized.set(true);
       } catch (e) {
         if (e instanceof Error) {
           setError(JSON.stringify(e.message));
         }
         setIsLoading(false);
       }
-      $isInitialized.set(true);
     }
   }
 

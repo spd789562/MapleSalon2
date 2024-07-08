@@ -159,6 +159,46 @@ export abstract class CategorizedItem<Name extends string> {
     this.unresolvedItems = piecesByFrame;
   }
 
+  async prepareResoureceByFrame(index: number) {
+    if (this.unresolvedItems.size === 0) {
+      return;
+    }
+    const assets = new Set<UnresolvedAsset>();
+    for (const items of this.unresolvedItems.values()) {
+      const res = items[index]?.getResource() || [];
+      if (res?.length) {
+        for (const asset of res) {
+          assets.add(asset);
+        }
+      }
+    }
+    await Assets.load(Array.from(assets));
+
+    for (const [pieceName, pieces] of this.unresolvedItems) {
+      const existItem = this.items.get(pieceName as PieceName);
+      if (existItem) {
+        /* update certain frame */
+        existItem.frames = existItem.frames.map((frame, i) => {
+          if (i === index) {
+            return pieces[index];
+          }
+          return frame;
+        });
+      } else {
+        const frames = pieces.map((frame, i) => {
+          if (i === index) {
+            return frame;
+          }
+          return EMPTY;
+        }) as CharacterItemPiece[];
+        this.items.set(
+          pieceName as PieceName,
+          new CharacterAnimatablePart(this.mainItem, frames),
+        );
+      }
+    }
+  }
+
   async prepareResourece() {
     // if unresolvedItems is empty, it means the item is already loaded
     if (this.unresolvedItems.size === 0) {
