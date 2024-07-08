@@ -1,7 +1,7 @@
 {
   "productName": "maplecharactercreator",
   "version": "0.0.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "com.maplecreator.io",
   "build": {
     "beforeDevCommand": "bun run dev",
     "devUrl": "http://localhost:1420",
