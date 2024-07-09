@@ -1,7 +1,8 @@
 import { defineRecipe } from '@pandacss/dev';
 
-export const cssTooltipRecipe = defineRecipe({
+export const cssTooltip = defineRecipe({
   className: 'css-tooltip',
+  jsx: ['CssTooltip'],
   base: {
     position: 'relative',
     _after: {

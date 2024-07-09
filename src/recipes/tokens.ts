@@ -1,6 +1,8 @@
 import type { Tokens } from '@pandacss/dev';
+import { animations } from './animations';
 
 export const tokens: Tokens = {
+  animations,
   gradients: {
     hue: {
       value:
