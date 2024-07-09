@@ -16,6 +16,7 @@ export default defineConfig({
       accentColor: 'iris',
       grayColor: 'neutral',
       borderRadius: 'sm',
+      additionalColors: ['neutral'],
     }),
   ],
 

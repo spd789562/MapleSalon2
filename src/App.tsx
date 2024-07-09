@@ -11,8 +11,10 @@ import { BaseWzSelector } from './components/BaseWzSelector';
 import { CharacterScene } from './components/Character';
 import { EqupimentDrawer } from './components/drawer/EqupimentDrawer';
 import { CurrentEquipmentDrawer } from './components/drawer/CurrentEquipmentDrawer';
+import { CharacterSelectionDrawer } from './components/drawer/CharacterSelectionDrawer';
 import { EquipOpenButton } from './components/drawer/EqupimentDrawer/EquipOpenButton';
 import { CurrentEquipOpenButton } from './components/drawer/CurrentEquipmentDrawer/CurrentEquipOpenButton';
+import { CharacterSelectionDrawerOpenButton } from './components/drawer/CharacterSelectionDrawer/CharacterSelectionDrawerOpenButton';
 
 import './App.css';
 
@@ -66,6 +68,8 @@ function App() {
         <CurrentEquipOpenButton />
         <CurrentEquipmentDrawer />
         <EqupimentDrawer />
+        <CharacterSelectionDrawer />
+        <CharacterSelectionDrawerOpenButton />
       </Show>
     </>
   );
