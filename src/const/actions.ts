@@ -37,3 +37,9 @@ export enum CharacterAction {
 export function isBackAction(action: CharacterAction) {
   return action === CharacterAction.Rope || action === CharacterAction.Ladder;
 }
+
+export function isValidAction(
+  action: CharacterAction,
+): action is CharacterAction {
+  return Object.values(CharacterAction).includes(action);
+}

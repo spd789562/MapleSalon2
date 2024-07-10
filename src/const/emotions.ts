@@ -35,3 +35,11 @@ export const ExpressionsHasEye = [
   CharacterExpressions.Wink,
   CharacterExpressions.Glitter,
 ];
+
+export function isValidExpression(
+  expression: string,
+): expression is CharacterExpressions {
+  return Object.values(CharacterExpressions).includes(
+    expression as CharacterExpressions,
+  );
+}
