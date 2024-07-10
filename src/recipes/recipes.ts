@@ -14,6 +14,37 @@ export const recipes: Record<string, Partial<RecipeConfig>> = {
 };
 
 export const slotRecipes: Record<string, Partial<SlotRecipeConfig>> = {
+  toast: {
+    jsx: ['Toast', /.*Toast$/],
+    staticCss: [{ variant: ['*'] }],
+    variants: {
+      variant: {
+        error: {
+          root: {
+            border: '2px solid',
+            borderColor: 'tomato.9',
+          },
+        },
+        success: {
+          root: {
+            border: '2px solid',
+            borderColor: 'grass.9',
+          },
+        },
+        info: {
+          root: {
+            border: 'none',
+          },
+        },
+        loading: {
+          root: {
+            border: '2px solid',
+            borderColor: 'gray.9',
+          },
+        },
+      },
+    },
+  },
   tooltip: {
     jsx: ['Tooltip', /.*Tooltip$/],
   },

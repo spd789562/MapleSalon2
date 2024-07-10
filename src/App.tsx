@@ -9,6 +9,8 @@ import { initialGlobalRenderer } from '@/store/renderer';
 import { AppContainer } from './components/AppContainer';
 import { BaseWzSelector } from './components/BaseWzSelector';
 import { CharacterScene } from './components/Character';
+import { GlobalToast } from './components/GlobalToast';
+
 import { EqupimentDrawer } from './components/drawer/EqupimentDrawer';
 import { CurrentEquipmentDrawer } from './components/drawer/CurrentEquipmentDrawer';
 import { CharacterSelectionDrawer } from './components/drawer/CharacterSelectionDrawer';
@@ -71,6 +73,7 @@ function App() {
         <CharacterSelectionDrawer />
         <CharacterSelectionDrawerOpenButton />
       </Show>
+      <GlobalToast />
     </>
   );
 }

@@ -9,12 +9,12 @@ export const topBarPositioner = defineRecipe({
     left: 0,
     right: 0,
     w: { base: 'full', md: '50%' },
-    zIndex: 'modal',
+    zIndex: 'toast',
     display: 'flex',
     justifyContent: 'center',
     '& svg': {
       marginLeft: 'auto',
-      transition: 'transform 0.3s ease',
+      transition: 'transform 0.5s ease',
     },
     _open: {
       animation: 'top-bar-in-top',
@@ -23,6 +23,9 @@ export const topBarPositioner = defineRecipe({
       },
     },
     _close: {
+      '& svg': {
+        transitionDuration: '0.3s',
+      },
       animation: 'top-bar-out-top',
     },
   },
