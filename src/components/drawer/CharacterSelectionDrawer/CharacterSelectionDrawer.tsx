@@ -3,6 +3,7 @@ import { Portal } from 'solid-js/web';
 import { useStore } from '@nanostores/solid';
 
 import { $characterSelectionDrawerOpen } from '@/store/trigger';
+
 import { Root, Positioner, Content, Body } from '@/components/ui/drawer';
 
 interface CharacterSelectionDrawerProps {
@@ -24,15 +25,13 @@ export const CharacterSelectionDrawer = (
       onEscapeKeyDown={handleClose}
       variant={props.variant}
       modal={false}
-      closeOnInteractOutside={false}
       trapFocus={false}
       lazyMount={true}
-      preventScroll={false}
     >
       <Portal>
         <Positioner
           height="9rem"
-          width="xs"
+          width={{ base: 'full', md: '70%' }}
           maxWidth="full"
           position="absolute"
         >
