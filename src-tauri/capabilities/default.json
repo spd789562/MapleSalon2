@@ -15,6 +15,9 @@
     "menu:default",
     "tray:default",
     "dialog:allow-open",
-    "store:default"
+    "store:allow-set",
+    "store:allow-get",
+    "store:allow-save",
+    "store:allow-delete"
   ]
 }
