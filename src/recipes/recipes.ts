@@ -14,6 +14,9 @@ export const recipes: Record<string, Partial<RecipeConfig>> = {
 };
 
 export const slotRecipes: Record<string, Partial<SlotRecipeConfig>> = {
+  menu: {
+    jsx: ['Menu', /.*Menu$/],
+  },
   toast: {
     jsx: ['Toast', /.*Toast$/],
     staticCss: [{ variant: ['*'] }],
