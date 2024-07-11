@@ -17,6 +17,7 @@ export type CharacterItemInfo = ItemInfo &
 export type CharacterItems = Record<EquipSubCategory, CharacterItemInfo>;
 
 export interface CharacterInfo {
+  id?: string;
   frame: number;
   isAnimating: boolean;
   action: CharacterAction;
@@ -85,6 +86,7 @@ export const $currentCharacterItems = deepMap<Partial<CharacterItems>>({
 });
 
 export const $currentCharacterInfo = map({
+  id: 'default',
   frame: 0,
   isAnimating: true,
   action: CharacterAction.Stand1,
@@ -224,14 +226,23 @@ export function createEquipItemByCategory(category: EquipSubCategory) {
 export function changeCurrentCharacter(character: Partial<CharacterData>) {
   if (character.items) {
     $currentCharacterItems.set(character.items);
-    character.action &&
-      $currentCharacterInfo.setKey('action', character.action);
-    character.expression &&
-      $currentCharacterInfo.setKey('expression', character.expression);
-    character.earType &&
-      $currentCharacterInfo.setKey('earType', character.earType);
-    character.handType &&
-      $currentCharacterInfo.setKey('handType', character.handType);
+    const updateInfo = { ...$currentCharacterInfo.get() };
+    if (character.id) {
+      updateInfo.id = character.id;
+    }
+    if (character.action) {
+      updateInfo.action = character.action;
+    }
+    if (character.expression) {
+      updateInfo.expression = character.expression;
+    }
+    if (character.earType) {
+      updateInfo.earType = character.earType;
+    }
+    if (character.handType) {
+      updateInfo.handType = character.handType;
+    }
+    $currentCharacterInfo.set(updateInfo);
 
     $currentItemChanges.set({});
   }
