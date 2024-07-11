@@ -31,6 +31,7 @@ export const CharacterList = () => {
       ref={scrollContainerRef}
       gap="2"
       py="1"
+      px="2"
       minWidth="0"
       overflow="auto"
       onWheel={hanedleHorizontalScroll}

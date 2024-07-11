@@ -12,7 +12,7 @@ export const CharacterSelectionDrawer = () => {
           <CharacterList />
           <Grid gridTemplateRows="1fr auto" gap="1.5">
             <AddDefaultCharacterButton />
-            <div>upload</div>
+            {/* <div>upload button</div> */}
           </Grid>
         </Grid>
       }
