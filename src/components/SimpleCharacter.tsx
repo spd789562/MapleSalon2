@@ -22,12 +22,15 @@ import { CharacterEarType } from '@/const/ears';
 export interface SimpleCharacterProps extends Partial<CharacterInfo> {
   title: string;
   items: Partial<CharacterItems>;
+  noMaxWidth?: boolean;
 }
 export const SimpleCharacter = (props: SimpleCharacterProps) => {
   const isInit = useStore($isGlobalRendererInitialized);
   const [url, setUrl] = createSignal<string>('');
 
   const character = new Character();
+
+  const style = props.noMaxWidth ? { 'max-width': 'unset' } : {};
 
   createEffect(async () => {
     if (isInit()) {
@@ -71,7 +74,7 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
 
   return (
     <Show when={url()} fallback={<Skeleton width="3.5rem" height="5rem" />}>
-      <img src={url()} alt={props.title} />
+      <img src={url()} alt={props.title} style={style} />
     </Show>
   );
 };

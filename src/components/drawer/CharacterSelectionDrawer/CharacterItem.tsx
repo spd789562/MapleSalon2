@@ -68,6 +68,7 @@ export const CharacterItem = (props: CharacterItemProps) => {
                 items={character().items}
                 earType={character().earType}
                 handType={character().handType}
+                noMaxWidth={true}
               />
             </CharacterItemPositioner>
           </CharacterItemImage>
@@ -98,9 +99,8 @@ const CharacterItemContainer = styled('div', {
     flexBasis: '5rem',
     flexShrink: 0,
     position: 'relative',
-    borderRadius: 'md',
     boxShadow: 'md',
-    cursor: 'pointer',
+    borderRadius: 'md',
   },
 });
 
@@ -115,6 +115,7 @@ const CharacterItemImage = styled('button', {
     right: 0,
     bottom: 0,
     overflow: 'hidden',
+    borderRadius: 'md',
     cursor: 'pointer',
   },
 });
