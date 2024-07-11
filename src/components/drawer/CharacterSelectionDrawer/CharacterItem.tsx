@@ -90,6 +90,7 @@ export const CharacterItem = (props: CharacterItemProps) => {
               size="xs"
               variant="ghost"
               position="absolute"
+              zIndex="1"
               top="1"
               right="1"
             >

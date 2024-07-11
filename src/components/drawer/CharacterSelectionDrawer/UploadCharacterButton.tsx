@@ -7,7 +7,11 @@ import {
   verifySaveCharacterData,
   createCharacterUniqueId,
 } from '@/store/characterDrawer';
+import { getEquipById } from '@/store/string';
+
 import { toaster } from '@/components/GlobalToast';
+
+import { getHeadIdFromBodyId, isBodyId } from '@/utils/itemId';
 
 export const UploadCharacterButton = () => {
   const handleUpload = (event: Event) => {
@@ -34,7 +38,18 @@ export const UploadCharacterButton = () => {
           throw new Error('invalid character data');
         }
         data.id = createCharacterUniqueId();
-        console.info('upload character', data);
+        for (const itemKey in data.items) {
+          const item = data.items[itemKey as keyof typeof data.items];
+          if (item?.id && !item?.name) {
+            let equip = getEquipById(item.id);
+            if (isBodyId(item.id)) {
+              equip = getEquipById(getHeadIdFromBodyId(item.id));
+            }
+            if (equip) {
+              item.name = equip.name;
+            }
+          }
+        }
 
         appendCharacter(data);
       } catch (error) {
