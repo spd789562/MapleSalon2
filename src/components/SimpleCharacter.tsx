@@ -1,4 +1,4 @@
-import { createEffect, createSignal, onCleanup, Show } from 'solid-js';
+import { createEffect, createSignal, Show } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 
 import {
@@ -28,8 +28,6 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
   const isInit = useStore($isGlobalRendererInitialized);
   const [url, setUrl] = createSignal<string>('');
 
-  const character = new Character();
-
   const style = props.noMaxWidth ? { 'max-width': 'unset' } : {};
 
   createEffect(async () => {
@@ -49,8 +47,9 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
       if (existCache) {
         setUrl(existCache);
       } else {
-        await character.update(characterData);
+        const character = new Character();
         if (app.renderer?.extract) {
+          await character.update(characterData);
           /* prevent pixi's error */
           character.effects = [];
           const canvas = app.renderer.extract.canvas(character);
@@ -61,15 +60,12 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
               setUrl(url);
             }
           });
+          character.reset();
+          character.loadEvent.removeAllListeners();
+          character.destroy();
         }
       }
     }
-  });
-
-  onCleanup(() => {
-    character.reset();
-    character.loadEvent.removeAllListeners();
-    character.destroy();
   });
 
   return (
