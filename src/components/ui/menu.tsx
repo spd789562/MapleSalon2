@@ -49,6 +49,7 @@ export const ItemIndicator = withContext<
   Assign<JsxStyleProps, Menu.ItemIndicatorProps>
 >(Menu.ItemIndicator, 'itemIndicator');
 
+export type ItemProps = Assign<JsxStyleProps, Menu.ItemProps>;
 export const Item = withContext<Assign<JsxStyleProps, Menu.ItemProps>>(
   Menu.Item,
   'item',
@@ -85,7 +86,9 @@ export const Trigger = withContext<Assign<JsxStyleProps, Menu.TriggerProps>>(
 );
 
 export {
+  useMenuContext as useContext,
   MenuContext as Context,
   type MenuContextProps as ContextProps,
   type MenuSelectionDetails as SelectionDetails,
+  type MenuOpenChangeDetails as OpenChangeDetails,
 } from '@ark-ui/solid';
