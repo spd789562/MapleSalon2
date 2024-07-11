@@ -3,7 +3,7 @@ import { map, computed } from 'nanostores';
 
 import { Store } from '@tauri-apps/plugin-store';
 
-import type { CharacterItems } from './character';
+import { changeCurrentCharacter, type CharacterItems } from './character';
 import { CharacterEarType } from '@/const/ears';
 import { CharacterHandType } from '@/const/hand';
 
@@ -160,6 +160,9 @@ export async function cloneCharacter(id: string) {
 /* utils */
 export function createCharacterUniqueId() {
   return `${createUniqueId()}-${Date.now()}`;
+}
+export function selectCharacter(character: SaveCharacterData) {
+  changeCurrentCharacter(character as Partial<CharacterData>);
 }
 export function verifyItems(items: Partial<CharacterItems>) {
   for (const [key, item] of Object.entries(items)) {

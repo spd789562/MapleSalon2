@@ -1,9 +1,11 @@
-import { createMemo, createSignal, Show } from 'solid-js';
+import { createMemo, Show } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
 
 import { useDynamicPureStore } from '@/store';
+import { $hasAnyItemChanges } from '@/store/character';
 import {
   createGetCharacterById,
+  selectCharacter,
   removeCharacter,
   cloneCharacter,
 } from '@/store/characterDrawer';
@@ -20,13 +22,20 @@ export interface CharacterItemProps {
   id: string;
 }
 export const CharacterItem = (props: CharacterItemProps) => {
-  const [open, setOpen] = createSignal(false);
-
   const getCharacterById = createMemo(() => createGetCharacterById(props.id));
   const characterData = useDynamicPureStore(getCharacterById);
 
   const handleSelect = () => {
-    setOpen(!open());
+    const data = characterData();
+    if (!data) {
+      return;
+    }
+    const hasChanges = $hasAnyItemChanges.get();
+    if (hasChanges) {
+      /* do something like popup */
+    }
+
+    selectCharacter(data);
   };
 
   const handleClone = () => {

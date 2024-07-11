@@ -147,6 +147,11 @@ export const $totalItems = batched(
   getUpdateItems,
 );
 
+export const $hasAnyItemChanges = computed(
+  [$currentItemChanges],
+  (items) => Object.keys(items).length > 0,
+);
+
 export const $previewCharacter = computed(
   [$currentCharacterInfo, $totalItems],
   (info, items) => {
@@ -216,6 +221,22 @@ export function createEquipItemByCategory(category: EquipSubCategory) {
 }
 
 /* actions */
+export function changeCurrentCharacter(character: Partial<CharacterData>) {
+  if (character.items) {
+    $currentCharacterItems.set(character.items);
+    character.action &&
+      $currentCharacterInfo.setKey('action', character.action);
+    character.expression &&
+      $currentCharacterInfo.setKey('expression', character.expression);
+    character.earType &&
+      $currentCharacterInfo.setKey('earType', character.earType);
+    character.handType &&
+      $currentCharacterInfo.setKey('handType', character.handType);
+
+    $currentItemChanges.set({});
+  }
+}
+
 export function applyCharacterChanges() {
   $currentCharacterItems.set($currentItemChanges.get());
   $currentItemChanges.set({});
