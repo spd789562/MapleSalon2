@@ -4,6 +4,7 @@ import { HStack } from 'styled-system/jsx';
 
 import InfoIcon from 'lucide-solid/icons/info';
 import CopyIcon from 'lucide-solid/icons/copy';
+import ArrowDownToLineIcon from 'lucide-solid/icons/arrow-down-to-line';
 import Trash2Icon from 'lucide-solid/icons/trash-2';
 import * as Menu from '@/components/ui/menu';
 import { Kbd } from '@/components/ui/kbd';
@@ -17,7 +18,7 @@ export const CharacterActionMenu = (props: CharacterActionMenuProps) => {
 
   function handleKeyDown(e: KeyboardEvent) {
     if (e.key === 'i') {
-      // rootProps.onSelect?.({ value: 'detail' });
+      rootProps.onSelect?.({ value: 'detail' });
     } else if (e.key === 'c') {
       rootProps.onSelect?.({ value: 'clone' });
     } else if (e.key === 'Delete') {
@@ -53,6 +54,12 @@ export const CharacterActionMenu = (props: CharacterActionMenuProps) => {
                 keybind="C"
                 keybindPx="1"
               />
+              <CharacterActionMenuItem
+                value="download"
+                icon={<ArrowDownToLineIcon size={12} />}
+                label="下載"
+              />
+              <Menu.Separator />
               <CharacterActionMenuItem
                 value="delete"
                 icon={<Trash2Icon size={12} />}

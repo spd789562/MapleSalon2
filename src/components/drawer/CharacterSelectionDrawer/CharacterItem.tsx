@@ -14,6 +14,8 @@ import { SimpleCharacter } from '@/components/SimpleCharacter';
 import { CharacterActionMenu } from './CharacterActionMenu';
 import type { SelectionDetails } from '@/components/ui/menu';
 
+import { downloadJson } from '@/utils/download';
+
 export interface CharacterItemProps {
   id: string;
 }
@@ -35,9 +37,21 @@ export const CharacterItem = (props: CharacterItemProps) => {
     removeCharacter(props.id);
   };
 
+  const handleDownlaod = () => {
+    const data = characterData();
+    if (!data) {
+      return;
+    }
+    downloadJson(data, `${data.name}.json`);
+  };
+
   const handleMenuSelect = (details: SelectionDetails) => {
     if (details.value === 'clone') {
       handleClone();
+    } else if (details.value === 'info') {
+      console.warn('unimplemented');
+    } else if (details.value === 'download') {
+      handleDownlaod();
     } else if (details.value === 'delete') {
       handleRemove();
     }
