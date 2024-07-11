@@ -7,6 +7,7 @@ import type { CharacterItems } from './character';
 import { CharacterEarType } from '@/const/ears';
 import { CharacterHandType } from '@/const/hand';
 
+import { isValidEquipSubCategory } from '@/const/equipments';
 import { isValidEarType } from '@/const/ears';
 import { isValidHandType } from '@/const/hand';
 
@@ -16,7 +17,7 @@ const SAVE_CHARACTERS_KEY = 'characters';
 
 const DEFAULT_CHARACTER: SaveCharacterData = {
   id: createCharacterUniqueId(),
-  name: 'new',
+  name: 'name',
   earType: CharacterEarType.HumanEar,
   handType: CharacterHandType.SingleHand,
   items: {
@@ -49,7 +50,6 @@ export const $savedCharacter = map<(SaveCharacterData | undefined)[]>([]);
 
 /* computed */
 export const $characterList = computed($savedCharacter, (characters) => {
-  console.log(Array.from(Object.values(characters)), 'update');
   return Array.from(Object.values(characters)) as SaveCharacterData[];
 });
 export function createGetCharacterById(id: string) {
@@ -95,13 +95,16 @@ export async function clearAllCharacters() {
   $savedCharacter.set([]);
   await fileStore.delete(SAVE_CHARACTERS_KEY);
 }
-export async function appendDefaultCharacter() {
+export async function appendCharacter(data: SaveCharacterData) {
   const currentCharacters = $characterList.get();
-  $savedCharacter.setKey(currentCharacters.length, {
+  $savedCharacter.setKey(currentCharacters.length, data);
+  await fileStore.set(SAVE_CHARACTERS_KEY, $savedCharacter.get());
+}
+export async function appendDefaultCharacter() {
+  await appendCharacter({
     ...DEFAULT_CHARACTER,
     id: createCharacterUniqueId(),
   });
-  await fileStore.set(SAVE_CHARACTERS_KEY, $savedCharacter.get());
 }
 export async function saveCharacter(data: SaveCharacterData) {
   const currentCharacters = $characterList.get();
@@ -109,11 +112,11 @@ export async function saveCharacter(data: SaveCharacterData) {
     return character?.id === data.id;
   });
   if (existIndex === -1) {
-    $savedCharacter.setKey(currentCharacters.length, data);
+    await appendCharacter(data);
   } else {
     $savedCharacter.setKey(existIndex, data);
+    await fileStore.set(SAVE_CHARACTERS_KEY, $savedCharacter.get());
   }
-  await fileStore.set(SAVE_CHARACTERS_KEY, $savedCharacter.get());
 }
 export async function removeCharacter(id: string) {
   const currentCharacters = $characterList.get();
@@ -158,6 +161,21 @@ export async function cloneCharacter(id: string) {
 export function createCharacterUniqueId() {
   return `${createUniqueId()}-${Date.now()}`;
 }
+export function verifyItems(items: Partial<CharacterItems>) {
+  for (const [key, item] of Object.entries(items)) {
+    if (!isValidEquipSubCategory(key)) {
+      return false;
+    }
+    if (!item.id) {
+      return false;
+    }
+  }
+  return true;
+}
 export function verifySaveCharacterData(data: SaveCharacterData) {
-  return isValidEarType(data.earType) && isValidHandType(data.handType);
+  return (
+    isValidEarType(data.earType) &&
+    isValidHandType(data.handType) &&
+    verifyItems(data.items)
+  );
 }

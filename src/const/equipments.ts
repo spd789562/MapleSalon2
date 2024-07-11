@@ -27,6 +27,31 @@ export enum EquipCategory {
   Unknown = '24',
 }
 
+const ValidEquipSubCategory = [
+  'Skin',
+  'Head',
+  'Body',
+  'Cap',
+  'Hat',
+  'Cape',
+  'Coat',
+  'Dragon',
+  'Mechanic',
+  'Face',
+  'Glove',
+  'Hair',
+  'Longcoat',
+  'Overall',
+  'Pants',
+  'Shield',
+  'Shoes',
+  'Weapon',
+  'CashWeapon',
+  'Face Accessory',
+  'Eye Decoration',
+  'Earrings',
+];
+
 export type EquipSubCategory =
   | 'Skin'
   | 'Head'
@@ -78,3 +103,9 @@ export type AvaialbeEquipCategory = Exclude<
   EquipCategory,
   UnavailableEquipCategory
 >;
+
+export function isValidEquipSubCategory(
+  category: string,
+): category is EquipSubCategory {
+  return ValidEquipSubCategory.includes(category as EquipCategory);
+}

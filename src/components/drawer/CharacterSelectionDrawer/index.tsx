@@ -2,6 +2,7 @@ import { Grid } from 'styled-system/jsx/grid';
 import { CharacterSelectionDrawer as Drawer } from './CharacterSelectionDrawer';
 import { CharacterList } from './CharacterList';
 import { AddDefaultCharacterButton } from './AddDefaultCharacterButton';
+import { UploadCharacterButton } from './UploadCharacterButton';
 
 export const CharacterSelectionDrawer = () => {
   return (
@@ -12,7 +13,7 @@ export const CharacterSelectionDrawer = () => {
           <CharacterList />
           <Grid gridTemplateRows="1fr auto" gap="1.5">
             <AddDefaultCharacterButton />
-            {/* <div>upload button</div> */}
+            <UploadCharacterButton />
           </Grid>
         </Grid>
       }
