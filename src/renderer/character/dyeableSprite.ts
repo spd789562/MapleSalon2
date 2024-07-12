@@ -29,6 +29,7 @@ export class DyeableSprite extends Container {
     const isNeedToLoad = this._prevDyeId !== dyeId;
 
     if (isNeedToLoad) {
+      console.log('updateDye', dyeId, this._prevDyeId);
       this._failedToGetDye = false;
       await this.loadDyeAssets();
 

@@ -154,27 +154,35 @@ export class Character extends Container {
   async update(characterData: CharacterData) {
     this.frame = characterData.frame || 0;
     this.isAnimating = characterData.isAnimating;
-    this.updateAttribute(characterData);
-    await this.updateItems(Object.values(characterData.items));
-    await this.loadItems();
+    const hasAttributeChanged = this.updateAttribute(characterData);
+    const hasAddAnyItem = await this.updateItems(
+      Object.values(characterData.items),
+    );
+    if (hasAttributeChanged || hasAddAnyItem) {
+      console.log('updateItems', hasAttributeChanged, hasAddAnyItem);
+      await this.loadItems();
+    }
   }
 
   updateAttribute(attributes: Partial<CharacterAttributes>) {
-    if (attributes.action) {
-      this.#_action = attributes.action;
-      this.updateFaceVisibilityByAction();
-      this.updateHandTypeByAction();
+    let hasChange = false;
+    if (attributes.action && attributes.action !== this.#_action) {
+      hasChange = true;
+      this.action = attributes.action;
     }
-    if (attributes.expression) {
-      this.#_expression = attributes.expression;
+    if (attributes.expression && attributes.expression !== this.#_expression) {
+      hasChange = true;
+      this.expression = attributes.expression;
     }
-    if (attributes.earType) {
-      this.#_earType = attributes.earType;
+    if (attributes.earType && attributes.earType !== this.#_earType) {
+      hasChange = true;
+      this.earType = attributes.earType;
     }
-    if (attributes.handType) {
-      this.#_handType = attributes.handType;
-      this.updateActionByHandType();
+    if (attributes.handType && attributes.handType !== this.#_handType) {
+      hasChange = true;
+      this.handType = attributes.handType;
     }
+    return hasChange;
   }
 
   async updateItems(items: ItemInfo[]) {
@@ -198,6 +206,7 @@ export class Character extends Container {
         this.idItems.delete(item);
       }
     }
+    return isAddItem;
   }
 
   updateFilter(id: number, info: ItemInfo) {
@@ -219,7 +228,7 @@ export class Character extends Container {
       .flatMap((item) => Array.from(item.items.values()))
       .filter((piece) => piece.item.info.id === id)
       .flatMap((piece) =>
-        piece.frames.filter((frame) => frame.isDyeable()),
+        piece.frames.filter((frame) => frame.isDyeable?.()),
       ) as DyeableCharacterItemPiece[];
     for await (const sprites of dyeableSprites) {
       await sprites.updateDye();
