@@ -23,7 +23,6 @@ export class DyeableSprite extends Container {
     this.mainUrl = mainUrl;
     this._mainSprite = Sprite.from(mainUrl);
     this.addChild(this._mainSprite);
-    this.updateDye();
   }
   async updateDye() {
     const dyeId = this.dyeId;

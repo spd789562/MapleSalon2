@@ -183,7 +183,7 @@ export class Character extends Container {
       if (this.idItems.has(item.id)) {
         this.updateFilter(item.id, item);
         if (isMixDyeableId(item.id)) {
-          this.updateMixDye(item.id, item);
+          await this.updateMixDye(item.id, item);
         }
       } else {
         isAddItem = true;
@@ -198,9 +198,6 @@ export class Character extends Container {
         this.idItems.delete(item);
       }
     }
-    // if (isAddItem) {
-    //   await this.loadItems();
-    // }
   }
 
   updateFilter(id: number, info: ItemInfo) {
@@ -211,20 +208,21 @@ export class Character extends Container {
     item.info = info;
     item.updateFilter();
   }
-  updateMixDye(id: number, info: ItemInfo) {
+  async updateMixDye(id: number, info: ItemInfo) {
     const item = this.idItems.get(id);
     if (!item) {
       return;
     }
     item.info = info;
     /* only update sprite already in render */
-    const dyeableSprites = this.currentPieces
+    const dyeableSprites = this.currentAllItem
+      .flatMap((item) => Array.from(item.items.values()))
       .filter((piece) => piece.item.info.id === id)
       .flatMap((piece) =>
         piece.frames.filter((frame) => frame.isDyeable()),
       ) as DyeableCharacterItemPiece[];
-    for (const sprites of dyeableSprites) {
-      sprites.updateDye();
+    for await (const sprites of dyeableSprites) {
+      await sprites.updateDye();
     }
   }
 
@@ -480,6 +478,13 @@ export class Character extends Container {
     }
 
     this.buildLock();
+
+    /* initizlize mixdye */
+    const mixDyeItems = Array.from(this.idItems.values())
+      .filter((item) => isMixDyeableId(item.info.id))
+      .map((item) => this.updateMixDye(item.info.id, item.info));
+
+    await Promise.all(mixDyeItems);
 
     this.render();
   }

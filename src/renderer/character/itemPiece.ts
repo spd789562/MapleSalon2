@@ -156,8 +156,8 @@ export class DyeableCharacterItemPiece extends CharacterItemPiece {
     this._srpite = new DyeableSprite(this.item, this.url);
     return this._srpite;
   }
-  updateDye() {
-    (this._srpite as DyeableSprite)?.updateDye?.();
+  async updateDye() {
+    return (this._srpite as DyeableSprite)?.updateDye?.();
   }
 }
 
