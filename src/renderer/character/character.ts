@@ -152,14 +152,15 @@ export class Character extends Container {
   }
 
   async update(characterData: CharacterData) {
-    this.frame = characterData.frame || 0;
+    if (!characterData.isAnimating) {
+      this.frame = characterData.frame || 0;
+    }
     this.isAnimating = characterData.isAnimating;
     const hasAttributeChanged = this.updateAttribute(characterData);
     const hasAddAnyItem = await this.updateItems(
       Object.values(characterData.items),
     );
     if (hasAttributeChanged || hasAddAnyItem) {
-      console.log('updateItems', hasAttributeChanged, hasAddAnyItem);
       await this.loadItems();
     }
   }

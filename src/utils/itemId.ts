@@ -249,5 +249,5 @@ export function isMixDyeableId(id: number) {
   return isFaceId(id) || isHairId(id);
 }
 export function isDyeableId(id: number) {
-  return !(isMixDyeableId(id) || isSkinPartId(id));
+  return !isMixDyeableId(id);
 }

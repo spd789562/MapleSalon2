@@ -133,11 +133,7 @@ onSet($currentItem, ({ newValue, abort }) => {
 
   if (category === 'Skin') {
     updateChangesSkin(newValue);
-
-    return abort();
   }
-
-  addItemToChanges(category, newValue);
 });
 
 export const $currentItemChanges = deepMap<
@@ -209,7 +205,10 @@ export function getUpdateItems(
 
 export function createGetItemChangeById(id: number) {
   const c = getSubCategory(id);
-  const category = c && getCharacterSubCategory(c);
+  let category = c && getCharacterSubCategory(c);
+  if (category === 'Skin') {
+    category = 'Head';
+  }
   return computed($totalItems, (changes) => {
     if (!category) {
       return null;
@@ -274,10 +273,16 @@ export function addItemToChanges(
     name: string;
   },
 ) {
-  if ($currentItemChanges.get()[category]) {
-    $currentItemChanges.setKey(`${category}.id`, item.id);
-    $currentItemChanges.setKey(`${category}.name`, item.name);
-    $currentItemChanges.setKey(`${category}.isDeleted`, undefined);
+  const currentItems = $currentCharacterItems.get();
+  if (currentItems[category]) {
+    $currentItemChanges.setKey(category, {
+      ...currentItems[category],
+      ...{
+        id: item.id,
+        name: item.name,
+        isDeleted: false,
+      },
+    });
   } else {
     $currentItemChanges.setKey(category, {
       id: item.id,

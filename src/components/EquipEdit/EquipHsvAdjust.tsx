@@ -59,7 +59,10 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
     (property: 'colorRange' | 'hue' | 'saturation' | 'brightness') =>
     (value: number) => {
       const category = itemChange()?.category;
-      if (category) {
+      if (category === 'Head') {
+        $currentItemChanges.setKey(`Head.${property}`, value);
+        $currentItemChanges.setKey(`Body.${property}`, value);
+      } else if (category) {
         $currentItemChanges.setKey(
           `${getCharacterSubCategory(category)}.${property}`,
           value,
@@ -69,7 +72,16 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
 
   function handleResetAll() {
     const category = itemChange()?.category;
-    if (category) {
+    if (category === 'Head') {
+      $currentItemChanges.setKey('Head.colorRange', 0);
+      $currentItemChanges.setKey('Head.hue', 0);
+      $currentItemChanges.setKey('Head.saturation', 0);
+      $currentItemChanges.setKey('Head.brightness', 0);
+      $currentItemChanges.setKey('Body.colorRange', 0);
+      $currentItemChanges.setKey('Body.hue', 0);
+      $currentItemChanges.setKey('Body.saturation', 0);
+      $currentItemChanges.setKey('Body.brightness', 0);
+    } else if (category) {
       const subCategory = getCharacterSubCategory(category);
       $currentItemChanges.setKey(`${subCategory}.colorRange`, 0);
       $currentItemChanges.setKey(`${subCategory}.hue`, 0);

@@ -32,7 +32,7 @@ export const EquipItem = (props: EquipItemProps) => {
       return;
     }
     if (isSkinPartId(itemInfo.id)) {
-      return openSkinSelection();
+      openSkinSelection();
     }
     return editCurrentItem({
       id: itemInfo.id,
