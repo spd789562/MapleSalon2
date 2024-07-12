@@ -95,17 +95,10 @@ export const MixDyeAdjust = (props: MixDyeAdjustProps) => {
 
   function handleMixDyeColorChange(value: number) {
     const currentItemChange = itemChange()?.item;
-    if (currentItemChange?.dye) {
-      $currentItemChanges.setKey(
-        `${props.category}.dye.color`,
-        getColorId(value),
-      );
-    } else {
-      $currentItemChanges.setKey(`${props.category}.dye`, {
-        color: getColorId(value),
-        alpha: currentItemChange?.dye?.alpha || 50,
-      });
-    }
+    $currentItemChanges.setKey(`${props.category}.dye`, {
+      color: getColorId(value),
+      alpha: currentItemChange?.dye?.alpha || 50,
+    });
   }
 
   function handleMixDyeAlphaChange(value: number) {
