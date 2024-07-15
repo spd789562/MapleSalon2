@@ -8,8 +8,9 @@ import { initialGlobalRenderer } from '@/store/renderer';
 
 import { AppContainer } from './components/AppContainer';
 import { BaseWzSelector } from './components/BaseWzSelector';
-import { CharacterScene } from './components/Character';
 import { GlobalToast } from './components/GlobalToast';
+
+import { CharacterPreview } from './components/CharacterPreview';
 
 import { EqupimentDrawer } from './components/drawer/EqupimentDrawer';
 import { CurrentEquipmentDrawer } from './components/drawer/CurrentEquipmentDrawer';
@@ -64,7 +65,7 @@ function App() {
       <BaseWzSelector />
       <Show when={ready()}>
         <AppContainer>
-          <CharacterScene />
+          <CharacterPreview />
         </AppContainer>
         <EquipOpenButton />
         <CurrentEquipOpenButton />

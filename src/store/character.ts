@@ -136,6 +136,8 @@ onSet($currentItem, ({ newValue, abort }) => {
   }
 });
 
+export const $enableCharacterPreview = atom<boolean>(false);
+
 export const $currentItemChanges = deepMap<
   Partial<CharacterItems & Record<string, unknown>>
 >({});

@@ -11,6 +11,7 @@ export const AppContainer = (props: AppContainerProps) => {
       class={css({
         position: 'relative',
         mx: { base: 0, lg: 2 },
+        mt: 4,
         paddingLeft: { base: 2, lg: '{sizes.xs}' },
         paddingRight: { base: 2, lg: '{sizes.sm}' },
       })}
