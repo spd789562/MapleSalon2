@@ -85,6 +85,7 @@ export interface SimpleSelectProps<V> extends RootProps {
   }[];
   placeholder?: string;
   groupTitle?: string;
+  maxHeight?: string | number;
 }
 export const SimpleSelect = <V extends string | number>(
   props: SimpleSelectProps<V>,
@@ -93,6 +94,7 @@ export const SimpleSelect = <V extends string | number>(
     'placeholder',
     'groupTitle',
     'items',
+    'maxHeight',
   ]);
 
   const itemToValue = (item: unknown) =>
@@ -112,7 +114,7 @@ export const SimpleSelect = <V extends string | number>(
         </Trigger>
       </Control>
       <Positioner>
-        <Content>
+        <Content overflow="auto" maxHeight={local.maxHeight || 'unset'}>
           <ItemGroup>
             <Show when={local.groupTitle}>
               <ItemGroupLabel>{local.groupTitle}</ItemGroupLabel>
