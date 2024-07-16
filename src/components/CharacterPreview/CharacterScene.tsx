@@ -1,24 +1,62 @@
+import { Show, createSignal } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 import { styled } from 'styled-system/jsx/factory';
 
-import { $currentScene } from '@/store/character';
+import {
+  $currentScene,
+  $currentCharacter,
+  $previewCharacter,
+} from '@/store/character';
+import { $showPreviousCharacter } from '@/store/trigger';
 
-import { CharacterAvatar } from '../Character';
+import LoaderCircle from 'lucide-solid/icons/loader-circle';
+import ChevronRightIcon from 'lucide-solid/icons/chevron-right';
+import { CharacterView } from './Character';
 import { CharacterSceneSelection } from './CharacterSceneSelection';
 import { ShowPreviousSwitch } from './ShowPreviousSwitch';
 
 import { PreviewSceneBackground } from '@/const/scene';
 
 export const CharacterScene = () => {
+  const [isLoading, setIsLoading] = createSignal(false);
   const scene = useStore($currentScene);
+  const isShowComparison = useStore($showPreviousCharacter);
+
+  function handleLoad() {
+    setIsLoading(true);
+  }
+  function handleLoaded() {
+    setIsLoading(false);
+  }
 
   return (
     <CharacterSceneContainer bgType={scene()}>
-      <CharacterAvatar />
+      <Show when={isShowComparison()}>
+        <CharacterView
+          onLoad={handleLoad}
+          onLoaded={handleLoaded}
+          store={$currentCharacter}
+        />
+        <CompareSeparator>
+          <ChevronRightIcon size={32} />
+        </CompareSeparator>
+      </Show>
+      <CharacterView
+        onLoad={handleLoad}
+        onLoaded={handleLoaded}
+        store={$previewCharacter}
+      />
       <TopTool>
         <ShowPreviousSwitch />
       </TopTool>
       <CharacterSceneSelection />
+      <Show when={isLoading()}>
+        <LoadingBackdrop>
+          <Loading>
+            <LoaderCircle size={48} />
+          </Loading>
+        </LoadingBackdrop>
+      </Show>
     </CharacterSceneContainer>
   );
 };
@@ -31,6 +69,7 @@ const CharacterSceneContainer = styled('div', {
     borderRadius: 'lg',
     display: 'flex',
     justifyContent: 'center',
+    alignItems: 'center',
   },
   variants: {
     bgType: {
@@ -67,5 +106,37 @@ const TopTool = styled('div', {
     _hover: {
       opacity: 1,
     },
+  },
+});
+
+const CompareSeparator = styled('div', {
+  base: {
+    borderRadius: 'md',
+    boxShadow: 'md',
+    p: 4,
+    backgroundColor: 'bg.default',
+    color: 'fg.default',
+  },
+});
+
+const LoadingBackdrop = styled('div', {
+  base: {
+    position: 'absolute',
+    top: '0',
+    left: '0',
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'bg.muted',
+    opacity: 0.75,
+  },
+});
+
+const Loading = styled('div', {
+  base: {
+    animation: 'rotate infinite 1s linear',
+    color: 'fg.muted',
   },
 });
