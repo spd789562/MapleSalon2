@@ -26,3 +26,9 @@ export const PreviewSceneBackground: Record<PreviewScene, SystemStyleObject> = {
     backgroundColor: 'white',
   },
 };
+
+export const PreviewSceneThemeMap: Record<PreviewScene, string> = {
+  [PreviewScene.Alpha]: 'light',
+  [PreviewScene.Black]: 'dark',
+  [PreviewScene.White]: 'light',
+};
