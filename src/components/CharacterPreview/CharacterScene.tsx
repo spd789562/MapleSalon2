@@ -4,6 +4,9 @@ import { styled } from 'styled-system/jsx/factory';
 import { $currentScene } from '@/store/character';
 
 import { CharacterAvatar } from '../Character';
+import { CharacterSceneSelection } from './CharacterSceneSelection';
+
+import { PreviewSceneBackground } from '@/const/scene';
 
 export const CharacterScene = () => {
   const scene = useStore($currentScene);
@@ -11,6 +14,7 @@ export const CharacterScene = () => {
   return (
     <CharacterSceneContainer bgType={scene()}>
       <CharacterAvatar />
+      <CharacterSceneSelection />
     </CharacterSceneContainer>
   );
 };
@@ -24,18 +28,15 @@ const CharacterSceneContainer = styled('div', {
   variants: {
     bgType: {
       alpha: {
-        backgroundImage:
-          'conic-gradient(white 90deg, #999 90deg, #999 180deg, white 180deg, white 270deg, #999 270deg, #999 360deg, white 360deg)',
-        backgroundSize: '16px 16px',
-        backgroundRepeat: 'repeat',
+        ...PreviewSceneBackground.alpha,
       },
       black: {
-        backgroundColor: 'black',
+        ...PreviewSceneBackground.black,
         border: '1px solid',
         borderColor: 'border.muted',
       },
       white: {
-        backgroundColor: 'white',
+        ...PreviewSceneBackground.white,
         border: '1px solid',
         borderColor: 'border.muted',
       },
