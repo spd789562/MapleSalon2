@@ -20,3 +20,11 @@ export async function initialGlobalRenderer() {
   });
   $isGlobalRendererInitialized.set(true);
 }
+
+export function clearCharacterCache() {
+  const currentCache = $simpleCharacterCache.get();
+  for (const key in currentCache) {
+    URL.revokeObjectURL(currentCache[key]);
+  }
+  $simpleCharacterCache.set({});
+}

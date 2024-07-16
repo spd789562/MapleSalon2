@@ -223,6 +223,28 @@ export function createEquipItemByCategory(category: EquipSubCategory) {
   return computed($totalItems, (items) => items[category]);
 }
 
+/* computed */
+export const $currentAction = computed(
+  $currentCharacterInfo,
+  (info) => info.action,
+);
+export const $currentExpression = computed(
+  $currentCharacterInfo,
+  (info) => info.expression,
+);
+export const $currentEarType = computed(
+  $currentCharacterInfo,
+  (info) => info.earType,
+);
+export const $currentHandType = computed(
+  $currentCharacterInfo,
+  (info) => info.handType,
+);
+export const $isAnimating = computed(
+  $currentCharacterInfo,
+  (info) => info.isAnimating,
+);
+
 /* actions */
 export function changeCurrentCharacter(character: Partial<CharacterData>) {
   if (character.items) {
