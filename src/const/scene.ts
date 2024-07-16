@@ -1,4 +1,5 @@
 import type { SystemStyleObject } from 'styled-system/types';
+import { css } from 'styled-system/css';
 
 export enum PreviewScene {
   Alpha = 'alpha',
@@ -26,6 +27,10 @@ export const PreviewSceneBackground: Record<PreviewScene, SystemStyleObject> = {
     backgroundColor: 'white',
   },
 };
+/* for panda css generate css token */
+const _a = css.raw(PreviewSceneBackground.alpha);
+const _b = css.raw(PreviewSceneBackground.black);
+const _w = css.raw(PreviewSceneBackground.white);
 
 export const PreviewSceneThemeMap: Record<PreviewScene, string> = {
   [PreviewScene.Alpha]: 'light',
