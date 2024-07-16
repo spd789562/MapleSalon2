@@ -13,19 +13,23 @@ export const CharacterSceneSelection = () => {
   const scene = useStore($currentScene);
   const isOpen = useStore($sceneSelectionOpen);
 
+  function handleToggle() {
+    $sceneSelectionOpen.set(!isOpen());
+  }
+
   return (
     <Positioner>
       <SelectionContainer data-state={isOpen() ? 'closed' : 'open'}>
         <SelectionToggleButton
           title="收合場景選擇列表"
           data-state={isOpen() ? 'closed' : 'open'}
-          onClick={() => $sceneSelectionOpen.set(!isOpen())}
+          onClick={handleToggle}
         >
           <ChevronLeftIcon size={24} />
         </SelectionToggleButton>
         <CharacterSceneRadioGroup />
       </SelectionContainer>
-      <BlockContainer>
+      <BlockContainer onClick={handleToggle}>
         <BackgroundBlock title={PreviewSceneNames[scene()]} bgType={scene()} />
       </BlockContainer>
     </Positioner>
@@ -92,6 +96,9 @@ const SelectionToggleButton = styled('button', {
     display: 'flex',
     cursor: 'pointer',
     justifyContent: 'center',
+    _dark: {
+      color: 'accent.fg',
+    },
     _closed: {
       transform: 'rotate(0)',
     },
