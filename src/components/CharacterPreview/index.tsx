@@ -7,7 +7,7 @@ import { EarTypeToggleGroup } from './EarTypeToggleGroup';
 import { ExpressionSelect } from './ExpressionSelect';
 import { ActionSelect } from './ActionSelect';
 import { AnimatingSwitch } from './AnimatingSwitch';
-import { CharacterScene } from '@/components/Character';
+import { CharacterScene } from './CharacterScene';
 
 export const CharacterPreview = () => {
   return (

@@ -10,6 +10,7 @@ import { CharacterAction } from '@/const/actions';
 import { CharacterExpressions } from '@/const/emotions';
 import { CharacterEarType } from '@/const/ears';
 import { CharacterHandType } from '@/const/hand';
+import { PreviewScene } from '@/const/scene';
 
 export type CharacterItemInfo = ItemInfo &
   Partial<{ isDeleted: boolean; isDeleteDye: boolean; name: string }>;
@@ -29,6 +30,8 @@ export interface CharacterInfo {
 export interface CharacterData extends Record<string, unknown>, CharacterInfo {
   items: Partial<CharacterItems>;
 }
+
+export const $currentScene = atom<PreviewScene>(PreviewScene.White);
 
 export const $currentCharacterItems = deepMap<Partial<CharacterItems>>({
   Head: {

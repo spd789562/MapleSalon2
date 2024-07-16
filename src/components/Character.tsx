@@ -10,7 +10,7 @@ import { Character } from '@/renderer/character/character';
 
 import LoaderCircle from 'lucide-solid/icons/loader-circle';
 
-export const CharacterScene = () => {
+export const CharacterAvatar = () => {
   const characterData = usePureStore($previewCharacter);
   const [isInit, setIsInit] = createSignal<boolean>(false);
   const [isLoading, setIsLoading] = createSignal(false);
@@ -53,7 +53,7 @@ export const CharacterScene = () => {
 
   return (
     <div class={css({ position: 'relative' })}>
-      <div class="alpha-bg" ref={container} />
+      <div ref={container} />
       <Show when={isLoading()}>
         <div
           class={css({
