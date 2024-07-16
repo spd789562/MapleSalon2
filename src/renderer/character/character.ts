@@ -152,8 +152,10 @@ export class Character extends Container {
   }
 
   async update(characterData: CharacterData) {
+    const isPlayingChanged = this.isAnimating !== characterData.isAnimating;
     if (!characterData.isAnimating) {
       this.frame = characterData.frame || 0;
+      this.stop();
     }
     this.isAnimating = characterData.isAnimating;
     const hasAttributeChanged = this.updateAttribute(characterData);
@@ -162,6 +164,8 @@ export class Character extends Container {
     );
     if (hasAttributeChanged || hasAddAnyItem) {
       await this.loadItems();
+    } else if (isPlayingChanged) {
+      this.render();
     }
   }
 
@@ -306,11 +310,17 @@ export class Character extends Container {
     this.loadEvent.emit('loaded');
   }
 
-  reset() {
+  stop() {
     this.isBounce = false;
     this.isLoading = false;
     this.isPlaying = false;
-    this.currentTicker && Ticker.shared.remove(this.currentTicker);
+    if (this.currentTicker) {
+      Ticker.shared.remove(this.currentTicker);
+      this.currentTicker = undefined;
+    }
+  }
+  reset() {
+    this.stop();
     this.clearnContainerChild();
   }
   clearnContainerChild() {
@@ -377,8 +387,10 @@ export class Character extends Container {
         ancher && piece.parent?.position.copyFrom(ancher);
         /* some part can play indenpendently */
         if (piece.canIndependentlyPlay && !isSkinGroup) {
-          if (!piece.playing) {
-            piece.play();
+          if (this.isAnimating) {
+            !piece.playing && piece.play();
+          } else {
+            piece.stop();
           }
         } else {
           piece.currentFrame = pieceFrameIndex;
