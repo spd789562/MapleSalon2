@@ -184,10 +184,7 @@ export function getUpdateItems(
     const isNotDeleted = !changes[k]?.isDeleted;
     if (isNotDeleted) {
       if (changeItem) {
-        result[k] = {
-          ...before[k],
-          ...changes[k],
-        } as ItemInfo & Partial<{ isDeleted: boolean }>;
+        result[k] = Object.assign({}, before[k], changes[k]);
       } else {
         result[k] = before[k];
       }
@@ -200,8 +197,8 @@ export function getUpdateItems(
   /* add new item to result  */
   for (const key in changes) {
     const k = key as EquipSubCategory;
-    const isNewItem = !before[k];
-    if (isNewItem) {
+    const isNewCategory = !before[k];
+    if (isNewCategory) {
       result[k] = changes[k] as ItemInfo;
     }
   }
@@ -293,23 +290,30 @@ export function updateChangesSkin(item: {
   $currentItemChanges.setKey('Head.name', item.name);
 }
 
-export function addItemToChanges(
-  category: EquipSubCategory,
-  item: {
-    id: number;
-    name: string;
-  },
-) {
+/* @TODO: hair and face should use original color and dye so probably need to read changes */
+export function addItemToChanges(item: {
+  id: number;
+  name: string;
+}) {
+  let category = getSubCategory(item.id);
+  if (!category) {
+    return;
+  }
+  category = getCharacterSubCategory(category);
+  if (!category) {
+    return;
+  }
+
   const currentItems = $currentCharacterItems.get();
   if (currentItems[category]) {
-    $currentItemChanges.setKey(category, {
-      ...currentItems[category],
-      ...{
+    $currentItemChanges.setKey(
+      category,
+      Object.assign({}, currentItems[category], {
         id: item.id,
         name: item.name,
         isDeleted: false,
-      },
-    });
+      }),
+    );
   } else {
     $currentItemChanges.setKey(category, {
       id: item.id,

@@ -1,5 +1,5 @@
 import { Switch, Match } from 'solid-js';
-import { $currentItem } from '@/store/character';
+import { $currentItem, addItemToChanges } from '@/store/character';
 import type { EquipItem } from '@/store/string';
 
 import { CssTooltip } from '@/components/ui/cssTooltip';
@@ -15,6 +15,7 @@ export interface EquipItemButtonProps {
 export const EquipItemButton = (props: EquipItemButtonProps) => {
   function handleClick() {
     $currentItem.set({ id: props.item.id, name: props.item.name });
+    addItemToChanges({ id: props.item.id, name: props.item.name });
   }
 
   return (
