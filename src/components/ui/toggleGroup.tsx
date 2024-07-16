@@ -1,3 +1,4 @@
+import { type JSX, Index, splitProps } from 'solid-js';
 import { type Assign, ToggleGroup } from '@ark-ui/solid';
 import {
   type ToggleGroupVariantProps,
@@ -5,6 +6,8 @@ import {
 } from 'styled-system/recipes/toggle-group';
 import type { JsxStyleProps } from 'styled-system/types';
 import { createStyleContext } from '@/utils/create-style-context';
+
+import { HStack } from 'styled-system/jsx/hstack';
 
 const { withProvider, withContext } = createStyleContext(toggleGroup);
 
@@ -23,3 +26,29 @@ export {
   type ToggleGroupContextProps as ContextProps,
   type ToggleGroupValueChangeDetails as ValueChangeDetails,
 } from '@ark-ui/solid';
+
+export interface SimpleToggleGroupProps<T extends string> extends RootProps {
+  options: {
+    label: JSX.Element;
+    value: T;
+    disabled?: boolean;
+  }[];
+}
+export const SimpleToggleGroup = <T extends string>(
+  props: SimpleToggleGroupProps<T>,
+) => {
+  const [localProps, toggleGroupProps] = splitProps(props, ['options']);
+  return (
+    <Root {...toggleGroupProps}>
+      <HStack>
+        <Index each={localProps.options}>
+          {(item) => (
+            <Item value={item().value} disabled={item().disabled} px={2}>
+              {item().label}
+            </Item>
+          )}
+        </Index>
+      </HStack>
+    </Root>
+  );
+};
