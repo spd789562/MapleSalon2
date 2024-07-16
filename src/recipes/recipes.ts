@@ -14,8 +14,17 @@ export const recipes: Record<string, Partial<RecipeConfig>> = {
 };
 
 export const slotRecipes: Record<string, Partial<SlotRecipeConfig>> = {
+  toggleGroup: {
+    jsx: ['ToggleGroup', /.*ToggleGroup$/],
+  },
   menu: {
     jsx: ['Menu', /.*Menu$/],
+  },
+  tooltip: {
+    jsx: ['Tooltip', /.*Tooltip$/],
+  },
+  select: {
+    jsx: ['Select', /.*Select$/],
   },
   toast: {
     jsx: ['Toast', /.*Toast$/],
@@ -47,9 +56,6 @@ export const slotRecipes: Record<string, Partial<SlotRecipeConfig>> = {
         },
       },
     },
-  },
-  tooltip: {
-    jsx: ['Tooltip', /.*Tooltip$/],
   },
   drawer: {
     jsx: ['Drawer', /.*Drawer$/],
