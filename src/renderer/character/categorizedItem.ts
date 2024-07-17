@@ -3,7 +3,7 @@ import { Assets, type UnresolvedAsset } from 'pixi.js';
 import type { CharacterItem } from './item';
 import type { CharacterExpressions } from '@/const/emotions';
 import type { AncherName, Vec2, PieceName, AncherMap } from './const/data';
-import type { WzPieceFrame } from './const/wz';
+import type { WzPieceFrame, WzEffectActionItem } from './const/wz';
 
 import {
   CharacterItemPiece,
@@ -25,6 +25,7 @@ export abstract class CategorizedItem<Name extends string> {
   items: Map<PieceName, CharacterAnimatablePart>;
 
   wz: Record<number, WzPieceFrame>;
+  effectWz: WzEffectActionItem | undefined = undefined;
   frameCount = 0;
 
   mainItem: CharacterItem;
@@ -33,9 +34,11 @@ export abstract class CategorizedItem<Name extends string> {
     name: Name,
     wz: Record<number, WzPieceFrame>,
     mainItem: CharacterItem,
+    effectWz?: WzEffectActionItem,
   ) {
     this.name = name;
     this.wz = wz;
+    this.effectWz = effectWz;
     this.mainItem = mainItem;
     this.items = new Map();
     this.unresolvedItems = new Map();

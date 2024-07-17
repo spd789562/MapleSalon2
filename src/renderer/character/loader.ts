@@ -3,7 +3,7 @@ import { Assets, Sprite, type Texture } from 'pixi.js';
 import { $apiHost } from '@/store/const';
 
 import type { Zmap, Smap } from './const/data';
-import type { WzItem } from './const/wz';
+import type { WzItem, WzEffectItem } from './const/wz';
 
 import { getItemFolderFromId } from '@/utils/itemFolder';
 
@@ -17,7 +17,11 @@ class Loader {
       this.loadZmap(),
       this.loadSmap(),
       this.loadWzImageFolder(),
+      this.loadEffect(),
     ]);
+  }
+  async loadEffect() {
+    return await fetch(`${this.apiHost}/node/parse/Effect/ItemEff.img`);
   }
   async loadZmap() {
     this.zmap = await fetch(`${this.apiHost}/mapping/zmap`).then((res) =>
@@ -75,7 +79,18 @@ class Loader {
     const data = await Assets.load<WzItem>({
       alias: path,
       loadParser: 'loadJson',
-      src: `${this.apiHost}/node/json/${path}?force_parse=true&simple=true&cache=14400&resolve_uol=true`,
+      src: `${this.apiHost}/node/json/${path}?force_parse=true&simple=true&cache=14400`,
+    }).catch(() => null);
+
+    return data;
+  }
+  async getPieceEffectWz(id: number): Promise<WzEffectItem | null> {
+    const alias = `Effect/ItemEff.img/${id}`;
+
+    const data = await Assets.load<WzEffectItem>({
+      alias,
+      loadParser: 'loadJson',
+      src: `${this.apiHost}/node/json/${alias}/effect?simple=true&cache=14400`,
     }).catch(() => null);
 
     return data;

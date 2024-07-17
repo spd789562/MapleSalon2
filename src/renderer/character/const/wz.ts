@@ -15,6 +15,16 @@ export type WzPieceFrame = Record<PieceName, WzPieceInfo> & {
   delay: number;
 };
 
+export type WzEffectItem = Record<string, string> &
+  Record<string, WzEffectActionItem>;
+
+export type WzEffectActionItem = Record<
+  number,
+  WzPieceInfo & {
+    delay: number;
+  }
+> & { z: number };
+
 /** PieceInfo structure in wz */
 export interface WzPieceInfo {
   origin: Vec2;

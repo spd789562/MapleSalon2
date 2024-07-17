@@ -11,7 +11,7 @@ import type {
   Vec2,
   ItemDyeInfo,
 } from './const/data';
-import type { WzItem } from './const/wz';
+import type { WzItem, WzEffectItem } from './const/wz';
 
 import {
   isFaceId,
@@ -46,6 +46,7 @@ export class CharacterItem implements RenderItemInfo {
   character: Character;
 
   wz: WzItem | null = null;
+  effectWz: WzEffectItem | null = null;
   isCleanedWz = false;
 
   filters: (HsvAdjustmentFilter | Filter)[] = [];
@@ -136,7 +137,9 @@ export class CharacterItem implements RenderItemInfo {
         continue;
       }
 
-      const actionItem = new CharacterActionItem(action, actionWz, this);
+      const effectWz = this.effectWz?.[action];
+
+      const actionItem = new CharacterActionItem(action, actionWz, this, effectWz);
 
       this.actionPieces.set(action, actionItem);
     }
@@ -169,6 +172,7 @@ export class CharacterItem implements RenderItemInfo {
   async load() {
     if (!this.wz) {
       this.wz = await CharacterLoader.getPieceWz(this.info.id);
+      this.effectWz = await CharacterLoader.getPieceEffectWz(this.info.id);
     }
 
     if (this.wz === null) {
@@ -203,7 +207,10 @@ export class CharacterItem implements RenderItemInfo {
     }
     await actionItem.prepareResourece();
   }
-  async prepareActionResourceByFrame(name: CharacterAction | CharacterExpressions, frame: number) {
+  async prepareActionResourceByFrame(
+    name: CharacterAction | CharacterExpressions,
+    frame: number,
+  ) {
     const actionItem = this.actionPieces.get(name);
     if (!actionItem) {
       return;

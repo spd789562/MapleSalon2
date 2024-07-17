@@ -15,10 +15,10 @@ export const CharacterPreview = () => {
       <HStack justify="center" mb="2">
         <HandTypeToggleGroup />
         <EarTypeToggleGroup />
-        <Box width="48">
+        <Box width="32">
           <ExpressionSelect />
         </Box>
-        <Box width="48">
+        <Box width="32">
           <ActionSelect />
         </Box>
         <AnimatingSwitch />
