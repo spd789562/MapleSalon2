@@ -1,7 +1,7 @@
 import { createUniqueId } from 'solid-js';
 import { type Application, Container, Ticker, EventEmitter } from 'pixi.js';
 
-import type { CharacterData } from '@/store/character';
+import type { CharacterData } from '@/store/character/store';
 import type { ItemInfo, AncherName, Vec2, PieceSlot } from './const/data';
 import type { CategorizedItem } from './categorizedItem';
 import type { CharacterAnimatablePart } from './characterAnimatablePart';

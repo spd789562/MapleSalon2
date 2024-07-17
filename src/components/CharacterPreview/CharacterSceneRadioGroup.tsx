@@ -3,7 +3,7 @@ import { useStore } from '@nanostores/solid';
 
 import { css } from 'styled-system/css';
 
-import { $currentScene } from '@/store/character';
+import { $currentScene } from '@/store/character/store';
 import { HStack } from 'styled-system/jsx/hstack';
 import * as RadioButtonGroup from '@/components/ui/radioButtonGroup';
 

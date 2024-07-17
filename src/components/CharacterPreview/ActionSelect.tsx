@@ -1,6 +1,7 @@
 import { useStore } from '@nanostores/solid';
 
-import { $currentCharacterInfo, $currentAction } from '@/store/character';
+import { $currentCharacterInfo } from '@/store/character/store';
+import { $currentAction } from '@/store/character/selector';
 
 import { SimpleSelect, type ValueChangeDetails } from '@/components/ui/select';
 

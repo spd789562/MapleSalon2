@@ -1,11 +1,8 @@
 import { Show, createMemo } from 'solid-js';
 import { css } from 'styled-system/css';
 
-import {
-  createGetItemChangeById,
-  $currentItemChanges,
-  $currentItem,
-} from '@/store/character';
+import { $currentItem, $currentItemChanges } from '@/store/character/store';
+import { createGetItemChangeById } from '@/store/character/selector';
 import { getEquipById } from '@/store/string';
 import { useDynamicPureStore } from '@/store';
 

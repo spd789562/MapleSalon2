@@ -6,7 +6,7 @@ import {
   $globalRenderer,
   $simpleCharacterCache,
 } from '@/store/renderer';
-import type { CharacterItems, CharacterInfo } from '@/store/character';
+import type { CharacterItems, CharacterInfo } from '@/store/character/store';
 
 import { Skeleton } from './ui/skeleton';
 

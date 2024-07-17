@@ -1,10 +1,10 @@
 import { createMemo } from 'solid-js';
 
-import type { CharacterItems } from '@/store/character';
+import type { CharacterItems } from '@/store/character/store';
 
 import { SimpleCharacter } from '@/components/SimpleCharacter';
 
-import { getCharacterSubCategory } from '@/store/character';
+import { getCharacterSubCategory } from '@/store/character/utils';
 import { getSubCategory, getBodyId } from '@/utils/itemId';
 
 export interface PreviewCharacterProps {

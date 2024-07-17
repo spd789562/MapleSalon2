@@ -1,6 +1,7 @@
 import { useStore } from '@nanostores/solid';
 
-import { $currentCharacterInfo, $currentHandType } from '@/store/character';
+import { $currentCharacterInfo } from '@/store/character/store';
+import { $currentHandType } from '@/store/character/selector';
 
 import {
   SimpleToggleGroup,

@@ -3,7 +3,8 @@ import { map, computed } from 'nanostores';
 
 import { Store } from '@tauri-apps/plugin-store';
 
-import { changeCurrentCharacter, type CharacterItems } from './character';
+import type { CharacterItems } from './character/store';
+import { changeCurrentCharacter } from './character/action';
 import { CharacterEarType } from '@/const/ears';
 import { CharacterHandType } from '@/const/hand';
 

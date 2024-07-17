@@ -1,11 +1,11 @@
-import { atom, computed } from 'nanostores';
+import { computed } from 'nanostores';
 
 import {
-  $totalItems,
   $currentItem,
   $currentItemChanges,
   $currentCharacterItems,
-} from './character';
+} from './character/store';
+import { $totalItems } from './character/selector';
 import { $equpimentDrawerOpen } from './trigger';
 import {
   $equipmentDrawerEquipCategory,

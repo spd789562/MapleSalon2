@@ -2,11 +2,11 @@ import { Show, createSignal } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 import { styled } from 'styled-system/jsx/factory';
 
+import { $currentScene } from '@/store/character/store';
 import {
-  $currentScene,
   $currentCharacter,
   $previewCharacter,
-} from '@/store/character';
+} from '@/store/character/selector';
 import { $showPreviousCharacter } from '@/store/trigger';
 
 import LoaderCircle from 'lucide-solid/icons/loader-circle';

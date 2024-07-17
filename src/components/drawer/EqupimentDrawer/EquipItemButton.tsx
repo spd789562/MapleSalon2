@@ -1,6 +1,8 @@
 import { Switch, Match } from 'solid-js';
-import { $currentItem, addItemToChanges } from '@/store/character';
+
 import type { EquipItem } from '@/store/string';
+import { $currentItem } from '@/store/character/store';
+import { addItemToChanges } from '@/store/character/action';
 
 import { CssTooltip } from '@/components/ui/cssTooltip';
 import { LoadableEquipIcon } from '@/components/LoadableEquipIcon';

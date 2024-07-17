@@ -1,4 +1,4 @@
-import type { CharacterData, CharacterItemInfo } from '@/store/character';
+import type { CharacterData, CharacterItemInfo } from '@/store/character/store';
 
 export function makeCharacterHash(character: CharacterData) {
   let baseHash = [

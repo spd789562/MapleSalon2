@@ -19,6 +19,8 @@ import { EquipOpenButton } from './components/drawer/EqupimentDrawer/EquipOpenBu
 import { CurrentEquipOpenButton } from './components/drawer/CurrentEquipmentDrawer/CurrentEquipOpenButton';
 import { CharacterSelectionDrawerOpenButton } from './components/drawer/CharacterSelectionDrawer/CharacterSelectionDrawerOpenButton';
 
+import './store/effects';
+
 import './App.css';
 
 function App() {

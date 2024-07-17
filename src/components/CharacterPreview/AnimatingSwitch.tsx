@@ -1,6 +1,7 @@
 import { useStore } from '@nanostores/solid';
 
-import { $currentCharacterInfo, $isAnimating } from '@/store/character';
+import { $currentCharacterInfo } from '@/store/character/store';
+import { $isAnimating } from '@/store/character/selector';
 
 import { Switch, type ChangeDetails } from '@/components/ui/switch';
 

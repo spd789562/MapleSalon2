@@ -1,6 +1,7 @@
 import { useStore } from '@nanostores/solid';
 
-import { $currentCharacterInfo, $currentEarType } from '@/store/character';
+import { $currentCharacterInfo } from '@/store/character/store';
+import { $currentEarType } from '@/store/character/selector';
 
 import {
   SimpleToggleGroup,

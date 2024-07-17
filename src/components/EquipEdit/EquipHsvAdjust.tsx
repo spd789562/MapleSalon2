@@ -1,11 +1,9 @@
 import { Show, createMemo } from 'solid-js';
 import { css } from 'styled-system/css';
 
-import {
-  createGetItemChangeById,
-  $currentItemChanges,
-  getCharacterSubCategory,
-} from '@/store/character';
+import { $currentItemChanges } from '@/store/character/store';
+import { createGetItemChangeById } from '@/store/character/selector';
+import { getCharacterSubCategory } from '@/store/character/utils';
 import { useDynamicPureStore } from '@/store';
 
 import ResetIcon from 'lucide-solid/icons/rotate-ccw';

@@ -1,7 +1,7 @@
 import { Show, Switch, Match } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 
-import { $currentItem } from '@/store/character';
+import { $currentItem } from '@/store/character/store';
 
 import { Box } from 'styled-system/jsx/box';
 import { EquipTitle } from './EquipTitle';

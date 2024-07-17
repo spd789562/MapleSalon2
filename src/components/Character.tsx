@@ -2,7 +2,7 @@ import { onMount, onCleanup, createEffect, createSignal, Show } from 'solid-js';
 
 import { css } from 'styled-system/css';
 
-import { $previewCharacter } from '@/store/character';
+import { $previewCharacter } from '@/store/character/selector';
 import { usePureStore } from '@/store';
 
 import { Application, Container } from 'pixi.js';

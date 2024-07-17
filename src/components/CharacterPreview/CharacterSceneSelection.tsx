@@ -1,7 +1,7 @@
 import { useStore } from '@nanostores/solid';
 import { styled } from 'styled-system/jsx/factory';
 
-import { $currentScene } from '@/store/character';
+import { $currentScene } from '@/store/character/store';
 import { $sceneSelectionOpen } from '@/store/trigger';
 
 import ChevronLeftIcon from 'lucide-solid/icons/chevron-left';

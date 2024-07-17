@@ -2,7 +2,8 @@ import { createMemo, Show } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
 
 import { useDynamicPureStore } from '@/store';
-import { $hasAnyItemChanges } from '@/store/character';
+import { $hasAnyItemChanges } from '@/store/character/selector';
+
 import {
   createGetCharacterById,
   selectCharacter,

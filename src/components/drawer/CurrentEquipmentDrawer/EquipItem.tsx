@@ -1,7 +1,7 @@
 import { Show, Switch, Match, createMemo } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 
-import { createEquipItemByCategory } from '@/store/character';
+import { createEquipItemByCategory } from '@/store/character/selector';
 import {
   openSkinSelection,
   editCurrentItem,

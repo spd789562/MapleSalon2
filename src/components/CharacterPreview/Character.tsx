@@ -1,7 +1,7 @@
 import { onMount, onCleanup, createEffect, createSignal } from 'solid-js';
 import type { ReadableAtom } from 'nanostores';
 
-import type { CharacterData } from '@/store/character';
+import type { CharacterData } from '@/store/character/store';
 import { usePureStore } from '@/store';
 
 import { Application, Container } from 'pixi.js';
