@@ -153,6 +153,7 @@ export class Character extends Container {
 
   async update(characterData: CharacterData) {
     const isPlayingChanged = this.isAnimating !== characterData.isAnimating;
+    const isStopToPlay = !this.isAnimating && characterData.isAnimating;
     if (!characterData.isAnimating) {
       this.frame = characterData.frame || 0;
       this.stop();
@@ -162,7 +163,7 @@ export class Character extends Container {
     const hasAddAnyItem = await this.updateItems(
       Object.values(characterData.items),
     );
-    if (hasAttributeChanged || hasAddAnyItem) {
+    if (hasAttributeChanged || hasAddAnyItem || isStopToPlay) {
       await this.loadItems();
     } else if (isPlayingChanged) {
       this.render();
@@ -314,6 +315,7 @@ export class Character extends Container {
     this.isBounce = false;
     this.isLoading = false;
     this.isPlaying = false;
+    this.currentDelta = 0;
     if (this.currentTicker) {
       Ticker.shared.remove(this.currentTicker);
       this.currentTicker = undefined;
