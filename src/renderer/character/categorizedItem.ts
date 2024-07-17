@@ -51,6 +51,7 @@ export abstract class CategorizedItem<Name extends string> {
       this.frameCount = maxFrame;
     }
     this.resolveFrames();
+    this.resolveEffectFrames();
   }
 
   get isAllAncherBuilt() {
@@ -95,6 +96,56 @@ export abstract class CategorizedItem<Name extends string> {
       return name;
     }
     return this.mainItem.islot[0];
+  }
+
+  resolveEffectFrames() {
+    if (!this.effectWz) {
+      return;
+    }
+    const hasFirstFrame = this.effectWz[0];
+    if (!hasFirstFrame) {
+      return;
+    }
+    const maxFrame = Object.keys(this.effectWz).reduce(
+      (a, b) => (Number.isNaN(Number(b)) ? a : Math.max(a, Number(b))),
+      0,
+    );
+    const pieces: CharacterItemPiece[] = [];
+
+    for (let frame = 0; frame <= maxFrame; frame += 1) {
+      const piece = this.effectWz[frame];
+
+      if (!piece) {
+        continue;
+      }
+      const pieceUrl = piece._outlink || piece.path;
+
+      if (!pieceUrl) {
+        continue;
+      }
+      console.log(this.mainItem.info.id, piece.origin);
+      const renderPiecesInfo = {
+        info: this.mainItem.info,
+        url: pieceUrl,
+        origin: piece.origin,
+        z: piece.z,
+        slot: 'effect',
+        map: (piece.map as AncherMap) || defaultAncher,
+        delay: piece.delay,
+        group: piece.group,
+      };
+      const characterItemPiece = new CharacterItemPiece(
+        renderPiecesInfo,
+        this.mainItem,
+      );
+      characterItemPiece.position = {
+        x: -piece.origin.x,
+        y: -piece.origin.y,
+      };
+
+      pieces.push(characterItemPiece);
+    }
+    this.unresolvedItems.set('effect', pieces);
   }
 
   /** resolve all frames and build CharacterAnimatablePart Later */

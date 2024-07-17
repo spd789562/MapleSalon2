@@ -137,9 +137,14 @@ export class CharacterItem implements RenderItemInfo {
         continue;
       }
 
-      const effectWz = this.effectWz?.[action];
+      const effectWz = this.effectWz?.[action] || this.effectWz?.default;
 
-      const actionItem = new CharacterActionItem(action, actionWz, this, effectWz);
+      const actionItem = new CharacterActionItem(
+        action,
+        actionWz,
+        this,
+        effectWz,
+      );
 
       this.actionPieces.set(action, actionItem);
     }
