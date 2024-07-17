@@ -1,8 +1,7 @@
 import { Switch, Match } from 'solid-js';
 
 import type { EquipItem } from '@/store/string';
-import { $currentItem } from '@/store/character/store';
-import { addItemToChanges } from '@/store/character/action';
+import { selectNewItem } from '@/store/character/action';
 
 import { CssTooltip } from '@/components/ui/cssTooltip';
 import { LoadableEquipIcon } from '@/components/LoadableEquipIcon';
@@ -16,8 +15,7 @@ export interface EquipItemButtonProps {
 }
 export const EquipItemButton = (props: EquipItemButtonProps) => {
   function handleClick() {
-    $currentItem.set({ id: props.item.id, name: props.item.name });
-    addItemToChanges({ id: props.item.id, name: props.item.name });
+    selectNewItem({ id: props.item.id, name: props.item.name });
   }
 
   return (

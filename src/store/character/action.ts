@@ -1,12 +1,29 @@
 import {
   type CharacterData,
+  $currentItem,
   $currentCharacterItems,
   $currentCharacterInfo,
   $currentItemChanges,
 } from './store';
+import {
+  $totalItems,
+  getCurrentHairColor,
+  getCurrentFaceColor,
+} from './selector';
+import { getEquipById, appendHistory } from '@/store/string';
 import { getCharacterSubCategory } from './utils';
 
+import {
+  getHairColorId,
+  gatHairAvailableColorIds,
+  changeHairColorId,
+  getFaceColorId,
+  gatFaceAvailableColorIds,
+  changeFaceColorId,
+} from '@/utils/mixDye';
 import { getSubCategory, getBodyId, getHeadIdFromBodyId } from '@/utils/itemId';
+
+import { EquipCategory, type EquipSubCategory } from '@/const/equipments';
 
 export function changeCurrentCharacter(character: Partial<CharacterData>) {
   if (character.items) {
@@ -45,15 +62,65 @@ export function updateChangesSkin(item: {
   const bodyId = getBodyId(item.id);
   const headId = getHeadIdFromBodyId(bodyId);
 
-  $currentItemChanges.setKey('Body.id', bodyId);
-  $currentItemChanges.setKey('Body.name', item.name);
+  const currentChanges = $totalItems.get();
 
-  $currentItemChanges.setKey('Head.id', headId);
-  $currentItemChanges.setKey('Head.name', item.name);
+  $currentItemChanges.setKey(
+    'Body',
+    Object.assign({}, currentChanges.Body, { id: bodyId, name: item.name }),
+  );
+  $currentItemChanges.setKey(
+    'Head',
+    Object.assign({}, currentChanges.Head, { id: headId, name: item.name }),
+  );
 }
 
-/* @TODO: hair and face should use original color and dye so probably need to read changes */
-export function addItemToChanges(item: {
+const getColorItemUseSameColor =
+  <ColorType extends number>(
+    getCurrentColor: () => ColorType,
+    getColorId: (id: number) => ColorType,
+    getAvailableColorIds: (id: number) => number[],
+    changeColorId: (id: number, color: ColorType) => number,
+  ) =>
+  (item: { id: number; name: string }) => {
+    const currentItemColor = getCurrentColor();
+    const itemColor = getColorId(item.id);
+
+    const itemInfo = Object.assign({}, item);
+
+    if (itemColor !== currentItemColor) {
+      itemInfo.id = changeColorId(item.id, currentItemColor);
+      const avaiableColorIds = getAvailableColorIds(item.id);
+
+      /* if color is not available, use the first one */
+      if (!avaiableColorIds.includes(itemInfo.id)) {
+        itemInfo.id = avaiableColorIds[0];
+      }
+
+      const newEquipInfo = getEquipById(itemInfo.id);
+
+      if (newEquipInfo) {
+        itemInfo.name = newEquipInfo.name;
+      }
+    }
+
+    return itemInfo;
+  };
+
+export const getHairItemUseSameColor = getColorItemUseSameColor(
+  getCurrentHairColor,
+  getHairColorId,
+  gatHairAvailableColorIds,
+  changeHairColorId,
+);
+
+export const getFaceItemUseSameColor = getColorItemUseSameColor(
+  getCurrentFaceColor,
+  getFaceColorId,
+  gatFaceAvailableColorIds,
+  changeFaceColorId,
+);
+
+export function addItemToChangesIfNeeded(item: {
   id: number;
   name: string;
 }) {
@@ -66,11 +133,53 @@ export function addItemToChanges(item: {
     return;
   }
 
-  const currentItems = $currentCharacterItems.get();
+  const currentItems = $currentItemChanges.get();
 
-  if (currentItems[category] && currentItems[category]?.id === item.id) {
+  const currentItem = currentItems[category];
+
+  if (currentItem?.id === item.id) {
     return;
   }
+
+  if (currentItem) {
+    return $currentItemChanges.setKey(
+      category,
+      Object.assign({}, currentItem, {
+        id: item.id,
+        name: item.name,
+        isDeleted: false,
+      }),
+    );
+  }
+
+  const originItem = $currentCharacterItems.get()[category];
+
+  if (originItem) {
+    $currentItemChanges.setKey(
+      category,
+      Object.assign({}, originItem, {
+        id: item.id,
+        name: item.name,
+        isDeleted: false,
+      }),
+    );
+  } else {
+    $currentItemChanges.setKey(category, {
+      id: item.id,
+      name: item.name,
+      isDeleted: false,
+    });
+  }
+}
+
+export function addItemToChanges(
+  category: EquipSubCategory,
+  item: {
+    id: number;
+    name: string;
+  },
+) {
+  const currentItems = $totalItems.get();
 
   if (currentItems[category]) {
     $currentItemChanges.setKey(
@@ -88,4 +197,58 @@ export function addItemToChanges(item: {
       isDeleted: false,
     });
   }
+}
+
+export function selectNewItem(item: { id: number; name: string }) {
+  let category = getSubCategory(item.id);
+  if (!category) {
+    return;
+  }
+  category = getCharacterSubCategory(category);
+  if (!category) {
+    return;
+  }
+
+  /* append to history */
+  appendHistory({
+    category: EquipCategory.Unknown,
+    id: item.id,
+    name: item.name,
+  });
+
+  if (category === 'Hair') {
+    const itemInfo = getHairItemUseSameColor(item);
+    const originItem = $totalItems.get().Hair;
+    $currentItem.set(itemInfo);
+    $currentItemChanges.setKey('Hair', {
+      id: itemInfo.id,
+      name: itemInfo.name,
+      dye: Object.assign({}, originItem?.dye),
+      isDeleted: false,
+      isDeleteDye: !!originItem?.isDeleteDye,
+    });
+    return;
+  }
+
+  if (category === 'Face') {
+    const itemInfo = getFaceItemUseSameColor(item);
+    const originItem = $totalItems.get().Face;
+    $currentItem.set(itemInfo);
+    $currentItemChanges.setKey('Face', {
+      id: itemInfo.id,
+      name: itemInfo.name,
+      dye: Object.assign({}, originItem?.dye),
+      isDeleted: false,
+      isDeleteDye: !!originItem?.isDeleteDye,
+    });
+    return;
+  }
+
+  $currentItem.set(item);
+
+  if (category === 'Skin') {
+    return updateChangesSkin(item);
+  }
+
+  return addItemToChanges(category, item);
 }

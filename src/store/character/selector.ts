@@ -13,6 +13,16 @@ import { getSubCategory } from '@/utils/itemId';
 import type { EquipSubCategory } from '@/const/equipments';
 import type { ItemInfo } from '@/renderer/character/const/data';
 
+import { FaceColor, type FaceColorId } from '@/const/face';
+import { HairColor, type HairColorId } from '@/const/hair';
+
+import {
+  getHairAllColorIds,
+  getHairColorId,
+  getFaceAllColorIds,
+  getFaceColorId,
+} from '@/utils/mixDye';
+
 export const $currentAction = computed(
   $currentCharacterInfo,
   (info) => info.action,
@@ -78,4 +88,20 @@ export function createGetItemChangeById(id: number) {
 
 export function createEquipItemByCategory(category: EquipSubCategory) {
   return computed($totalItems, (items) => items[category]);
+}
+
+/* functions */
+export function getCurrentHairColor(): HairColorId {
+  const hair = $totalItems.get().Hair;
+  if (!hair) {
+    return 0; // default hair color black
+  }
+  return getHairColorId(hair.id);
+}
+export function getCurrentFaceColor(): FaceColorId {
+  const face = $totalItems.get().Face;
+  if (!face) {
+    return 0; // default face color black
+  }
+  return getFaceColorId(face.id);
 }
