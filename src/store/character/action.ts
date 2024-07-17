@@ -252,3 +252,43 @@ export function selectNewItem(item: { id: number; name: string }) {
 
   return addItemToChanges(category, item);
 }
+
+export function updateItemHsvInfo(
+  category: EquipSubCategory,
+  field: 'colorRange' | 'hue' | 'saturation' | 'brightness',
+  value: number,
+) {
+  const hasChanges = $currentItemChanges.get()[category];
+  if (hasChanges) {
+    $currentItemChanges.setKey(`${category}.${field}`, value);
+  } else {
+    const currentItem = $totalItems.get()[category];
+
+    if (!currentItem) {
+      return;
+    }
+
+    /* fill the changes first and then modify the value */
+    $currentItemChanges.setKey(
+      category,
+      Object.assign({}, currentItem, {
+        [field]: value,
+      }),
+    );
+  }
+}
+export function resetItemHsvInfo(category: EquipSubCategory) {
+  const currentItems = $totalItems.get();
+  const originItem = currentItems[category];
+  if (originItem) {
+    $currentItemChanges.setKey(
+      category,
+      Object.assign({}, originItem, {
+        colorRange: 0,
+        hue: 0,
+        saturation: 0,
+        brightness: 0,
+      }),
+    );
+  }
+}
