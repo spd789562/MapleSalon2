@@ -281,10 +281,7 @@ export class Character extends Container {
             if (existLayer) {
               container = existLayer;
             } else {
-              const zIndex =
-                piece.effectZindex >= 0
-                  ? zmap.length + piece.effectZindex
-                  : piece.effectZindex;
+              const zIndex = piece.effectZindex - 10;
               container = new ZmapContainer(effectLayerName, zIndex, this);
               this.addChild(container);
               this.zmapLayers.set(layer, container);
@@ -435,6 +432,12 @@ export class Character extends Container {
     /* use the ancher to set actual character offset */
     const bodyPos = this.currentBodyFrame?.ancher || { x: 0, y: 0 };
     this.pivot?.set(bodyPos.x, bodyPos.y);
+    for (const [layerName, layer] of this.zmapLayers.entries()) {
+      if (!layerName.includes('effect')) {
+        continue;
+      }
+      layer.position.set(bodyPos.x, bodyPos.y);
+    }
   }
 
   /** use backBody to check current action is turn character to back  */

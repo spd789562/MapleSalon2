@@ -145,7 +145,7 @@ export abstract class CategorizedItem<Name extends string> {
         z: piece.z,
         slot: 'effect',
         map: (piece.map as AncherMap) || defaultAncher,
-        delay: piece.delay,
+        delay: piece.delay || 120,
         group: piece.group,
       };
       const characterItemPiece = new CharacterItemPiece(
@@ -294,9 +294,14 @@ export abstract class CategorizedItem<Name extends string> {
     await Assets.load(Array.from(assets));
 
     for (const [pieceName, pieces] of this.unresolvedItems) {
+      const isEffect = pieceName === 'effect' && this.effectWz !== undefined;
       this.items.set(
         pieceName as PieceName,
-        new CharacterAnimatablePart(this.mainItem, pieces),
+        new CharacterAnimatablePart(
+          this.mainItem,
+          pieces,
+          isEffect ? this.effectWz?.z : undefined,
+        ),
       );
     }
 
