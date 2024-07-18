@@ -3,6 +3,8 @@ import type { ReadableAtom } from 'nanostores';
 
 import type { CharacterData } from '@/store/character/store';
 import {
+  MAX_ZOOM,
+  MIN_ZOOM,
   $zoomTarget,
   $previewZoomInfo,
   updateCenter,
@@ -43,10 +45,15 @@ export const CharacterView = (props: CharacterViewProps) => {
       width: 300,
       height: 260,
       worldScale: 2,
-      maxScale: 3,
+      maxScale: MAX_ZOOM,
     });
-    viewport.on('zoomed', () => {
-      if (viewport && viewport.scaled <= 3) {
+    viewport.on('zoomed', (e) => {
+      const viewport = e.viewport as ZoomContainer;
+      if (
+        viewport &&
+        viewport.scaled <= MAX_ZOOM &&
+        viewport.scaled >= MIN_ZOOM
+      ) {
         updateZoom(viewport.scaled, props.target);
       }
     });

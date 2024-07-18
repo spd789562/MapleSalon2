@@ -14,6 +14,7 @@ import ChevronRightIcon from 'lucide-solid/icons/chevron-right';
 import { CharacterView } from './Character';
 import { CharacterSceneSelection } from './CharacterSceneSelection';
 import { ShowPreviousSwitch } from './ShowPreviousSwitch';
+import { ZoomControl } from './ZoomControl';
 
 import { PreviewSceneBackground } from '@/const/scene';
 
@@ -51,6 +52,9 @@ export const CharacterScene = () => {
       <TopTool>
         <ShowPreviousSwitch />
       </TopTool>
+      <BottomLeftTool>
+        <ZoomControl />
+      </BottomLeftTool>
       <CharacterSceneSelection />
       <Show when={isLoading()}>
         <LoadingBackdrop>
@@ -100,11 +104,28 @@ const TopTool = styled('div', {
     transform: 'translateX(-50%)',
     mx: 'auto',
     p: 2,
-    opacity: 0.4,
+    opacity: 0.6,
     borderBottomRadius: 'md',
     transition: 'opacity 0.2s',
     backgroundColor: 'bg.default',
     boxShadow: 'md',
+    _hover: {
+      opacity: 1,
+    },
+  },
+});
+
+const BottomLeftTool = styled('div', {
+  base: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    p: 2,
+    borderTopRightRadius: 'md',
+    boxShadow: 'md',
+    backgroundColor: 'bg.default',
+    opacity: 0.6,
+    transition: 'opacity 0.2s',
     _hover: {
       opacity: 1,
     },
