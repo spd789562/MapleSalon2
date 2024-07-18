@@ -116,6 +116,7 @@ const CompareSeparator = styled('div', {
     borderRadius: 'md',
     boxShadow: 'md',
     p: 4,
+    mx: 2,
     backgroundColor: 'bg.default',
     color: 'fg.default',
   },
