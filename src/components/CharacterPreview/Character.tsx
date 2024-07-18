@@ -6,6 +6,7 @@ import { usePureStore } from '@/store';
 
 import { Application, Container } from 'pixi.js';
 import { Character } from '@/renderer/character/character';
+import { ZoomContainer } from '@/renderer/ZoomContainer';
 
 export interface CharacterViewProps {
   onLoad: () => void;
@@ -16,6 +17,7 @@ export const CharacterView = (props: CharacterViewProps) => {
   const characterData = usePureStore(props.store);
   const [isInit, setIsInit] = createSignal<boolean>(false);
   let container!: HTMLDivElement;
+  let viewport: ZoomContainer | undefined = undefined;
   const app = new Application();
   const ch = new Character(app);
 
@@ -29,11 +31,16 @@ export const CharacterView = (props: CharacterViewProps) => {
       background: 0x000000,
       backgroundAlpha: 0,
     });
+    viewport = new ZoomContainer(app, {
+      width: 300,
+      height: 260,
+      worldScale: 2,
+    });
     container.appendChild(app.canvas);
-    const characterLayer = new Container();
-    characterLayer.addChild(ch);
-    characterLayer.position.set(150, 150);
-    app.stage.addChild(characterLayer);
+    // const characterLayer = new Container();
+    viewport.addChild(ch);
+    // characterLayer.position.set(150, 150);
+    app.stage.addChild(viewport);
 
     setIsInit(true);
   }
