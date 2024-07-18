@@ -5,10 +5,16 @@ import type { CharacterItem } from './item';
 
 export class CharacterAnimatablePart extends BaseAnimatablePart<CharacterItemPiece> {
   item: CharacterItem;
+  effectZindex?: number;
 
-  constructor(item: CharacterItem, frames: CharacterItemPiece[]) {
+  constructor(
+    item: CharacterItem,
+    frames: CharacterItemPiece[],
+    effectZindex?: number,
+  ) {
     super(frames);
     this.item = item;
+    this.effectZindex = effectZindex;
     this.updatePositionByFrame(0);
     this.onFrameChange = this.frameChanges.bind(this);
     this.filters = this.item.filters;

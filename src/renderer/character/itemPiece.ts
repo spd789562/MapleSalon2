@@ -38,6 +38,7 @@ export class CharacterItemPiece implements AnimatableFrame {
   /** calcualted ancher use to calculate for new joint */
   ancher: Vec2;
   baseAncherName: AncherName = 'navel';
+  noAncher: boolean;
 
   isAncherBuilt = false;
 
@@ -49,7 +50,7 @@ export class CharacterItemPiece implements AnimatableFrame {
 
   _srpite: Container | null = null;
 
-  constructor(piece: RenderPieceInfo, item: CharacterItem) {
+  constructor(piece: RenderPieceInfo, item: CharacterItem, noAncher = false) {
     this.info = piece.info;
     this.url = piece.url || '';
     this.group = piece.group;
@@ -59,6 +60,7 @@ export class CharacterItemPiece implements AnimatableFrame {
     this.map = piece.map || defaultAncher;
     this.delay = piece.delay;
     this.ancher = defaultAncher.navel;
+    this.noAncher = noAncher;
     this.item = item;
     this.zIndex =
       CharacterLoader.zmap?.findIndex((z) => z === this.z) ||
@@ -125,7 +127,7 @@ export class CharacterItemPiece implements AnimatableFrame {
     );
     const baseAncher = baseAncherName && frameAncherMap.get(baseAncherName);
     // if baseAncher doesn't contain any related ancher of this pieces, skip for now
-    if (!(baseAncherName && baseAncher)) {
+    if (!(baseAncherName && baseAncher) || this.noAncher) {
       return;
     }
 

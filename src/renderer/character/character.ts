@@ -273,7 +273,23 @@ export class Character extends Container {
         const piece = item.items.get(layer);
         if (piece) {
           let container = this.zmapLayers.get(layer);
-          if (!container) {
+          if (piece.effectZindex !== undefined) {
+            /* make special layer for effects */
+            /* ex: effect0 effect-1 effect2 */
+            const effectLayerName = `effect${piece.effectZindex}`;
+            const existLayer = this.zmapLayers.get(effectLayerName);
+            if (existLayer) {
+              container = existLayer;
+            } else {
+              const zIndex =
+                piece.effectZindex >= 0
+                  ? zmap.length + piece.effectZindex
+                  : piece.effectZindex;
+              container = new ZmapContainer(effectLayerName, zIndex, this);
+              this.addChild(container);
+              this.zmapLayers.set(layer, container);
+            }
+          } else if (!container) {
             container = new ZmapContainer(layer, zmap.indexOf(layer), this);
             this.addChild(container);
             this.zmapLayers.set(layer, container);

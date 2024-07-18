@@ -112,6 +112,20 @@ export abstract class CategorizedItem<Name extends string> {
     );
     const pieces: CharacterItemPiece[] = [];
 
+    const basePos = {
+      x: 0,
+      y: 0,
+    };
+    const effectPos = this.effectWz.pos ?? -1;
+
+    /* pos logic is from MapleNecrocer */
+    // if (effectPos === 0 || effectPos === 1) {
+    //   basePos.x = -10;
+    // }
+    if (effectPos === 1) {
+      basePos.y = -50;
+    }
+
     for (let frame = 0; frame <= maxFrame; frame += 1) {
       const piece = this.effectWz[frame];
 
@@ -123,7 +137,7 @@ export abstract class CategorizedItem<Name extends string> {
       if (!pieceUrl) {
         continue;
       }
-      console.log(this.mainItem.info.id, piece.origin);
+
       const renderPiecesInfo = {
         info: this.mainItem.info,
         url: pieceUrl,
@@ -137,10 +151,11 @@ export abstract class CategorizedItem<Name extends string> {
       const characterItemPiece = new CharacterItemPiece(
         renderPiecesInfo,
         this.mainItem,
+        true,
       );
       characterItemPiece.position = {
-        x: -piece.origin.x,
-        y: -piece.origin.y,
+        x: -piece.origin.x + basePos.x,
+        y: -piece.origin.y + basePos.y,
       };
 
       pieces.push(characterItemPiece);
@@ -239,6 +254,7 @@ export abstract class CategorizedItem<Name extends string> {
           return frame;
         });
       } else {
+        const isEffect = pieceName === 'effect' && this.effectWz !== undefined;
         const frames = pieces.map((frame, i) => {
           if (i === index) {
             return frame;
@@ -247,7 +263,11 @@ export abstract class CategorizedItem<Name extends string> {
         }) as CharacterItemPiece[];
         this.items.set(
           pieceName as PieceName,
-          new CharacterAnimatablePart(this.mainItem, frames),
+          new CharacterAnimatablePart(
+            this.mainItem,
+            frames,
+            isEffect ? this.effectWz?.z : undefined,
+          ),
         );
       }
     }

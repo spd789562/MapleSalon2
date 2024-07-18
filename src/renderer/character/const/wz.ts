@@ -23,7 +23,7 @@ export type WzEffectActionItem = Record<
   WzPieceInfo & {
     delay: number;
   }
-> & { z: number };
+> & { z: number; pos: number };
 
 /** PieceInfo structure in wz */
 export interface WzPieceInfo {
