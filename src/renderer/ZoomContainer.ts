@@ -5,6 +5,7 @@ export interface ZoomContainerOptions {
   width: number;
   height: number;
   worldScale?: number;
+  maxScale?: number;
 }
 export class ZoomContainer extends Viewport {
   constructor(app: Application, options: ZoomContainerOptions) {
@@ -24,7 +25,7 @@ export class ZoomContainer extends Viewport {
       .pinch()
       .wheel()
       .clampZoom({
-        maxScale: worldScale,
+        maxScale: options.maxScale || 3,
         minScale: 0.5,
       })
       .clamp({

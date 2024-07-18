@@ -36,6 +36,7 @@ export const CharacterScene = () => {
           onLoad={handleLoad}
           onLoaded={handleLoaded}
           store={$currentCharacter}
+          target="original"
         />
         <CompareSeparator>
           <ChevronRightIcon size={32} />
@@ -45,6 +46,7 @@ export const CharacterScene = () => {
         onLoad={handleLoad}
         onLoaded={handleLoaded}
         store={$previewCharacter}
+        target="preview"
       />
       <TopTool>
         <ShowPreviousSwitch />
