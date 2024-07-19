@@ -12,7 +12,7 @@ import {
 } from './selector';
 import { removeItems } from '@/store/currentEquipDrawer';
 import { getEquipById, appendHistory } from '@/store/string';
-import { getCharacterSubCategory } from './utils';
+import { getCharacterSubCategory, deepCloneCharacterItems } from './utils';
 
 import {
   getHairColorId,
@@ -28,10 +28,13 @@ import { EquipCategory, type EquipSubCategory } from '@/const/equipments';
 
 export function changeCurrentCharacter(character: Partial<CharacterData>) {
   if (character.items) {
-    $currentCharacterItems.set(character.items);
+    $currentCharacterItems.set(deepCloneCharacterItems(character.items));
     const updateInfo = { ...$currentCharacterInfo.get() };
     if (character.id) {
       updateInfo.id = character.id;
+    }
+    if (character.name) {
+      updateInfo.name = character.name;
     }
     if (character.action) {
       updateInfo.action = character.action;
@@ -47,12 +50,13 @@ export function changeCurrentCharacter(character: Partial<CharacterData>) {
     }
     $currentCharacterInfo.set(updateInfo);
 
+    $currentItem.set(undefined);
     $currentItemChanges.set({});
   }
 }
 
 export function applyCharacterChanges() {
-  $currentCharacterItems.set($currentItemChanges.get());
+  $currentCharacterItems.set(deepCloneCharacterItems($totalItems.get()));
   $currentItemChanges.set({});
 }
 

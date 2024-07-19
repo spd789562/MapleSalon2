@@ -8,6 +8,7 @@ import { ExpressionSelect } from './ExpressionSelect';
 import { ActionSelect } from './ActionSelect';
 import { AnimatingSwitch } from './AnimatingSwitch';
 import { CharacterScene } from './CharacterScene';
+import { SaveButton } from './SaveButton';
 
 export const CharacterPreview = () => {
   return (
@@ -24,6 +25,11 @@ export const CharacterPreview = () => {
         <AnimatingSwitch />
       </HStack>
       <CharacterScene />
+      <HStack mt="2">
+        <Box marginLeft="auto">
+          <SaveButton />
+        </Box>
+      </HStack>
     </CharacterPreviewCard>
   );
 };

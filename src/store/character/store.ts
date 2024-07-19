@@ -15,6 +15,7 @@ export type CharacterItems = Record<EquipSubCategory, CharacterItemInfo>;
 
 export interface CharacterInfo {
   id?: string;
+  name?: string;
   frame: number;
   isAnimating: boolean;
   action: CharacterAction;
@@ -86,6 +87,7 @@ export const $currentCharacterItems = deepMap<Partial<CharacterItems>>({
 
 export const $currentCharacterInfo = map({
   id: 'default',
+  name: 'default',
   frame: 0,
   isAnimating: true,
   action: CharacterAction.Stand1,

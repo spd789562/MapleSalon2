@@ -3,6 +3,21 @@ import type { CharacterItems } from './store';
 import type { EquipSubCategory } from '@/const/equipments';
 import type { ItemInfo } from '@/renderer/character/const/data';
 
+export function deepCloneCharacterItems(items: Partial<CharacterItems>) {
+  const result: Partial<CharacterItems> = {};
+  for (const key in items) {
+    const k = key as EquipSubCategory;
+    const item = items[k];
+    if (item) {
+      result[k] = Object.assign({}, item);
+      if (item.dye) {
+        result[k].dye = Object.assign({}, item.dye);
+      }
+    }
+  }
+  return result;
+}
+
 export function getCharacterSubCategory(category: EquipSubCategory) {
   if (category === 'CashWeapon') {
     return 'Weapon';

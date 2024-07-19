@@ -4,6 +4,7 @@ import { map, computed } from 'nanostores';
 import { Store } from '@tauri-apps/plugin-store';
 
 import type { CharacterItems } from './character/store';
+import { $previewCharacter } from './character/selector';
 import { changeCurrentCharacter } from './character/action';
 import { CharacterEarType } from '@/const/ears';
 import { CharacterHandType } from '@/const/hand';
@@ -156,6 +157,17 @@ export async function cloneCharacter(id: string) {
 
   // clone to last index
   // $savedCharacter.setKey(currentCharacters.length, character);
+}
+export function saveCurrentCharacter() {
+  const currentCharacter = $previewCharacter.get();
+  const data: SaveCharacterData = {
+    id: currentCharacter.id || createCharacterUniqueId(),
+    name: currentCharacter.name || 'name',
+    earType: currentCharacter.earType,
+    handType: currentCharacter.handType,
+    items: currentCharacter.items,
+  };
+  return saveCharacter(data);
 }
 
 /* utils */
