@@ -173,6 +173,24 @@ export function addItemToChangesIfNeeded(item: {
   }
 }
 
+export function addDyeableToChanges(
+  category: 'Hair' | 'Face',
+  item: {
+    id: number;
+    name: string;
+  },
+) {
+  const originItem = $totalItems.get()[category];
+  $currentItem.set(item);
+  $currentItemChanges.setKey(category, {
+    id: item.id,
+    name: item.name,
+    dye: Object.assign({}, originItem?.dye),
+    isDeleted: false,
+    isDeleteDye: !!originItem?.isDeleteDye,
+  });
+}
+
 export function addItemToChanges(
   category: EquipSubCategory,
   item: {
@@ -219,30 +237,12 @@ export function selectNewItem(item: { id: number; name: string }) {
 
   if (category === 'Hair') {
     const itemInfo = getHairItemUseSameColor(item);
-    const originItem = $totalItems.get().Hair;
-    $currentItem.set(itemInfo);
-    $currentItemChanges.setKey('Hair', {
-      id: itemInfo.id,
-      name: itemInfo.name,
-      dye: Object.assign({}, originItem?.dye),
-      isDeleted: false,
-      isDeleteDye: !!originItem?.isDeleteDye,
-    });
-    return;
+    return addDyeableToChanges('Hair', itemInfo);
   }
 
   if (category === 'Face') {
     const itemInfo = getFaceItemUseSameColor(item);
-    const originItem = $totalItems.get().Face;
-    $currentItem.set(itemInfo);
-    $currentItemChanges.setKey('Face', {
-      id: itemInfo.id,
-      name: itemInfo.name,
-      dye: Object.assign({}, originItem?.dye),
-      isDeleted: false,
-      isDeleteDye: !!originItem?.isDeleteDye,
-    });
-    return;
+    return addDyeableToChanges('Face', itemInfo);
   }
 
   $currentItem.set(item);

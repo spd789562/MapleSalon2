@@ -5,7 +5,7 @@ export const MIN_ZOOM = 0.5;
 export const MAX_ZOOM = 3;
 export const DEFAULT_ZOOM = 1;
 
-export const DEFAULT_CENTER: PointData = { x: 0, y: 0 };
+export const DEFAULT_CENTER: PointData = { x: 0, y: -53 };
 
 export const $previewZoom = atom<number>(DEFAULT_ZOOM);
 export const $previewCenter = atom<PointData>(DEFAULT_CENTER);

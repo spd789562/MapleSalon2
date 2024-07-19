@@ -69,7 +69,7 @@ export const CharacterScene = () => {
 
 const CharacterSceneContainer = styled('div', {
   base: {
-    py: 10,
+    // py: 10,
     overflow: 'hidden',
     position: 'relative',
     borderRadius: 'lg',
@@ -91,6 +91,11 @@ const CharacterSceneContainer = styled('div', {
         ...PreviewSceneBackground.white,
         border: '1px solid',
         borderColor: 'border.muted',
+      },
+      henesys: {
+        ...PreviewSceneBackground.henesys,
+        backgroundRepeat: 'repeat-x',
+        backgroundPositionY: '-20px',
       },
     },
   },

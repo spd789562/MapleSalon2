@@ -3,6 +3,12 @@ import { animations } from './animations';
 
 export const tokens: Tokens = {
   animations,
+  assets: {
+    henesysBackground: {
+      type: 'string',
+      value: 'url(/background/henesysType2.png)',
+    },
+  },
   gradients: {
     hue: {
       value:

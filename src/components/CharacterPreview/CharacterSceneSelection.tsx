@@ -8,6 +8,7 @@ import ChevronLeftIcon from 'lucide-solid/icons/chevron-left';
 import { CharacterSceneRadioGroup } from './CharacterSceneRadioGroup';
 
 import { PreviewSceneBackground, PreviewSceneNames } from '@/const/scene';
+import h from 'solid-js/h';
 
 export const CharacterSceneSelection = () => {
   const scene = useStore($currentScene);
@@ -83,6 +84,10 @@ const BackgroundBlock = styled('div', {
         ...PreviewSceneBackground.white,
         border: '1px solid',
         borderColor: 'border.muted',
+      },
+      henesys: {
+        ...PreviewSceneBackground.henesys,
+        backgroundPosition: 'left bottom',
       },
     },
   },

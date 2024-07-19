@@ -29,6 +29,14 @@ const options = [
     label: PreviewSceneNames.white,
     colorBlockStyle: PreviewSceneBackground.white,
   },
+  {
+    value: PreviewScene.Henesys,
+    label: PreviewSceneNames.henesys,
+    colorBlockStyle: {
+      ...PreviewSceneBackground.henesys,
+      backgroundPosition: 'left bottom',
+    },
+  },
 ];
 
 export const CharacterSceneRadioGroup = () => {

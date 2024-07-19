@@ -37,16 +37,19 @@ export const CharacterView = (props: CharacterViewProps) => {
   async function initScene() {
     await app.init({
       width: 300,
-      height: 260,
+      height: 340,
       background: 0x000000,
       backgroundAlpha: 0,
     });
     viewport = new ZoomContainer(app, {
       width: 300,
-      height: 260,
+      height: 340,
       worldScale: 2,
       maxScale: MAX_ZOOM,
     });
+    const defaultInfo = zoomInfo();
+    viewport.scaled = defaultInfo.zoom;
+    viewport.moveCenter(defaultInfo.center);
     viewport.on('zoomed', (e) => {
       const viewport = e.viewport as ZoomContainer;
       if (
@@ -64,9 +67,7 @@ export const CharacterView = (props: CharacterViewProps) => {
       }
     });
     container.appendChild(app.canvas);
-    // const characterLayer = new Container();
     viewport.addChild(ch);
-    // characterLayer.position.set(150, 150);
     app.stage.addChild(viewport);
 
     setIsInit(true);
