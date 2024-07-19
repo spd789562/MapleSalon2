@@ -40,7 +40,7 @@ export const CharacterSceneSelection = () => {
 const Positioner = styled('div', {
   base: {
     position: 'absolute',
-    bottom: 0,
+    bottom: 1,
     right: 0,
     p: 2,
     opacity: 0.6,

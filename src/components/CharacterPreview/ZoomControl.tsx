@@ -37,7 +37,7 @@ export const ZoomControl = () => {
   }
 
   return (
-    <HStack>
+    <HStack gap={1}>
       <IconButton
         variant="ghost"
         size="xs"
@@ -68,7 +68,7 @@ export const ZoomControl = () => {
       <IconButton
         variant="ghost"
         size="xs"
-        title="重製視角"
+        title="重製角色位置"
         onClick={handleResetCenter}
       >
         <ViewIcon />

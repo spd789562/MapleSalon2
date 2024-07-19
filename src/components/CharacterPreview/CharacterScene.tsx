@@ -123,10 +123,10 @@ const TopTool = styled('div', {
 const BottomLeftTool = styled('div', {
   base: {
     position: 'absolute',
-    bottom: 0,
-    left: 0,
-    p: 2,
-    borderTopRightRadius: 'md',
+    bottom: 1,
+    left: 1,
+    p: 1,
+    borderRadius: 'md',
     boxShadow: 'md',
     backgroundColor: 'bg.default',
     opacity: 0.6,
