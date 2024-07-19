@@ -10,6 +10,7 @@ import {
   getCurrentHairColor,
   getCurrentFaceColor,
 } from './selector';
+import { removeItems } from '@/store/currentEquipDrawer';
 import { getEquipById, appendHistory } from '@/store/string';
 import { getCharacterSubCategory } from './utils';
 
@@ -248,6 +249,14 @@ export function selectNewItem(item: { id: number; name: string }) {
 
   if (category === 'Skin') {
     return updateChangesSkin(item);
+  }
+
+  /* remove conflict category */
+  if (category === 'Coat' || category === 'Pants') {
+    removeItems('Overall');
+  } else if (category === 'Longcoat' || category === 'Overall') {
+    removeItems('Coat');
+    removeItems('Pants');
   }
 
   return addItemToChanges(category, item);
