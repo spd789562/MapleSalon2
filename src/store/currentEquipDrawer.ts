@@ -44,19 +44,11 @@ export function editCurrentItem(data: {
   }
 }
 export function removeItems(category: EquipSubCategory) {
-  const targetOriginItem = $currentCharacterItems.get()[category];
-  const targetItem = $currentItemChanges.get()[category];
-
   /* if slot is in current item, mark as delete */
-  if (targetOriginItem && !targetItem) {
-    $currentItemChanges.setKey(category, {
-      ...targetOriginItem,
-      isDeleted: true,
-    });
-  } else if (targetItem) {
-    $currentItemChanges.setKey(`${category}.isDeleted`, true);
-  }
+  $currentItemChanges.setKey(`${category}.isDeleted`, true);
 
+  // if item is currently edit, also remove it from $currentItem
+  const targetItem = $currentItemChanges.get()[category];
   if ($currentItem.get()?.id === targetItem?.id) {
     $currentItem.set(undefined);
   }

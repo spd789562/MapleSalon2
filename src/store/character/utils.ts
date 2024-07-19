@@ -36,9 +36,10 @@ export function getUpdateItems(
   for (const key in changes) {
     const k = key as EquipSubCategory;
     const isNewCategory = !before[k];
-    if (isNewCategory) {
+    if (isNewCategory && !changes[k]?.isDeleted) {
       result[k] = changes[k] as ItemInfo;
     }
   }
+
   return result;
 }
