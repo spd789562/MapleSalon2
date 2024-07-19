@@ -130,12 +130,12 @@ export abstract class CategorizedItem<Name extends string> {
       const piece = this.effectWz[frame];
 
       if (!piece) {
-        continue;
+        return;
       }
       const pieceUrl = piece._outlink || piece.path;
 
       if (!pieceUrl) {
-        continue;
+        return;
       }
 
       const renderPiecesInfo = {
