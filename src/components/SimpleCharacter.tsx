@@ -61,15 +61,18 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
         const character = new Character();
         if (app.renderer?.extract) {
           await character.update(characterData);
-          const feetCenter = character.pivot;
           const offsetBounds = character.getLocalBounds();
           const imageCenter = {
             x: offsetBounds.width / 2,
             y: offsetBounds.height / 2,
           };
+          const bellyPos = {
+            x: -offsetBounds.x,
+            y: -offsetBounds.y,
+          };
           const calcOffset = {
-            x: Math.floor(imageCenter.x / 2 - feetCenter.x),
-            y: Math.floor(imageCenter.y - feetCenter.y - 10),
+            x: Math.floor(imageCenter.x - bellyPos.x) - 4,
+            y: Math.floor(imageCenter.y - bellyPos.y) + 10,
           };
           /* prevent pixi's error */
           character.effects = [];
@@ -79,11 +82,11 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
               const url = URL.createObjectURL(blob);
               $simpleCharacterCache.setKey(
                 hash,
-                `${url}?x=${calcOffset.x}&y=${-calcOffset.y}`,
+                `${url}?x=${calcOffset.x}&y=${calcOffset.y}`,
               );
               setUrl(url);
               if (props.useOffset) {
-                setOffset([calcOffset.x, -calcOffset.y]);
+                setOffset([calcOffset.x, calcOffset.y]);
               }
             }
           });
