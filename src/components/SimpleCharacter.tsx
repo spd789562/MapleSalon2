@@ -1,5 +1,6 @@
 import { createEffect, createSignal, Show } from 'solid-js';
 import { useStore } from '@nanostores/solid';
+import { Point } from 'pixi.js';
 
 import {
   $isGlobalRendererInitialized,
@@ -23,12 +24,15 @@ export interface SimpleCharacterProps extends Partial<CharacterInfo> {
   title: string;
   items: Partial<CharacterItems>;
   noMaxWidth?: boolean;
+  useOffset?: boolean;
 }
 export const SimpleCharacter = (props: SimpleCharacterProps) => {
   const isInit = useStore($isGlobalRendererInitialized);
   const [url, setUrl] = createSignal<string>('');
+  /* [x, y] */
+  const [offset, setOffset] = createSignal<[number, number]>([0, 0]);
 
-  const style = props.noMaxWidth ? { 'max-width': 'unset' } : {};
+  const maxWidthStyle = props.noMaxWidth ? { 'max-width': 'unset' } : {};
 
   createEffect(async () => {
     if (isInit()) {
@@ -46,18 +50,40 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
       const existCache: string | undefined = $simpleCharacterCache.get()[hash];
       if (existCache) {
         setUrl(existCache);
+        if (props.useOffset) {
+          const url = new URL(existCache);
+          const x = Number.parseInt(url.searchParams.get('x') || '0', 10);
+          const y = Number.parseInt(url.searchParams.get('y') || '0', 10);
+          setOffset([x, y]);
+        }
       } else {
         const character = new Character();
         if (app.renderer?.extract) {
           await character.update(characterData);
+          const feetCenter = character.pivot;
+          const offsetBounds = character.getLocalBounds();
+          const imageCenter = {
+            x: offsetBounds.width / 2,
+            y: offsetBounds.height / 2,
+          };
+          const calcOffset = {
+            x: Math.floor(imageCenter.x / 2 - feetCenter.x),
+            y: Math.floor(imageCenter.y - feetCenter.y - 10),
+          };
           /* prevent pixi's error */
           character.effects = [];
           const canvas = app.renderer.extract.canvas(character);
           canvas.toBlob?.((blob) => {
             if (blob) {
               const url = URL.createObjectURL(blob);
-              $simpleCharacterCache.setKey(hash, url);
+              $simpleCharacterCache.setKey(
+                hash,
+                `${url}?x=${calcOffset.x}&y=${-calcOffset.y}`,
+              );
               setUrl(url);
+              if (props.useOffset) {
+                setOffset([calcOffset.x, -calcOffset.y]);
+              }
             }
           });
           character.reset();
@@ -70,7 +96,14 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
 
   return (
     <Show when={url()} fallback={<Skeleton width="3.5rem" height="5rem" />}>
-      <img src={url()} alt={props.title} style={style} />
+      <img
+        src={url()}
+        alt={props.title}
+        style={{
+          ...maxWidthStyle,
+          transform: `translate(${offset()[0]}px, ${offset()[1]}px)`,
+        }}
+      />
     </Show>
   );
 };

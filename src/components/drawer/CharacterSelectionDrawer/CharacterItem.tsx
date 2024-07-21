@@ -79,6 +79,7 @@ export const CharacterItem = (props: CharacterItemProps) => {
                 earType={character().earType}
                 handType={character().handType}
                 noMaxWidth={true}
+                useOffset={true}
               />
             </CharacterItemPositioner>
           </CharacterItemImage>
