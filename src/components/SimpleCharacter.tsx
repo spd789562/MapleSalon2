@@ -49,11 +49,12 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
       const hash = makeCharacterHash(characterData);
       const existCache: string | undefined = $simpleCharacterCache.get()[hash];
       if (existCache) {
-        setUrl(existCache);
+        const [url, query] = existCache.split('?');
+        setUrl(url);
         if (props.useOffset) {
-          const url = new URL(existCache);
-          const x = Number.parseInt(url.searchParams.get('x') || '0', 10);
-          const y = Number.parseInt(url.searchParams.get('y') || '0', 10);
+          const searchParams = new URLSearchParams(query);
+          const x = Number.parseInt(searchParams.get('x') || '0', 10);
+          const y = Number.parseInt(searchParams.get('y') || '0', 10);
           setOffset([x, y]);
         }
       } else {
