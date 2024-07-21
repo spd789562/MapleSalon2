@@ -52,11 +52,12 @@ class ZmapContainer extends Container {
       if (!frame || !frame.item) {
         continue;
       }
-      // using the fewer locks
-      let locks =
-        frame.item.vslot.length < this.requireLocks.length
-          ? frame.item.vslot
-          : this.requireLocks;
+      // using the fewer locks, but seems not right.
+      // let locks =
+      //   frame.item.vslot.length < this.requireLocks.length
+      //     ? frame.item.vslot
+      //     : this.requireLocks;
+      let locks = this.requireLocks;
 
       // force Cap using vslot
       if (frame.item.islot.includes('Cp')) {
@@ -66,6 +67,8 @@ class ZmapContainer extends Container {
       // this logic is from maplestory.js, but why
       if (this.name === 'mailArm') {
         locks = ['Ma'];
+      } else if (this.name === 'mailChest') {
+        locks = frame.item.vslot;
       } else if (this.name === 'pants' || this.name === 'backPants') {
         locks = ['Pn'];
       }
