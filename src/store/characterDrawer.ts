@@ -158,10 +158,14 @@ export async function cloneCharacter(id: string) {
   // clone to last index
   // $savedCharacter.setKey(currentCharacters.length, character);
 }
-export function saveCurrentCharacter() {
+export function saveCurrentCharacter(newId?: boolean) {
   const currentCharacter = $previewCharacter.get();
+  const id =
+    newId || !currentCharacter.id
+      ? createCharacterUniqueId()
+      : currentCharacter.id;
   const data: SaveCharacterData = {
-    id: currentCharacter.id || createCharacterUniqueId(),
+    id,
     name: currentCharacter.name || 'name',
     earType: currentCharacter.earType,
     handType: currentCharacter.handType,

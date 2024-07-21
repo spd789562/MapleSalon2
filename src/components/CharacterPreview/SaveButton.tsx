@@ -3,7 +3,9 @@ import { createSignal } from 'solid-js';
 import { saveCurrentCharacter } from '@/store/characterDrawer';
 import { applyCharacterChanges } from '@/store/character/action';
 
+import UserRoundPlusIcon from 'lucide-solid/icons/user-round-plus';
 import { Button } from '@/components/ui/button';
+import { IconButton } from '@/components/ui/icon-button';
 
 import { toaster } from '../GlobalToast';
 
@@ -21,9 +23,36 @@ export const SaveButton = () => {
     });
   }
 
+  async function handleSaveNewCharacter() {
+    setIsLoading(true);
+    await saveCurrentCharacter(true);
+    applyCharacterChanges();
+    setIsLoading(false);
+    toaster.success({
+      title: '儲存成功',
+      description: '以另存為新角色',
+    });
+  }
+
   return (
-    <Button w="24" onClick={handleSave} disabled={isLoading()}>
-      儲存
-    </Button>
+    <>
+      <Button
+        w="24"
+        onClick={handleSave}
+        disabled={isLoading()}
+        borderRightRadius="0"
+      >
+        儲存
+      </Button>
+      <IconButton
+        variant="outline"
+        onClick={handleSaveNewCharacter}
+        disabled={isLoading()}
+        title="另存為新角色"
+        borderLeftRadius="0"
+      >
+        <UserRoundPlusIcon />
+      </IconButton>
+    </>
   );
 };
