@@ -16,7 +16,7 @@ export default defineConfig({
       accentColor: 'iris',
       grayColor: 'neutral',
       borderRadius: 'sm',
-      additionalColors: ['tomato', 'grass'],
+      additionalColors: ['tomato', 'grass', 'iris'],
     }),
   ],
 
@@ -34,12 +34,7 @@ export default defineConfig({
     themes: ['light', 'dark'],
   },
 
-  conditions: {
-    extend: {
-      dark: '.dark &, [data-theme="dark"] &',
-      light: '.light &',
-    },
-  },
+  conditions: {},
 
   // Useful for theme customization
   theme: {

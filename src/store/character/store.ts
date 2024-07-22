@@ -28,7 +28,9 @@ export interface CharacterData extends Record<string, unknown>, CharacterInfo {
   items: Partial<CharacterItems>;
 }
 
-export const $currentScene = atom<PreviewScene>(PreviewScene.White);
+export const $currentScene = atom<PreviewScene>(PreviewScene.Color);
+
+export const $sceneCustomColor = atom<string>('#FFFFFF');
 
 export const $currentCharacterItems = deepMap<Partial<CharacterItems>>({
   Head: {

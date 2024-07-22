@@ -29,12 +29,10 @@ export function updateTargetIfNeeded(target: string) {
   }
 }
 export function updateZoom(value: number, target: string) {
-  console.log('updateZoom', value, target);
   updateTargetIfNeeded(target);
   $previewZoom.set(value);
 }
 export function updateCenter(value: PointData, target: string) {
-  console.log('updateCenter', value, target);
   updateTargetIfNeeded(target);
   $previewCenter.set(value);
 }
@@ -53,7 +51,6 @@ export function resetZoom() {
   $previewZoom.set(DEFAULT_ZOOM);
 }
 export function resetCenter() {
-  console.log('resetCenter', $previewCenter.get());
   updateTargetIfNeeded('system');
   $previewCenter.set(DEFAULT_CENTER);
 }

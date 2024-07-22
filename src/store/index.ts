@@ -12,12 +12,12 @@ export function usePureStore<
 >(store: SomeStore): Accessor<Value> {
   const [value, setValue] = createStore({ value: store.get() });
 
-  const unsubscribe = store.listen((nv) => {
+  const unsubscribe = store.subscribe((nv) => {
     setValue('value', nv);
   });
 
   onCleanup(() => {
-    unsubscribe();
+    unsubscribe?.();
   });
 
   return () => value.value;
@@ -42,7 +42,7 @@ export function useDynamicPureStore<
   });
 
   onCleanup(() => {
-    unsubscribe();
+    unsubscribe?.();
   });
 
   return () => value.value;

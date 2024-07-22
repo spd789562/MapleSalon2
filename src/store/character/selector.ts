@@ -5,6 +5,8 @@ import {
   $currentCharacterInfo,
   $currentCharacterItems,
   $currentItemChanges,
+  $currentScene,
+  $sceneCustomColor,
 } from './store';
 import { getUpdateItems, getCharacterSubCategory } from './utils';
 
@@ -15,13 +17,9 @@ import type { ItemInfo } from '@/renderer/character/const/data';
 
 import { FaceColor, type FaceColorId } from '@/const/face';
 import { HairColor, type HairColorId } from '@/const/hair';
+import { PreviewScene } from '@/const/scene';
 
-import {
-  getHairAllColorIds,
-  getHairColorId,
-  getFaceAllColorIds,
-  getFaceColorId,
-} from '@/utils/mixDye';
+import { getHairColorId, getFaceColorId } from '@/utils/mixDye';
 
 export const $currentAction = computed(
   $currentCharacterInfo,
@@ -68,6 +66,17 @@ export const $previewCharacter = computed(
       ...info,
       items,
     } as CharacterData;
+  },
+);
+export const $sceneCustomColorStyle = computed(
+  [$currentScene, $sceneCustomColor],
+  (scene, color) => {
+    if (scene === PreviewScene.Color) {
+      return {
+        'background-color': color,
+      };
+    }
+    return {};
   },
 );
 
