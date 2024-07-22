@@ -17,6 +17,9 @@ export const slotRecipes: Record<string, Partial<SlotRecipeConfig>> = {
   toggleGroup: {
     jsx: ['ToggleGroup', /.*ToggleGroup$/],
   },
+  colorPicker: {
+    jsx: ['ColorPicker', /.*ColorPicker$/],
+  },
   menu: {
     jsx: ['Menu', /.*Menu$/],
   },
