@@ -1,9 +1,15 @@
+import type { ComponentProps } from 'solid-js';
 import { type Assign, Menu } from '@ark-ui/solid';
 import { type MenuVariantProps, menu } from 'styled-system/recipes/menu';
 import type { JsxStyleProps } from 'styled-system/types';
 import { createStyleContext } from '@/utils/create-style-context';
 
 const { withRootProvider, withContext } = createStyleContext(menu);
+
+export type RootProviderProps = ComponentProps<typeof RootProvider>;
+export const RootProvider = withRootProvider<
+  Assign<Menu.RootProviderProps, MenuVariantProps>
+>(Menu.RootProvider);
 
 export interface RootProps
   extends Assign<JsxStyleProps, Menu.RootProps>,

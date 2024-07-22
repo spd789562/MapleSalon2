@@ -1,8 +1,12 @@
-import { createSignal, Show } from 'solid-js';
+import { createSignal, createMemo, Show } from 'solid-js';
+
+import { setItemContextMenuTargetInfo } from '@/store/itemContextMenu';
 
 import CircleHelpIcon from 'lucide-solid/icons/circle-help';
 import { Skeleton } from './ui/skeleton';
 import { Flex } from 'styled-system/jsx/flex';
+
+import { useItemContextTrigger } from '@/context/itemContextMenu';
 
 import { getIconPath } from '@/utils/itemId';
 
@@ -25,6 +29,22 @@ export const LoadableEquipIcon = (props: LoadableEquipIconProps) => {
     setIsError(true);
   }
 
+  const iconPath = createMemo(() => getIconPath(props.id));
+
+  const contextTriggerProps = useItemContextTrigger();
+
+  function handleContextMenu(event: MouseEvent) {
+    setItemContextMenuTargetInfo({
+      id: props.id,
+      name: props.name || props.id.toString(),
+      icon: iconPath(),
+    });
+    const cb = contextTriggerProps.onContextMenu as unknown as (
+      event: MouseEvent,
+    ) => void;
+    cb?.(event);
+  }
+
   return (
     <Skeleton isLoaded={isLoaded()}>
       <Flex
@@ -36,7 +56,9 @@ export const LoadableEquipIcon = (props: LoadableEquipIconProps) => {
       >
         <Show when={!isError()} fallback={<CircleHelpIcon />}>
           <img
-            src={getIconPath(props.id)}
+            {...contextTriggerProps}
+            onContextMenu={handleContextMenu}
+            src={iconPath()}
             alt={props.name || props.id.toString()}
             onLoad={onLoad}
             onError={onError}

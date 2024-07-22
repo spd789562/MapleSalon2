@@ -1,7 +1,7 @@
 import { splitProps, Show, type JSX } from 'solid-js';
 import { Portal } from 'solid-js/web';
-import { HStack } from 'styled-system/jsx';
 
+import { HStack } from 'styled-system/jsx/hstack';
 import InfoIcon from 'lucide-solid/icons/info';
 import CopyIcon from 'lucide-solid/icons/copy';
 import ArrowDownToLineIcon from 'lucide-solid/icons/arrow-down-to-line';

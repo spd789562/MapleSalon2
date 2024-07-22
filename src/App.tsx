@@ -12,12 +12,16 @@ import { GlobalToast } from './components/GlobalToast';
 
 import { CharacterPreview } from './components/CharacterPreview';
 
+import { GlobalItemContextMenu } from './components/GlobalItemContextMenu';
+
 import { EqupimentDrawer } from './components/drawer/EqupimentDrawer';
 import { CurrentEquipmentDrawer } from './components/drawer/CurrentEquipmentDrawer';
 import { CharacterSelectionDrawer } from './components/drawer/CharacterSelectionDrawer';
 import { EquipOpenButton } from './components/drawer/EqupimentDrawer/EquipOpenButton';
 import { CurrentEquipOpenButton } from './components/drawer/CurrentEquipmentDrawer/CurrentEquipOpenButton';
 import { CharacterSelectionDrawerOpenButton } from './components/drawer/CharacterSelectionDrawer/CharacterSelectionDrawerOpenButton';
+
+import { ItemContextMenuProvider } from './context/itemContextMenu';
 
 import './store/effects';
 
@@ -63,7 +67,7 @@ function App() {
   });
 
   return (
-    <>
+    <ItemContextMenuProvider>
       <BaseWzSelector />
       <Show when={ready()}>
         <AppContainer>
@@ -77,7 +81,8 @@ function App() {
         <CharacterSelectionDrawerOpenButton />
       </Show>
       <GlobalToast />
-    </>
+      <GlobalItemContextMenu />
+    </ItemContextMenuProvider>
   );
 }
 
