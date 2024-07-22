@@ -1,6 +1,7 @@
 import { useStore } from '@nanostores/solid';
 import { styled } from 'styled-system/jsx/factory';
 
+import { $sceneCustomColorStyle } from '@/store/character/selector';
 import { $currentScene } from '@/store/character/store';
 import { $sceneSelectionOpen } from '@/store/trigger';
 
@@ -8,10 +9,10 @@ import ChevronLeftIcon from 'lucide-solid/icons/chevron-left';
 import { CharacterSceneRadioGroup } from './CharacterSceneRadioGroup';
 
 import { PreviewSceneBackground, PreviewSceneNames } from '@/const/scene';
-import h from 'solid-js/h';
 
 export const CharacterSceneSelection = () => {
   const scene = useStore($currentScene);
+  const customColorStyle = useStore($sceneCustomColorStyle);
   const isOpen = useStore($sceneSelectionOpen);
 
   function handleToggle() {
@@ -31,7 +32,11 @@ export const CharacterSceneSelection = () => {
         <CharacterSceneRadioGroup />
       </SelectionContainer>
       <BlockContainer onClick={handleToggle}>
-        <BackgroundBlock title={PreviewSceneNames[scene()]} bgType={scene()} />
+        <BackgroundBlock
+          title={PreviewSceneNames[scene()]}
+          bgType={scene()}
+          style={customColorStyle()}
+        />
       </BlockContainer>
     </Positioner>
   );
@@ -75,13 +80,7 @@ const BackgroundBlock = styled('div', {
       alpha: {
         ...PreviewSceneBackground.alpha,
       },
-      black: {
-        ...PreviewSceneBackground.black,
-        border: '1px solid',
-        borderColor: 'border.muted',
-      },
-      white: {
-        ...PreviewSceneBackground.white,
+      color: {
         border: '1px solid',
         borderColor: 'border.muted',
       },

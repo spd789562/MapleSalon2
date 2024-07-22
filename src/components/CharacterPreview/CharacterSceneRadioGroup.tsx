@@ -3,9 +3,10 @@ import { useStore } from '@nanostores/solid';
 
 import { css } from 'styled-system/css';
 
-import { $currentScene } from '@/store/character/store';
+import { $currentScene, $sceneCustomColor } from '@/store/character/store';
 import { HStack } from 'styled-system/jsx/hstack';
 import * as RadioButtonGroup from '@/components/ui/radioButtonGroup';
+import { CharacterSceneColorPicker } from './CharacterSceneColorPicker';
 
 import {
   PreviewScene,
@@ -20,16 +21,6 @@ const options = [
     colorBlockStyle: PreviewSceneBackground.alpha,
   },
   {
-    value: PreviewScene.Black,
-    label: PreviewSceneNames.black,
-    colorBlockStyle: PreviewSceneBackground.black,
-  },
-  {
-    value: PreviewScene.White,
-    label: PreviewSceneNames.white,
-    colorBlockStyle: PreviewSceneBackground.white,
-  },
-  {
     value: PreviewScene.Henesys,
     label: PreviewSceneNames.henesys,
     colorBlockStyle: {
@@ -41,6 +32,7 @@ const options = [
 
 export const CharacterSceneRadioGroup = () => {
   const scene = useStore($currentScene);
+  const customColor = useStore($sceneCustomColor);
 
   function handleChange(detail: RadioButtonGroup.ValueChangeDetails) {
     $currentScene.set(detail.value as PreviewScene);
@@ -66,6 +58,24 @@ export const CharacterSceneRadioGroup = () => {
             </RadioButtonGroup.Item>
           )}
         </Index>
+        <CharacterSceneColorPicker>
+          <RadioButtonGroup.Item
+            value="color"
+            width="6"
+            height="6"
+            padding="unset"
+            minWidth="0"
+            title={PreviewSceneNames.color}
+            borderWidth={2}
+            transition-property="border-color, color, box-shadow"
+            style={{
+              'background-color': customColor(),
+            }}
+          >
+            <RadioButtonGroup.ItemControl />
+            <RadioButtonGroup.ItemHiddenInput />
+          </RadioButtonGroup.Item>
+        </CharacterSceneColorPicker>
       </HStack>
     </RadioButtonGroup.Root>
   );

@@ -6,6 +6,7 @@ import { $currentScene } from '@/store/character/store';
 import {
   $currentCharacter,
   $previewCharacter,
+  $sceneCustomColorStyle,
 } from '@/store/character/selector';
 import { $showPreviousCharacter } from '@/store/trigger';
 
@@ -21,6 +22,7 @@ import { PreviewSceneBackground } from '@/const/scene';
 export const CharacterScene = () => {
   const [isLoading, setIsLoading] = createSignal(false);
   const scene = useStore($currentScene);
+  const customColorStyle = useStore($sceneCustomColorStyle);
   const isShowComparison = useStore($showPreviousCharacter);
 
   function handleLoad() {
@@ -31,7 +33,7 @@ export const CharacterScene = () => {
   }
 
   return (
-    <CharacterSceneContainer bgType={scene()}>
+    <CharacterSceneContainer bgType={scene()} style={customColorStyle()}>
       <Show when={isShowComparison()}>
         <CharacterView
           onLoad={handleLoad}
@@ -82,16 +84,7 @@ const CharacterSceneContainer = styled('div', {
       alpha: {
         ...PreviewSceneBackground.alpha,
       },
-      black: {
-        ...PreviewSceneBackground.black,
-        border: '1px solid',
-        borderColor: 'border.muted',
-      },
-      white: {
-        ...PreviewSceneBackground.white,
-        border: '1px solid',
-        borderColor: 'border.muted',
-      },
+      color: {},
       henesys: {
         ...PreviewSceneBackground.henesys,
         backgroundRepeat: 'repeat-x',
