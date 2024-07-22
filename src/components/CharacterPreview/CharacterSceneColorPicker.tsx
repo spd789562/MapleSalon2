@@ -75,17 +75,28 @@ export const CharacterSceneColorPicker = (
                 <ColorPicker.AreaThumb />
               </ColorPicker.Area>
               <HStack gap="3">
-                <ColorPicker.EyeDropperTrigger>
-                  <IconButton
-                    size="xs"
-                    variant="outline"
-                    aria-label="Pick a color"
-                  >
-                    <PipetteIcon />
-                  </IconButton>
-                </ColorPicker.EyeDropperTrigger>
+                <ColorPicker.EyeDropperTrigger
+                  asChild={(props) => (
+                    <IconButton
+                      size="xs"
+                      variant="outline"
+                      aria-label="顏色選擇器"
+                      {...props()}
+                    >
+                      <PipetteIcon />
+                    </IconButton>
+                  )}
+                />
                 <Stack gap="2" flex="1">
                   <ColorPicker.ChannelSlider channel="hue">
+                    <ColorPicker.ChannelSliderTrack />
+                    <ColorPicker.ChannelSliderThumb />
+                  </ColorPicker.ChannelSlider>
+                  <ColorPicker.ChannelSlider channel="saturation">
+                    <ColorPicker.ChannelSliderTrack />
+                    <ColorPicker.ChannelSliderThumb />
+                  </ColorPicker.ChannelSlider>
+                  <ColorPicker.ChannelSlider channel="brightness">
                     <ColorPicker.ChannelSliderTrack />
                     <ColorPicker.ChannelSliderThumb />
                   </ColorPicker.ChannelSlider>
