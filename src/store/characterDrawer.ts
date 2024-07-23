@@ -1,14 +1,15 @@
 import { createUniqueId } from 'solid-js';
-import { map, computed } from 'nanostores';
+import { map, computed, atom, onSet } from 'nanostores';
 
 import { Store } from '@tauri-apps/plugin-store';
 
 import type { CharacterItems } from './character/store';
 import { $previewCharacter } from './character/selector';
 import { changeCurrentCharacter } from './character/action';
+import { deepCloneCharacterItems } from './character/utils';
+
 import { CharacterEarType } from '@/const/ears';
 import { CharacterHandType } from '@/const/hand';
-
 import { isValidEquipSubCategory } from '@/const/equipments';
 import { isValidEarType } from '@/const/ears';
 import { isValidHandType } from '@/const/hand';
@@ -16,6 +17,8 @@ import { isValidHandType } from '@/const/hand';
 const SAVE_FILENAME = 'character.bin';
 
 const SAVE_CHARACTERS_KEY = 'characters';
+
+const SAVE_PERIOD = 1000 * 60 * 20; // 20 minutes
 
 const DEFAULT_CHARACTER: SaveCharacterData = {
   id: createCharacterUniqueId(),
@@ -49,6 +52,15 @@ export interface SaveCharacterData extends SaveCharacterInfo {
 export const fileStore = new Store(SAVE_FILENAME);
 
 export const $savedCharacter = map<(SaveCharacterData | undefined)[]>([]);
+export const $lastSave = atom<number>(-1);
+
+/* effect */
+onSet($savedCharacter, async () => {
+  if ($lastSave.get() + SAVE_PERIOD < Date.now()) {
+    await fileStore.save();
+    $lastSave.set(Date.now());
+  }
+});
 
 /* computed */
 export const $characterList = computed($savedCharacter, (characters) => {
@@ -95,7 +107,7 @@ export async function initializeSavedCharacter() {
 }
 export async function clearAllCharacters() {
   $savedCharacter.set([]);
-  await fileStore.delete(SAVE_CHARACTERS_KEY);
+  await fileStore.set(SAVE_CHARACTERS_KEY, {});
 }
 export async function appendCharacter(data: SaveCharacterData) {
   const currentCharacters = $characterList.get();
@@ -144,6 +156,7 @@ export async function cloneCharacter(id: string) {
   }
   const character = {
     ...currentCharacters[existIndex],
+    items: deepCloneCharacterItems(currentCharacters[existIndex].items),
     id: createCharacterUniqueId(),
   } as SaveCharacterData;
   // clone to next index
