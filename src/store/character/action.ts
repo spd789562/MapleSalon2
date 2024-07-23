@@ -185,13 +185,14 @@ export function addDyeableToChanges(
   },
 ) {
   const originItem = $totalItems.get()[category];
+  const isDeleteDye = originItem?.isDeleteDye;
   $currentItem.set(item);
   $currentItemChanges.setKey(category, {
     id: item.id,
     name: item.name,
-    dye: Object.assign({}, originItem?.dye),
+    dye: originItem?.dye ? Object.assign({}, originItem?.dye) : undefined,
     isDeleted: false,
-    isDeleteDye: !!originItem?.isDeleteDye,
+    isDeleteDye: isDeleteDye ?? true,
   });
 }
 

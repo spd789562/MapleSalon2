@@ -2,6 +2,7 @@ import { computed, batched } from 'nanostores';
 
 import {
   type CharacterData,
+  type CharacterItemInfo,
   $currentCharacterInfo,
   $currentCharacterItems,
   $currentItemChanges,
@@ -91,7 +92,7 @@ export function createGetItemChangeById(id: number) {
     if (!category) {
       return null;
     }
-    return { item: (changes[category] || {}) as ItemInfo, category };
+    return { item: (changes[category] || {}) as CharacterItemInfo, category };
   });
 }
 

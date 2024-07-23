@@ -231,7 +231,11 @@ export class Character extends Container {
     if (!item) {
       return;
     }
-    item.info = info;
+    item.info = Object.assign({}, info, {
+      dye: (info as unknown as ItemInfo & { isDeleteDye: boolean }).isDeleteDye
+        ? undefined
+        : info.dye,
+    });
     /* only update sprite already in render */
     const dyeableSprites = this.currentAllItem
       .flatMap((item) => Array.from(item.items.values()))

@@ -47,6 +47,10 @@ export const MixDyeAdjust = (props: MixDyeAdjustProps) => {
       : generateFaceColorOptions(genericId());
   });
 
+  const isEnableDye = createMemo(() =>
+    itemChange()?.item.isDeleteDye ? false : !!itemChange()?.item.dye,
+  );
+
   function getColorId(id: number) {
     return props.category === 'Hair' ? getHairColorId(id) : getFaceColorId(id);
   }
@@ -113,14 +117,14 @@ export const MixDyeAdjust = (props: MixDyeAdjustProps) => {
             顏色
           </Box>
           <MixDyeColorSelection
-            value={item().item.id.toString()}
+            value={item().item.id?.toString()}
             onChange={handleColorChange}
             options={options()}
           />
           <HStack alignSelf="flex-start" alignItems="center" ml={2}>
             混染
             <Switch
-              checked={!!item().item.dye}
+              checked={isEnableDye()}
               onCheckedChange={handleToggleMixDye}
               alignSelf="flex-start"
               ml={2}
@@ -133,7 +137,7 @@ export const MixDyeAdjust = (props: MixDyeAdjustProps) => {
             ).toString()}
             onChange={handleMixDyeColorChange}
             options={options()}
-            disabled={!item().item.dye}
+            disabled={!isEnableDye()}
           />
           <MixDyeAlphaSlider
             title="混染"
@@ -142,7 +146,7 @@ export const MixDyeAdjust = (props: MixDyeAdjustProps) => {
             class={css({ width: 'full', mt: 1 })}
             baseColor={baseColor()}
             rangeColor={rangeColor()}
-            disabled={!item().item.dye}
+            disabled={!isEnableDye()}
           />
         </VStack>
       )}
