@@ -16,7 +16,7 @@ export const GlobalItemContextMenu = () => {
   const itemInfo = useStore($itemContextMenuTargetInfo);
 
   return (
-    <Menu.RootProvider value={menu}>
+    <Menu.RootProvider value={menu} size="xs">
       <Portal>
         <Menu.Positioner zIndex="1900 !important">
           <Menu.Content>

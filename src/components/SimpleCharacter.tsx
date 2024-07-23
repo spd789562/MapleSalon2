@@ -23,8 +23,12 @@ import { CharacterEarType } from '@/const/ears';
 export interface SimpleCharacterProps extends Partial<CharacterInfo> {
   title: string;
   items: Partial<CharacterItems>;
+  /** remove default maxWidth: 100% css style */
   noMaxWidth?: boolean;
+  /** apply offset on character, useful when need to use same offset on character */
   useOffset?: boolean;
+  /** ref to image */
+  ref?: HTMLImageElement;
 }
 export const SimpleCharacter = (props: SimpleCharacterProps) => {
   const isInit = useStore($isGlobalRendererInitialized);
@@ -107,6 +111,7 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
           ...maxWidthStyle,
           transform: `translate(${offset()[0]}px, ${offset()[1]}px)`,
         }}
+        ref={props.ref}
       />
     </Show>
   );
