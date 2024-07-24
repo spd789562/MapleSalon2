@@ -9,10 +9,10 @@ import { initialGlobalRenderer } from '@/store/renderer';
 import { AppContainer } from './components/AppContainer';
 import { BaseWzSelector } from './components/BaseWzSelector';
 import { GlobalToast } from './components/GlobalToast';
+import { GlobalItemContextMenu } from './components/GlobalItemContextMenu';
 
 import { CharacterPreview } from './components/CharacterPreview';
-
-import { GlobalItemContextMenu } from './components/GlobalItemContextMenu';
+import { ToolTabsRadioGroup } from './components/ToolTabsRadioGroup';
 
 import { EqupimentDrawer } from './components/drawer/EqupimentDrawer';
 import { CurrentEquipmentDrawer } from './components/drawer/CurrentEquipmentDrawer';
@@ -72,6 +72,7 @@ function App() {
       <Show when={ready()}>
         <AppContainer>
           <CharacterPreview />
+          <ToolTabsRadioGroup />
         </AppContainer>
         <EquipOpenButton />
         <CurrentEquipOpenButton />
