@@ -13,6 +13,7 @@ import { GlobalItemContextMenu } from './components/GlobalItemContextMenu';
 
 import { CharacterPreview } from './components/CharacterPreview';
 import { ToolTabsRadioGroup } from './components/ToolTabsRadioGroup';
+import { ToolTabPage } from './components/ToolTabPage';
 
 import { EqupimentDrawer } from './components/drawer/EqupimentDrawer';
 import { CurrentEquipmentDrawer } from './components/drawer/CurrentEquipmentDrawer';
@@ -73,6 +74,7 @@ function App() {
         <AppContainer>
           <CharacterPreview />
           <ToolTabsRadioGroup />
+          <ToolTabPage />
         </AppContainer>
         <EquipOpenButton />
         <CurrentEquipOpenButton />
