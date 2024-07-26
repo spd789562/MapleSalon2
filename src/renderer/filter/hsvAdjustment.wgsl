@@ -82,7 +82,7 @@ fn hueShift(color: vec3<f32>, angle: f32) -> vec3<f32> {
 // code from https://gist.github.com/983/e170a24ae8eba2cd174f
 const w: vec4<f32> = vec4<f32>(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
 
-fn rgb2hsv(color: vec3<f32>) -> vec3<f32> {
+fn rgb2hsv(c: vec3<f32>) -> vec3<f32> {
     let p = mix(vec4<f32>(c.bg, w.wz), vec4<f32>(c.gb, w.xy), step(c.b, c.g));
     let q = mix(vec4<f32>(p.xyw, c.r), vec4<f32>(c.r, p.yzx), step(p.x, c.r));
 
@@ -93,7 +93,8 @@ fn rgb2hsv(color: vec3<f32>) -> vec3<f32> {
 
 const rw: vec4<f32> = vec4<f32>(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
 fn hsv2rgb(color: vec3<f32>) -> vec3<f32> {
-    let c = vec3<f32>(color.x, clamp(color.yz, 0.0, 1.0));
+    let c = vec3<f32>(color.x, clamp(color.yz, vec2(0.0), vec2(1.0)));
     let p = abs(fract(c.xxx + rw.xyz) * 6.0 - rw.www);
-    return c.z * mix(rw.xxx, clamp(p - k.xxx, 0.0, 1.0), c.y);
+    let m = clamp(p - k.xxx, vec3(0.0), vec3(1.0));
+    return c.z * mix(rw.xxx, m, c.y);
 }
