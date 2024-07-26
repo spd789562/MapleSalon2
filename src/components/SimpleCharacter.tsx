@@ -1,3 +1,4 @@
+import { GlTextureSystem } from 'pixi.js';
 import { createEffect, createMemo, createSignal, Show } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 
@@ -14,6 +15,7 @@ import { Skeleton } from './ui/skeleton';
 import { Character } from '@/renderer/character/character';
 
 import { makeCharacterHash } from '@/utils/characterHash';
+import { webGLGenerateCanvas } from '@/utils/webGLExtract';
 
 import { CharacterAction } from '@/const/actions';
 import { CharacterExpressions } from '@/const/emotions';
@@ -87,7 +89,16 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
           };
           /* prevent pixi's error */
           character.effects = [];
-          const canvas = app.renderer.extract.canvas(character);
+          const texture = app.renderer.extract.texture(character);
+
+          const canvas = (() => {
+            if (app.renderer.texture instanceof GlTextureSystem) {
+              // the webgl currently doesn't support unpremultiplyAlpha, so do it manually
+              return webGLGenerateCanvas(texture, app.renderer.texture);
+            }
+            return app.renderer.texture.generateCanvas(texture);
+          })();
+
           const url = await new Promise<string>((resolve) => {
             canvas.toBlob?.((blob) => {
               if (blob) {
@@ -96,6 +107,7 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
               return resolve('');
             }, 'image/png');
           });
+
           if (url) {
             if (props.useOffset) {
               setOffset([calcOffset.x, calcOffset.y]);
