@@ -1,6 +1,5 @@
-import { createEffect, createSignal, Show } from 'solid-js';
+import { createEffect, createMemo, createSignal, Show } from 'solid-js';
 import { useStore } from '@nanostores/solid';
-import { Point } from 'pixi.js';
 
 import {
   $isGlobalRendererInitialized,
@@ -8,6 +7,7 @@ import {
   $simpleCharacterCache,
 } from '@/store/renderer';
 import type { CharacterItems, CharacterInfo } from '@/store/character/store';
+import { getUpdateItems } from '@/store/character/utils';
 
 import { Skeleton } from './ui/skeleton';
 
@@ -23,6 +23,7 @@ import { CharacterEarType } from '@/const/ears';
 export interface SimpleCharacterProps extends Partial<CharacterInfo> {
   title: string;
   items: Partial<CharacterItems>;
+  itemsOverride?: Partial<CharacterItems>;
   /** remove default maxWidth: 100% css style */
   noMaxWidth?: boolean;
   /** apply offset on character, useful when need to use same offset on character */
@@ -38,6 +39,12 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
 
   const maxWidthStyle = props.noMaxWidth ? { 'max-width': 'unset' } : {};
 
+  const totalItems = createMemo(() =>
+    props.itemsOverride
+      ? getUpdateItems(props.items, props.itemsOverride || {})
+      : props.items,
+  );
+
   createEffect(async () => {
     if (isInit()) {
       const app = $globalRenderer.get();
@@ -48,7 +55,7 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
         expression: props.expression || CharacterExpressions.Default,
         earType: props.earType || CharacterEarType.HumanEar,
         handType: props.handType || CharacterHandType.SingleHand,
-        items: props.items,
+        items: totalItems(),
       };
       const hash = makeCharacterHash(characterData);
       const existCache: string | undefined = $simpleCharacterCache.get()[hash];
@@ -81,19 +88,24 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
           /* prevent pixi's error */
           character.effects = [];
           const canvas = app.renderer.extract.canvas(character);
-          canvas.toBlob?.((blob) => {
-            if (blob) {
-              const url = URL.createObjectURL(blob);
-              $simpleCharacterCache.setKey(
-                hash,
-                `${url}?x=${calcOffset.x}&y=${calcOffset.y}`,
-              );
-              setUrl(url);
-              if (props.useOffset) {
-                setOffset([calcOffset.x, calcOffset.y]);
+          const url = await new Promise<string>((resolve) => {
+            canvas.toBlob?.((blob) => {
+              if (blob) {
+                return resolve(URL.createObjectURL(blob));
               }
-            }
+              return resolve('');
+            }, 'image/png');
           });
+          if (url) {
+            if (props.useOffset) {
+              setOffset([calcOffset.x, calcOffset.y]);
+            }
+            $simpleCharacterCache.setKey(
+              hash,
+              `${url}?x=${calcOffset.x}&y=${calcOffset.y}`,
+            );
+            setUrl(url);
+          }
           character.reset();
           character.loadEvent.removeAllListeners();
           character.destroy();
