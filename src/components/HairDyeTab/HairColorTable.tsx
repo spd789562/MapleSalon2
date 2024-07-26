@@ -18,7 +18,10 @@ import { HairColorHex } from '@/const/hair';
 
 const $hairItem = createEquipItemByCategory('Hair');
 
-export const HairColorTable = () => {
+export interface HairColorTableProps {
+  showFullCharacter?: boolean;
+}
+export const HairColorTable = (props: HairColorTableProps) => {
   const hairItem = usePureStore($hairItem);
 
   const avaialbeHairColorIds = createMemo(() => {
@@ -53,7 +56,11 @@ export const HairColorTable = () => {
           <For each={avaialbeHairColorIds()}>
             {(colorHex) => (
               <Table.Cell overflow="hidden" textAlign="center">
-                <HairDyeCharacter category="Hair" hairOverrideId={colorHex} />
+                <HairDyeCharacter
+                  category="Hair"
+                  hairOverrideId={colorHex}
+                  showFullCharacter={props.showFullCharacter}
+                />
               </Table.Cell>
             )}
           </For>
@@ -66,29 +73,31 @@ export const HairColorTable = () => {
 interface HairDyeCharacterProps {
   category: 'Hair' | 'Face';
   hairOverrideId: number;
+  showFullCharacter?: boolean;
 }
 const HairDyeCharacter = (props: HairDyeCharacterProps) => {
   const totalItems = usePureStore($totalItems);
 
-  const characterData = createMemo(() => {
+  const overrideData = createMemo(() => {
     const ovrrideId = props.hairOverrideId;
     const category = props.category;
-    return getUpdateItems(totalItems(), {
+    return {
       [category]: {
         id: ovrrideId,
         isDeleteDye: true,
       },
-    });
+    };
   });
 
   return (
-    <CharacterItemContainer>
-      <CharacterItemImage>
+    <CharacterItemContainer isBox={!props.showFullCharacter}>
+      <CharacterItemImage isBox={!props.showFullCharacter}>
         <SimpleCharacter
           title={`dyeid-${props.hairOverrideId}`}
-          items={characterData()}
+          items={totalItems()}
+          itemsOverride={overrideData()}
           noMaxWidth={true}
-          useOffset={true}
+          useOffset={!props.showFullCharacter}
         />
       </CharacterItemImage>
     </CharacterItemContainer>
@@ -107,10 +116,16 @@ const ColorBlock = styled('div', {
 const CharacterItemContainer = styled('div', {
   base: {
     display: 'inline-block',
-    height: '7.5rem',
-    width: '5rem',
     position: 'relative',
     overflow: 'hidden',
+  },
+  variants: {
+    isBox: {
+      true: {
+        height: '7.5rem',
+        width: '5rem',
+      },
+    },
   },
 });
 
@@ -119,11 +134,17 @@ const CharacterItemImage = styled('button', {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
     cursor: 'pointer',
+  },
+  variants: {
+    isBox: {
+      true: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+      },
+    },
   },
 });
