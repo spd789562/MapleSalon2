@@ -1,5 +1,6 @@
 import { Index, type JSX, createSignal } from 'solid-js';
 import { Portal } from 'solid-js/web';
+import { useStore } from '@nanostores/solid';
 
 import { $sceneCustomColor } from '@/store/character/store';
 
@@ -29,6 +30,7 @@ export const CharacterSceneColorPicker = (
   props: CharacterSceneColorPickerProps,
 ) => {
   let hoverTimer: number | null = null;
+  const color = useStore($sceneCustomColor);
   const [isOpen, setIsOpen] = createSignal(false);
 
   const handleHoverTrigger = () => {
@@ -53,6 +55,7 @@ export const CharacterSceneColorPicker = (
   return (
     <ColorPicker.Root
       open={isOpen()}
+      value={color()}
       defaultValue="#ffffff"
       positioning={{
         strategy: 'fixed',
