@@ -3,17 +3,18 @@ import { styled } from 'styled-system/jsx/factory';
 
 import { usePureStore } from '@/store';
 
+import type { CharacterItemInfo } from '@/store/character/store';
 import {
   $totalItems,
   createEquipItemByCategory,
 } from '@/store/character/selector';
-import { getUpdateItems } from '@/store/character/utils';
 
 import * as Table from '@/components/ui/table';
 import { SimpleCharacter } from '@/components/SimpleCharacter';
 
 import { gatHairAvailableColorIds, getHairColorId } from '@/utils/mixDye';
 
+import type { DyeColor } from '@/renderer/character/const/data';
 import { HairColorHex } from '@/const/hair';
 
 const $hairItem = createEquipItemByCategory('Hair');
@@ -73,6 +74,7 @@ export const HairColorTable = (props: HairColorTableProps) => {
 interface HairDyeCharacterProps {
   category: 'Hair' | 'Face';
   hairOverrideId: number;
+  dyeId?: number;
   showFullCharacter?: boolean;
 }
 const HairDyeCharacter = (props: HairDyeCharacterProps) => {
@@ -81,11 +83,19 @@ const HairDyeCharacter = (props: HairDyeCharacterProps) => {
   const overrideData = createMemo(() => {
     const ovrrideId = props.hairOverrideId;
     const category = props.category;
+    const dyeId = props.dyeId;
+    const data: CharacterItemInfo = {
+      id: ovrrideId,
+      isDeleteDye: !!dyeId,
+    };
+    if (dyeId) {
+      data.dye = {
+        color: dyeId as DyeColor,
+        alpha: 50,
+      };
+    }
     return {
-      [category]: {
-        id: ovrrideId,
-        isDeleteDye: true,
-      },
+      [category]: data,
     };
   });
 
@@ -107,6 +117,7 @@ const HairDyeCharacter = (props: HairDyeCharacterProps) => {
 const ColorBlock = styled('div', {
   base: {
     borderRadius: 'md',
+    boxShadow: 'md',
     w: 6,
     h: 6,
     display: 'inline-block',

@@ -80,10 +80,7 @@ export const $currentCharacterItems = deepMap<Partial<CharacterItems>>({
     id: 1103580,
   },
   Weapon: {
-    id: 1703024,
-    hue: 0,
-    saturation: 0,
-    brightness: 0,
+    id: 1703369,
   },
 });
 

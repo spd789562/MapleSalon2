@@ -3,7 +3,7 @@ import { useStore } from '@nanostores/solid';
 
 import { $toolTab } from '@/store/toolTab';
 
-import { HairDyeTab } from './HairDyeTab';
+import { HairDyeTab } from './DyeTab/HairDyeTab';
 
 import { ToolTab } from '@/const/toolTab';
 
