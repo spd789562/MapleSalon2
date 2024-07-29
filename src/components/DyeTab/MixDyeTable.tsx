@@ -5,6 +5,7 @@ import { ColorBlock } from './AllColorTable';
 import { DyeCharacter } from './DyeCharacter';
 
 export interface MixDyeTableProps {
+  category: 'Hair' | 'Face';
   avaialbeColorIds: number[];
   getColorHex: (colorId: number) => string;
   getColorId: (colorId: number) => number;
@@ -31,16 +32,16 @@ export const MixDyeTable = (props: MixDyeTableProps) => {
         <For each={props.avaialbeColorIds}>
           {(mixColorId) => (
             <Table.Row>
-              <Table.Cell textAlign="center">
+              <Table.Cell p="2" textAlign="center">
                 <ColorBlock
                   style={{ 'background-color': props.getColorHex(mixColorId) }}
                 />
               </Table.Cell>
               <For each={props.avaialbeColorIds}>
                 {(colorId) => (
-                  <Table.Cell overflow="hidden" textAlign="center">
+                  <Table.Cell p="2" overflow="hidden" textAlign="center">
                     <DyeCharacter
-                      category="Hair"
+                      category={props.category}
                       hairOverrideId={colorId}
                       showFullCharacter={props.showFullCharacter}
                       dyeId={props.getColorId(mixColorId)}

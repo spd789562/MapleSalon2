@@ -5,6 +5,7 @@ import * as Table from '@/components/ui/table';
 import { DyeCharacter } from './DyeCharacter';
 
 export interface AllColorTableProps {
+  category: 'Hair' | 'Face';
   avaialbeColorIds: number[];
   getColorHex: (colorId: number) => string;
   showFullCharacter?: boolean;
@@ -29,9 +30,9 @@ export const AllColorTable = (props: AllColorTableProps) => {
         <Table.Row>
           <For each={props.avaialbeColorIds}>
             {(colorId) => (
-              <Table.Cell overflow="hidden" textAlign="center">
+              <Table.Cell p="2" overflow="hidden" textAlign="center">
                 <DyeCharacter
-                  category="Hair"
+                  category={props.category}
                   hairOverrideId={colorId}
                   showFullCharacter={props.showFullCharacter}
                 />

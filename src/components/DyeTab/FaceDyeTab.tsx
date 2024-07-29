@@ -13,26 +13,26 @@ import { MixDyeTable } from './MixDyeTable';
 
 import { horizontalScroll } from '@/directive/horizontalScroll';
 
-import { gatHairAvailableColorIds, getHairColorId } from '@/utils/mixDye';
+import { gatFaceAvailableColorIds, getFaceColorId } from '@/utils/mixDye';
 
-import { HairColorHex } from '@/const/hair';
+import { FaceColorHex } from '@/const/face';
 
-const $hairItem = createEquipItemByCategory('Hair');
+const $hairItem = createEquipItemByCategory('Face');
 
-export const HairDyeTab = () => {
+export const FaceDyeTab = () => {
   const [showFullCharacter, setShowFullCharacter] = createSignal(false);
   const hairItem = usePureStore($hairItem);
 
-  const avaialbeHairColorIds = createMemo(() => {
+  const avaialbeFaceColorIds = createMemo(() => {
     const hairId = hairItem()?.id;
     if (!hairId) {
       return [];
     }
-    return gatHairAvailableColorIds(hairId);
+    return gatFaceAvailableColorIds(hairId);
   });
 
-  function getHairColorHex(colorId: number) {
-    return HairColorHex[getHairColorId(colorId)];
+  function getFaceColorHex(colorId: number) {
+    return FaceColorHex[getFaceColorId(colorId)];
   }
 
   function handleSwitchChange({ checked }: ChangeDetails) {
@@ -43,7 +43,7 @@ export const HairDyeTab = () => {
     <VStack>
       <CardContainer>
         <HStack alignItems="flex-end" m="2">
-          <Heading size="2xl">髮色預覽</Heading>
+          <Heading size="2xl">顏色預覽</Heading>
           <Switch
             checked={showFullCharacter()}
             onCheckedChange={handleSwitchChange}
@@ -53,9 +53,9 @@ export const HairDyeTab = () => {
         </HStack>
         <TableContainer ref={horizontalScroll}>
           <AllColorTable
-            category="Hair"
-            avaialbeColorIds={avaialbeHairColorIds()}
-            getColorHex={getHairColorHex}
+            category="Face"
+            avaialbeColorIds={avaialbeFaceColorIds()}
+            getColorHex={getFaceColorHex}
             showFullCharacter={showFullCharacter()}
           />
         </TableContainer>
@@ -72,10 +72,10 @@ export const HairDyeTab = () => {
         </HStack>
         <TableContainer ref={horizontalScroll}>
           <MixDyeTable
-            category="Hair"
-            avaialbeColorIds={avaialbeHairColorIds()}
-            getColorHex={getHairColorHex}
-            getColorId={getHairColorId}
+            category="Face"
+            avaialbeColorIds={avaialbeFaceColorIds()}
+            getColorHex={getFaceColorHex}
+            getColorId={getFaceColorId}
             showFullCharacter={showFullCharacter()}
           />
         </TableContainer>
