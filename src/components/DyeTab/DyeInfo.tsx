@@ -19,7 +19,7 @@ export const DyeInfo = (props: DyeInfoProps) => {
 
 const DyeInfoPanel = styled(Flex, {
   base: {
-    p: 2,
+    py: 1,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'bg.default',
@@ -32,7 +32,7 @@ const DyeInfoPanel = styled(Flex, {
 });
 const ColorBlock = styled('div', {
   base: {
-    borderRadius: 'md',
+    borderRadius: 'sm',
     w: 3,
     h: 3,
     display: 'inline-block',

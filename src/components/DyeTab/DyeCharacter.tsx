@@ -71,7 +71,7 @@ const CharacterItemContainer = styled('button', {
   variants: {
     isBox: {
       true: {
-        height: '7.5rem',
+        height: '6.5rem',
         width: '5rem',
       },
     },
