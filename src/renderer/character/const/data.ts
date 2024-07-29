@@ -44,8 +44,9 @@ export type PieceGroup = string;
 export type Zmap = PieceSlot[];
 export type Smap = Record<PieceSlot, string>;
 
+export type DyeColor = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 export interface ItemDyeInfo {
-  color: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+  color: DyeColor;
   alpha: number;
 }
 
