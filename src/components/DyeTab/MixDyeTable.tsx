@@ -3,6 +3,7 @@ import { For } from 'solid-js';
 import * as Table from '@/components/ui/table';
 import { ColorBlock } from './AllColorTable';
 import { DyeCharacter } from './DyeCharacter';
+import { DyeInfo } from './DyeInfo';
 
 export interface MixDyeTableProps {
   category: 'Hair' | 'Face';
@@ -42,9 +43,16 @@ export const MixDyeTable = (props: MixDyeTableProps) => {
                   <Table.Cell p="2" overflow="hidden" textAlign="center">
                     <DyeCharacter
                       category={props.category}
-                      hairOverrideId={colorId}
+                      ovrrideId={colorId}
                       showFullCharacter={props.showFullCharacter}
                       dyeId={props.getColorId(mixColorId)}
+                      dyeInfo={
+                        <DyeInfo
+                          originHex={props.getColorHex(colorId)}
+                          dyeHex={props.getColorHex(mixColorId)}
+                          dyeAlpha={50}
+                        />
+                      }
                     />
                   </Table.Cell>
                 )}

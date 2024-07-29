@@ -33,7 +33,7 @@ export const AllColorTable = (props: AllColorTableProps) => {
               <Table.Cell p="2" overflow="hidden" textAlign="center">
                 <DyeCharacter
                   category={props.category}
-                  hairOverrideId={colorId}
+                  ovrrideId={colorId}
                   showFullCharacter={props.showFullCharacter}
                 />
               </Table.Cell>
