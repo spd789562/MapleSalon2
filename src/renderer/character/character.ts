@@ -210,6 +210,7 @@ export class Character extends Container {
     }
     for (const item of this.idItems.keys()) {
       if (!items.find((i) => i.id === item)) {
+        isAddItem = true;
         const removedItem = this.idItems.get(item);
         removedItem?.destroy();
         this.idItems.delete(item);
