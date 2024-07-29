@@ -46,6 +46,11 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
       ? getUpdateItems(props.items, props.itemsOverride || {})
       : props.items,
   );
+  createEffect(() => {
+    if (!props.useOffset) {
+      setOffset([0, 0]);
+    }
+  });
 
   createEffect(async () => {
     if (isInit()) {
