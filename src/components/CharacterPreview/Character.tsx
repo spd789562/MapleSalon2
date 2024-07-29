@@ -73,6 +73,10 @@ export const CharacterView = (props: CharacterViewProps) => {
     setIsInit(true);
   }
 
+  function handlePreventScrollBubble(e: Event) {
+    e.preventDefault();
+  }
+
   onMount(() => {
     initScene();
   });
@@ -98,5 +102,5 @@ export const CharacterView = (props: CharacterViewProps) => {
     }
   });
 
-  return <div ref={container} />;
+  return <div ref={container} onWheel={handlePreventScrollBubble} />;
 };
