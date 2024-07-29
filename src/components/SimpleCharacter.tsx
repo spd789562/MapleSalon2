@@ -1,5 +1,11 @@
 import { GlTextureSystem } from 'pixi.js';
-import { createEffect, createMemo, createSignal, Show } from 'solid-js';
+import {
+  createEffect,
+  createMemo,
+  createSignal,
+  Show,
+  untrack,
+} from 'solid-js';
 import { useStore } from '@nanostores/solid';
 
 import {
@@ -65,17 +71,19 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
         items: totalItems(),
       };
       const hash = makeCharacterHash(characterData);
+
       const existCache: string | undefined = $simpleCharacterCache.get()[hash];
       if (existCache) {
         const [url, query] = existCache.split('?');
         setUrl(url);
-        if (props.useOffset) {
+        if (untrack(() => props.useOffset)) {
           const searchParams = new URLSearchParams(query);
           const x = Number.parseInt(searchParams.get('x') || '0', 10);
           const y = Number.parseInt(searchParams.get('y') || '0', 10);
           setOffset([x, y]);
         }
       } else {
+        setUrl('');
         const character = new Character();
         if (app.renderer?.extract) {
           await character.update(characterData);
