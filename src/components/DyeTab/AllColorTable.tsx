@@ -9,8 +9,18 @@ export interface AllColorTableProps {
   avaialbeColorIds: number[];
   getColorHex: (colorId: number) => string;
   showFullCharacter?: boolean;
+  refs?: HTMLImageElement[];
 }
 export const AllColorTable = (props: AllColorTableProps) => {
+  function handleRef(i: number) {
+    return (element: HTMLImageElement) => {
+      if (!props.refs) {
+        return;
+      }
+      props.refs[i] = element;
+    };
+  }
+
   return (
     <Table.Root>
       <Table.Head>
@@ -29,12 +39,13 @@ export const AllColorTable = (props: AllColorTableProps) => {
       <Table.Body>
         <Table.Row>
           <For each={props.avaialbeColorIds}>
-            {(colorId) => (
+            {(colorId, i) => (
               <Table.Cell p="2" overflow="hidden" textAlign="center">
                 <DyeCharacter
                   category={props.category}
                   ovrrideId={colorId}
                   showFullCharacter={props.showFullCharacter}
+                  ref={handleRef(i())}
                 />
               </Table.Cell>
             )}

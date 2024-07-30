@@ -22,6 +22,7 @@ interface DyeCharacterProps {
   dyeAlpha?: number;
   showFullCharacter?: boolean;
   dyeInfo?: JSX.Element;
+  ref?: (element: HTMLImageElement) => void;
 }
 export const DyeCharacter = (props: DyeCharacterProps) => {
   const totalItems = usePureStore($totalItems);
@@ -88,11 +89,12 @@ export const DyeCharacter = (props: DyeCharacterProps) => {
     >
       <CharacterItemImage isBox={!props.showFullCharacter}>
         <SimpleCharacter
-          title={`dyeid-${props.ovrrideId}`}
+          title={`dyeid-${props.ovrrideId}-${props.dyeId ?? ''}`}
           items={totalItems()}
           itemsOverride={overrideData()}
           noMaxWidth={true}
           useOffset={!props.showFullCharacter}
+          ref={props.ref}
         />
       </CharacterItemImage>
       <DyeInfoPositioner>{props.dyeInfo}</DyeInfoPositioner>

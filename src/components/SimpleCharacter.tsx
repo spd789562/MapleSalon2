@@ -37,7 +37,7 @@ export interface SimpleCharacterProps extends Partial<CharacterInfo> {
   /** apply offset on character, useful when need to use same offset on character */
   useOffset?: boolean;
   /** ref to image */
-  ref?: HTMLImageElement;
+  ref?: (element: HTMLImageElement) => void;
 }
 export const SimpleCharacter = (props: SimpleCharacterProps) => {
   const isInit = useStore($isGlobalRendererInitialized);
