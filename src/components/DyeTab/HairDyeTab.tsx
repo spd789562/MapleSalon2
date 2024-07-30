@@ -10,6 +10,7 @@ import { Heading } from '@/components/ui/heading';
 import { Switch, type ChangeDetails } from '@/components/ui/switch';
 import { AllColorTable } from './AllColorTable';
 import { MixDyeTable } from './MixDyeTable';
+import { ExportSeperateButton } from './ExportSeperateButton';
 
 import { horizontalScroll } from '@/directive/horizontalScroll';
 
@@ -20,6 +21,7 @@ import { HairColorHex } from '@/const/hair';
 const $hairItem = createEquipItemByCategory('Hair');
 
 export const HairDyeTab = () => {
+  const allColorRefs: HTMLImageElement[] = [];
   const [showFullCharacter, setShowFullCharacter] = createSignal(false);
   const hairItem = usePureStore($hairItem);
 
@@ -50,6 +52,14 @@ export const HairDyeTab = () => {
           >
             顯示完整腳色
           </Switch>
+          <HStack marginLeft="auto">
+            <ExportSeperateButton
+              images={allColorRefs}
+              imageCounts={avaialbeHairColorIds().length}
+            >
+              匯出(.zip)
+            </ExportSeperateButton>
+          </HStack>
         </HStack>
         <TableContainer ref={horizontalScroll}>
           <AllColorTable
@@ -57,6 +67,7 @@ export const HairDyeTab = () => {
             avaialbeColorIds={avaialbeHairColorIds()}
             getColorHex={getHairColorHex}
             showFullCharacter={showFullCharacter()}
+            refs={allColorRefs}
           />
         </TableContainer>
       </CardContainer>
