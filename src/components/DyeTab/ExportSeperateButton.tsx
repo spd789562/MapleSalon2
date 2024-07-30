@@ -10,6 +10,7 @@ export interface ExportSeperateButtonProps {
   images: HTMLImageElement[];
   /** the image counts should be */
   imageCounts: number;
+  fileName: string;
   children: JSX.Element;
 }
 export const ExportSeperateButton = (props: ExportSeperateButtonProps) => {
@@ -19,6 +20,7 @@ export const ExportSeperateButton = (props: ExportSeperateButtonProps) => {
     if (isExporting()) {
       return;
     }
+    console.log('props.images', props.images);
     const validImageCounts = props.images.filter((img) => img?.src).length;
     const isAllImagesLoaded = validImageCounts === props.imageCounts;
     if (!isAllImagesLoaded) {
@@ -29,7 +31,7 @@ export const ExportSeperateButton = (props: ExportSeperateButtonProps) => {
     }
     setIsExporting(true);
     const zipBlob = await makeImagesZipBlob(props.images);
-    downloadBlob(zipBlob, 'hair-colors.zip');
+    downloadBlob(zipBlob, props.fileName);
     setIsExporting(false);
   }
 

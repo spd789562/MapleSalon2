@@ -22,6 +22,7 @@ const $hairItem = createEquipItemByCategory('Hair');
 
 export const HairDyeTab = () => {
   const allColorRefs: HTMLImageElement[] = [];
+  const mixDyeColorRefs: HTMLImageElement[] = [];
   const [showFullCharacter, setShowFullCharacter] = createSignal(false);
   const hairItem = usePureStore($hairItem);
 
@@ -54,6 +55,7 @@ export const HairDyeTab = () => {
           </Switch>
           <HStack marginLeft="auto">
             <ExportSeperateButton
+              fileName="hair-all-color.zip"
               images={allColorRefs}
               imageCounts={avaialbeHairColorIds().length}
             >
@@ -80,6 +82,17 @@ export const HairDyeTab = () => {
           >
             顯示完整腳色
           </Switch>
+          <HStack marginLeft="auto">
+            <ExportSeperateButton
+              fileName="hair-mix-dye.zip"
+              images={mixDyeColorRefs}
+              imageCounts={
+                avaialbeHairColorIds().length * avaialbeHairColorIds().length
+              }
+            >
+              匯出(.zip)
+            </ExportSeperateButton>
+          </HStack>
         </HStack>
         <TableContainer ref={horizontalScroll}>
           <MixDyeTable
@@ -88,6 +101,7 @@ export const HairDyeTab = () => {
             getColorHex={getHairColorHex}
             getColorId={getHairColorId}
             showFullCharacter={showFullCharacter()}
+            refs={mixDyeColorRefs}
           />
         </TableContainer>
       </CardContainer>

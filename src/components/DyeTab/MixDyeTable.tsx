@@ -11,8 +11,18 @@ export interface MixDyeTableProps {
   getColorHex: (colorId: number) => string;
   getColorId: (colorId: number) => number;
   showFullCharacter?: boolean;
+  refs?: HTMLImageElement[];
 }
 export const MixDyeTable = (props: MixDyeTableProps) => {
+  function handleRef(i: number) {
+    return (element: HTMLImageElement) => {
+      if (!props.refs) {
+        return;
+      }
+      console.log(i);
+      props.refs[i] = element;
+    };
+  }
   return (
     <Table.Root>
       <Table.Head>
@@ -31,7 +41,7 @@ export const MixDyeTable = (props: MixDyeTableProps) => {
       </Table.Head>
       <Table.Body>
         <For each={props.avaialbeColorIds}>
-          {(mixColorId) => (
+          {(mixColorId, y) => (
             <Table.Row>
               <Table.Cell p="2" textAlign="center">
                 <ColorBlock
@@ -39,7 +49,7 @@ export const MixDyeTable = (props: MixDyeTableProps) => {
                 />
               </Table.Cell>
               <For each={props.avaialbeColorIds}>
-                {(colorId) => (
+                {(colorId, x) => (
                   <Table.Cell p="2" overflow="hidden" textAlign="center">
                     <DyeCharacter
                       category={props.category}
@@ -53,6 +63,7 @@ export const MixDyeTable = (props: MixDyeTableProps) => {
                           dyeAlpha={50}
                         />
                       }
+                      ref={handleRef(x() + y() * props.avaialbeColorIds.length)}
                     />
                   </Table.Cell>
                 )}
