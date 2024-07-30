@@ -3,8 +3,13 @@ import { styled } from 'styled-system/jsx/factory';
 
 import { usePureStore } from '@/store';
 
-import type { CharacterItemInfo } from '@/store/character/store';
+import {
+  $currentItem,
+  $currentItemChanges,
+  type CharacterItemInfo,
+} from '@/store/character/store';
 import { $totalItems } from '@/store/character/selector';
+import { getEquipById } from '@/store/string';
 
 import { SimpleCharacter } from '@/components/SimpleCharacter';
 
@@ -41,8 +46,46 @@ export const DyeCharacter = (props: DyeCharacterProps) => {
     };
   });
 
+  function handleSelect() {
+    const currentItem = totalItems()?.[props.category];
+    let currentItemName = '';
+
+    if (currentItem?.id !== props.ovrrideId) {
+      /* if base hair get changed need to get new name */
+      const equipInfo = getEquipById(props.ovrrideId);
+      currentItemName = equipInfo?.name || equipInfo?.id?.toString() || '';
+    } else {
+      currentItemName = currentItem?.name || currentItem?.id?.toString() || '';
+    }
+
+    const data = {
+      id: props.ovrrideId,
+      name: currentItemName,
+    };
+
+    const isDeleteDye = props.dyeId === undefined;
+    const dyeObject = isDeleteDye
+      ? undefined
+      : {
+          color: props.dyeId as DyeColor,
+          alpha: props.dyeAlpha ?? 50,
+        };
+
+    $currentItem.set(data);
+    $currentItemChanges.setKey(props.category, {
+      id: data.id,
+      name: data.name,
+      dye: dyeObject,
+      isDeleted: false,
+      isDeleteDye,
+    } as CharacterItemInfo);
+  }
+
   return (
-    <CharacterItemContainer isBox={!props.showFullCharacter}>
+    <CharacterItemContainer
+      isBox={!props.showFullCharacter}
+      onClick={handleSelect}
+    >
       <CharacterItemImage isBox={!props.showFullCharacter}>
         <SimpleCharacter
           title={`dyeid-${props.ovrrideId}`}

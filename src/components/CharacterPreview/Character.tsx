@@ -40,6 +40,7 @@ export const CharacterView = (props: CharacterViewProps) => {
       height: 340,
       background: 0x000000,
       backgroundAlpha: 0,
+      antialias: true,
     });
     viewport = new ZoomContainer(app, {
       width: 300,

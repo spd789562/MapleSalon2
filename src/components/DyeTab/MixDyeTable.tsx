@@ -17,7 +17,7 @@ export const MixDyeTable = (props: MixDyeTableProps) => {
     <Table.Root>
       <Table.Head>
         <Table.Row>
-          <Table.Header textAlign="center">混染色\基本色</Table.Header>
+          <Table.Header />
           <For each={props.avaialbeColorIds}>
             {(colorId) => (
               <Table.Header textAlign="center">
