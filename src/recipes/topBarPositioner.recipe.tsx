@@ -3,7 +3,7 @@ import { defineRecipe } from '@pandacss/dev';
 export const topBarPositioner = defineRecipe({
   className: 'top-bar-positioner',
   base: {
-    position: 'fixed',
+    position: 'absolute',
     mx: 'auto',
     top: 0,
     left: 0,
