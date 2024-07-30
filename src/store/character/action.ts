@@ -223,7 +223,10 @@ export function addItemToChanges(
   }
 }
 
-export function selectNewItem(item: { id: number; name: string }) {
+export function selectNewItem(
+  item: { id: number; name: string },
+  addToHistory = true,
+) {
   let category = getSubCategory(item.id);
   if (!category) {
     return;
@@ -233,12 +236,14 @@ export function selectNewItem(item: { id: number; name: string }) {
     return;
   }
 
-  /* append to history */
-  appendHistory({
-    category: EquipCategory.Unknown,
-    id: item.id,
-    name: item.name,
-  });
+  if (addToHistory) {
+    /* append to history */
+    appendHistory({
+      category: EquipCategory.Unknown,
+      id: item.id,
+      name: item.name,
+    });
+  }
 
   if (category === 'Hair') {
     const itemInfo = getHairItemUseSameColor(item);
