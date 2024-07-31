@@ -202,6 +202,7 @@ export function addItemToChanges(
   item: {
     id: number;
     name: string;
+    hasEffect?: boolean;
   },
 ) {
   const currentItems = $totalItems.get();
@@ -213,6 +214,7 @@ export function addItemToChanges(
         id: item.id,
         name: item.name,
         isDeleted: false,
+        enableEffect: item.hasEffect ? currentItems[category] : undefined,
       }),
     );
   } else {
@@ -220,12 +222,13 @@ export function addItemToChanges(
       id: item.id,
       name: item.name,
       isDeleted: false,
+      enableEffect: item.hasEffect ? true : undefined,
     });
   }
 }
 
 export function selectNewItem(
-  item: { id: number; name: string },
+  item: { id: number; name: string; hasEffect?: boolean },
   addToHistory = true,
 ) {
   let category = getSubCategory(item.id);

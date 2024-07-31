@@ -182,7 +182,9 @@ export class CharacterItem implements RenderItemInfo {
   async load() {
     if (!this.wz) {
       this.wz = await CharacterLoader.getPieceWz(this.info.id);
-      this.effectWz = await CharacterLoader.getPieceEffectWz(this.info.id);
+      if (this.info.enableEffect) {
+        this.effectWz = await CharacterLoader.getPieceEffectWz(this.info.id);
+      }
     }
 
     if (this.wz === null) {

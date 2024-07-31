@@ -56,6 +56,7 @@ export const $currentCharacterItems = deepMap<Partial<CharacterItems>>({
   Cap: {
     // hat half cover
     id: 1006105,
+    enableEffect: true,
   },
   // Cap: {
   //   //  hat full cover
@@ -69,9 +70,11 @@ export const $currentCharacterItems = deepMap<Partial<CharacterItems>>({
   },
   Earrings: {
     id: 1032331,
+    enableEffect: true,
   },
   Overall: {
     id: 1053576,
+    enableEffect: true,
   },
   Shoes: {
     id: 1073273,

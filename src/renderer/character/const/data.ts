@@ -54,6 +54,7 @@ export interface ItemDyeInfo {
 export interface ItemInfo {
   id: number;
 
+  enableEffect?: boolean;
   visible?: boolean;
 
   alpha?: number;
