@@ -1,5 +1,4 @@
 import { createSignal, createMemo } from 'solid-js';
-import { styled } from 'styled-system/jsx/factory';
 
 import { usePureStore } from '@/store';
 import { createEquipItemByCategory } from '@/store/character/selector';
@@ -8,6 +7,7 @@ import { HStack } from 'styled-system/jsx/hstack';
 import { VStack } from 'styled-system/jsx/vstack';
 import { Heading } from '@/components/ui/heading';
 import { Switch, type ChangeDetails } from '@/components/ui/switch';
+import { CardContainer, TableContainer } from './styledComponents';
 import { AllColorTable } from './AllColorTable';
 import { MixDyeTable } from './MixDyeTable';
 
@@ -83,20 +83,3 @@ export const FaceDyeTab = () => {
     </VStack>
   );
 };
-
-const CardContainer = styled('div', {
-  base: {
-    p: 2,
-    borderRadius: 'md',
-    boxShadow: 'md',
-    backgroundColor: 'bg.default',
-    maxWidth: '100%',
-  },
-});
-
-const TableContainer = styled('div', {
-  base: {
-    overflowX: 'auto',
-    maxWidth: '100%',
-  },
-});

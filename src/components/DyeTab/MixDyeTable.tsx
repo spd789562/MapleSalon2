@@ -1,7 +1,7 @@
 import { For } from 'solid-js';
 
 import * as Table from '@/components/ui/table';
-import { ColorBlock } from './AllColorTable';
+import { ColorBlock } from './styledComponents';
 import { DyeCharacter } from './DyeCharacter';
 import { DyeInfo } from './DyeInfo';
 
@@ -19,7 +19,6 @@ export const MixDyeTable = (props: MixDyeTableProps) => {
       if (!props.refs) {
         return;
       }
-      console.log(i);
       props.refs[i] = element;
     };
   }

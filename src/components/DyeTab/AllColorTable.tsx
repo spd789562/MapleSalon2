@@ -1,7 +1,7 @@
 import { For } from 'solid-js';
-import { styled } from 'styled-system/jsx/factory';
 
 import * as Table from '@/components/ui/table';
+import { ColorBlock } from './styledComponents';
 import { DyeCharacter } from './DyeCharacter';
 
 export interface AllColorTableProps {
@@ -55,13 +55,3 @@ export const AllColorTable = (props: AllColorTableProps) => {
     </Table.Root>
   );
 };
-
-export const ColorBlock = styled('div', {
-  base: {
-    borderRadius: 'md',
-    boxShadow: 'md',
-    w: 6,
-    h: 6,
-    display: 'inline-block',
-  },
-});
