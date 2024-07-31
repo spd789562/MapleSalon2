@@ -10,6 +10,8 @@ import { Switch, type ChangeDetails } from '@/components/ui/switch';
 import { CardContainer, TableContainer } from './styledComponents';
 import { AllColorTable } from './AllColorTable';
 import { MixDyeTable } from './MixDyeTable';
+import { ExportSeperateButton } from './ExportSeperateButton';
+import { ExportTableButton } from './ExportTableButton';
 
 import { horizontalScroll } from '@/directive/horizontalScroll';
 
@@ -20,6 +22,8 @@ import { FaceColorHex } from '@/const/face';
 const $hairItem = createEquipItemByCategory('Face');
 
 export const FaceDyeTab = () => {
+  const allColorRefs: HTMLImageElement[] = [];
+  const mixDyeColorRefs: HTMLImageElement[] = [];
   const [showFullCharacter, setShowFullCharacter] = createSignal(false);
   const hairItem = usePureStore($hairItem);
 
@@ -50,6 +54,23 @@ export const FaceDyeTab = () => {
           >
             顯示完整腳色
           </Switch>
+          <HStack marginLeft="auto">
+            <ExportTableButton
+              fileName="face-all-color.png"
+              images={allColorRefs}
+              avaialbeColorIds={avaialbeFaceColorIds()}
+              getColorHex={getFaceColorHex}
+            >
+              匯出表格圖
+            </ExportTableButton>
+            <ExportSeperateButton
+              fileName="face-all-color.zip"
+              images={allColorRefs}
+              imageCounts={avaialbeFaceColorIds().length}
+            >
+              匯出(.zip)
+            </ExportSeperateButton>
+          </HStack>
         </HStack>
         <TableContainer ref={horizontalScroll}>
           <AllColorTable
@@ -57,6 +78,7 @@ export const FaceDyeTab = () => {
             avaialbeColorIds={avaialbeFaceColorIds()}
             getColorHex={getFaceColorHex}
             showFullCharacter={showFullCharacter()}
+            refs={allColorRefs}
           />
         </TableContainer>
       </CardContainer>
@@ -69,6 +91,25 @@ export const FaceDyeTab = () => {
           >
             顯示完整腳色
           </Switch>
+          <HStack marginLeft="auto">
+            <ExportTableButton
+              fileName="face-mix-dye.png"
+              images={mixDyeColorRefs}
+              avaialbeColorIds={avaialbeFaceColorIds()}
+              getColorHex={getFaceColorHex}
+            >
+              匯出表格圖
+            </ExportTableButton>
+            <ExportSeperateButton
+              fileName="face-mix-dye.zip"
+              images={mixDyeColorRefs}
+              imageCounts={
+                avaialbeFaceColorIds().length * avaialbeFaceColorIds().length
+              }
+            >
+              匯出(.zip)
+            </ExportSeperateButton>
+          </HStack>
         </HStack>
         <TableContainer ref={horizontalScroll}>
           <MixDyeTable
@@ -77,6 +118,7 @@ export const FaceDyeTab = () => {
             getColorHex={getFaceColorHex}
             getColorId={getFaceColorId}
             showFullCharacter={showFullCharacter()}
+            refs={mixDyeColorRefs}
           />
         </TableContainer>
       </CardContainer>
