@@ -180,7 +180,7 @@ pub(crate) async fn search_by_equip_name<R: Runtime>(
 
     if let Ok(ref mut string_read) = state.string.write() {
         if string_read.len() == 0 {
-            string_read.extend(handlers::resolve_equip_string(&node)?);
+            string_read.extend(handlers::resolve_equip_string(&state.node, &node, false)?);
         }
     }
 
@@ -188,7 +188,7 @@ pub(crate) async fn search_by_equip_name<R: Runtime>(
 
     Ok(string_dict
         .iter()
-        .filter_map(|(_, id, text)| {
+        .filter_map(|(_, id, text, _, _, _)| {
             if text.contains(&name) {
                 Some((id.clone(), text.clone()))
             } else {

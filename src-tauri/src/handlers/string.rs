@@ -1,10 +1,14 @@
 use wz_reader::{WzNodeArc, WzNodeCast};
 
-use super::path::EQUIP_STRING_PATH;
+use super::item::{
+    get_is_cash_item, get_is_colorvar, get_item_info_node, get_item_node_from_category,
+};
+use super::path::{CHARACTER_ITEM_PATH, EQUIP_EFFECT_PATH, EQUIP_STRING_PATH};
 
 use serde::Serialize;
 
-use crate::Result;
+use crate::store::StringDictInner;
+use crate::{Error, Result};
 
 const EQUIP_CATEGORY_NEEDS: [&str; 14] = [
     "Cap",
@@ -123,8 +127,12 @@ pub fn get_equip_string(root: &WzNodeArc) -> Result<WzNodeArc> {
     Ok(node)
 }
 
-pub fn resolve_equip_string(node: &WzNodeArc) -> Result<Vec<(EquipCategory, String, String)>> {
-    let node = node.read().unwrap();
+pub fn resolve_equip_string(
+    root: &WzNodeArc,
+    string_node: &WzNodeArc,
+    extra_info: bool,
+) -> Result<StringDictInner> {
+    let node = string_node.read().unwrap();
 
     let mut result = Vec::new();
 
@@ -150,7 +158,38 @@ pub fn resolve_equip_string(node: &WzNodeArc) -> Result<Vec<(EquipCategory, Stri
 
             if let Some(string) = text_node_read.try_as_string() {
                 let text = string.get_string()?;
-                category_result.push((category.clone(), name, text));
+                category_result.push((category.clone(), name, text, false, false, false));
+            }
+        }
+
+        if extra_info {
+            'extra: {
+                let character_category_node = root
+                    .read()
+                    .unwrap()
+                    .at_path(&format!("{}/{}", CHARACTER_ITEM_PATH, category_name));
+                if character_category_node.is_none() {
+                    break 'extra;
+                }
+                let character_category_node = character_category_node.unwrap();
+                let effect_node = root
+                    .read()
+                    .unwrap()
+                    .at_path(EQUIP_EFFECT_PATH)
+                    .ok_or(Error::NodeNotFound)?;
+                for item in &mut category_result {
+                    let item_node = get_item_node_from_category(&character_category_node, &item.1);
+                    if let Some(item_node) = item_node {
+                        let info_node = get_item_info_node(&item_node);
+                        if let Some(info_node) = info_node {
+                            item.3 = get_is_cash_item(&info_node);
+                            item.4 = get_is_colorvar(&info_node);
+                        }
+                    }
+                    if effect_node.read().unwrap().at(&item.1).is_some() {
+                        item.5 = true;
+                    }
+                }
             }
         }
 

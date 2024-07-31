@@ -13,3 +13,8 @@ pub struct GetJsonParam {
     /// how long to cache for resoponse header
     pub cache: Option<u32>,
 }
+
+#[derive(Deserialize)]
+pub struct GetEquipListParam {
+    pub extra: Option<bool>,
+}

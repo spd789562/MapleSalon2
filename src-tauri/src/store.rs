@@ -6,7 +6,9 @@ use wz_reader::{property::WzValue, WzNodeArc, WzObjectType};
 
 use crate::handlers::EquipCategory;
 
-pub type StringDict = Arc<RwLock<Vec<(EquipCategory, String, String)>>>;
+/* Category, Id, Name, isCash, isColor, hasEffect  */
+pub type StringDictInner = Vec<(EquipCategory, String, String, bool, bool, bool)>;
+pub type StringDict = Arc<RwLock<StringDictInner>>;
 
 pub struct AppStore {
     pub node: WzNodeArc,

@@ -1,7 +1,8 @@
+#![allow(dead_code)]
 use wz_reader::{WzNodeArc, WzNodeCast};
 
 pub fn get_item_node(
-    character_node: WzNodeArc,
+    character_node: &WzNodeArc,
     category: &str,
     item_id: &str,
 ) -> Option<WzNodeArc> {
@@ -9,6 +10,13 @@ pub fn get_item_node(
         .read()
         .unwrap()
         .at_path(&format!("{}/{:0>8}.img", category, item_id))
+}
+
+pub fn get_item_node_from_category(category_node: &WzNodeArc, item_id: &str) -> Option<WzNodeArc> {
+    category_node
+        .read()
+        .unwrap()
+        .at_path(&format!("{:0>8}.img", item_id))
 }
 
 pub fn get_item_info_node(item_node: &WzNodeArc) -> Option<WzNodeArc> {
