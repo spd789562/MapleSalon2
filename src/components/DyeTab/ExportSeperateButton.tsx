@@ -20,7 +20,6 @@ export const ExportSeperateButton = (props: ExportSeperateButtonProps) => {
     if (isExporting()) {
       return;
     }
-    console.log('props.images', props.images);
     const validImageCounts = props.images.filter((img) => img?.src).length;
     const isAllImagesLoaded = validImageCounts === props.imageCounts;
     if (!isAllImagesLoaded) {

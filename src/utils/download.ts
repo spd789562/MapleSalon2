@@ -3,6 +3,21 @@ export function downloadJson(data: unknown, filename: string) {
   downloadBlob(blob, filename);
 }
 
+export async function downloadCanvas(
+  canvas: HTMLCanvasElement,
+  filename: string,
+) {
+  return new Promise<void>((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        return reject(new Error('Failed to convert canvas to blob'));
+      }
+      downloadBlob(blob, filename);
+      resolve();
+    });
+  });
+}
+
 export function downloadBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
   downloadByLink(url, filename);
