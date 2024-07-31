@@ -2,8 +2,8 @@ import { createSignal } from 'solid-js';
 import { invoke } from '@tauri-apps/api/core';
 import { open } from '@tauri-apps/plugin-dialog';
 
-import { $isInitialized, $apiHost } from '@/store/const';
-import { $equipmentStrings, type EquipItem } from '@/store/string';
+import { $isInitialized } from '@/store/const';
+import { prepareAndFetchEquipStrings } from '@/store/string';
 import { initialGlobalRenderer } from '@/store/renderer';
 
 export const BaseWzSelector = () => {
@@ -22,18 +22,7 @@ export const BaseWzSelector = () => {
       try {
         await invoke('init', { path });
 
-        await fetch(`${$apiHost.get()}/string/equip/prepare`);
-        const strings = await fetch(
-          `${$apiHost.get()}/string/equip?cache=14400`,
-        )
-          .then((res) => res.json())
-          .then((res: [string, string, string][]) =>
-            res.map(
-              ([category, id, name]) =>
-                ({ category, id: Number.parseInt(id), name }) as EquipItem,
-            ),
-          );
-        $equipmentStrings.set(strings);
+        await prepareAndFetchEquipStrings();
 
         await initialGlobalRenderer();
 

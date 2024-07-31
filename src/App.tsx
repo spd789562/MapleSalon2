@@ -3,7 +3,7 @@ import { useStore } from '@nanostores/solid';
 import { invoke } from '@tauri-apps/api/core';
 
 import { $apiHost, $isInitialized, $wzReady } from '@/store/const';
-import { $equipmentStrings, type EquipItem } from '@/store/string';
+import { prepareAndFetchEquipStrings } from '@/store/string';
 import { initialGlobalRenderer } from '@/store/renderer';
 
 import { AppContainer } from './components/AppContainer';
@@ -40,18 +40,8 @@ function App() {
     $apiHost.set(url);
 
     if (is_initialized) {
-      await fetch(`${url}/string/equip/prepare`);
-      const strings = await fetch(`${url}/string/equip?cache=14400`)
-        .then((res) => res.json())
-        .then((res: [string, string, string][]) =>
-          res.map(
-            ([category, id, name]) =>
-              ({ category, id: Number.parseInt(id), name }) as EquipItem,
-          ),
-        );
-      $equipmentStrings.set(strings);
-
       try {
+        await prepareAndFetchEquipStrings();
         await initialGlobalRenderer();
       } catch (e) {
         console.error('initialGlobalRenderer failed', e);
