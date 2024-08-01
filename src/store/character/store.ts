@@ -73,14 +73,14 @@ export const $currentCharacterItems = deepMap<Partial<CharacterItems>>({
     enableEffect: true,
   },
   Overall: {
-    id: 1053576,
-    enableEffect: true,
+    id: 1054098,
   },
   Shoes: {
     id: 1073273,
   },
   Cape: {
-    id: 1103580,
+    id: 1103642,
+    enableEffect: true,
   },
   Weapon: {
     id: 1703369,

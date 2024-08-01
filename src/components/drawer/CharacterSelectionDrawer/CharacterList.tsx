@@ -1,11 +1,8 @@
-import { For, onMount } from 'solid-js';
+import { For } from 'solid-js';
 
 import { usePureStore } from '@/store';
 
-import {
-  $getCharacterIds,
-  initializeSavedCharacter,
-} from '@/store/characterDrawer';
+import { $getCharacterIds } from '@/store/characterDrawer';
 
 import { HStack } from 'styled-system/jsx/hstack';
 import { CharacterItem } from './CharacterItem';
@@ -13,10 +10,6 @@ import { CharacterItem } from './CharacterItem';
 export const CharacterList = () => {
   let scrollContainerRef!: HTMLDivElement;
   const characterIds = usePureStore($getCharacterIds);
-
-  onMount(() => {
-    initializeSavedCharacter();
-  });
 
   function hanedleHorizontalScroll(e: WheelEvent) {
     e.preventDefault();

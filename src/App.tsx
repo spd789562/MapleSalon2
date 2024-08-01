@@ -5,6 +5,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { $apiHost, $isInitialized, $wzReady } from '@/store/const';
 import { prepareAndFetchEquipStrings } from '@/store/string';
 import { initialGlobalRenderer } from '@/store/renderer';
+import { initializeSavedCharacter } from './store/characterDrawer';
 
 import { AppContainer } from './components/AppContainer';
 import { BaseWzSelector } from './components/BaseWzSelector';
@@ -32,6 +33,7 @@ function App() {
   const ready = useStore($wzReady);
 
   async function init() {
+    await initializeSavedCharacter();
     const { url, is_initialized } = await invoke<{
       url: string;
       is_initialized: boolean;

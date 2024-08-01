@@ -65,6 +65,7 @@ export const CategorySelectionDialog = (
       closeOnInteractOutside={false}
       modal={false}
       trapFocus={false}
+      preventScroll={false}
     >
       <Dialog.Backdrop
         class={overlayStyle}
