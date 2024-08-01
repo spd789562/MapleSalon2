@@ -1,4 +1,4 @@
-import { createSignal, createMemo } from 'solid-js';
+import { createSignal, createMemo, Show } from 'solid-js';
 
 import { usePureStore } from '@/store';
 import { createEquipItemByCategory } from '@/store/character/selector';
@@ -7,7 +7,7 @@ import { HStack } from 'styled-system/jsx/hstack';
 import { VStack } from 'styled-system/jsx/vstack';
 import { Heading } from '@/components/ui/heading';
 import { Switch, type ChangeDetails } from '@/components/ui/switch';
-import { CardContainer, TableContainer } from './styledComponents';
+import { CardContainer, TableContainer, EmptyBlock } from './styledComponents';
 import { AllColorTable } from './AllColorTable';
 import { MixDyeTable } from './MixDyeTable';
 import { ExportSeperateButton } from './ExportSeperateButton';
@@ -19,20 +19,20 @@ import { gatFaceAvailableColorIds, getFaceColorId } from '@/utils/mixDye';
 
 import { FaceColorHex } from '@/const/face';
 
-const $hairItem = createEquipItemByCategory('Face');
+const $faceItem = createEquipItemByCategory('Face');
 
 export const FaceDyeTab = () => {
   const allColorRefs: HTMLImageElement[] = [];
   const mixDyeColorRefs: HTMLImageElement[] = [];
   const [showFullCharacter, setShowFullCharacter] = createSignal(false);
-  const hairItem = usePureStore($hairItem);
+  const faceItem = usePureStore($faceItem);
 
   const avaialbeFaceColorIds = createMemo(() => {
-    const hairId = hairItem()?.id;
-    if (!hairId) {
+    const faceId = faceItem()?.id;
+    if (!faceId) {
       return [];
     }
-    return gatFaceAvailableColorIds(hairId);
+    return gatFaceAvailableColorIds(faceId);
   });
 
   function getFaceColorHex(colorId: number) {
@@ -60,6 +60,7 @@ export const FaceDyeTab = () => {
               images={allColorRefs}
               avaialbeColorIds={avaialbeFaceColorIds()}
               getColorHex={getFaceColorHex}
+              disabled={!faceItem()?.id}
             >
               匯出表格圖
             </ExportTableButton>
@@ -67,19 +68,25 @@ export const FaceDyeTab = () => {
               fileName="face-all-color.zip"
               images={allColorRefs}
               imageCounts={avaialbeFaceColorIds().length}
+              disabled={!faceItem()?.id}
             >
               匯出(.zip)
             </ExportSeperateButton>
           </HStack>
         </HStack>
         <TableContainer ref={horizontalScroll}>
-          <AllColorTable
-            category="Face"
-            avaialbeColorIds={avaialbeFaceColorIds()}
-            getColorHex={getFaceColorHex}
-            showFullCharacter={showFullCharacter()}
-            refs={allColorRefs}
-          />
+          <Show
+            when={faceItem()?.id}
+            fallback={<EmptyBlock>尚未選擇臉型</EmptyBlock>}
+          >
+            <AllColorTable
+              category="Face"
+              avaialbeColorIds={avaialbeFaceColorIds()}
+              getColorHex={getFaceColorHex}
+              showFullCharacter={showFullCharacter()}
+              refs={allColorRefs}
+            />
+          </Show>
         </TableContainer>
       </CardContainer>
       <CardContainer>
@@ -97,6 +104,7 @@ export const FaceDyeTab = () => {
               images={mixDyeColorRefs}
               avaialbeColorIds={avaialbeFaceColorIds()}
               getColorHex={getFaceColorHex}
+              disabled={!faceItem()?.id}
             >
               匯出表格圖
             </ExportTableButton>
@@ -106,20 +114,26 @@ export const FaceDyeTab = () => {
               imageCounts={
                 avaialbeFaceColorIds().length * avaialbeFaceColorIds().length
               }
+              disabled={!faceItem()?.id}
             >
               匯出(.zip)
             </ExportSeperateButton>
           </HStack>
         </HStack>
         <TableContainer ref={horizontalScroll}>
-          <MixDyeTable
-            category="Face"
-            avaialbeColorIds={avaialbeFaceColorIds()}
-            getColorHex={getFaceColorHex}
-            getColorId={getFaceColorId}
-            showFullCharacter={showFullCharacter()}
-            refs={mixDyeColorRefs}
-          />
+          <Show
+            when={faceItem()?.id}
+            fallback={<EmptyBlock>尚未選擇臉型</EmptyBlock>}
+          >
+            <MixDyeTable
+              category="Face"
+              avaialbeColorIds={avaialbeFaceColorIds()}
+              getColorHex={getFaceColorHex}
+              getColorId={getFaceColorId}
+              showFullCharacter={showFullCharacter()}
+              refs={mixDyeColorRefs}
+            />
+          </Show>
         </TableContainer>
       </CardContainer>
     </VStack>

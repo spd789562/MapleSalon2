@@ -17,6 +17,7 @@ export interface ExportTableButtonProps {
   getColorHex: (colorId: number) => string;
   fileName: string;
   children: JSX.Element;
+  disabled?: boolean;
 }
 export const ExportTableButton = (props: ExportTableButtonProps) => {
   async function handleClick() {
@@ -101,7 +102,12 @@ export const ExportTableButton = (props: ExportTableButtonProps) => {
   }
 
   return (
-    <Button size="sm" fontWeight="normal" onClick={handleClick}>
+    <Button
+      size="sm"
+      fontWeight="normal"
+      onClick={handleClick}
+      disabled={props.disabled}
+    >
       {props.children}
     </Button>
   );

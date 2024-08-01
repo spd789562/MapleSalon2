@@ -1,4 +1,4 @@
-import { createSignal, createMemo } from 'solid-js';
+import { createSignal, createMemo, Show } from 'solid-js';
 
 import { usePureStore } from '@/store';
 import { createEquipItemByCategory } from '@/store/character/selector';
@@ -7,7 +7,7 @@ import { HStack } from 'styled-system/jsx/hstack';
 import { VStack } from 'styled-system/jsx/vstack';
 import { Heading } from '@/components/ui/heading';
 import { Switch, type ChangeDetails } from '@/components/ui/switch';
-import { CardContainer, TableContainer } from './styledComponents';
+import { CardContainer, TableContainer, EmptyBlock } from './styledComponents';
 import { AllColorTable } from './AllColorTable';
 import { MixDyeTable } from './MixDyeTable';
 import { ExportSeperateButton } from './ExportSeperateButton';
@@ -60,6 +60,7 @@ export const HairDyeTab = () => {
               images={allColorRefs}
               avaialbeColorIds={avaialbeHairColorIds()}
               getColorHex={getHairColorHex}
+              disabled={!hairItem()?.id}
             >
               匯出表格圖
             </ExportTableButton>
@@ -67,19 +68,25 @@ export const HairDyeTab = () => {
               fileName="hair-all-color.zip"
               images={allColorRefs}
               imageCounts={avaialbeHairColorIds().length}
+              disabled={!hairItem()?.id}
             >
               匯出(.zip)
             </ExportSeperateButton>
           </HStack>
         </HStack>
         <TableContainer ref={horizontalScroll}>
-          <AllColorTable
-            category="Hair"
-            avaialbeColorIds={avaialbeHairColorIds()}
-            getColorHex={getHairColorHex}
-            showFullCharacter={showFullCharacter()}
-            refs={allColorRefs}
-          />
+          <Show
+            when={hairItem()?.id}
+            fallback={<EmptyBlock>尚未選擇髮型</EmptyBlock>}
+          >
+            <AllColorTable
+              category="Hair"
+              avaialbeColorIds={avaialbeHairColorIds()}
+              getColorHex={getHairColorHex}
+              showFullCharacter={showFullCharacter()}
+              refs={allColorRefs}
+            />
+          </Show>
         </TableContainer>
       </CardContainer>
       <CardContainer>
@@ -97,6 +104,7 @@ export const HairDyeTab = () => {
               images={mixDyeColorRefs}
               avaialbeColorIds={avaialbeHairColorIds()}
               getColorHex={getHairColorHex}
+              disabled={!hairItem()?.id}
             >
               匯出表格圖
             </ExportTableButton>
@@ -106,20 +114,26 @@ export const HairDyeTab = () => {
               imageCounts={
                 avaialbeHairColorIds().length * avaialbeHairColorIds().length
               }
+              disabled={!hairItem()?.id}
             >
               匯出(.zip)
             </ExportSeperateButton>
           </HStack>
         </HStack>
         <TableContainer ref={horizontalScroll}>
-          <MixDyeTable
-            category="Hair"
-            avaialbeColorIds={avaialbeHairColorIds()}
-            getColorHex={getHairColorHex}
-            getColorId={getHairColorId}
-            showFullCharacter={showFullCharacter()}
-            refs={mixDyeColorRefs}
-          />
+          <Show
+            when={hairItem()?.id}
+            fallback={<EmptyBlock>尚未選擇髮型</EmptyBlock>}
+          >
+            <MixDyeTable
+              category="Hair"
+              avaialbeColorIds={avaialbeHairColorIds()}
+              getColorHex={getHairColorHex}
+              getColorId={getHairColorId}
+              showFullCharacter={showFullCharacter()}
+              refs={mixDyeColorRefs}
+            />
+          </Show>
         </TableContainer>
       </CardContainer>
     </VStack>

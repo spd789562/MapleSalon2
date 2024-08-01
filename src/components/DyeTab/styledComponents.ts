@@ -7,6 +7,7 @@ export const CardContainer = styled('div', {
     boxShadow: 'md',
     backgroundColor: 'bg.default',
     maxWidth: '100%',
+    minWidth: '75%',
   },
 });
 
@@ -24,5 +25,17 @@ export const ColorBlock = styled('div', {
     w: 6,
     h: 6,
     display: 'inline-block',
+  },
+});
+
+export const EmptyBlock = styled('div', {
+  base: {
+    py: 12,
+    border: '3px dashed',
+    borderColor: 'bg.emphasized',
+    borderRadius: 'xl',
+    textAlign: 'center',
+    color: 'fg.subtle',
+    fontSize: '2xl',
   },
 });

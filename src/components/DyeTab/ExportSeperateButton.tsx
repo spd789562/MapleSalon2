@@ -12,6 +12,7 @@ export interface ExportSeperateButtonProps {
   imageCounts: number;
   fileName: string;
   children: JSX.Element;
+  disabled?: boolean;
 }
 export const ExportSeperateButton = (props: ExportSeperateButtonProps) => {
   const [isExporting, setIsExporting] = createSignal(false);
@@ -39,7 +40,7 @@ export const ExportSeperateButton = (props: ExportSeperateButtonProps) => {
       size="sm"
       fontWeight="normal"
       onClick={handleClick}
-      disabled={isExporting()}
+      disabled={props.disabled || isExporting()}
     >
       {props.children}
     </Button>
