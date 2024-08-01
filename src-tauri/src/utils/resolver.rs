@@ -1,5 +1,6 @@
 use futures::future::{BoxFuture, FutureExt};
 use std::path::Path;
+use std::sync::Arc;
 use tokio::fs::{self, DirEntry};
 
 use wz_reader::{version::WzMapleVersion, SharedWzMutableKey, WzNode, WzNodeArc, WzNodeCast};
@@ -21,16 +22,22 @@ pub async fn get_root_wz_file_path(dir: &DirEntry) -> Option<String> {
 }
 
 pub fn resolve_root_wz_file_dir<'a>(
-    dir: &'a str,
+    dir: String,
     version: Option<WzMapleVersion>,
     patch_version: Option<i32>,
-    parent: Option<&'a WzNodeArc>,
-    default_keys: Option<&'a SharedWzMutableKey>,
+    parent: Option<WzNodeArc>,
+    default_keys: Option<SharedWzMutableKey>,
 ) -> BoxFuture<'a, Result<WzNodeArc>> {
     async move {
-        let root_node: WzNodeArc =
-            WzNode::from_wz_file_full(dir, version, patch_version, parent, default_keys)?.into();
-        let wz_dir = Path::new(dir).parent().unwrap();
+        let root_node: WzNodeArc = WzNode::from_wz_file_full(
+            &dir,
+            version,
+            patch_version,
+            parent.as_ref(),
+            default_keys.as_ref(),
+        )?
+        .into();
+        let wz_dir = Path::new(&dir).parent().unwrap();
 
         block_parse(&root_node).await?;
 
@@ -49,11 +56,11 @@ pub fn resolve_root_wz_file_dir<'a>(
                 if file_type.is_dir() && target_node.is_some() {
                     if let Some(file_path) = get_root_wz_file_path(&entry).await {
                         let dir_node = resolve_root_wz_file_dir(
-                            &file_path,
+                            file_path,
                             version,
                             patch_version,
-                            Some(&root_node),
-                            default_keys,
+                            Some(Arc::clone(&root_node)),
+                            default_keys.clone(),
                         )
                         .await?;
 
@@ -83,7 +90,7 @@ pub fn resolve_root_wz_file_dir<'a>(
                         version,
                         patch_version,
                         None,
-                        default_keys,
+                        default_keys.as_ref(),
                     )
                     .unwrap()
                     .into_lock();
@@ -113,7 +120,7 @@ pub async fn resolve_base(path: &str, version: Option<WzMapleVersion>) -> Result
         )));
     }
 
-    let base_node = resolve_root_wz_file_dir(path, version, None, None, None).await?;
+    let base_node = resolve_root_wz_file_dir(path.to_string(), version, None, None, None).await?;
 
     let (patch_version, keys) = {
         let node_read = base_node.read().unwrap();
@@ -135,6 +142,8 @@ pub async fn resolve_base(path: &str, version: Option<WzMapleVersion>) -> Result
         };
 
         let mut entries = fs::read_dir(wz_root_path).await?;
+
+        let mut set = tokio::task::JoinSet::new();
 
         while let Some(item) = entries.next_entry().await? {
             let path = item.path();
@@ -162,23 +171,24 @@ pub async fn resolve_base(path: &str, version: Option<WzMapleVersion>) -> Result
                 };
 
                 if let Some(file_path) = wz_path {
-                    let dir_node = resolve_root_wz_file_dir(
-                        &file_path,
+                    set.spawn(resolve_root_wz_file_dir(
+                        file_path,
                         version,
                         Some(patch_version),
-                        Some(&base_node),
-                        Some(&keys),
-                    )
-                    .await?;
-
-                    /* replace the original one */
-                    base_node
-                        .write()
-                        .unwrap()
-                        .children
-                        .insert(file_name.to_str().unwrap().into(), dir_node);
+                        Some(Arc::clone(&base_node)),
+                        Some(Arc::clone(&keys)),
+                    ));
                 }
             }
+        }
+
+        while let Some(result) = set.join_next().await {
+            let node = result.unwrap()?;
+            let name = {
+                let node_read = node.read().unwrap();
+                node_read.name.clone()
+            };
+            base_node.write().unwrap().children.insert(name, node);
         }
     }
 
