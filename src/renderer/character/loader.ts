@@ -11,6 +11,8 @@ class Loader {
   zmap?: Zmap = [];
   smap?: Smap;
   wzImageFolder: string[] = [];
+  loadingMap = new Map<string, Promise<unknown>>();
+  pathExistCache = new Map<number, string>();
 
   init() {
     return Promise.all([
@@ -56,13 +58,33 @@ class Loader {
     if (!folder) {
       getfolder = getItemFolderFromId(id);
     }
+    const existPath = this.pathExistCache.get(id);
+    if (existPath) {
+      return existPath;
+    }
     const path = `Character/${getfolder}${id.toString().padStart(8, '0')}.img`;
 
     const exists = this.wzImageFolder.includes(path);
+    this.pathExistCache.set(id, exists ? path : '');
     if (!exists) {
       return null;
     }
     return path;
+  }
+  createParsePromise(path: string) {
+    const current = this.loadingMap.get(path);
+    if (current) {
+      return current;
+    }
+
+    const promise = Assets.load<unknown>({
+      alias: `parse/${path}`,
+      loadParser: 'loadJson',
+      src: `${this.apiHost}/node/parse/${path}`,
+    }).catch(() => null);
+
+    this.loadingMap.set(path, promise);
+    return promise;
   }
   async getPieceWz(id: number): Promise<WzItem | null> {
     const path = this.getPiecePathIfExist(id);
@@ -73,7 +95,10 @@ class Loader {
   }
   async getPieceWzByPath(path: string): Promise<WzItem | null> {
     if (!Assets.cache.has(path)) {
-      await fetch(`${this.apiHost}/node/parse/${path}`).catch(() => null);
+      await this.createParsePromise(path);
+    } else if (this.loadingMap.get(path)) {
+      /* if cache exist and loadingMap has this item, then delete it */
+      this.loadingMap.delete(path);
     }
 
     const data = await Assets.load<WzItem>({
