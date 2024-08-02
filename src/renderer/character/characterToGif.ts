@@ -1,13 +1,13 @@
-import type { Renderer } from "pixi.js";
-import { encode } from "modern-gif";
-import UPNG from "@pdf-lib/upng";
+import type { Renderer } from 'pixi.js';
+import { encode } from 'modern-gif';
+import UPNG from '@pdf-lib/upng';
 // import workerUrl from 'modern-gif/worker?url';
 
-import type { Character } from "./character";
+import type { Character } from './character';
 
-import { extractCanvas } from "@/utils/extract";
+import { extractCanvas } from '@/utils/extract';
 
-import { CharacterAction } from "@/const/actions";
+import { CharacterAction } from '@/const/actions';
 
 async function nextTick() {
   return new Promise((resolve) => {
@@ -37,7 +37,7 @@ export async function makeCharacterFrames(
 
   const needBounce =
     character.action === CharacterAction.Alert ||
-    character.action.startsWith("stand");
+    character.action.startsWith('stand');
 
   const baseFrameCount = character.currentBodyNode.frames.length;
   const totalFrameCount = needBounce ? baseFrameCount * 2 - 2 : baseFrameCount;
@@ -85,22 +85,30 @@ export async function makeCharacterFrames(
     y: -bound.top,
   };
   for (const frame of exportFrames) {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     canvas.width = maxWidth;
     canvas.height = maxHeight;
     ctx.drawImage(frame.canvas, basePos.x + frame.left, basePos.y + frame.top);
-    frame.width = maxWidth;
-    frame.height = maxHeight;
-    frame.left = 0;
-    frame.top = 0;
+    frame.canvas = canvas;
   }
 
   if (!isOriginalAnimating) {
     character.play();
   }
 
-  return { frames: exportFrames, width: maxWidth, height: maxHeight };
+  return {
+    frames: exportFrames.map(({ canvas, delay }) => ({
+      canvas,
+      delay,
+      width: maxWidth,
+      height: maxHeight,
+      left: 0,
+      top: 0,
+    })),
+    width: maxWidth,
+    height: maxHeight,
+  };
 }
 
 export function characterFramesToApng(
@@ -109,7 +117,10 @@ export function characterFramesToApng(
 ) {
   return UPNG.encode(
     frames.map(({ canvas }) => {
-      const ctx = canvas.getContext("2d")!;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        throw new Error('Canvas context is null');
+      }
       const buffer = ctx.getImageData(0, 0, canvas.width, canvas.height).data
         .buffer;
       return buffer;

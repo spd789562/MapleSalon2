@@ -1,7 +1,7 @@
-import { onMount, onCleanup, createEffect, createSignal } from "solid-js";
-import type { ReadableAtom } from "nanostores";
+import { onMount, onCleanup, createEffect, createSignal } from 'solid-js';
+import type { ReadableAtom } from 'nanostores';
 
-import type { CharacterData } from "@/store/character/store";
+import type { CharacterData } from '@/store/character/store';
 import {
   MAX_ZOOM,
   MIN_ZOOM,
@@ -9,18 +9,12 @@ import {
   $previewZoomInfo,
   updateCenter,
   updateZoom,
-} from "@/store/previewZoom";
-import { usePureStore } from "@/store";
+} from '@/store/previewZoom';
+import { usePureStore } from '@/store';
 
-import { Application } from "pixi.js";
-import { Character } from "@/renderer/character/character";
-import { ZoomContainer } from "@/renderer/ZoomContainer";
-import {
-  makeCharacterFrames,
-  characterFramesToGif,
-} from "@/renderer/character/characterToGif";
-
-import { downloadBlob } from "@/utils/download";
+import { Application } from 'pixi.js';
+import { Character } from '@/renderer/character/character';
+import { ZoomContainer } from '@/renderer/ZoomContainer';
 
 export interface CharacterViewProps {
   onLoad: () => void;
@@ -37,8 +31,8 @@ export const CharacterView = (props: CharacterViewProps) => {
   const app = new Application();
   const ch = new Character(app);
 
-  ch.loadEvent.addListener("loading", props.onLoad);
-  ch.loadEvent.addListener("loaded", props.onLoaded);
+  ch.loadEvent.addListener('loading', props.onLoad);
+  ch.loadEvent.addListener('loaded', props.onLoaded);
 
   async function initScene() {
     await app.init({
@@ -57,7 +51,7 @@ export const CharacterView = (props: CharacterViewProps) => {
     const defaultInfo = zoomInfo();
     viewport.scaled = defaultInfo.zoom;
     viewport.moveCenter(defaultInfo.center);
-    viewport.on("zoomed", (e) => {
+    viewport.on('zoomed', (e) => {
       const viewport = e.viewport as ZoomContainer;
       if (
         viewport &&
@@ -67,8 +61,8 @@ export const CharacterView = (props: CharacterViewProps) => {
         updateZoom(viewport.scaled, props.target);
       }
     });
-    viewport.on("moved", (e) => {
-      const isNotClamp = !e.type.includes("clamp");
+    viewport.on('moved', (e) => {
+      const isNotClamp = !e.type.includes('clamp');
       if (viewport && isNotClamp) {
         updateCenter(viewport.center, props.target);
       }
@@ -95,16 +89,6 @@ export const CharacterView = (props: CharacterViewProps) => {
   createEffect(async () => {
     if (isInit()) {
       await ch.update(characterData());
-      const { frames, width, height } = await makeCharacterFrames(
-        ch,
-        app.renderer,
-      );
-      // const apng = characterFramesToApng(frames, { width, height });
-      // const blob = new Blob([apng], { type: "image/apng" });
-      // downloadBlob(blob, `${props.target}.png`);
-      const gif = await characterFramesToGif(frames, { width, height });
-      const blob = new Blob([gif], { type: "image/gif" });
-      downloadBlob(blob, `${props.target}.gif`);
     }
   });
 
