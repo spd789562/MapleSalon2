@@ -108,6 +108,8 @@ export class Character extends Container {
   isPlaying = false;
   isAnimating = false;
 
+  isHideAllEffect = false;
+
   /* delta to calculate is need enter next frame */
   currentDelta = 0;
   currentTicker?: (delta: Ticker) => void;
@@ -332,6 +334,14 @@ export class Character extends Container {
     this.loadEvent.emit('loaded');
   }
 
+  play(frame = 0) {
+    if (this.isPlaying) {
+      return;
+    }
+    this.isAnimating = true;
+    this.frame = frame;
+    return this.loadItems();
+  }
   stop() {
     this.isBounce = false;
     this.isLoading = false;
@@ -458,6 +468,17 @@ export class Character extends Container {
     return backBodyNode && isEmptyNode;
   }
 
+  get currentBodyNode() {
+    const body = this.zmapLayers.get('body');
+    const bodyNode = body?.children[0] as CharacterAnimatablePart;
+    if (bodyNode) {
+      return bodyNode;
+    }
+    const back = this.zmapLayers.get('backBody');
+    const backNode = back?.children[0] as CharacterAnimatablePart;
+    return backNode;
+  }
+
   get currentBodyFrame() {
     const body = this.zmapLayers.get('body');
     const bodyNode = body?.children[0] as CharacterAnimatablePart;
@@ -479,6 +500,18 @@ export class Character extends Container {
     return Array.from(this.idItems.values()).every((item) =>
       item.isActionAncherBuilt(this.action),
     );
+  }
+
+  get effectLayers() {
+    const zMapLayers = this.zmapLayers;
+    return function* effectGenerator() {
+      for (const [layerName, layer] of zMapLayers.entries()) {
+        if (!layerName.includes('effect')) {
+          continue;
+        }
+        yield layer;
+      }
+    };
   }
 
   async loadItems() {
@@ -575,6 +608,17 @@ export class Character extends Container {
     for (const item of this.idItems.values()) {
       const ancher = this.actionAnchers.get(action);
       this.actionAnchers.set(action, item.tryBuildAncher(action, ancher || []));
+    }
+  }
+
+  toggleEffectVisibility(isHide?: boolean, includeNormal = false) {
+    this.isHideAllEffect = isHide ?? !this.isHideAllEffect;
+    for (const layer of this.effectLayers()) {
+      if (layer.name === 'effect' && !includeNormal) {
+        layer.visible = true;
+      } else {
+        layer.visible = !this.isHideAllEffect;
+      }
     }
   }
 
