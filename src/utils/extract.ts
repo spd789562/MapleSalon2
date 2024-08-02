@@ -1,9 +1,23 @@
 import {
   unpremultiplyAlpha,
   DOMAdapter,
-  type GlTextureSystem,
+  GlTextureSystem,
   type Texture,
+  type ExtractSystem,
+  type Renderer,
 } from 'pixi.js';
+
+type ExtractTarget = Parameters<ExtractSystem['texture']>[0];
+
+export function extractCanvas(target: ExtractTarget, renderer: Renderer) {
+  const texture = renderer.extract.texture(target);
+
+  if (renderer.texture instanceof GlTextureSystem) {
+    // the webgl currently doesn't support unpremultiplyAlpha, so do it manually
+    return webGLGenerateCanvas(texture, renderer.texture);
+  }
+  return renderer.texture.generateCanvas(texture);
+}
 
 export function webGLGenerateCanvas(
   texture: Texture,

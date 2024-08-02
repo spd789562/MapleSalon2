@@ -21,7 +21,7 @@ import { Skeleton } from './ui/skeleton';
 import { Character } from '@/renderer/character/character';
 
 import { makeCharacterHash } from '@/utils/characterHash';
-import { webGLGenerateCanvas } from '@/utils/webGLExtract';
+import { extractCanvas } from '@/utils/extract';
 
 import { CharacterAction } from '@/const/actions';
 import { CharacterExpressions } from '@/const/emotions';
@@ -102,15 +102,8 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
           };
           /* prevent pixi's error */
           character.effects = [];
-          const texture = app.renderer.extract.texture(character);
 
-          const canvas = (() => {
-            if (app.renderer.texture instanceof GlTextureSystem) {
-              // the webgl currently doesn't support unpremultiplyAlpha, so do it manually
-              return webGLGenerateCanvas(texture, app.renderer.texture);
-            }
-            return app.renderer.texture.generateCanvas(texture);
-          })();
+          const canvas = extractCanvas(character, app.renderer);
 
           const url = await new Promise<string>((resolve) => {
             canvas.toBlob?.((blob) => {

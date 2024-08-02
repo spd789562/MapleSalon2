@@ -15,6 +15,9 @@ import { usePureStore } from '@/store';
 import { Application } from 'pixi.js';
 import { Character } from '@/renderer/character/character';
 import { ZoomContainer } from '@/renderer/ZoomContainer';
+import { characterToGif } from '@/renderer/character/characterToGif';
+
+import { downloadBlob } from '@/utils/download';
 
 export interface CharacterViewProps {
   onLoad: () => void;
@@ -89,6 +92,9 @@ export const CharacterView = (props: CharacterViewProps) => {
   createEffect(async () => {
     if (isInit()) {
       await ch.update(characterData());
+      const gif = await characterToGif(ch, app.renderer);
+      const blob = new Blob([gif], { type: 'image/gif' });
+      downloadBlob(blob, `${props.target}.gif`);
     }
   });
 
