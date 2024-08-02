@@ -1,3 +1,4 @@
+use rayon::prelude::*;
 use wz_reader::{WzNodeArc, WzNodeCast};
 
 use super::item::{
@@ -7,7 +8,7 @@ use super::path::{CHARACTER_ITEM_PATH, EQUIP_EFFECT_PATH, EQUIP_STRING_PATH};
 
 use serde::Serialize;
 
-use crate::store::StringDictInner;
+use crate::store::{StringDictInner, StringDictItem};
 use crate::{Error, Result};
 
 const EQUIP_CATEGORY_NEEDS: [&str; 14] = [
@@ -142,25 +143,40 @@ pub fn resolve_equip_string(
         let category_name = category_node_read.name.as_str();
         let category = get_equip_category_from_str(category_name);
 
-        let mut category_result = Vec::with_capacity(category_node_read.children.len());
+        let mut category_result = category_node_read
+            .children
+            .values()
+            .par_bridge()
+            .fold_with(
+                Vec::with_capacity(category_node_read.children.len()),
+                |mut result, child| {
+                    let child_read = child.read().unwrap();
+                    let name = child_read.name.to_string();
 
-        for child in category_node_read.children.values() {
-            let child_read = child.read().unwrap();
-            let name = child_read.name.to_string();
+                    let text_node = if let Some(text_node) = child_read.at("name") {
+                        text_node
+                    } else {
+                        return result;
+                    };
 
-            let text_node = if let Some(text_node) = child_read.at("name") {
-                text_node
-            } else {
-                continue;
-            };
+                    let text_node_read = text_node.read().unwrap();
 
-            let text_node_read = text_node.read().unwrap();
+                    if let Some(string) = text_node_read.try_as_string() {
+                        if let Ok(text) = string.get_string() {
+                            result.push((category.clone(), name, text, false, false, false));
+                        }
+                    }
 
-            if let Some(string) = text_node_read.try_as_string() {
-                let text = string.get_string()?;
-                category_result.push((category.clone(), name, text, false, false, false));
-            }
-        }
+                    result
+                },
+            )
+            .reduce(
+                || Vec::<StringDictItem>::new(),
+                |mut r, next| {
+                    r.extend(next);
+                    r
+                },
+            );
 
         if extra_info {
             'extra: {
@@ -177,7 +193,8 @@ pub fn resolve_equip_string(
                     .unwrap()
                     .at_path(EQUIP_EFFECT_PATH)
                     .ok_or(Error::NodeNotFound)?;
-                for item in &mut category_result {
+
+                category_result.par_iter_mut().for_each(|item| {
                     let item_node = get_item_node_from_category(&character_category_node, &item.1);
                     if let Some(item_node) = item_node {
                         let info_node = get_item_info_node(&item_node);
@@ -189,7 +206,7 @@ pub fn resolve_equip_string(
                     if effect_node.read().unwrap().at(&item.1).is_some() {
                         item.5 = true;
                     }
-                }
+                });
             }
         }
 
