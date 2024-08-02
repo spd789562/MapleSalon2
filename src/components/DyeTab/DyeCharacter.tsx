@@ -1,14 +1,12 @@
-import { createMemo, type JSX } from 'solid-js';
+import { createMemo, type JSX, from, Show } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
-
-import { usePureStore } from '@/store';
 
 import {
   $currentItem,
   $currentItemChanges,
   type CharacterItemInfo,
 } from '@/store/character/store';
-import { $totalItems } from '@/store/character/selector';
+import { $totalItemsApplyDeletion } from '@/store/character/selector';
 import { getEquipById } from '@/store/string';
 
 import { SimpleCharacter } from '@/components/SimpleCharacter';
@@ -25,7 +23,8 @@ interface DyeCharacterProps {
   ref?: (element: HTMLImageElement) => void;
 }
 export const DyeCharacter = (props: DyeCharacterProps) => {
-  const totalItems = usePureStore($totalItems);
+  /* don't know why it not reactive when use usePureStore, so just use from to subscribe the store */
+  const totalItems = from($totalItemsApplyDeletion);
 
   const overrideData = createMemo(() => {
     const ovrrideId = props.ovrrideId;
@@ -88,14 +87,18 @@ export const DyeCharacter = (props: DyeCharacterProps) => {
       onClick={handleSelect}
     >
       <CharacterItemImage isBox={!props.showFullCharacter}>
-        <SimpleCharacter
-          title={`dyeid-${props.ovrrideId}-${props.dyeId ?? ''}`}
-          items={totalItems()}
-          itemsOverride={overrideData()}
-          noMaxWidth={true}
-          useOffset={!props.showFullCharacter}
-          ref={props.ref}
-        />
+        <Show when={totalItems()}>
+          {(items) => (
+            <SimpleCharacter
+              title={`dyeid-${props.ovrrideId}-${props.dyeId ?? ''}`}
+              items={items()}
+              itemsOverride={overrideData()}
+              noMaxWidth={true}
+              useOffset={!props.showFullCharacter}
+              ref={props.ref}
+            />
+          )}
+        </Show>
       </CharacterItemImage>
       <DyeInfoPositioner>{props.dyeInfo}</DyeInfoPositioner>
     </CharacterItemContainer>
