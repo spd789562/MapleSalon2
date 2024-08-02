@@ -23,6 +23,7 @@
     "@zip.js/zip.js": "^2.7.47",
     "lucide-solid": "^0.394.0",
     "mingcute_icon": "^2.9.4",
+    "modern-gif": "^2.0.3",
     "nanostores": "^0.10.3",
     "pixi-filters": "^6.0.3",
     "pixi-viewport": "^5.0.3",
