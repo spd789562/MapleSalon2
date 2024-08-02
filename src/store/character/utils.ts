@@ -28,9 +28,10 @@ export function getCharacterSubCategory(category: EquipSubCategory) {
 export function getUpdateItems(
   before: Partial<CharacterItems>,
   changes: Partial<CharacterItems>,
+  applyDeletion = true,
 ): Partial<CharacterItems> {
   const result: Partial<CharacterItems> = {};
-  /* add not delete item to result  */
+  /* optionally add not delete item to result  */
   for (const key in before) {
     const k = key as EquipSubCategory;
     const changeItem = changes[k];
@@ -42,7 +43,7 @@ export function getUpdateItems(
         result[k] = before[k];
       }
       const updated = result[k];
-      if (updated?.isDeleteDye) {
+      if (updated?.isDeleteDye && applyDeletion) {
         updated.dye = undefined;
       }
     }

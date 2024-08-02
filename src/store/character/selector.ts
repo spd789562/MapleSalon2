@@ -54,14 +54,19 @@ export const $currentCharacter = batched(
 );
 export const $totalItems = batched(
   [$currentCharacterItems, $currentItemChanges],
+  (current, changes) => getUpdateItems(current, changes, false),
+);
+export const $totalItemsApplyDeletion = batched(
+  [$currentCharacterItems, $currentItemChanges],
   getUpdateItems,
 );
+
 export const $hasAnyItemChanges = computed(
   [$currentItemChanges],
   (items) => Object.keys(items).length > 0,
 );
 export const $previewCharacter = computed(
-  [$currentCharacterInfo, $totalItems],
+  [$currentCharacterInfo, $totalItemsApplyDeletion],
   (info, items) => {
     return {
       ...info,

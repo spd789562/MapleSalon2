@@ -1,4 +1,3 @@
-import { invoke } from '@tauri-apps/api/core';
 import { Assets, Sprite, type Texture } from 'pixi.js';
 import { $apiHost } from '@/store/const';
 
