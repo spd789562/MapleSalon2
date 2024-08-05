@@ -26,6 +26,7 @@
     "mingcute_icon": "^2.9.4",
     "modern-gif": "^2.0.3",
     "nanostores": "^0.10.3",
+    "p-queue": "^8.0.1",
     "pixi-filters": "^6.0.3",
     "pixi-viewport": "^5.0.3",
     "pixi.js": "^8.1.5",
