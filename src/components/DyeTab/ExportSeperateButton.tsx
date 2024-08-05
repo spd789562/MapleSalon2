@@ -2,7 +2,7 @@ import { type JSX, createSignal } from 'solid-js';
 
 import { Button } from '@/components/ui/button';
 
-import { makeImagesZipBlob } from '@/utils/exportImagesAsZip';
+import { makeImagesZipBlob } from '@/utils/exportImage/exportImageToZip';
 import { downloadBlob } from '@/utils/download';
 import { toaster } from '@/components/GlobalToast';
 
