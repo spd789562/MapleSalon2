@@ -90,6 +90,7 @@ export interface CharacterAttributes {
 }
 
 export class Character extends Container {
+  name = '';
   idItems = new Map<number, CharacterItem>();
   actionAnchers = new Map<CharacterAction, Map<AncherName, Vec2>[]>();
 
