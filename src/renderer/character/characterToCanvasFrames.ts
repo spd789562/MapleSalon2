@@ -3,14 +3,9 @@ import type { Renderer } from 'pixi.js';
 import type { Character } from './character';
 
 import { extractCanvas } from '@/utils/extract';
+import { nextTick } from '@/utils/eventLoop';
 
 import { CharacterAction } from '@/const/actions';
-
-async function nextTick() {
-  return new Promise((resolve) => {
-    setTimeout(resolve, 0);
-  });
-}
 
 interface UnprocessedFrame {
   width: number;
