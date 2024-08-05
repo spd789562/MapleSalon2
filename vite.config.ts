@@ -43,6 +43,12 @@ export default defineConfig(async () => ({
     },
   },
 
+  /* fix wasm-webp's wasm not been include */
+  optimizeDeps: {
+    exclude: ['wasm-webp'],
+  },
+  assetsInclude: ['**/wasm-webp/**/*.wasm'],
+
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
   // 1. prevent vite from obscuring rust errors
