@@ -15,10 +15,10 @@ export async function characterFramesToWebp(
       if (!ctx) {
         throw new Error('Canvas context is null');
       }
-      const buffer = ctx.getImageData(0, 0, canvas.width, canvas.height).data
-        .buffer;
+      const buffer = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
       return {
-        data: buffer as Uint8Array,
+        /* it actually Uint8ClampedArray but need to force cast here */
+        data: buffer as unknown as Uint8Array,
         duration: delay,
       };
     }),

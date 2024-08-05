@@ -4,7 +4,9 @@ export async function characterFramesToApng(
   frames: UniversalFrame[],
   options: { width: number; height: number },
 ) {
-  const { encode } = await import('@pdf-lib/upng');
+  const {
+    default: { encode },
+  } = await import('@pdf-lib/upng');
 
   return encode(
     frames.map(({ canvas }) => {
