@@ -99,8 +99,10 @@ export async function characterToCanvasFrames(
 
   if (!isOriginalAnimating) {
     character.play();
-    character.toggleEffectVisibility(false, false);
   }
+
+  character.toggleEffectVisibility(false, false);
+  await nextTick();
 
   return {
     frames: exportFrames,
