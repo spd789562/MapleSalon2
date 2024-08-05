@@ -22,6 +22,11 @@ interface UnprocessedFrame {
 }
 
 export type UniversalFrame = Omit<UnprocessedFrame, 'left' | 'top'>;
+export interface CanvasFramesData {
+  frames: UniversalFrame[];
+  width: number;
+  height: number;
+}
 
 export async function characterToCanvasFrames(
   character: Character,
@@ -99,6 +104,7 @@ export async function characterToCanvasFrames(
 
   if (!isOriginalAnimating) {
     character.play();
+    character.toggleEffectVisibility(false, false);
   }
 
   return {
