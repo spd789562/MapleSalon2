@@ -1,8 +1,14 @@
+import { Index } from 'solid-js';
+
 import { VStack } from 'styled-system/jsx/vstack';
 import { Grid } from 'styled-system/jsx/grid';
 import { ActionTabTitle } from './ActionTabTitle';
-import { ActionCharacter, type ActionCharacterRef } from './ActionCharacter';
+import type { ActionCharacterRef } from './ActionCharacter';
+import { ActionCard } from './ActionCard';
+
 import { CharacterAction } from '@/const/actions';
+
+const actions: CharacterAction[] = Object.values(CharacterAction);
 
 export const ActionTab = () => {
   const characterRefs: ActionCharacterRef[] = [];
@@ -16,8 +22,10 @@ export const ActionTab = () => {
   return (
     <VStack>
       <ActionTabTitle characterRefs={characterRefs} />
-      <Grid>
-        <ActionCharacter ref={handleRef(0)} action={CharacterAction.Stand1} />
+      <Grid columns={4}>
+        <Index each={actions}>
+          {(action, i) => <ActionCard ref={handleRef(i)} action={action()} />}
+        </Index>
       </Grid>
     </VStack>
   );

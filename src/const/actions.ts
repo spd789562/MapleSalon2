@@ -34,6 +34,20 @@ export enum CharacterAction {
   SwingTF = 'swingTF',
 }
 
+export const CharacterActionNames: Partial<Record<CharacterAction, string>> = {
+  [CharacterAction.Stand1]: '站立',
+  [CharacterAction.Sit]: '坐下',
+  [CharacterAction.Walk1]: '走路',
+  [CharacterAction.Jump]: '跳躍',
+  [CharacterAction.Fly]: '飛行/游泳',
+  [CharacterAction.Ladder]: '攀爬(梯子)',
+  [CharacterAction.Rope]: '攀爬(繩子)',
+  [CharacterAction.Alert]: '警戒',
+  [CharacterAction.Heal]: '施放',
+  [CharacterAction.Prone]: '趴下',
+  [CharacterAction.ProneStab]: '趴下攻擊',
+};
+
 export function isBackAction(action: CharacterAction) {
   return action === CharacterAction.Rope || action === CharacterAction.Ladder;
 }
