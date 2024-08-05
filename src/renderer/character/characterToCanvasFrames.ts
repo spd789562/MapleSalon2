@@ -1,7 +1,4 @@
 import type { Renderer } from 'pixi.js';
-import { encode } from 'modern-gif';
-import UPNG from '@pdf-lib/upng';
-// import workerUrl from 'modern-gif/worker?url';
 
 import type { Character } from './character';
 
@@ -15,16 +12,18 @@ async function nextTick() {
   });
 }
 
-type UniversalFrame = {
+interface UnprocessedFrame {
   width: number;
   height: number;
   left: number;
   top: number;
   delay: number;
   canvas: HTMLCanvasElement;
-};
+}
 
-export async function makeCharacterFrames(
+export type UniversalFrame = Omit<UnprocessedFrame, 'left' | 'top'>;
+
+export async function characterToCanvasFrames(
   character: Character,
   renderer: Renderer,
 ) {
@@ -42,7 +41,7 @@ export async function makeCharacterFrames(
   const baseFrameCount = character.currentBodyNode.frames.length;
   const totalFrameCount = needBounce ? baseFrameCount * 2 - 2 : baseFrameCount;
 
-  const exportFrames: UniversalFrame[] = [];
+  const unprocessedFrames: UnprocessedFrame[] = [];
 
   const bound = {
     top: 0,
@@ -58,7 +57,7 @@ export async function makeCharacterFrames(
     const currentBodyFrame = character.currentBodyFrame;
     const canvas = extractCanvas(character, renderer) as HTMLCanvasElement;
     const bodyPos = currentBodyFrame?.ancher || { x: 0, y: 0 };
-    const frameData: UniversalFrame = {
+    const frameData: UnprocessedFrame = {
       canvas,
       delay: currentBodyFrame.delay,
       width: canvas.width,
@@ -66,7 +65,7 @@ export async function makeCharacterFrames(
       left: -bodyPos.x,
       top: -bodyPos.y,
     };
-    exportFrames.push(frameData);
+    unprocessedFrames.push(frameData);
 
     bound.left = Math.min(bound.left, -bodyPos.x);
     bound.top = Math.min(bound.top, -bodyPos.y);
@@ -84,72 +83,27 @@ export async function makeCharacterFrames(
     x: -bound.left,
     y: -bound.top,
   };
-  for (const frame of exportFrames) {
+  const exportFrames = unprocessedFrames.map((frame) => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     canvas.width = maxWidth;
     canvas.height = maxHeight;
     ctx.drawImage(frame.canvas, basePos.x + frame.left, basePos.y + frame.top);
-    frame.canvas = canvas;
-  }
+    return {
+      canvas,
+      delay: frame.delay,
+      width: canvas.width,
+      height: canvas.height,
+    };
+  });
 
   if (!isOriginalAnimating) {
     character.play();
   }
 
   return {
-    frames: exportFrames.map(({ canvas, delay }) => ({
-      canvas,
-      delay,
-      width: maxWidth,
-      height: maxHeight,
-      left: 0,
-      top: 0,
-    })),
+    frames: exportFrames,
     width: maxWidth,
     height: maxHeight,
   };
-}
-
-export function characterFramesToApng(
-  frames: UniversalFrame[],
-  options: { width: number; height: number },
-) {
-  return UPNG.encode(
-    frames.map(({ canvas }) => {
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        throw new Error('Canvas context is null');
-      }
-      const buffer = ctx.getImageData(0, 0, canvas.width, canvas.height).data
-        .buffer;
-      return buffer;
-    }),
-    options.width,
-    options.height,
-    0,
-    frames.map((frame) => frame.delay),
-  );
-}
-
-export function characterFramesToGif(
-  frames: UniversalFrame[],
-  options: { width: number; height: number },
-) {
-  return encode({
-    // workerUrl,
-    width: options.width,
-    height: options.height,
-    frames: frames.map((frame) => ({
-      data: frame.canvas,
-      width: frame.width,
-      height: frame.height,
-      delay: frame.delay,
-      top: 0,
-      left: 0,
-      disposal: 2,
-    })),
-    maxColors: 255,
-    looped: true,
-  });
 }
