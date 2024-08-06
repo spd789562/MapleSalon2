@@ -1,4 +1,4 @@
-import { Show, createSignal } from 'solid-js';
+import { Show, createSignal, onCleanup, onMount } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 import { styled } from 'styled-system/jsx/factory';
 
@@ -20,8 +20,9 @@ import { ZoomControl } from './ZoomControl';
 import { PreviewSceneBackground } from '@/const/scene';
 
 export const CharacterScene = () => {
+  let containerRef!: HTMLDivElement;
   const [isLoading, setIsLoading] = createSignal(false);
-  const [isLockInteraction, setIsLockInteraction] = createSignal(false);
+  const [isLockInteraction, setIsLockInteraction] = createSignal(true);
   const scene = useStore($currentScene);
   const customColorStyle = useStore($sceneCustomColorStyle);
   const isShowComparison = useStore($showPreviousCharacter);
@@ -39,8 +40,23 @@ export const CharacterScene = () => {
     setIsLockInteraction(true);
   }
 
+  onMount(() => {
+    function preventScrollWhenNotLock(e: Event) {
+      if (!isLockInteraction()) {
+        e.preventDefault();
+      }
+    }
+    containerRef.addEventListener('wheel', preventScrollWhenNotLock, {
+      passive: false,
+    });
+    onCleanup(() => {
+      containerRef.removeEventListener('wheel', preventScrollWhenNotLock);
+    });
+  });
+
   return (
     <CharacterSceneContainer
+      ref={containerRef}
       bgType={scene()}
       style={customColorStyle()}
       role="button"
@@ -97,7 +113,7 @@ const CharacterSceneContainer = styled('div', {
     _focus: {
       outline: '2px solid',
       outlineColor: 'accent.a6',
-      boxShadow: '0 0 0 5px {accent.a6}',
+      boxShadow: '0 0 5px 2px {colors.accent.a6}',
     },
   },
   variants: {

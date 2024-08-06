@@ -48,6 +48,7 @@ export const CharacterView = (props: CharacterViewProps) => {
       height: 340,
       worldScale: 2,
       maxScale: MAX_ZOOM,
+      defaultInteraction: false,
     });
     const defaultInfo = zoomInfo();
     viewport.scaled = defaultInfo.zoom;
@@ -75,10 +76,6 @@ export const CharacterView = (props: CharacterViewProps) => {
     setIsInit(true);
   }
 
-  function handlePreventScrollBubble(e: Event) {
-    e.preventDefault();
-  }
-
   onMount(() => {
     initScene();
   });
@@ -90,7 +87,6 @@ export const CharacterView = (props: CharacterViewProps) => {
   createEffect(() => {
     const isLock = props.isLockInteraction;
     if (viewport) {
-      console.log('isLock', isLock);
       if (isLock) {
         viewport.disable();
       } else {
@@ -116,5 +112,5 @@ export const CharacterView = (props: CharacterViewProps) => {
     }
   });
 
-  return <div ref={container} onWheel={handlePreventScrollBubble} />;
+  return <div ref={container} />;
 };

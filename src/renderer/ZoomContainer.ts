@@ -1,4 +1,4 @@
-import { type Application, EventEmitter } from 'pixi.js';
+import type { Application } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 
 export interface ZoomContainerOptions {
@@ -6,6 +6,7 @@ export interface ZoomContainerOptions {
   height: number;
   worldScale?: number;
   maxScale?: number;
+  defaultInteraction?: boolean;
 }
 export class ZoomContainer extends Viewport {
   constructor(app: Application, options: ZoomContainerOptions) {
@@ -35,6 +36,12 @@ export class ZoomContainer extends Viewport {
         right: options.width,
       })
       .moveCenter(0, 0);
+    if (options.defaultInteraction !== false) {
+      console.log('enable');
+      this.enable();
+    } else {
+      this.disable();
+    }
   }
   disable() {
     this.plugins.pause('drag');
