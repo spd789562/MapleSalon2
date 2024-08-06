@@ -1,4 +1,4 @@
-import { Show } from 'solid-js';
+import { type Accessor, Show } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
 
 import { HStack } from 'styled-system/jsx/hstack';
@@ -10,7 +10,7 @@ import { CharacterActionNames, type CharacterAction } from '@/const/actions';
 
 export interface ActionCardProps {
   action: CharacterAction;
-  ref: (element: ActionCharacterRef) => void;
+  ref?: Accessor<ActionCharacterRef>;
 }
 export const ActionCard = (props: ActionCardProps) => {
   return (
@@ -26,7 +26,7 @@ export const ActionCard = (props: ActionCardProps) => {
         </Heading>
         <HStack marginLeft="auto">1</HStack>
       </HStack>
-      <ActionCharacter ref={props.ref} action={props.action} />
+      <CharacterPlaceholder />
     </CardContainer>
   );
 };
@@ -38,5 +38,12 @@ export const CardContainer = styled(VStack, {
     boxShadow: 'md',
     backgroundColor: 'bg.default',
     width: '100%',
+  },
+});
+
+export const CharacterPlaceholder = styled(VStack, {
+  base: {
+    w: 'full',
+    minHeight: '300px',
   },
 });

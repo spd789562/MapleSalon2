@@ -2,15 +2,17 @@ import { createSignal, createEffect, onMount, onCleanup, from } from 'solid-js';
 
 import { $previewCharacter } from '@/store/character/selector';
 
-import { Application } from 'pixi.js';
+import type { Application } from 'pixi.js';
 import { Character } from '@/renderer/character/character';
 
 import {
   characterToCanvasFrames,
   type CanvasFramesData,
 } from '@/renderer/character/characterToCanvasFrames';
+import { characterLoadingQueue } from '@/utils/characterLoadingQueue';
 
-import type { CharacterAction } from '@/const/actions';
+import { isDoubleHandAction, type CharacterAction } from '@/const/actions';
+import { CharacterHandType } from '@/const/hand';
 
 export interface ActionCharacterRef {
   character: Character;
@@ -19,47 +21,57 @@ export interface ActionCharacterRef {
 export interface ActionCharacterProps {
   action: CharacterAction;
   ref: (element: ActionCharacterRef) => void;
+  mainApp: Application;
+  position: { x: number; y: number };
 }
 export const ActionCharacter = (props: ActionCharacterProps) => {
   const characterData = from($previewCharacter);
   const [isInit, setIsInit] = createSignal(false);
 
-  let container!: HTMLDivElement;
+  let abortController: AbortController | undefined = undefined;
   const canvasFrameCache: { current?: CanvasFramesData } = {};
-  const app = new Application();
   const character = new Character();
 
   function makeCharacterFrames() {
     if (canvasFrameCache.current) {
       return Promise.resolve(canvasFrameCache.current);
     }
-    return characterToCanvasFrames(character, app.renderer);
+    return characterToCanvasFrames(character, props.mainApp.renderer);
   }
 
   props.ref({ character, makeCharacterFrames });
 
   createEffect(() => {
-    canvasFrameCache.current = undefined;
-    const data = characterData();
-    const action = props.action;
-    if (isInit() && data) {
-      character.update({ ...data, action });
+    if (props.position) {
+      character.position.copyFrom(props.position);
     }
   });
 
-  onMount(async () => {
-    await app.init({
-      width: 300,
-      height: 300,
-      background: 0x000000,
-      backgroundAlpha: 0,
-      antialias: true,
-    });
+  createEffect(async () => {
+    canvasFrameCache.current = undefined;
+    const data = characterData();
+    const action = props.action;
+    const handType = isDoubleHandAction(props.action)
+      ? CharacterHandType.DoubleHand
+      : CharacterHandType.SingleHand;
+    if (isInit() && data) {
+      abortController?.abort();
+      abortController = new AbortController();
+      try {
+        await characterLoadingQueue.add(
+          () => character.update({ ...data, action, handType }),
+          { signal: abortController.signal },
+        );
+      } catch (e) {
+        if (!(e instanceof DOMException && e.name === 'AbortError')) {
+          console.error('Character update error', e);
+        }
+      }
+    }
+  });
 
-    container.appendChild(app.canvas);
-    app.stage.addChild(character);
-    character.position.set(150, 150);
-
+  onMount(() => {
+    props.mainApp.stage.addChild(character);
     setIsInit(true);
   });
 
@@ -67,5 +79,5 @@ export const ActionCharacter = (props: ActionCharacterProps) => {
     character.reset();
   });
 
-  return <div ref={container} />;
+  return null;
 };

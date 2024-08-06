@@ -55,7 +55,7 @@ export const ExportFrameButton = (props: ExportAnimateButtonProps) => {
   }
 
   return (
-    <Button title="匯出全部動圖分鏡" onClick={handleClick}>
+    <Button title="匯出動圖分鏡" onClick={handleClick}>
       匯出分鏡
     </Button>
   );

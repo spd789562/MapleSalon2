@@ -36,8 +36,10 @@ export enum CharacterAction {
 
 export const CharacterActionNames: Partial<Record<CharacterAction, string>> = {
   [CharacterAction.Stand1]: '站立',
+  [CharacterAction.Stand2]: '站立(雙手)',
   [CharacterAction.Sit]: '坐下',
   [CharacterAction.Walk1]: '走路',
+  [CharacterAction.Walk2]: '走路(雙手)',
   [CharacterAction.Jump]: '跳躍',
   [CharacterAction.Fly]: '飛行/游泳',
   [CharacterAction.Ladder]: '攀爬(梯子)',
@@ -47,6 +49,13 @@ export const CharacterActionNames: Partial<Record<CharacterAction, string>> = {
   [CharacterAction.Prone]: '趴下',
   [CharacterAction.ProneStab]: '趴下攻擊',
 };
+
+export function isDoubleHandAction(action: CharacterAction) {
+  return action === CharacterAction.Walk2 || action === CharacterAction.Stand2;
+}
+export function isSingalHandAction(action: CharacterAction) {
+  return action === CharacterAction.Walk1 || action === CharacterAction.Stand1;
+}
 
 export function isBackAction(action: CharacterAction) {
   return action === CharacterAction.Rope || action === CharacterAction.Ladder;

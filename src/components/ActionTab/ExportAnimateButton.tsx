@@ -64,7 +64,7 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
   }
 
   return (
-    <Button title="匯出全部動圖" onClick={handleClick} disabled={isExporting()}>
+    <Button onClick={handleClick} disabled={isExporting()}>
       匯出動圖
     </Button>
   );
