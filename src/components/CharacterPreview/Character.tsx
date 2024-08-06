@@ -21,6 +21,7 @@ export interface CharacterViewProps {
   onLoaded: () => void;
   store: ReadableAtom<CharacterData>;
   target: string;
+  isLockInteraction: boolean;
 }
 export const CharacterView = (props: CharacterViewProps) => {
   const zoomInfo = usePureStore($previewZoomInfo);
@@ -84,6 +85,18 @@ export const CharacterView = (props: CharacterViewProps) => {
 
   onCleanup(() => {
     ch.reset();
+  });
+
+  createEffect(() => {
+    const isLock = props.isLockInteraction;
+    if (viewport) {
+      console.log('isLock', isLock);
+      if (isLock) {
+        viewport.disable();
+      } else {
+        viewport.enable();
+      }
+    }
   });
 
   createEffect(async () => {

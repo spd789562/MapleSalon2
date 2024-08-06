@@ -36,4 +36,14 @@ export class ZoomContainer extends Viewport {
       })
       .moveCenter(0, 0);
   }
+  disable() {
+    this.plugins.pause('drag');
+    this.plugins.pause('pinch');
+    this.plugins.pause('wheel');
+  }
+  enable() {
+    this.plugins.resume('drag');
+    this.plugins.resume('pinch');
+    this.plugins.resume('wheel');
+  }
 }

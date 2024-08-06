@@ -21,6 +21,7 @@ import { PreviewSceneBackground } from '@/const/scene';
 
 export const CharacterScene = () => {
   const [isLoading, setIsLoading] = createSignal(false);
+  const [isLockInteraction, setIsLockInteraction] = createSignal(false);
   const scene = useStore($currentScene);
   const customColorStyle = useStore($sceneCustomColorStyle);
   const isShowComparison = useStore($showPreviousCharacter);
@@ -31,15 +32,29 @@ export const CharacterScene = () => {
   function handleLoaded() {
     setIsLoading(false);
   }
+  function handleFocusContainer() {
+    setIsLockInteraction(false);
+  }
+  function handleBlurContainer() {
+    setIsLockInteraction(true);
+  }
 
   return (
-    <CharacterSceneContainer bgType={scene()} style={customColorStyle()}>
+    <CharacterSceneContainer
+      bgType={scene()}
+      style={customColorStyle()}
+      role="button"
+      tabIndex="0"
+      onFocus={handleFocusContainer}
+      onBlur={handleBlurContainer}
+    >
       <Show when={isShowComparison()}>
         <CharacterView
           onLoad={handleLoad}
           onLoaded={handleLoaded}
           store={$currentCharacter}
           target="original"
+          isLockInteraction={isLockInteraction()}
         />
         <CompareSeparator>
           <ChevronRightIcon size={32} />
@@ -50,6 +65,7 @@ export const CharacterScene = () => {
         onLoaded={handleLoaded}
         store={$previewCharacter}
         target="preview"
+        isLockInteraction={isLockInteraction()}
       />
       <TopTool>
         <ShowPreviousSwitch />
@@ -78,6 +94,11 @@ const CharacterSceneContainer = styled('div', {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    _focus: {
+      outline: '2px solid',
+      outlineColor: 'accent.a6',
+      boxShadow: '0 0 0 5px {accent.a6}',
+    },
   },
   variants: {
     bgType: {
