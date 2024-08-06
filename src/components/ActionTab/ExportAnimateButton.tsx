@@ -2,7 +2,7 @@ import { createSignal } from 'solid-js';
 
 import { $actionExportType } from '@/store/toolTab';
 
-import { Button } from '@/components/ui/button';
+import { Button, type ButtonProps } from '@/components/ui/button';
 import type { ActionCharacterRef } from './ActionCharacter';
 
 import { ActionExportTypeExtensions } from '@/const/toolTab';
@@ -15,6 +15,8 @@ import { nextTick } from '@/utils/eventLoop';
 
 export interface ExportAnimateButtonProps {
   characterRefs: ActionCharacterRef[];
+  size?: ButtonProps['size'];
+  variant?: ButtonProps['variant'];
 }
 export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
   const [isExporting, setIsExporting] = createSignal(false);
@@ -40,17 +42,27 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
 
     try {
       const files: [Blob, string][] = [];
-      for await (const characterRef of props.characterRefs) {
+      if (props.characterRefs.length === 1) {
+        const characterRef = props.characterRefs[0];
         const frameData = await characterRef.makeCharacterFrames();
         const blob = await getAnimatedCharacterBlob(frameData, exportType);
         const fileNameSuffix = getCharacterFilenameSuffix(
           characterRef.character,
         );
-        files.push([blob, `${fileNameSuffix}${exportExt}`]);
+        downloadBlob(blob, `${fileNameSuffix}${exportExt}`);
+      } else {
+        for await (const characterRef of props.characterRefs) {
+          const frameData = await characterRef.makeCharacterFrames();
+          const blob = await getAnimatedCharacterBlob(frameData, exportType);
+          const fileNameSuffix = getCharacterFilenameSuffix(
+            characterRef.character,
+          );
+          files.push([blob, `${fileNameSuffix}${exportExt}`]);
+        }
+        const zipBlob = await makeBlobsZipBlob(files);
+        const fileName = 'character-action.zip';
+        downloadBlob(zipBlob, fileName);
       }
-      const zipBlob = await makeBlobsZipBlob(files);
-      const fileName = 'character-action.zip';
-      downloadBlob(zipBlob, fileName);
       toaster.success({
         title: '匯出成功',
       });
@@ -64,7 +76,12 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
   }
 
   return (
-    <Button onClick={handleClick} disabled={isExporting()}>
+    <Button
+      size={props.size}
+      variant={props.variant}
+      onClick={handleClick}
+      disabled={isExporting()}
+    >
       匯出動圖
     </Button>
   );

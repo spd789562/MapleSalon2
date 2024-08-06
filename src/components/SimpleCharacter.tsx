@@ -22,6 +22,7 @@ import { Character } from '@/renderer/character/character';
 
 import { makeCharacterHash } from '@/utils/characterHash';
 import { extractCanvas } from '@/utils/extract';
+import { simpleCharacterLoadingQueue } from '@/utils/characterLoadingQueue';
 
 import { CharacterAction } from '@/const/actions';
 import { CharacterExpressions } from '@/const/emotions';
@@ -86,7 +87,10 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
         setUrl('');
         const character = new Character();
         if (app.renderer?.extract) {
-          await character.update(characterData);
+          await simpleCharacterLoadingQueue.add(() =>
+            character.update(characterData),
+          );
+          // await character.update(characterData);
           const offsetBounds = character.getLocalBounds();
           const imageCenter = {
             x: offsetBounds.width / 2,

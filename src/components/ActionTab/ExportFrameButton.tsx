@@ -1,5 +1,5 @@
 import { createSignal } from 'solid-js';
-import { Button } from '@/components/ui/button';
+import { Button, type ButtonProps } from '@/components/ui/button';
 import type { ActionCharacterRef } from './ActionCharacter';
 
 import { toaster } from '@/components/GlobalToast';
@@ -10,6 +10,8 @@ import { nextTick } from '@/utils/eventLoop';
 
 export interface ExportAnimateButtonProps {
   characterRefs: ActionCharacterRef[];
+  size?: ButtonProps['size'];
+  variant?: ButtonProps['variant'];
 }
 export const ExportFrameButton = (props: ExportAnimateButtonProps) => {
   const [isExporting, setIsExporting] = createSignal(false);
@@ -39,9 +41,14 @@ export const ExportFrameButton = (props: ExportAnimateButtonProps) => {
           ...(await getCharacterFrameBlobs(frameData, characterRef.character)),
         );
       }
-      const zipBlob = await makeBlobsZipBlob(files);
-      const fileName = 'character-action-split-frame.zip';
-      downloadBlob(zipBlob, fileName);
+      if (files.length === 1) {
+        const file = files[0];
+        downloadBlob(file[0], file[1]);
+      } else {
+        const zipBlob = await makeBlobsZipBlob(files);
+        const fileName = 'character-action-split-frame.zip';
+        downloadBlob(zipBlob, fileName);
+      }
       toaster.success({
         title: '匯出成功',
       });
@@ -55,7 +62,12 @@ export const ExportFrameButton = (props: ExportAnimateButtonProps) => {
   }
 
   return (
-    <Button title="匯出動圖分鏡" onClick={handleClick}>
+    <Button
+      size={props.size}
+      variant={props.variant}
+      title="匯出動圖分鏡"
+      onClick={handleClick}
+    >
       匯出分鏡
     </Button>
   );

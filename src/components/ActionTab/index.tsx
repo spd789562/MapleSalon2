@@ -12,7 +12,7 @@ import { ActionCard } from './ActionCard';
 import { CharacterAction } from '@/const/actions';
 
 const actions: CharacterAction[] = Object.values(CharacterAction);
-const COLUMN_COUNT = 4;
+const COLUMN_COUNT = 3;
 
 export const ActionTab = () => {
   const [itemGap, setItemGap] = createSignal({ x: 150, y: 300 });
@@ -31,8 +31,8 @@ export const ActionTab = () => {
     const width = appContainer.clientWidth;
     const height = appContainer.clientHeight;
     setItemGap({
-      x: width / COLUMN_COUNT,
-      y: height / Math.ceil(actions.length / COLUMN_COUNT),
+      x: Math.floor(width / COLUMN_COUNT),
+      y: Math.floor(height / Math.ceil(actions.length / COLUMN_COUNT)),
     });
   }
 
@@ -53,7 +53,7 @@ export const ActionTab = () => {
     <VStack>
       <ActionTabTitle characterRefs={characterRefs} />
       <ActionTableContainer>
-        <Grid columns={4}>
+        <Grid columns={COLUMN_COUNT} position="relative" zIndex="1">
           <Index each={actions}>
             {(action, i) => (
               <ActionCard ref={() => characterRefs[i]} action={action()} />
@@ -70,9 +70,9 @@ export const ActionTab = () => {
             action={action()}
             mainApp={app}
             position={{
-              x: (i % 4) * itemGap().x + Math.floor(itemGap().x / 2),
+              x: (i % COLUMN_COUNT) * itemGap().x + Math.floor(itemGap().x / 2),
               y:
-                Math.floor(i / 4) * itemGap().y +
+                Math.floor(i / COLUMN_COUNT) * itemGap().y +
                 Math.floor(itemGap().y / 2) +
                 100,
             }}
