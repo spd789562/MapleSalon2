@@ -6,8 +6,8 @@
   line-height: 24px;
   font-weight: 400;
 
-  color: #0f0f0f;
-  background-color: #f6f6f6;
+  background: var(--colors-bg-canvas);
+  color: var(--colors-fg-default);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -23,10 +23,6 @@
   background-repeat: repeat;
 }
 
-html[data-theme="dark"] {
-  background: var(--colors-bg-canvas);
-  color: var(--colors-fg-default);
-}
 
 @media (prefers-color-scheme: dark) {
   :root {

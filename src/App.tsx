@@ -1,11 +1,8 @@
 import { Show, onMount } from 'solid-js';
 import { useStore } from '@nanostores/solid';
-import { invoke } from '@tauri-apps/api/core';
 
-import { $apiHost, $isInitialized, $wzReady } from '@/store/const';
-import { prepareAndFetchEquipStrings } from '@/store/string';
-import { initialGlobalRenderer } from '@/store/renderer';
-import { initializeSavedCharacter } from './store/characterDrawer';
+import { $wzReady } from '@/store/const';
+import { initApp } from './store/initialize';
 
 import { AppContainer } from './components/AppContainer';
 import { BaseWzSelector } from './components/BaseWzSelector';
@@ -32,31 +29,8 @@ import './App.css';
 function App() {
   const ready = useStore($wzReady);
 
-  async function init() {
-    await initializeSavedCharacter();
-    const { url, is_initialized } = await invoke<{
-      url: string;
-      is_initialized: boolean;
-    }>('get_server_url');
-
-    $apiHost.set(url);
-
-    if (is_initialized) {
-      try {
-        await prepareAndFetchEquipStrings();
-        await initialGlobalRenderer();
-      } catch (e) {
-        console.error('initialGlobalRenderer failed', e);
-      }
-    }
-
-    $isInitialized.set(is_initialized);
-
-    console.info('API host:', url);
-  }
-
-  onMount(() => {
-    init();
+  onMount(async () => {
+    await initApp();
   });
 
   return (
