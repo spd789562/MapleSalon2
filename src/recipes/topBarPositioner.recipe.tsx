@@ -8,7 +8,7 @@ export const topBarPositioner = defineRecipe({
     top: 0,
     left: 0,
     right: 0,
-    w: { base: 'full', md: '50%' },
+    w: 'min-content',
     zIndex: 'toast',
     display: 'flex',
     justifyContent: 'center',

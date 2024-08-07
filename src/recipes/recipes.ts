@@ -8,6 +8,9 @@ export const recipes: Record<string, Partial<RecipeConfig>> = {
   button: {
     jsx: ['Button', /.*Button$/],
   },
+  iconButton: {
+    jsx: ['IconButton', /.*IconButton$/],
+  },
   cssTooltip,
   topBarToggle,
   topBarPositioner,
