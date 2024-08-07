@@ -2,9 +2,10 @@ import type { JSX } from 'solid-js';
 import { Portal } from 'solid-js/web';
 import { useStore } from '@nanostores/solid';
 
-import { $equpimentDrawerOpen } from '@/store/trigger';
+import { $equpimentDrawerOpen, $equpimentDrawerPin } from '@/store/trigger';
 
 import CloseIcon from 'lucide-solid/icons/x';
+import { HStack } from 'styled-system/jsx/hstack';
 import { IconButton } from '@/components/ui/icon-button';
 import {
   Root,
@@ -13,6 +14,7 @@ import {
   Header,
   Body,
 } from '@/components/ui/drawer';
+import { PinIconButton } from '@/components/PinIconButton';
 
 interface EquipDrawerProps {
   header: JSX.Element;
@@ -40,15 +42,12 @@ export const EquipDrawer = (props: EquipDrawerProps) => {
           <Content>
             <Header>
               {props.header}
-              <IconButton
-                variant="ghost"
-                position="absolute"
-                top="3"
-                right="4"
-                onClick={handleClose}
-              >
-                <CloseIcon />
-              </IconButton>
+              <HStack position="absolute" top="1" right="1">
+                <PinIconButton store={$equpimentDrawerPin} variant="ghost" />
+                <IconButton variant="ghost" onClick={handleClose}>
+                  <CloseIcon />
+                </IconButton>
+              </HStack>
             </Header>
             <Body p={2}>{props.body}</Body>
           </Content>

@@ -2,9 +2,13 @@ import type { JSX } from 'solid-js';
 import { Portal } from 'solid-js/web';
 import { useStore } from '@nanostores/solid';
 
-import { $currentEquipmentDrawerOpen } from '@/store/trigger';
+import {
+  $currentEquipmentDrawerOpen,
+  $currentEquipmentDrawerPin,
+} from '@/store/trigger';
 
 import CloseIcon from 'lucide-solid/icons/x';
+import { HStack } from 'styled-system/jsx/hstack';
 import { IconButton } from '@/components/ui/icon-button';
 import {
   Root,
@@ -14,6 +18,7 @@ import {
   Body,
   Footer,
 } from '@/components/ui/drawer';
+import { PinIconButton } from '@/components/PinIconButton';
 
 interface EquipDrawerProps {
   header?: JSX.Element;
@@ -23,8 +28,12 @@ interface EquipDrawerProps {
 }
 export const CurrentEquipDrawer = (props: EquipDrawerProps) => {
   const isOpen = useStore($currentEquipmentDrawerOpen);
+  const isPinned = useStore($currentEquipmentDrawerPin);
 
   function handleClose(_: unknown) {
+    if (isPinned()) {
+      return;
+    }
     $currentEquipmentDrawerOpen.set(false);
   }
 
@@ -32,6 +41,7 @@ export const CurrentEquipDrawer = (props: EquipDrawerProps) => {
     <Root
       open={isOpen()}
       onEscapeKeyDown={handleClose}
+      closeOnEscape={!isPinned()}
       variant={/* @once */ props.variant}
       modal={false}
       closeOnInteractOutside={false}
@@ -48,16 +58,22 @@ export const CurrentEquipDrawer = (props: EquipDrawerProps) => {
           >
             <Header>
               {props.header}
-              <IconButton
-                variant="ghost"
-                position="absolute"
-                top="1"
-                right="1"
-                size="xs"
-                onClick={handleClose}
-              >
-                <CloseIcon />
-              </IconButton>
+
+              <HStack position="absolute" top="1" right="1">
+                <PinIconButton
+                  store={$currentEquipmentDrawerPin}
+                  size="xs"
+                  variant="ghost"
+                />
+                <IconButton
+                  size="xs"
+                  variant="ghost"
+                  onClick={handleClose}
+                  disabled={isPinned()}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </HStack>
             </Header>
             <Body p={2} backgroundColor="bg.subtle">
               {props.body}
