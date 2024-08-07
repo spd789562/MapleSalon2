@@ -5,10 +5,10 @@ import { $wzReady } from '@/store/const';
 import { initApp } from './store/initialize';
 
 import { AppContainer } from './components/AppContainer';
-import { BaseWzSelector } from './components/BaseWzSelector';
 import { GlobalToast } from './components/GlobalToast';
 import { GlobalItemContextMenu } from './components/GlobalItemContextMenu';
 
+import { InitialScreen } from './components/InitialScreen';
 import { CharacterPreview } from './components/CharacterPreview';
 import { ToolTabsRadioGroup } from './components/ToolTabsRadioGroup';
 import { ToolTabPage } from './components/ToolTabPage';
@@ -35,7 +35,9 @@ function App() {
 
   return (
     <ItemContextMenuProvider>
-      <BaseWzSelector />
+      <Show when={!ready()}>
+        <InitialScreen />
+      </Show>
       <Show when={ready()}>
         <AppContainer>
           <CharacterPreview />

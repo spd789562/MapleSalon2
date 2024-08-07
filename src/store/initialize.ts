@@ -44,7 +44,7 @@ export async function initApp() {
 
 export async function initByWzBase(path: string) {
   try {
-    await invoke('init', { path });
+    await initialWzBase(path);
   } catch (e) {
     let message = '未知錯誤';
     if (e instanceof Error) {
