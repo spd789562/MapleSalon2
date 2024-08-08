@@ -102,12 +102,12 @@ void main() {
           if (tohsv.y > 0.1 && v < 0.80) {
             tohsv.y = clamp(tohsv.y + saturation, 0.0, 1.0);
             // it also incress the brightness
-            tohsv.z = clamp(tohsv.z + saturation * 0.1 * v * color.a, 0.0, 1.0);
+            tohsv.z = clamp(tohsv.z + saturation * 0.2 * v * color.a, 0.0, 1.0);
           }
         } else if (saturation < 0.) {
           tohsv.y = clamp(tohsv.y + (tohsv.y * saturation * 0.8), 0.0, 1.0);
           // it also decress the brightness
-          tohsv.z = clamp(tohsv.z + (saturation * 0.15 * s) * color.a, 0.0, 1.0);
+          tohsv.z = clamp(tohsv.z + (saturation * 0.5 * s) * color.a, 0.0, 1.0);
         }
 
         // value
