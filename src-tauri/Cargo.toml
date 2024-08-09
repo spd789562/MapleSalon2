@@ -12,13 +12,15 @@ tauri-build = { version = "2.0.0-beta", features = [] }
 
 [dependencies]
 tauri = { version = "2.0.0-beta", features = [] }
-tauri-plugin-dialog = "2.0.0-beta.7"
+tauri-plugin-dialog = "2.0.0-rc.0"
+tauri-plugin-fs = "2.0.0-rc.0"
+tauri-plugin-shell = "2.0.0-rc.0"
+tauri-plugin-store = "2.0.0-rc.0"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 thiserror = "1.0"
 rayon = "1.9.0"
-tauri-plugin-store = "2.0.0-beta.6"
-wz_reader = { version = "0.0.9", features = ["json"] }
+wz_reader = { version = "0.0.10", features = ["json"] }
 image = { version = "0.25.0", default-features = false, features = ["rayon", "bmp", "webp"] }
 tokio = { version = "1.0", features = ["net", "fs"] }
 futures = { version = "0.3.30" }
