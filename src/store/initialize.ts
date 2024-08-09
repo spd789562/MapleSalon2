@@ -3,11 +3,16 @@ import { atom } from 'nanostores';
 
 import { $apiHost, $isInitialized } from '@/store/const';
 import { initializeSavedCharacter } from '@/store/characterDrawer';
-import { initializeSavedFileSelectHistory } from '@/store/fileSelectHistory';
+import {
+  initializeSavedFileSelectHistory,
+  appendPathToHistory,
+} from '@/store/fileSelectHistory';
 import { prepareAndFetchEquipStrings } from '@/store/string';
 import { initialGlobalRenderer } from '@/store/renderer';
 
 import { toaster } from '@/components/GlobalToast';
+
+export const $isWzLoading = atom(false);
 
 export function initialWzBase(path: string) {
   return invoke<void>('init', { path });
@@ -18,6 +23,7 @@ export function getServerInfo() {
 }
 
 export async function initApp() {
+  $isWzLoading.set(true);
   try {
     await initializeSavedCharacter();
     await initializeSavedFileSelectHistory();
@@ -27,6 +33,7 @@ export async function initApp() {
       description: '無法建立或讀取存檔，請確認應用程式權限並重啟。',
       duration: 20000,
     });
+    $isWzLoading.set(false);
     return;
   }
   /* this should infailable */
@@ -39,10 +46,12 @@ export async function initApp() {
     $isInitialized.set(is_initialized);
   }
 
+  $isWzLoading.set(false);
   console.info('API host:', url);
 }
 
 export async function initByWzBase(path: string) {
+  $isWzLoading.set(true);
   try {
     await initialWzBase(path);
   } catch (e) {
@@ -54,17 +63,22 @@ export async function initByWzBase(path: string) {
       title: '初始化 Base.wz 錯誤',
       description: `錯誤訊息：${message}`,
     });
+    $isWzLoading.set(false);
     return false;
   }
 
   const isSuccess = await initStringAndRenderer();
 
   if (!isSuccess) {
+    $isWzLoading.set(false);
     return false;
   }
 
   $isInitialized.set(true);
 
+  await appendPathToHistory(path);
+
+  $isWzLoading.set(false);
   return true;
 }
 
