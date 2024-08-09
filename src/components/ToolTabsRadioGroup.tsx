@@ -44,10 +44,27 @@ export const ToolTabsRadioGroup = () => {
         value={tab()}
         onValueChange={handleChange}
       >
-        <Grid columns={8} gridRow={1} alignItems="center" gap={2}>
-          <IconButton variant="outline" onClick={handleClear} title="清除篩選">
-            <CloseIcon />
-          </IconButton>
+        <Grid
+          gridTemplateColumns="2.5rem repeat(8, 1fr)"
+          gridRow={1}
+          alignItems="center"
+          gap={2}
+        >
+          <RadioButtonGroup.Context>
+            {(api) => (
+              <IconButton
+                variant="ghost"
+                onClick={() => {
+                  api().clearValue();
+                  handleClear();
+                }}
+                title="清除篩選"
+                disabled={tab() === undefined}
+              >
+                <CloseIcon />
+              </IconButton>
+            )}
+          </RadioButtonGroup.Context>
           <Index each={options}>
             {(option) => (
               <RadioButtonGroup.Item value={option().value} minWidth="0">
