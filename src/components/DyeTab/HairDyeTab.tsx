@@ -43,6 +43,10 @@ export const HairDyeTab = () => {
     setShowFullCharacter(checked);
   }
 
+  function bindScrollRef(ref: HTMLDivElement) {
+    horizontalScroll(ref);
+  }
+
   return (
     <VStack>
       <CardContainer>
@@ -74,7 +78,7 @@ export const HairDyeTab = () => {
             </ExportSeperateButton>
           </HStack>
         </HStack>
-        <TableContainer ref={horizontalScroll}>
+        <TableContainer ref={bindScrollRef}>
           <Show
             when={hairItem()?.id}
             fallback={<EmptyBlock>尚未選擇髮型</EmptyBlock>}
@@ -120,7 +124,7 @@ export const HairDyeTab = () => {
             </ExportSeperateButton>
           </HStack>
         </HStack>
-        <TableContainer ref={horizontalScroll}>
+        <TableContainer ref={bindScrollRef}>
           <Show
             when={hairItem()?.id}
             fallback={<EmptyBlock>尚未選擇髮型</EmptyBlock>}

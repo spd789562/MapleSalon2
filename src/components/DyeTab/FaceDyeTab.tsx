@@ -43,6 +43,11 @@ export const FaceDyeTab = () => {
     setShowFullCharacter(checked);
   }
 
+  function bindScrollRef(ref: HTMLDivElement) {
+    horizontalScroll(ref);
+  }
+
+
   return (
     <VStack>
       <CardContainer>
@@ -74,7 +79,7 @@ export const FaceDyeTab = () => {
             </ExportSeperateButton>
           </HStack>
         </HStack>
-        <TableContainer ref={horizontalScroll}>
+        <TableContainer ref={bindScrollRef}>
           <Show
             when={faceItem()?.id}
             fallback={<EmptyBlock>尚未選擇臉型</EmptyBlock>}
@@ -120,7 +125,7 @@ export const FaceDyeTab = () => {
             </ExportSeperateButton>
           </HStack>
         </HStack>
-        <TableContainer ref={horizontalScroll}>
+        <TableContainer ref={bindScrollRef}>
           <Show
             when={faceItem()?.id}
             fallback={<EmptyBlock>尚未選擇臉型</EmptyBlock>}
