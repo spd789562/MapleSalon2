@@ -295,7 +295,7 @@ export class Character extends Container {
               const zIndex = piece.effectZindex - 10;
               container = new ZmapContainer(effectLayerName, zIndex, this);
               this.addChild(container);
-              this.zmapLayers.set(layer, container);
+              this.zmapLayers.set(effectLayerName, container);
             }
           } else if (!container) {
             container = new ZmapContainer(layer, zmap.indexOf(layer), this);
@@ -575,6 +575,7 @@ export class Character extends Container {
   }
 
   buildLock() {
+    this.locks.clear();
     const orderedItems = CharacterLoader.zmap?.reduce((acc, layer) => {
       for (const item of this.idItems.values()) {
         if (item.islot.includes(layer as PieceIslot)) {

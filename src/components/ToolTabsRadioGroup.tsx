@@ -4,8 +4,10 @@ import { styled } from 'styled-system/jsx/factory';
 
 import { $toolTab } from '@/store/toolTab';
 
+import CloseIcon from 'lucide-solid/icons/x';
 import { Grid } from 'styled-system/jsx/grid';
 import * as RadioButtonGroup from '@/components/ui/radioButtonGroup';
+import { IconButton } from '@/components/ui/icon-button';
 
 import { ToolTab, ToolTabNames } from '@/const/toolTab';
 
@@ -31,6 +33,10 @@ export const ToolTabsRadioGroup = () => {
     $toolTab.set(detail.value as ToolTab);
   }
 
+  function handleClear() {
+    $toolTab.set(undefined);
+  }
+
   return (
     <ToolTabsContainer>
       <RadioButtonGroup.Root
@@ -39,6 +45,9 @@ export const ToolTabsRadioGroup = () => {
         onValueChange={handleChange}
       >
         <Grid columns={8} gridRow={1} alignItems="center" gap={2}>
+          <IconButton variant="outline" onClick={handleClear} title="清除篩選">
+            <CloseIcon />
+          </IconButton>
           <Index each={options}>
             {(option) => (
               <RadioButtonGroup.Item value={option().value} minWidth="0">

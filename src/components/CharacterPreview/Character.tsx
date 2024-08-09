@@ -82,6 +82,7 @@ export const CharacterView = (props: CharacterViewProps) => {
 
   onCleanup(() => {
     ch.reset();
+    app.destroy();
   });
 
   createEffect(() => {

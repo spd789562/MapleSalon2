@@ -13,6 +13,7 @@ import {
 import { CharacterLoader } from './loader';
 import { CharacterAnimatablePart } from './characterAnimatablePart';
 
+import { CharacterEarType } from '@/const/ears';
 import { CharacterAction } from '@/const/actions';
 import { ExpressionsHasEye } from '@/const/emotions';
 import { defaultAncher, handMoveDefaultAnchers } from './const/ancher';
@@ -189,8 +190,16 @@ export abstract class CategorizedItem<Name extends string> {
 
         /* if pieces contains ear, only use character's */
         if (pieceName.match(/ear/i)) {
-          if (this.mainItem.character.earType !== pieceName) {
-            continue;
+          const lowerCasePieceName = pieceName.toLowerCase();
+          const lowerCaseEarType =
+            this.mainItem.character.earType.toLowerCase();
+          if (lowerCaseEarType !== lowerCasePieceName) {
+            if (lowerCaseEarType !== CharacterEarType.HumanEar.toLowerCase()) {
+              continue;
+            }
+            if (lowerCasePieceName !== CharacterEarType.Ear.toLowerCase()) {
+              continue;
+            }
           }
         }
 
