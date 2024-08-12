@@ -31,7 +31,7 @@ export const InitialScreen = () => {
 
 const InitialScreenContainer = styled(VStack, {
   base: {
-    p: 2,
+    p: 4,
     mt: 8,
     mx: 'auto',
     width: '100%',

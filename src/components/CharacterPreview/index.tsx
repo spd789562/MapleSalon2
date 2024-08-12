@@ -8,6 +8,7 @@ import { ExpressionSelect } from './ExpressionSelect';
 import { ActionSelect } from './ActionSelect';
 import { AnimatingSwitch } from './AnimatingSwitch';
 import { CharacterScene } from './CharacterScene';
+import { ResetButton } from './ResetButton';
 import { SaveButton } from './SaveButton';
 
 export const CharacterPreview = () => {
@@ -26,9 +27,10 @@ export const CharacterPreview = () => {
       </HStack>
       <CharacterScene />
       <HStack mt="2">
-        <Box marginLeft="auto">
+        <HStack marginLeft="auto">
+          <ResetButton />
           <SaveButton />
-        </Box>
+        </HStack>
       </HStack>
     </CharacterPreviewCard>
   );

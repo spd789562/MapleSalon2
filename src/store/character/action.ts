@@ -59,6 +59,9 @@ export function applyCharacterChanges() {
   $currentCharacterItems.set(deepCloneCharacterItems($totalItems.get()));
   $currentItemChanges.set({});
 }
+export function resetCharacterChanges() {
+  $currentItemChanges.set({});
+}
 
 export function updateChangesSkin(item: {
   id: number;

@@ -1,5 +1,6 @@
 import { createSignal } from 'solid-js';
 
+import { Box } from 'styled-system/jsx/box';
 import { saveCurrentCharacter } from '@/store/characterDrawer';
 import { applyCharacterChanges } from '@/store/character/action';
 
@@ -35,7 +36,7 @@ export const SaveButton = () => {
   }
 
   return (
-    <>
+    <Box>
       <Button
         w="24"
         onClick={handleSave}
@@ -53,6 +54,6 @@ export const SaveButton = () => {
       >
         <UserRoundPlusIcon />
       </IconButton>
-    </>
+    </Box>
   );
 };

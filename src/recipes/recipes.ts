@@ -7,9 +7,11 @@ import { topBarPositioner } from './topBarPositioner.recipe';
 export const recipes: Record<string, Partial<RecipeConfig>> = {
   button: {
     jsx: ['Button', /.*Button$/],
+    staticCss: [{ variant: ['*'] }],
   },
   iconButton: {
     jsx: ['IconButton', /.*IconButton$/],
+    staticCss: [{ variant: ['*'] }],
   },
   cssTooltip,
   topBarToggle,
