@@ -190,14 +190,20 @@ export abstract class CategorizedItem<Name extends string> {
 
         /* if pieces contains ear, only use character's */
         if (pieceName.match(/ear/i)) {
-          const lowerCasePieceName = pieceName.toLowerCase();
-          const lowerCaseEarType =
+          const lowerCaseEarType = pieceName.toLowerCase();
+          const lowerCaseCharacterEarType =
             this.mainItem.character.earType.toLowerCase();
-          if (lowerCaseEarType !== lowerCasePieceName) {
-            if (lowerCaseEarType !== CharacterEarType.HumanEar.toLowerCase()) {
+          if (lowerCaseCharacterEarType !== lowerCaseEarType) {
+            /* if character's ear is humanEar, but it not exist in wzData, then use ear instead */
+            const isUseHumanEar =
+              lowerCaseCharacterEarType ===
+              CharacterEarType.HumanEar.toLowerCase();
+            const hasHumanEar = !!restOfWzData[CharacterEarType.HumanEar];
+            if (isUseHumanEar && hasHumanEar) {
               continue;
             }
-            if (lowerCasePieceName !== CharacterEarType.Ear.toLowerCase()) {
+            /* use ear if interate to it */
+            if (lowerCaseEarType !== CharacterEarType.Ear.toLowerCase()) {
               continue;
             }
           }
