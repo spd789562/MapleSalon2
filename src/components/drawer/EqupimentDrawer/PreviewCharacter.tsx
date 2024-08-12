@@ -55,7 +55,14 @@ export const PreviewCharacter = (props: PreviewCharacterProps) => {
 
   return (
     <CharacterContainer gender={gender()}>
-      <SimpleCharacter title={props.name} items={subCategory()} />
+      <SimpleCharacter
+        title={props.name}
+        items={subCategory()}
+        itemContext={{
+          id: props.id,
+          name: props.name,
+        }}
+      />
     </CharacterContainer>
   );
 };

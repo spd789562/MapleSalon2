@@ -15,10 +15,16 @@ import {
 } from '@/store/renderer';
 import type { CharacterItems, CharacterInfo } from '@/store/character/store';
 import { getUpdateItems } from '@/store/character/utils';
+import {
+  setItemContextMenuTargetInfo,
+  type ItemContextMenuTargetInfo,
+} from '@/store/itemContextMenu';
 
 import { Skeleton } from './ui/skeleton';
 
 import { Character } from '@/renderer/character/character';
+
+import { useItemContextTrigger } from '@/context/itemContextMenu';
 
 import { makeCharacterHash } from '@/utils/characterHash';
 import { extractCanvas } from '@/utils/extract';
@@ -39,6 +45,7 @@ export interface SimpleCharacterProps extends Partial<CharacterInfo> {
   useOffset?: boolean;
   /** ref to image */
   ref?: (element: HTMLImageElement) => void;
+  itemContext?: Omit<ItemContextMenuTargetInfo, 'icon'>;
 }
 export const SimpleCharacter = (props: SimpleCharacterProps) => {
   const isInit = useStore($isGlobalRendererInitialized);
@@ -136,6 +143,22 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
     }
   });
 
+  const contextTriggerProps = useItemContextTrigger();
+
+  function handleContextMenu(event: MouseEvent) {
+    if (props.itemContext && url()) {
+      setItemContextMenuTargetInfo({
+        id: props.itemContext.id,
+        name: props.itemContext.name || props.itemContext.id.toString(),
+        icon: url(),
+      });
+      const cb = contextTriggerProps.onContextMenu as unknown as (
+        event: MouseEvent,
+      ) => void;
+      cb?.(event);
+    }
+  }
+
   return (
     <Show when={url()} fallback={<Skeleton width="3.5rem" height="5rem" />}>
       <img
@@ -145,6 +168,7 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
           ...maxWidthStyle,
           transform: `translate(${offset()[0]}px, ${offset()[1]}px)`,
         }}
+        onContextMenu={handleContextMenu}
         ref={props.ref}
       />
     </Show>
