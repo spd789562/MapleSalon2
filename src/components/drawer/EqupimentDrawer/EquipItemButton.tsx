@@ -1,4 +1,5 @@
 import { Switch, Match } from 'solid-js';
+import { styled } from 'styled-system/jsx/factory';
 
 import type { EquipItem } from '@/store/string';
 import { selectNewItem } from '@/store/character/action';
@@ -23,9 +24,10 @@ export const EquipItemButton = (props: EquipItemButtonProps) => {
   }
 
   return (
-    <button type="button" onClick={handleClick}>
+    <EquipItemButtonContainer p="1" type="button" onClick={handleClick}>
       <CssTooltip
-        p={1}
+        width="full"
+        height="full"
         placement={
           props.index === 0
             ? 'right'
@@ -44,6 +46,13 @@ export const EquipItemButton = (props: EquipItemButtonProps) => {
           </Match>
         </Switch>
       </CssTooltip>
-    </button>
+    </EquipItemButtonContainer>
   );
 };
+
+const EquipItemButtonContainer = styled('button', {
+  base: {
+    width: 'full',
+    height: 'full',
+  },
+});

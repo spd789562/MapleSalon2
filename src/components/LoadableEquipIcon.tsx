@@ -1,4 +1,5 @@
 import { createSignal, createMemo, Show } from 'solid-js';
+import { styled } from 'styled-system/jsx/factory';
 
 import { setItemContextMenuTargetInfo } from '@/store/itemContextMenu';
 
@@ -8,7 +9,7 @@ import { Flex } from 'styled-system/jsx/flex';
 
 import { useItemContextTrigger } from '@/context/itemContextMenu';
 
-import { getIconPath } from '@/utils/itemId';
+import { getIconPath, getGender } from '@/utils/itemId';
 
 export interface LoadableEquipIconProps {
   id: number;
@@ -30,6 +31,7 @@ export const LoadableEquipIcon = (props: LoadableEquipIconProps) => {
   }
 
   const iconPath = createMemo(() => getIconPath(props.id));
+  const gender = createMemo(() => getGender(props.id));
 
   const contextTriggerProps = useItemContextTrigger();
 
@@ -46,14 +48,14 @@ export const LoadableEquipIcon = (props: LoadableEquipIconProps) => {
   }
 
   return (
-    <Skeleton isLoaded={isLoaded()}>
-      <Flex
-        width={/* @once */ props.width || '8'}
-        height={/* @once */ props.height || '8'}
-        justify="center"
-        align="center"
-        color="fg.muted"
-      >
+    <Skeleton
+      height="full"
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      isLoaded={isLoaded()}
+    >
+      <IconContainer gender={gender()}>
         <Show when={!isError()} fallback={<CircleHelpIcon />}>
           <img
             {...contextTriggerProps}
@@ -65,7 +67,32 @@ export const LoadableEquipIcon = (props: LoadableEquipIconProps) => {
             style={{ 'max-height': '100%' }}
           />
         </Show>
-      </Flex>
+      </IconContainer>
     </Skeleton>
   );
 };
+
+const IconContainer = styled(Flex, {
+  base: {
+    p: '1',
+    width: '9',
+    height: '9',
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: 'fg.muted',
+    borderRadius: 'md',
+  },
+  variants: {
+    gender: {
+      0: {
+        backgroundColor: 'iris.a5',
+      },
+      1: {
+        backgroundColor: 'tomato.a5',
+      },
+      2: {
+        backgroundColor: 'transparent',
+      },
+    },
+  },
+});
