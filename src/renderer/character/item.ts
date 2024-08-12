@@ -205,7 +205,11 @@ export class CharacterItem implements RenderItemInfo {
 
     if (this.isUseExpressionItem) {
       this.loadFace(this.wz);
-    } else if (this.isWeapon) {
+      /* normal weapon not include extra int folder, will just tread like normal item */
+    } else if (
+      this.isWeapon &&
+      !(CharacterAction.Alert in this.wz && CharacterAction.Jump in this.wz)
+    ) {
       this.loadWeapon(this.wz);
     } else {
       this.loadAction(this.wz);
