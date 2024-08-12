@@ -90,7 +90,7 @@ export function isCashWeaponId(id: number): boolean {
 }
 
 export function getFaceOrHairGender(id: number): Gender {
-  const tag = (id / 1000) % 10;
+  const tag = Math.floor(id / 1000) % 10;
   switch (tag) {
     case 0:
     case 3:
@@ -111,7 +111,7 @@ export function getFaceOrHairGender(id: number): Gender {
 
 export function getEquipGender(id: number): Gender {
   /* use forth number in id to determin gender, like 105`1`028 is 1 */
-  const tag = (id / 1000) % 10;
+  const tag = Math.floor(id / 1000) % 10;
 
   /* currently male and female only use xxx1xxx and xxx2xxx, it may change while those item too many */
   switch (tag) {
@@ -128,7 +128,8 @@ export function getGender(id: number): Gender {
   if (id < 100000) {
     return getFaceOrHairGender(id);
   }
-  if (id < 1000000) {
+  /* 104xxxx ~ 106xxxx is overall, coat, and pants, only those has gender restriction */
+  if (id > 1040000 && id < 1070000) {
     return getEquipGender(id);
   }
   return Gender.Share;
