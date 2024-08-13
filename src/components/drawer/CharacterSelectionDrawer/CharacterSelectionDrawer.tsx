@@ -34,7 +34,7 @@ export const CharacterSelectionDrawer = (
           width={{ base: 'full', md: '70%' }}
           maxWidth="full"
           position="absolute"
-          zIndex="2000"
+          zIndex="topDrawer"
         >
           <Content borderBottomRadius="md">
             <Body p={2}>{props.body}</Body>

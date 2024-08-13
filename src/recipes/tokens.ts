@@ -3,6 +3,44 @@ import { animations } from './animations';
 
 export const tokens: Tokens = {
   animations,
+  zIndex: {
+    /* 
+      park-ui default
+        hide:  -1,
+        base:  0,
+        docked: 10,
+        dropdown: 1000,
+        sticky: 1100,
+        banner: 1200,
+        overlay: 1300,
+        modal:  1400,
+        popover: 1500,
+        skipLink: 1600,
+        toast:  1700,
+        tooltip: 1800,
+    */
+    contextMenu: {
+      value: 1900,
+    },
+    topDrawer: {
+      value: 2000,
+    },
+    topDrawerContextMenu: {
+      value: 2100,
+    },
+    settingOverlay: {
+      value: 2200,
+    },
+    settingModal: {
+      value: 2300,
+    },
+    confirmOverlay: {
+      value: 2400,
+    },
+    confirmModal: {
+      value: 2500,
+    },
+  },
   assets: {
     henesysBackground: {
       type: 'string',

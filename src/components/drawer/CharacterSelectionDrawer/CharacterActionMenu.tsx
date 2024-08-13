@@ -35,7 +35,7 @@ export const CharacterActionMenu = (props: CharacterActionMenuProps) => {
     >
       <Menu.Trigger>{localProps.children}</Menu.Trigger>
       <Portal>
-        <Menu.Positioner zIndex="2100 !important">
+        <Menu.Positioner zIndex="{zIndex.topDrawerContextMenu} !important">
           <Menu.Content onKeyDown={handleKeyDown}>
             <Menu.ItemGroup>
               <Menu.ItemGroupLabel>{localProps.name}</Menu.ItemGroupLabel>

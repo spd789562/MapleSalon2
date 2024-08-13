@@ -18,7 +18,7 @@ export const GlobalItemContextMenu = () => {
   return (
     <Menu.RootProvider value={menu} size="xs">
       <Portal>
-        <Menu.Positioner zIndex="1900 !important">
+        <Menu.Positioner zIndex="{zIndex.tooltip} !important">
           <Menu.Content>
             <Menu.ItemGroup>
               <Show when={itemInfo()?.id}>

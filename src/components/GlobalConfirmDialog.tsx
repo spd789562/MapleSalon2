@@ -73,8 +73,8 @@ export const GlobalConfirmDialog = () => {
       closeOnInteractOutside={dialogData()?.closable}
     >
       <Portal>
-        <Dialog.Backdrop zIndex="2400" />
-        <Dialog.Positioner zIndex="2500">
+        <Dialog.Backdrop zIndex="confirmOverlay" />
+        <Dialog.Positioner zIndex="confirmModal">
           <Dialog.Content>
             <Show when={dialogData()}>
               {(data) => (
