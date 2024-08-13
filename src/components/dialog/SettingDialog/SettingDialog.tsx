@@ -29,7 +29,7 @@ export const SettingDialog = (props: SettingDialogProps) => {
       <Portal>
         <Dialog.Backdrop zIndex="settingOverlay" />
         <Dialog.Positioner zIndex="settingModal">
-          <Dialog.Content>
+          <Dialog.Content minWidth="md">
             {props.children}
             <Dialog.CloseTrigger
               asChild={(closeTriggerProps) => (
