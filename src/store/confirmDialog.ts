@@ -1,4 +1,8 @@
 import { atom } from 'nanostores';
+
+import { $confirmDialogOpen } from './trigger';
+export { $confirmDialogOpen };
+
 import type { ButtonProps } from '@/components/ui/button';
 
 export enum DialogType {
@@ -33,11 +37,11 @@ export interface AlertDialogData extends CommonDialogData {
 export type DialogData = ConfirmDialogData | AlertDialogData;
 
 export const $confirmDialogData = atom<DialogData | null>(null);
-export const $isConfirmDialogOpen = atom<boolean>(false);
+
 
 export function openDialog(data: DialogData) {
   $confirmDialogData.set(data);
-  $isConfirmDialogOpen.set(true);
+  $confirmDialogOpen.set(true);
 }
 
 export function resetDialogData() {

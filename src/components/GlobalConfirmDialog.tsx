@@ -5,7 +5,7 @@ import { styled } from 'styled-system/jsx/factory';
 import { usePureStore } from '@/store';
 import {
   $confirmDialogData,
-  $isConfirmDialogOpen,
+  $confirmDialogOpen,
   resetDialogData,
   DialogType,
   type ButtonConfig,
@@ -25,11 +25,11 @@ export const GlobalConfirmDialog = () => {
   const [loadTarget, setLoadTarget] = createSignal<'confirm' | 'cancel' | null>(
     null,
   );
-  const isDialogOpen = usePureStore($isConfirmDialogOpen);
+  const isDialogOpen = usePureStore($confirmDialogOpen);
   const dialogData = usePureStore($confirmDialogData);
 
   function handleClose() {
-    $isConfirmDialogOpen.set(false);
+    $confirmDialogOpen.set(false);
   }
   function handleExitComplete() {
     resetDialogData();
