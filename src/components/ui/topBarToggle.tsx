@@ -11,9 +11,9 @@ import {
 import type { JsxStyleProps } from 'styled-system/types';
 
 export interface TopBarToggleProps
-  extends Assign<JsxStyleProps, HTMLArkProps<'div'>>,
+  extends Assign<JsxStyleProps, HTMLArkProps<'button'>>,
     TopBarToggleVariantProps {}
-export const TopBarToggle = styled(ark.div, topBarToggle);
+export const TopBarToggle = styled(ark.button, topBarToggle);
 
 export interface TopBarPositionerProps
   extends Assign<JsxStyleProps, HTMLArkProps<'div'>>,

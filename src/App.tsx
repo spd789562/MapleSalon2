@@ -21,6 +21,8 @@ import { EquipOpenButton } from './components/drawer/EqupimentDrawer/EquipOpenBu
 import { CurrentEquipOpenButton } from './components/drawer/CurrentEquipmentDrawer/CurrentEquipOpenButton';
 import { CharacterSelectionDrawerOpenButton } from './components/drawer/CharacterSelectionDrawer/CharacterSelectionDrawerOpenButton';
 
+import { SettingDialog } from './components/dialog/SettingDialog';
+
 import { ItemContextMenuProvider } from './context/itemContextMenu';
 
 import './store/effects';
@@ -51,6 +53,7 @@ function App() {
         <EqupimentDrawer />
         <CharacterSelectionDrawer />
         <CharacterSelectionDrawerOpenButton />
+        <SettingDialog />
       </Show>
       <GlobalToast />
       <GlobalConfirmDialog />
