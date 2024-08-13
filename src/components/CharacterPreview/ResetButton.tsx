@@ -1,6 +1,6 @@
 import { resetCharacterChanges } from '@/store/character/action';
 
-import { openDialog, DialogType } from '@/store/dialog';
+import { openDialog, DialogType } from '@/store/confirmDialog';
 
 import { Button } from '@/components/ui/button';
 

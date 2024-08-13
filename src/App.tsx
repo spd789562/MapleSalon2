@@ -6,7 +6,7 @@ import { initApp } from './store/initialize';
 
 import { AppContainer } from './components/AppContainer';
 import { GlobalToast } from './components/GlobalToast';
-import { GlobalDialog } from './components/GlobalDialog';
+import { GlobalConfirmDialog } from './components/GlobalConfirmDialog';
 import { GlobalItemContextMenu } from './components/GlobalItemContextMenu';
 
 import { InitialScreen } from './components/InitialScreen';
@@ -53,7 +53,7 @@ function App() {
         <CharacterSelectionDrawerOpenButton />
       </Show>
       <GlobalToast />
-      <GlobalDialog />
+      <GlobalConfirmDialog />
       <GlobalItemContextMenu />
     </ItemContextMenuProvider>
   );

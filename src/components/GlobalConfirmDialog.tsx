@@ -4,13 +4,13 @@ import { styled } from 'styled-system/jsx/factory';
 
 import { usePureStore } from '@/store';
 import {
-  $dialogData,
-  $isDialogOpen,
+  $confirmDialogData,
+  $isConfirmDialogOpen,
   resetDialogData,
   DialogType,
   type ButtonConfig,
   type ConfirmDialogData,
-} from '@/store/dialog';
+} from '@/store/confirmDialog';
 
 import CloseIcon from 'lucide-solid/icons/x';
 import LoaderCircle from 'lucide-solid/icons/loader-circle';
@@ -20,16 +20,16 @@ import * as Dialog from '@/components/ui/dialog';
 import { IconButton } from '@/components/ui/icon-button';
 import { Button } from '@/components/ui/button';
 
-export const GlobalDialog = () => {
+export const GlobalConfirmDialog = () => {
   const [isLoading, setIsLoading] = createSignal(false);
   const [loadTarget, setLoadTarget] = createSignal<'confirm' | 'cancel' | null>(
     null,
   );
-  const isDialogOpen = usePureStore($isDialogOpen);
-  const dialogData = usePureStore($dialogData);
+  const isDialogOpen = usePureStore($isConfirmDialogOpen);
+  const dialogData = usePureStore($confirmDialogData);
 
   function handleClose() {
-    $isDialogOpen.set(false);
+    $isConfirmDialogOpen.set(false);
   }
   function handleExitComplete() {
     resetDialogData();

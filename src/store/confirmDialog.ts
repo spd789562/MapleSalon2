@@ -32,14 +32,14 @@ export interface AlertDialogData extends CommonDialogData {
 
 export type DialogData = ConfirmDialogData | AlertDialogData;
 
-export const $dialogData = atom<DialogData | null>(null);
-export const $isDialogOpen = atom<boolean>(false);
+export const $confirmDialogData = atom<DialogData | null>(null);
+export const $isConfirmDialogOpen = atom<boolean>(false);
 
 export function openDialog(data: DialogData) {
-  $dialogData.set(data);
-  $isDialogOpen.set(true);
+  $confirmDialogData.set(data);
+  $isConfirmDialogOpen.set(true);
 }
 
 export function resetDialogData() {
-  $dialogData.set(null);
+  $confirmDialogData.set(null);
 }
