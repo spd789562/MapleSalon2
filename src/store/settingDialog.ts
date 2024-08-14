@@ -8,7 +8,12 @@ import {
   type Resolution,
 } from '@/const/setting/window';
 
-import { Theme, isValidTheme } from '@/const/setting/theme';
+import { Theme, isValidTheme, syncTheme } from '@/const/setting/theme';
+import {
+  ColorMode,
+  isValidColorMode,
+  syncColorMode,
+} from '@/const/setting/colorMode';
 
 const SAVE_FILENAME = 'setting.bin';
 
@@ -21,12 +26,14 @@ export interface AppSetting extends Record<string, unknown> {
   windowResizable: boolean;
   windowResolution: Resolution;
   theme: Theme;
+  colorMode: ColorMode;
 }
 
 const DEFAULT_SETTING: AppSetting = {
   windowResizable: true,
   windowResolution: WindowResolutions[0].name,
   theme: Theme.Iris,
+  colorMode: ColorMode.System,
 };
 
 export const $appSetting = deepMap<AppSetting>(DEFAULT_SETTING);
@@ -41,6 +48,7 @@ export const $windowResolution = computed(
   (setting) => setting.windowResolution,
 );
 export const $theme = computed($appSetting, (setting) => setting.theme);
+export const $colorMode = computed($appSetting, (setting) => setting.colorMode);
 
 /* action */
 export async function initializeSavedSetting() {
@@ -52,7 +60,12 @@ export async function initializeSavedSetting() {
         $appSetting.setKey('windowResolution', setting.windowResolution);
       }
       if (isValidTheme(setting.theme)) {
+        syncTheme(setting.theme);
         $appSetting.setKey('theme', setting.theme);
+      }
+      if (isValidColorMode(setting.colorMode)) {
+        syncColorMode(setting.colorMode);
+        $appSetting.setKey('colorMode', setting.colorMode);
       }
     }
   } catch (e) {
@@ -74,4 +87,7 @@ export function setWindowResolution(value: Resolution) {
 }
 export function setTheme(value: Theme) {
   $appSetting.setKey('theme', value);
+}
+export function setColorMode(value: ColorMode) {
+  $appSetting.setKey('colorMode', value);
 }

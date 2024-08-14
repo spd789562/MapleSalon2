@@ -1,5 +1,5 @@
 import { type JSX, Index, splitProps } from 'solid-js';
-import { type Assign, ToggleGroup } from '@ark-ui/solid';
+import { type Assign, ToggleGroup, ToggleGroupContext } from '@ark-ui/solid';
 import {
   type ToggleGroupVariantProps,
   toggleGroup,
@@ -28,6 +28,7 @@ export {
 } from '@ark-ui/solid';
 
 export interface SimpleToggleGroupProps<T extends string> extends RootProps {
+  cancelable?: boolean;
   options: {
     label: JSX.Element;
     value: T;
@@ -37,17 +38,34 @@ export interface SimpleToggleGroupProps<T extends string> extends RootProps {
 export const SimpleToggleGroup = <T extends string>(
   props: SimpleToggleGroupProps<T>,
 ) => {
-  const [localProps, toggleGroupProps] = splitProps(props, ['options']);
+  const [localProps, toggleGroupProps] = splitProps(props, [
+    'options',
+    'cancelable',
+  ]);
+
   return (
     <Root {...toggleGroupProps}>
       <HStack>
-        <Index each={localProps.options}>
-          {(item) => (
-            <Item value={item().value} disabled={item().disabled} px={2}>
-              {item().label}
-            </Item>
+        <ToggleGroupContext>
+          {(api) => (
+            <Index each={localProps.options}>
+              {(item) => (
+                <Item
+                  value={item().value}
+                  disabled={item().disabled}
+                  userSelect={
+                    !localProps.cancelable && api().value?.[0] === item().value
+                      ? 'none'
+                      : ''
+                  }
+                  px={2}
+                >
+                  {item().label}
+                </Item>
+              )}
+            </Index>
           )}
-        </Index>
+        </ToggleGroupContext>
       </HStack>
     </Root>
   );

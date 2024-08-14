@@ -58,6 +58,7 @@ export const ResolutionSelect = () => {
           label: resolution.name,
         }))}
         onValueChange={handleChange}
+        positioning={{ sameWidth: true }}
       />
       <Button onClick={handleSave} disabled={!isDifferentResolution()}>
         套用
