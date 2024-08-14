@@ -3,6 +3,8 @@ import { Application } from 'pixi.js';
 
 import { CharacterLoader } from '@/renderer/character/loader';
 
+export const $preferRenderer = atom<'webgl' | 'webgpu'>('webgpu');
+
 export const $globalRenderer = atom<Application>(new Application());
 
 export const $isGlobalRendererInitialized = atom<boolean>(false);
@@ -17,6 +19,7 @@ export async function initialGlobalRenderer() {
     height: 300,
     backgroundAlpha: 0,
     useBackBuffer: true,
+    preference: $preferRenderer.get(),
   });
   $isGlobalRendererInitialized.set(true);
 }

@@ -1,6 +1,8 @@
 import { onMount, onCleanup, createEffect, createSignal } from 'solid-js';
 import type { ReadableAtom } from 'nanostores';
 
+
+import { $preferRenderer } from '@/store/renderer';
 import type { CharacterData } from '@/store/character/store';
 import {
   MAX_ZOOM,
@@ -42,6 +44,7 @@ export const CharacterView = (props: CharacterViewProps) => {
       background: 0x000000,
       backgroundAlpha: 0,
       antialias: true,
+      preference: $preferRenderer.get(),
     });
     viewport = new ZoomContainer(app, {
       width: 300,

@@ -3,6 +3,8 @@ import { styled } from 'styled-system/jsx/factory';
 
 import { Application } from 'pixi.js';
 
+import { $preferRenderer } from '@/store/renderer';
+
 import { VStack } from 'styled-system/jsx/vstack';
 import { Grid } from 'styled-system/jsx/grid';
 import { ActionTabTitle } from './ActionTabTitle';
@@ -40,12 +42,14 @@ export const ActionTab = () => {
     await app.init({
       resizeTo: appContainer,
       backgroundAlpha: 0,
+      preference: $preferRenderer.get(),
     });
     appContainer.appendChild(app.canvas);
     canvasResizeObserver.observe(appContainer);
   });
 
   onCleanup(() => {
+    canvasResizeObserver.disconnect();
     app.destroy();
   });
 

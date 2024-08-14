@@ -2,8 +2,9 @@ import { onMount, onCleanup, createEffect, createSignal, Show } from 'solid-js';
 
 import { css } from 'styled-system/css';
 
-import { $previewCharacter } from '@/store/character/selector';
 import { usePureStore } from '@/store';
+import { $preferRenderer } from '@/store/renderer';
+import { $previewCharacter } from '@/store/character/selector';
 
 import { Application, Container } from 'pixi.js';
 import { Character } from '@/renderer/character/character';
@@ -23,6 +24,7 @@ export const CharacterAvatar = () => {
 
   async function initScene() {
     await app.init({
+      preference: $preferRenderer.get(),
       width: 300,
       height: 260,
       background: 0x000000,
