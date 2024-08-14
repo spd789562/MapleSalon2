@@ -16,7 +16,23 @@ export default defineConfig({
       accentColor: 'iris',
       grayColor: 'neutral',
       borderRadius: 'sm',
-      additionalColors: ['tomato', 'grass', 'iris'],
+      additionalColors: [
+        /* accent */
+        'tomato',
+        'crimson',
+        'orange',
+        'amber',
+        'grass',
+        'cyan',
+        'sky',
+        'iris',
+        'plum',
+        /* grays */
+        'mauve',
+        'olive',
+        'sand',
+        'slate',
+      ],
     }),
   ],
 

@@ -8,6 +8,8 @@ import {
   type Resolution,
 } from '@/const/setting/window';
 
+import { Theme, isValidTheme } from '@/const/setting/theme';
+
 const SAVE_FILENAME = 'setting.bin';
 
 const SAVE_KEY = 'setting';
@@ -18,11 +20,13 @@ export const fileStore = new Store(SAVE_FILENAME);
 export interface AppSetting extends Record<string, unknown> {
   windowResizable: boolean;
   windowResolution: Resolution;
+  theme: Theme;
 }
 
 const DEFAULT_SETTING: AppSetting = {
   windowResizable: true,
   windowResolution: WindowResolutions[0].name,
+  theme: Theme.Iris,
 };
 
 export const $appSetting = deepMap<AppSetting>(DEFAULT_SETTING);
@@ -36,6 +40,7 @@ export const $windowResolution = computed(
   $appSetting,
   (setting) => setting.windowResolution,
 );
+export const $theme = computed($appSetting, (setting) => setting.theme);
 
 /* action */
 export async function initializeSavedSetting() {
@@ -45,6 +50,9 @@ export async function initializeSavedSetting() {
       $appSetting.setKey('windowResizable', !!setting.windowResizable);
       if (isValidResolution(setting.windowResolution)) {
         $appSetting.setKey('windowResolution', setting.windowResolution);
+      }
+      if (isValidTheme(setting.theme)) {
+        $appSetting.setKey('theme', setting.theme);
       }
     }
   } catch (e) {
@@ -63,4 +71,7 @@ export function setWindowResizable(value: boolean) {
 }
 export function setWindowResolution(value: Resolution) {
   $appSetting.setKey('windowResolution', value);
+}
+export function setTheme(value: Theme) {
+  $appSetting.setKey('theme', value);
 }
