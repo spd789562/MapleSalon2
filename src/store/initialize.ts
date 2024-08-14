@@ -7,6 +7,7 @@ import {
   initializeSavedFileSelectHistory,
   appendPathToHistory,
 } from '@/store/fileSelectHistory';
+import { initializeSavedSetting } from '@/store/settingDialog';
 import { prepareAndFetchEquipStrings } from '@/store/string';
 import { initialGlobalRenderer } from '@/store/renderer';
 
@@ -27,6 +28,7 @@ export async function initApp() {
   try {
     await initializeSavedCharacter();
     await initializeSavedFileSelectHistory();
+    await initializeSavedSetting();
   } catch (_) {
     toaster.error({
       title: '初始化錯誤',

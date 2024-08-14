@@ -1,5 +1,7 @@
 import { createSignal } from 'solid-js';
 import { getCurrentWindow, LogicalSize } from '@tauri-apps/api/window';
+import { saveWindowState, StateFlags } from '@tauri-apps/plugin-window-state';
+
 import { useStore } from '@nanostores/solid';
 
 import { $windowResolution, setWindowResolution } from '@/store/settingDialog';
@@ -41,6 +43,7 @@ export const ResolutionSelect = () => {
     if (local && isDifferentResolution()) {
       const currentWindow = getCurrentWindow();
       await currentWindow.setSize(new LogicalSize(local.width, local.height));
+      await saveWindowState(StateFlags.SIZE);
       setWindowResolution(local.name);
     }
   }
