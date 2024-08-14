@@ -33,6 +33,7 @@ export interface SimpleToggleGroupProps<T extends string> extends RootProps {
     label: JSX.Element;
     value: T;
     disabled?: boolean;
+    title?: string;
   }[];
 }
 export const SimpleToggleGroup = <T extends string>(
@@ -58,6 +59,7 @@ export const SimpleToggleGroup = <T extends string>(
                       ? 'none'
                       : ''
                   }
+                  title={item().title}
                   px={2}
                 >
                   {item().label}

@@ -11,20 +11,27 @@ import {
   type ValueChangeDetails,
 } from '@/components/ui/toggleGroup';
 
-import { ColorMode, syncColorMode } from '@/const/setting/colorMode';
+import {
+  ColorMode,
+  ColorModeNames,
+  syncColorMode,
+} from '@/const/setting/colorMode';
 
 const options = [
   {
     label: (() => <SunIcon size={16} />) as unknown as JSX.Element,
     value: ColorMode.Light,
+    title: ColorModeNames[ColorMode.Light],
   },
   {
     label: (() => <MoonIcon size={16} />) as unknown as JSX.Element,
     value: ColorMode.Dark,
+    title: ColorModeNames[ColorMode.Dark],
   },
   {
     label: (() => <SettingsIcon size={16} />) as unknown as JSX.Element,
     value: ColorMode.System,
+    title: ColorModeNames[ColorMode.System],
   },
 ];
 
