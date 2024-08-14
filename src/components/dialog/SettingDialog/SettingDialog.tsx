@@ -3,6 +3,7 @@ import { Portal } from 'solid-js/web';
 import { useStore } from '@nanostores/solid';
 
 import { $settingDialogOpen } from '@/store/trigger';
+import { saveSetting } from '@/store/settingDialog';
 
 import CloseIcon from 'lucide-solid/icons/x';
 import * as Dialog from '@/components/ui/dialog';
@@ -18,7 +19,9 @@ export const SettingDialog = (props: SettingDialogProps) => {
     $settingDialogOpen.set(false);
   }
 
-  function handleExitComplete() {}
+  function handleExitComplete() {
+    saveSetting();
+  }
 
   return (
     <Dialog.Root

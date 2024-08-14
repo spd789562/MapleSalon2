@@ -1,6 +1,7 @@
+import type { JSX } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 
-import { $colorMode } from '@/store/settingDialog';
+import { $colorMode, setColorMode } from '@/store/settingDialog';
 
 import SunIcon from 'lucide-solid/icons/sun';
 import MoonIcon from 'lucide-solid/icons/moon';
@@ -14,15 +15,15 @@ import { ColorMode, syncColorMode } from '@/const/setting/colorMode';
 
 const options = [
   {
-    label: <SunIcon size={16} />,
+    label: (() => <SunIcon size={16} />) as unknown as JSX.Element,
     value: ColorMode.Light,
   },
   {
-    label: <MoonIcon size={16} />,
+    label: (() => <MoonIcon size={16} />) as unknown as JSX.Element,
     value: ColorMode.Dark,
   },
   {
-    label: <SettingsIcon size={16} />,
+    label: (() => <SettingsIcon size={16} />) as unknown as JSX.Element,
     value: ColorMode.System,
   },
 ];
@@ -31,8 +32,11 @@ export const ColorModeToggleGroup = () => {
   const colorMode = useStore($colorMode);
 
   function handleChange(details: ValueChangeDetails) {
-    const firstItem = details.value?.[0];
-    firstItem && syncColorMode(firstItem as ColorMode);
+    const changedColorMode = details.value?.[0] as ColorMode;
+    if (changedColorMode) {
+      syncColorMode(changedColorMode);
+      setColorMode(changedColorMode);
+    }
   }
 
   return (
