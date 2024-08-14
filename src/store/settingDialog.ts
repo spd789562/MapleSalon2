@@ -2,6 +2,8 @@ import { deepMap, computed } from 'nanostores';
 
 import { Store } from '@tauri-apps/plugin-store';
 
+import { $equipmentDrawerExperimentCharacterRender } from './equipDrawer';
+
 import {
   simpleCharacterLoadingQueue,
   isValidConcurrency,
@@ -34,6 +36,7 @@ export interface AppSetting extends Record<string, unknown> {
   theme: Theme;
   colorMode: ColorMode;
   simpleCharacterConcurrency: number;
+  defaultCharacterRendering: boolean;
 }
 
 const DEFAULT_SETTING: AppSetting = {
@@ -42,6 +45,7 @@ const DEFAULT_SETTING: AppSetting = {
   theme: Theme.Iris,
   colorMode: ColorMode.System,
   simpleCharacterConcurrency: DEFAULT_CONCURRENCY,
+  defaultCharacterRendering: false,
 };
 
 export const $appSetting = deepMap<AppSetting>(DEFAULT_SETTING);
@@ -61,6 +65,10 @@ export const $simpleCharacterConcurrency = computed(
   $appSetting,
   (setting) => setting.simpleCharacterConcurrency,
 );
+export const $defaultCharacterRendering = computed(
+  $appSetting,
+  (setting) => setting.defaultCharacterRendering,
+);
 
 /* action */
 export async function initializeSavedSetting() {
@@ -68,6 +76,11 @@ export async function initializeSavedSetting() {
     const setting = await fileStore.get<AppSetting | undefined>(SAVE_KEY);
     if (setting) {
       $appSetting.setKey('windowResizable', !!setting.windowResizable);
+      const defaultCharacterRendering = !!setting.defaultCharacterRendering;
+      if (defaultCharacterRendering) {
+        $appSetting.setKey('defaultCharacterRendering', true);
+        $equipmentDrawerExperimentCharacterRender.set(true);
+      }
       if (isValidResolution(setting.windowResolution)) {
         $appSetting.setKey('windowResolution', setting.windowResolution);
       }
@@ -113,4 +126,7 @@ export function setColorMode(value: ColorMode) {
 }
 export function setSimpleCharacterConcurrency(value: number) {
   $appSetting.setKey('simpleCharacterConcurrency', value);
+}
+export function setDefaultCharacterRendering(value: boolean) {
+  $appSetting.setKey('defaultCharacterRendering', value);
 }

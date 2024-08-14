@@ -36,8 +36,8 @@ export const SimpleCharacterRenderCountInput = () => {
       max={SUGGEST_MAX_CONCURRENCY}
       value={concurrency().toString()}
       onValueChange={handleChange}
-    >
-      角色快照同時渲染數量
-    </NumberInput>
+      maxWidth="20"
+      marginLeft="1"
+    />
   );
 };

@@ -8,7 +8,7 @@ import { ColorModeToggleGroup } from './ColorModeToggleGroup';
 export const ThemeSetting = () => {
   return (
     <Stack>
-      <Heading size="md">主題設定</Heading>
+      <Heading size="lg">主題設定</Heading>
       <HStack justify="space-between">
         <HStack>
           <Text>主題</Text>

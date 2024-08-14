@@ -9,7 +9,7 @@ export const SettingDialog = () => {
   return (
     <Dialog>
       <Stack p="6">
-        <Title>設定</Title>
+        <Title fontSize="xl">設定</Title>
         <WindowSetting />
         <ThemeSetting />
         <RenderSetting />
