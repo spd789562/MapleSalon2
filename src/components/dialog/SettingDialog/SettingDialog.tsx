@@ -25,11 +25,12 @@ export const SettingDialog = (props: SettingDialogProps) => {
       open={isOpen()}
       onOpenChange={handleClose}
       onExitComplete={handleExitComplete}
+      unmountOnExit={true}
     >
       <Portal>
         <Dialog.Backdrop zIndex="settingOverlay" />
         <Dialog.Positioner zIndex="settingModal">
-          <Dialog.Content minWidth="md">
+          <Dialog.Content minWidth="xl">
             {props.children}
             <Dialog.CloseTrigger
               asChild={(closeTriggerProps) => (

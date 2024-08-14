@@ -10,6 +10,7 @@
     "core:event:default",
     "core:window:default",
     "core:window:allow-set-resizable",
+    "core:window:allow-set-size",
     "core:app:default",
     "core:image:default",
     "core:resources:default",

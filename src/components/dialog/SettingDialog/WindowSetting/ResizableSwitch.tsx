@@ -5,7 +5,7 @@ import { $windowResizable, setWindowResizable } from '@/store/settingDialog';
 
 import { Switch, type ChangeDetails } from '@/components/ui/switch';
 
-export const WindowResizableSwitch = () => {
+export const ResizableSwitch = () => {
   const windowResizable = useStore($windowResizable);
 
   async function handleChange(details: ChangeDetails) {

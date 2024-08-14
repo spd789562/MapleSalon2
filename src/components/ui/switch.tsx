@@ -33,12 +33,12 @@ export const Switch = (props: SwitchProps) => {
       class={cx(styles.root, css(cssProps), localProps.class)}
       {...rootProps}
     >
-      <ArkSwitch.Control class={styles.control}>
-        <ArkSwitch.Thumb class={styles.thumb} />
-      </ArkSwitch.Control>
       <Show when={getChildren()}>
         <ArkSwitch.Label class={styles.label}>{getChildren()}</ArkSwitch.Label>
       </Show>
+      <ArkSwitch.Control class={styles.control}>
+        <ArkSwitch.Thumb class={styles.thumb} />
+      </ArkSwitch.Control>
       <ArkSwitch.HiddenInput />
     </ArkSwitch.Root>
   );
