@@ -32,7 +32,7 @@
     "p-queue": "^8.0.1",
     "pixi-filters": "^6.0.3",
     "pixi-viewport": "^5.0.3",
-    "pixi.js": "^8.1.5",
+    "pixi.js": "^8.3.3",
     "solid-js": "^1.7.8",
     "throttle-debounce": "^5.0.0",
     "wasm-webp": "^0.0.2"
