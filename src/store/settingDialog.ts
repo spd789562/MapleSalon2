@@ -3,6 +3,12 @@ import { deepMap, computed } from 'nanostores';
 import { Store } from '@tauri-apps/plugin-store';
 
 import {
+  simpleCharacterLoadingQueue,
+  isValidConcurrency,
+  DEFAULT_CONCURRENCY,
+  SUGGEST_MAX_CONCURRENCY,
+} from '@/utils/characterLoadingQueue';
+import {
   WindowResolutions,
   isValidResolution,
   type Resolution,
@@ -27,6 +33,7 @@ export interface AppSetting extends Record<string, unknown> {
   windowResolution: Resolution;
   theme: Theme;
   colorMode: ColorMode;
+  simpleCharacterConcurrency: number;
 }
 
 const DEFAULT_SETTING: AppSetting = {
@@ -34,6 +41,7 @@ const DEFAULT_SETTING: AppSetting = {
   windowResolution: WindowResolutions[0].name,
   theme: Theme.Iris,
   colorMode: ColorMode.System,
+  simpleCharacterConcurrency: DEFAULT_CONCURRENCY,
 };
 
 export const $appSetting = deepMap<AppSetting>(DEFAULT_SETTING);
@@ -49,6 +57,10 @@ export const $windowResolution = computed(
 );
 export const $theme = computed($appSetting, (setting) => setting.theme);
 export const $colorMode = computed($appSetting, (setting) => setting.colorMode);
+export const $simpleCharacterConcurrency = computed(
+  $appSetting,
+  (setting) => setting.simpleCharacterConcurrency,
+);
 
 /* action */
 export async function initializeSavedSetting() {
@@ -66,6 +78,14 @@ export async function initializeSavedSetting() {
       if (isValidColorMode(setting.colorMode)) {
         syncColorMode(setting.colorMode);
         $appSetting.setKey('colorMode', setting.colorMode);
+      }
+      if (isValidConcurrency(setting.simpleCharacterConcurrency)) {
+        const concurrency = Math.min(
+          setting.simpleCharacterConcurrency,
+          SUGGEST_MAX_CONCURRENCY,
+        );
+        $appSetting.setKey('simpleCharacterConcurrency', concurrency);
+        simpleCharacterLoadingQueue.concurrency = concurrency;
       }
     }
   } catch (e) {
@@ -90,4 +110,7 @@ export function setTheme(value: Theme) {
 }
 export function setColorMode(value: ColorMode) {
   $appSetting.setKey('colorMode', value);
+}
+export function setSimpleCharacterConcurrency(value: number) {
+  $appSetting.setKey('simpleCharacterConcurrency', value);
 }
