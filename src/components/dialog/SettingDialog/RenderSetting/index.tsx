@@ -4,6 +4,9 @@ import { Text } from '@/components/ui/text';
 import { Heading } from '@/components/ui/heading';
 import { SimpleCharacterRenderCountInput } from './SimpleCharacterRenderCountInput';
 import { DefaultCharacterRenderingSwitch } from './DefaultCharacterRenderingSwitch';
+import { ShowItemGenderSwitch } from './ShowItemGenderSwitch';
+import { ShowItemDyeableSwitch } from './ShowItemDyeableSwitch';
+import { ItemEffectPreview } from './ItemEffectPreview';
 import { SettingTooltip } from '@/components/dialog/SettingDialog/SettingTooltip';
 
 export const RenderSetting = () => {
@@ -17,6 +20,11 @@ export const RenderSetting = () => {
           <SettingTooltip tooltip="提升或降低角色快照同時渲染數量，過多可能造成應用程式渲染緩慢" />
           <SimpleCharacterRenderCountInput />
         </HStack>
+      </HStack>
+      <HStack gap="8">
+        <ShowItemGenderSwitch />
+        <ShowItemDyeableSwitch />
+        <ItemEffectPreview />
       </HStack>
     </Stack>
   );

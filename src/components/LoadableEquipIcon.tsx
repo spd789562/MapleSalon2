@@ -1,7 +1,9 @@
 import { createSignal, createMemo, Show } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
+import { useStore } from '@nanostores/solid';
 
 import { setItemContextMenuTargetInfo } from '@/store/itemContextMenu';
+import { $showItemGender } from '@/store/settingDialog';
 
 import CircleHelpIcon from 'lucide-solid/icons/circle-help';
 import { Skeleton } from './ui/skeleton';
@@ -10,6 +12,8 @@ import { Flex } from 'styled-system/jsx/flex';
 import { useItemContextTrigger } from '@/context/itemContextMenu';
 
 import { getIconPath, getGender } from '@/utils/itemId';
+
+import { Gender } from '@/utils/itemId';
 
 import DyeableLabelIcon from '@/assets/color_label.png';
 
@@ -23,6 +27,7 @@ export interface LoadableEquipIconProps {
 export const LoadableEquipIcon = (props: LoadableEquipIconProps) => {
   const [isLoaded, setIsLoaded] = createSignal(false);
   const [isError, setIsError] = createSignal(false);
+  const showItemGender = useStore($showItemGender);
 
   function onLoad(_: Event) {
     setIsLoaded(true);
@@ -34,7 +39,9 @@ export const LoadableEquipIcon = (props: LoadableEquipIconProps) => {
   }
 
   const iconPath = createMemo(() => getIconPath(props.id));
-  const gender = createMemo(() => getGender(props.id));
+  const gender = createMemo(() =>
+    showItemGender() ? getGender(props.id) : Gender.Share,
+  );
 
   const contextTriggerProps = useItemContextTrigger();
 
@@ -92,10 +99,10 @@ const IconContainer = styled(Flex, {
   variants: {
     gender: {
       0: {
-        backgroundColor: 'iris.a5',
+        backgroundColor: 'iris.a4',
       },
       1: {
-        backgroundColor: 'tomato.a5',
+        backgroundColor: 'tomato.a4',
       },
       2: {
         backgroundColor: 'transparent',

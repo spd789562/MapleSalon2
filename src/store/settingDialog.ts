@@ -37,6 +37,8 @@ export interface AppSetting extends Record<string, unknown> {
   colorMode: ColorMode;
   simpleCharacterConcurrency: number;
   defaultCharacterRendering: boolean;
+  showItemGender: boolean;
+  showItemDyeable: boolean;
 }
 
 const DEFAULT_SETTING: AppSetting = {
@@ -46,6 +48,8 @@ const DEFAULT_SETTING: AppSetting = {
   colorMode: ColorMode.System,
   simpleCharacterConcurrency: DEFAULT_CONCURRENCY,
   defaultCharacterRendering: false,
+  showItemGender: true,
+  showItemDyeable: true,
 };
 
 export const $appSetting = deepMap<AppSetting>(DEFAULT_SETTING);
@@ -69,6 +73,14 @@ export const $defaultCharacterRendering = computed(
   $appSetting,
   (setting) => setting.defaultCharacterRendering,
 );
+export const $showItemGender = computed(
+  $appSetting,
+  (setting) => setting.showItemGender,
+);
+export const $showItemDyeable = computed(
+  $appSetting,
+  (setting) => setting.showItemDyeable,
+);
 
 /* action */
 export async function initializeSavedSetting() {
@@ -76,6 +88,8 @@ export async function initializeSavedSetting() {
     const setting = await fileStore.get<AppSetting | undefined>(SAVE_KEY);
     if (setting) {
       $appSetting.setKey('windowResizable', !!setting.windowResizable);
+      $appSetting.setKey('showItemGender', setting.showItemGender ?? true);
+      $appSetting.setKey('showItemDyeable', setting.showItemDyeable ?? true);
       const defaultCharacterRendering = !!setting.defaultCharacterRendering;
       if (defaultCharacterRendering) {
         $appSetting.setKey('defaultCharacterRendering', true);
@@ -129,4 +143,10 @@ export function setSimpleCharacterConcurrency(value: number) {
 }
 export function setDefaultCharacterRendering(value: boolean) {
   $appSetting.setKey('defaultCharacterRendering', value);
+}
+export function setShowItemGender(value: boolean) {
+  $appSetting.setKey('showItemGender', value);
+}
+export function setShowItemDyeable(value: boolean) {
+  $appSetting.setKey('showItemDyeable', value);
 }

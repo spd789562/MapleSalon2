@@ -1,19 +1,25 @@
 import { createMemo } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
+import { useStore } from '@nanostores/solid';
 
 import type { CharacterItems } from '@/store/character/store';
+import { $showItemGender } from '@/store/settingDialog';
 
 import { SimpleCharacter } from '@/components/SimpleCharacter';
 
 import { getCharacterSubCategory } from '@/store/character/utils';
 import { getSubCategory, getBodyId, getGender } from '@/utils/itemId';
+import { Gender } from '@/utils/itemId';
 
 export interface PreviewCharacterProps {
   name: string;
   id: number;
 }
 export const PreviewCharacter = (props: PreviewCharacterProps) => {
-  const gender = createMemo(() => getGender(props.id));
+  const showItemGender = useStore($showItemGender);
+  const gender = createMemo(() =>
+    showItemGender() ? getGender(props.id) : Gender.Share,
+  );
   const subCategory = createMemo(() => {
     const baseItems: Partial<CharacterItems> = {
       Head: {
@@ -79,10 +85,10 @@ const CharacterContainer = styled('div', {
   variants: {
     gender: {
       0: {
-        backgroundColor: 'iris.a5',
+        backgroundColor: 'iris.a4',
       },
       1: {
-        backgroundColor: 'tomato.a5',
+        backgroundColor: 'tomato.a4',
       },
       2: {
         backgroundColor: 'transparent',
