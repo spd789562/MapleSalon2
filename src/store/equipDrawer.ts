@@ -25,6 +25,7 @@ export type EquipCategorySelections = EquipSubCategory | typeof AllCategory;
 export const $equipmentDrawerEquipTab = atom<EquipTab>(EquipTab.Equip);
 export const $equipmentDrawerEquipCategory =
   atom<EquipCategorySelections>(AllCategory);
+export const $equipmentDrawerOnlyShowDyeable = atom(false);
 export const $equipmentDrawerHairColor = atom<HairColor>(HairColor.Black);
 export const $equipmentDrawerFaceColor = atom<FaceColor>(FaceColor.Black);
 export const $equipmentDrawerEquipCategorySelectionOpen = atom(true);
@@ -33,7 +34,7 @@ export const $equipmentDrawerSearch = map<
   Partial<Record<EquipCategorySelections, string>>
 >({});
 
-/** enable character rendering featering in equipment drawer */
+/** enable character rendering feater in equipment drawer */
 export const $equipmentDrawerExperimentCharacterRender = atom(false);
 
 /* effect */
@@ -121,15 +122,26 @@ export const $categoryFilteredString = computed(
 );
 
 export const $equipmentDrawerEquipFilteredString = computed(
-  [$categoryFilteredString, $currentEquipmentDrawerSearch],
-  (strings, searchKey) => {
+  [
+    $categoryFilteredString,
+    $currentEquipmentDrawerSearch,
+    $equipmentDrawerOnlyShowDyeable,
+  ],
+  (strings, searchKey, onlyShowDyeable) => {
     if (searchKey) {
-      return strings.filter(
-        (item) =>
-          item.name.includes(searchKey) || item.id.toString() === searchKey,
-      );
+      return strings.filter((item) => {
+        const isMatch =
+          item.name.includes(searchKey) || item.id.toString() === searchKey;
+        if (!onlyShowDyeable) {
+          return isMatch;
+        }
+        return isMatch && item.isDyeable;
+      });
+    }
+    if (!onlyShowDyeable) {
+      return strings;
     }
 
-    return strings;
+    return strings.filter(({ isDyeable }) => isDyeable);
   },
 );

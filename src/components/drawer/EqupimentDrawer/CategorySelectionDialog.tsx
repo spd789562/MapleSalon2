@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/dialog';
 import CloseIcon from 'lucide-solid/icons/x';
 import { IconButton } from '@/components/ui/icon-button';
+import { OnlyShowDyeableSwitch } from './OnlySowDyeableSwitch';
 
 const Dialog = {
   Root,
@@ -83,7 +84,10 @@ export const CategorySelectionDialog = (
           >
             <CloseIcon />
           </IconButton>
-          <Dialog.Title mb={2}>裝備分類</Dialog.Title>
+          <Dialog.Title mb={2}>
+            裝備分類
+            <OnlyShowDyeableSwitch />
+          </Dialog.Title>
           {props.children}
         </Dialog.Content>
       </Dialog.Positioner>
