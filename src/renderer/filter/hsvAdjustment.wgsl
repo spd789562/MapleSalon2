@@ -25,11 +25,11 @@ fn mainFragment(
 
     var tohsv: vec3<f32> = rgb2hsv(resultRGB);
 
-    let h: f32 = tohsv.x;
-    let s: f32 = tohsv.y;
-    let v: f32 = tohsv.z;
+    let origin_h: f32 = tohsv.x;
+    let origin_s: f32 = tohsv.y;
+    let origin_v: f32 = tohsv.z;
 
-    if (h >= uColorStart && h <= uColorEnd) {
+    if (origin_h >= uColorStart && origin_h <= uColorEnd) {
         // hue
         resultRGB = hueShift(resultRGB, hue);
 
@@ -40,24 +40,24 @@ fn mainFragment(
         // saturation
         if (saturation > 0.0) {
           // weird, but it really works
-          if (tohsv.y > 0.1 && v < 0.80) {
+          if (tohsv.y > 0.1 && origin_v < 0.80) {
             tohsv.y = clamp(tohsv.y + saturation, 0.0, 1.0);
             // it also incress the brightness
-            tohsv.z = clamp(tohsv.z + saturation * 0.2 * v * color.a, 0.0, 1.0);
+            tohsv.z = clamp(tohsv.z + saturation * 0.2 * origin_v * color.a, 0.0, 1.0);
           }
         } else if (saturation < 0.0) {
           tohsv.y = clamp(tohsv.y + (tohsv.y * saturation * 0.8), 0.0, 1.0);
           // it also decress the brightness
-          tohsv.z = clamp(tohsv.z + (saturation * 0.5 * s) * color.a, 0.0, 1.0);
+          tohsv.z = clamp(tohsv.z + (saturation * 0.5 * origin_s) * color.a, 0.0, 1.0);
         }
 
         // value
         if (value < 0.0) {
           // in order to make sure the lower saturate will less effect
-          tohsv.z += v * value * s;
+          tohsv.z += origin_v * value * origin_s;
         } else if (value > 0.0) {
           // * (1. - s) means the higher saturation of original color will less effect
-          tohsv.z = clamp(tohsv.z + value * color.a * (1. - s) * 0.6, 0., 1.);
+          tohsv.z = clamp(tohsv.z + value * color.a * (1. - origin_s) * 0.6, 0., 1.);
           // also decrease the saturation but not too much
           tohsv.y = tohsv.y * max((1. - value), 0.05);
         }
