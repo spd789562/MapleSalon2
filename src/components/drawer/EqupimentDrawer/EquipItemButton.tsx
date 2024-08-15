@@ -42,7 +42,11 @@ export const EquipItemButton = (props: EquipItemButtonProps) => {
             <PreviewCharacter id={props.item.id} name={props.item.name} />
           </Match>
           <Match when={props.type === 'icon'}>
-            <LoadableEquipIcon id={props.item.id} name={props.item.name} />
+            <LoadableEquipIcon
+              id={props.item.id}
+              name={props.item.name}
+              isDyeable={props.item.isDyeable}
+            />
           </Match>
         </Switch>
       </CssTooltip>

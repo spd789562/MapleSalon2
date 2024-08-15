@@ -11,8 +11,11 @@ import { useItemContextTrigger } from '@/context/itemContextMenu';
 
 import { getIconPath, getGender } from '@/utils/itemId';
 
+import DyeableLabelIcon from '@/assets/color_label.png';
+
 export interface LoadableEquipIconProps {
   id: number;
+  isDyeable?: boolean;
   name?: string;
   width?: string;
   height?: string;
@@ -67,6 +70,9 @@ export const LoadableEquipIcon = (props: LoadableEquipIconProps) => {
             style={{ 'max-height': '100%' }}
           />
         </Show>
+        <Show when={props.isDyeable}>
+          <DyeableLabel src={DyeableLabelIcon} alt="Dyeable" />
+        </Show>
       </IconContainer>
     </Skeleton>
   );
@@ -77,6 +83,7 @@ const IconContainer = styled(Flex, {
     p: '1',
     width: '9',
     height: '9',
+    position: 'relative',
     justifyContent: 'center',
     alignItems: 'center',
     color: 'fg.muted',
@@ -94,5 +101,13 @@ const IconContainer = styled(Flex, {
         backgroundColor: 'transparent',
       },
     },
+  },
+});
+
+const DyeableLabel = styled('img', {
+  base: {
+    position: 'absolute',
+    bottom: '1',
+    right: '1',
   },
 });

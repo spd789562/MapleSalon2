@@ -8,7 +8,7 @@ import { RenderSetting } from './RenderSetting';
 export const SettingDialog = () => {
   return (
     <Dialog>
-      <Stack p="6">
+      <Stack gap="3" p="6">
         <Title fontSize="xl">設定</Title>
         <WindowSetting />
         <ThemeSetting />
