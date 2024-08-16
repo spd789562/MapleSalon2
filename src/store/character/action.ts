@@ -11,7 +11,8 @@ import {
   getCurrentFaceColor,
 } from './selector';
 import { removeItems } from '@/store/currentEquipDrawer';
-import { getEquipById, appendHistory } from '@/store/string';
+import { getEquipById } from '@/store/string';
+import { appendHistory } from '@/store/equipHistory';
 import { getCharacterSubCategory, deepCloneCharacterItems } from './utils';
 
 import {
@@ -231,7 +232,7 @@ export function addItemToChanges(
 }
 
 export function selectNewItem(
-  item: { id: number; name: string; hasEffect?: boolean },
+  item: { id: number; name: string; hasEffect?: boolean; isDyeable?: boolean },
   addToHistory = true,
 ) {
   let category = getSubCategory(item.id);
@@ -249,6 +250,8 @@ export function selectNewItem(
       category: EquipCategory.Unknown,
       id: item.id,
       name: item.name,
+      hasEffect: item.hasEffect ?? false,
+      isDyeable: item.isDyeable ?? false,
     });
   }
 

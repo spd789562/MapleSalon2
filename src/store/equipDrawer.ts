@@ -1,6 +1,7 @@
 import { atom, map, computed, onSet } from 'nanostores';
 
-import { $equipmentStrings, $equipmentHistory } from './string';
+import { $equipmentStrings } from './string';
+import { $equipmentHistory } from './equipHistory';
 
 import { getCategoryBySubCategory, getSubCategory } from '@/utils/itemId';
 import { getFaceColorId, getHairColorId } from '@/utils/mixDye';

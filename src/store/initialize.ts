@@ -8,6 +8,7 @@ import {
   appendPathToHistory,
 } from '@/store/fileSelectHistory';
 import { initializeSavedSetting } from '@/store/settingDialog';
+import { initializeSavedEquipmentHistory } from '@/store/equipHistory';
 import { prepareAndFetchEquipStrings } from '@/store/string';
 import { initialGlobalRenderer } from '@/store/renderer';
 
@@ -29,6 +30,7 @@ export async function initApp() {
     await initializeSavedCharacter();
     await initializeSavedFileSelectHistory();
     await initializeSavedSetting();
+    await initializeSavedEquipmentHistory();
   } catch (_) {
     toaster.error({
       title: '初始化錯誤',
