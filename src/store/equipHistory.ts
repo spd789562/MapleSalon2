@@ -41,6 +41,10 @@ export function appendHistory(item: EquipItem) {
   }
 }
 
+export function saveHistory() {
+  return fileStore.save();
+}
+
 /* util */
 function validateEquipItem(item: EquipItem) {
   const returnItem = {} as EquipItem;

@@ -1,7 +1,7 @@
 import { atom, map, computed, onSet } from 'nanostores';
 
 import { $equipmentStrings } from './string';
-import { $equipmentHistory } from './equipHistory';
+import { $equipmentHistory, saveHistory } from './equipHistory';
 
 import { getCategoryBySubCategory, getSubCategory } from '@/utils/itemId';
 import { getFaceColorId, getHairColorId } from '@/utils/mixDye';
@@ -42,6 +42,14 @@ export const $equipmentDrawerExperimentCharacterRender = atom(false);
 onSet($equipmentDrawerEquipTab, () => {
   if ($equipmentDrawerEquipCategorySelectionOpen.get()) {
     $equipmentDrawerEquipCategorySelectionOpen.set(false);
+  }
+  const prev = $equipmentDrawerEquipTab.get();
+  if (prev === EquipTab.History) {
+    try {
+      saveHistory();
+    } catch (_) {
+      console.error('Failed to save history');
+    }
   }
 });
 
