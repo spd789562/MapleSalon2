@@ -2,7 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use std::sync::Arc;
-use tauri::async_runtime;
+use tauri::{async_runtime, AppHandle, Manager};
 use wz_reader::WzNode;
 
 mod commands;
@@ -40,6 +40,9 @@ fn main() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_single_instance::init(|app, args, cwd| {
+            let _ = show_window(app);
+        }))
         .plugin(
             tauri_plugin_window_state::Builder::new()
                 .with_filename("window-state.bin")
@@ -61,4 +64,15 @@ fn main() {
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+fn show_window(app: &AppHandle) {
+    let windows = app.webview_windows();
+
+    windows
+        .values()
+        .next()
+        .expect("Sorry, no window found")
+        .set_focus()
+        .expect("Can't Bring Window to Focus");
 }
