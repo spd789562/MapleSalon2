@@ -105,6 +105,8 @@ export async function initializeSavedSetting() {
       if (isValidColorMode(setting.colorMode)) {
         syncColorMode(setting.colorMode);
         $appSetting.setKey('colorMode', setting.colorMode);
+      } else {
+        syncColorMode(ColorMode.System);
       }
       if (isValidConcurrency(setting.simpleCharacterConcurrency)) {
         const concurrency = Math.min(
