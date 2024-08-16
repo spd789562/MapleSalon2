@@ -37,7 +37,6 @@ export class ZoomContainer extends Viewport {
       })
       .moveCenter(0, 0);
     if (options.defaultInteraction !== false) {
-      console.log('enable');
       this.enable();
     } else {
       this.disable();

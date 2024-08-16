@@ -48,8 +48,8 @@ class ZmapContainer extends Container {
   }
   refreshLock() {
     for (const child of this.children) {
-      const frame = (child as CharacterAnimatablePart).frames[0];
-      if (!frame || !frame.item) {
+      const part = child as CharacterAnimatablePart;
+      if (!part.item) {
         continue;
       }
       // using the fewer locks, but seems not right.
@@ -60,20 +60,20 @@ class ZmapContainer extends Container {
       let locks = this.requireLocks;
 
       // force Cap using vslot
-      if (frame.item.islot.includes('Cp')) {
-        locks = frame.item.vslot;
+      if (part.item.islot.includes('Cp')) {
+        locks = part.item.vslot;
       }
 
       // this logic is from maplestory.js, but why
       if (this.name === 'mailArm') {
         locks = ['Ma'];
       } else if (this.name === 'mailChest') {
-        locks = frame.item.vslot;
+        locks = part.item.vslot;
       } else if (this.name === 'pants' || this.name === 'backPants') {
         locks = ['Pn'];
       }
 
-      if (this.hasAllLocks(frame.info.id, locks)) {
+      if (this.hasAllLocks(part.item.info.id, locks)) {
         child.visible = true;
       } else {
         child.visible = false;
@@ -242,7 +242,7 @@ export class Character extends Container {
     });
     /* only update sprite already in render */
     const dyeableSprites = this.currentAllItem
-      .flatMap((item) => Array.from(item.items.values()))
+      .flatMap((item) => Array.from(item.allPieces))
       .filter((piece) => piece.item.info.id === id)
       .flatMap((piece) =>
         piece.frames.filter((frame) => frame.isDyeable?.()),
@@ -278,46 +278,49 @@ export class Character extends Container {
     this.reset();
     const pieces: CharacterAnimatablePart[] = [];
     let body: CharacterAnimatablePart | undefined = undefined;
-    const items = this.currentAllItem;
     for (const layer of zmap) {
-      for (const item of items) {
-        const piece = item.items.get(layer);
-        if (piece) {
-          let container = this.zmapLayers.get(layer);
-          if (piece.effectZindex !== undefined) {
-            /* make special layer for effects */
-            /* ex: effect0 effect-1 effect2 */
-            const effectLayerName = `effect${piece.effectZindex}`;
-            const existLayer = this.zmapLayers.get(effectLayerName);
-            if (existLayer) {
-              container = existLayer;
-            } else {
-              const zIndex = piece.effectZindex - 10;
-              container = new ZmapContainer(effectLayerName, zIndex, this);
-              this.addChild(container);
-              this.zmapLayers.set(effectLayerName, container);
-            }
-          } else if (!container) {
-            container = new ZmapContainer(layer, zmap.indexOf(layer), this);
+      const itemsByLayer = this.getItemsByLayer(layer);
+      if (itemsByLayer.length === 0) {
+        continue;
+      }
+      for (const piece of itemsByLayer) {
+        let container = this.zmapLayers.get(layer);
+        if (piece.effectZindex !== undefined) {
+          /* make special layer for effects */
+          /* ex: effect0 effect-1 effect2 */
+          const effectLayerName = `effect${piece.effectZindex}`;
+          const existLayer = this.zmapLayers.get(effectLayerName);
+          if (existLayer) {
+            container = existLayer;
+          } else {
+            const zIndex =
+              piece.effectZindex >= 2
+                ? zmap.length + piece.effectZindex
+                : piece.effectZindex - 10;
+            container = new ZmapContainer(effectLayerName, zIndex, this);
             this.addChild(container);
-            this.zmapLayers.set(layer, container);
+            this.zmapLayers.set(effectLayerName, container);
           }
-          if (
-            isBackAction(this.action) &&
-            layer.toLocaleLowerCase().includes('face')
-          ) {
-            container.visible = false;
-          }
-          if (layer === 'body' || layer === 'backBody') {
-            body = piece;
-          }
-          // not sure why need to do this while it already initialized in constructor
-          piece.frameChanges(0);
-
-          pieces.push(piece);
-
-          container.addCharacterPart(piece);
+        } else if (!container) {
+          container = new ZmapContainer(layer, zmap.indexOf(layer), this);
+          this.addChild(container);
+          this.zmapLayers.set(layer, container);
         }
+        if (
+          isBackAction(this.action) &&
+          layer.toLocaleLowerCase().includes('face')
+        ) {
+          container.visible = false;
+        }
+        if ((layer === 'body' || layer === 'backBody') && piece.item.isBody) {
+          body = piece;
+        }
+        // not sure why need to do this while it already initialized in constructor
+        piece.frameChanges(0);
+
+        pieces.push(piece);
+
+        container.addCharacterPart(piece);
       }
     }
 
@@ -417,8 +420,12 @@ export class Character extends Container {
       if (pieceFrame) {
         const ancherName = pieceFrame.baseAncherName;
         const ancher = currentAncher.get(ancherName);
-        /* setting the ancher on zmapLayer */
-        ancher && piece.parent?.position.copyFrom(ancher);
+        /* setting the ancher on each piece */
+        ancher &&
+          piece.pivot.copyFrom({
+            x: -ancher.x,
+            y: -ancher.y,
+          });
         /* some part can play indenpendently */
         if (piece.canIndependentlyPlay && !isSkinGroup) {
           if (this.isAnimating) {
@@ -461,34 +468,39 @@ export class Character extends Container {
 
   /** use backBody to check current action is turn character to back  */
   get isCurrentFrameIsBackAction() {
-    const backLayer = this.zmapLayers.get('backBody');
-    const backBodyNode = backLayer?.children[0] as
-      | CharacterAnimatablePart
-      | undefined;
+    const backBodyNode = this.currentBackBodyNode;
     const isEmptyNode = backBodyNode?.frames[this.frame]?.zIndex !== -1;
     return backBodyNode && isEmptyNode;
   }
 
-  get currentBodyNode() {
+  get currentFrontBodyNode() {
     const body = this.zmapLayers.get('body');
-    const bodyNode = body?.children[0] as CharacterAnimatablePart;
+    return body?.children.find(
+      (child) => (child as CharacterAnimatablePart).item.isBody,
+    ) as CharacterAnimatablePart | undefined;
+  }
+  get currentBackBodyNode() {
+    const body = this.zmapLayers.get('backBody');
+    return body?.children.find(
+      (child) => (child as CharacterAnimatablePart).item.isBody,
+    ) as CharacterAnimatablePart | undefined;
+  }
+
+  get currentBodyNode() {
+    const bodyNode = this.currentFrontBodyNode;
     if (bodyNode) {
       return bodyNode;
     }
-    const back = this.zmapLayers.get('backBody');
-    const backNode = back?.children[0] as CharacterAnimatablePart;
-    return backNode;
+    return this.currentBackBodyNode;
   }
 
   get currentBodyFrame() {
-    const body = this.zmapLayers.get('body');
-    const bodyNode = body?.children[0] as CharacterAnimatablePart;
+    const bodyNode = this.currentFrontBodyNode;
     const bodyFrame = bodyNode?.frames[this.frame];
     if (bodyFrame && bodyFrame.zIndex !== -1) {
       return bodyFrame;
     }
-    const back = this.zmapLayers.get('backBody');
-    const backNode = back?.children[0] as CharacterAnimatablePart;
+    const backNode = this.currentBodyNode;
     return backNode?.frames[this.frame];
   }
 
@@ -513,6 +525,10 @@ export class Character extends Container {
         yield layer;
       }
     };
+  }
+
+  getItemsByLayer(layer: PieceSlot) {
+    return this.currentAllItem.flatMap((item) => item.items.get(layer) || []);
   }
 
   async loadItems() {
