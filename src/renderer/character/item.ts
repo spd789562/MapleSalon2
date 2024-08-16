@@ -19,6 +19,8 @@ import {
   isCashWeaponId,
   isHairId,
   isFaceAccessoryId,
+  isBodyId,
+  isCapId,
 } from '@/utils/itemId';
 import {
   gatFaceAvailableColorIds,
@@ -77,6 +79,14 @@ export class CharacterItem implements RenderItemInfo {
 
   get isHair() {
     return isHairId(this.info.id);
+  }
+
+  get isBody() {
+    return isBodyId(this.info.id);
+  }
+
+  get isCap() {
+    return isCapId(this.info.id);
   }
 
   get isWeapon() {
@@ -298,7 +308,7 @@ export class CharacterItem implements RenderItemInfo {
 
   applyFilter() {
     for (const actionItem of this.actionPieces.values()) {
-      for (const part of actionItem.items.values()) {
+      for (const part of actionItem.allPieces) {
         if (part.filters !== this.filters) {
           part.filters = this.filters;
         }

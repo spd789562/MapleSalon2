@@ -21,9 +21,9 @@ import { defaultAncher, handMoveDefaultAnchers } from './const/ancher';
 export abstract class CategorizedItem<Name extends string> {
   name: Name;
 
-  unresolvedItems: Map<PieceName, CharacterItemPiece[]>;
+  unresolvedItems: Map<PieceName, CharacterItemPiece[][]>;
 
-  items: Map<PieceName, CharacterAnimatablePart>;
+  items: Map<PieceName, CharacterAnimatablePart[]>;
 
   wz: Record<number, WzPieceFrame>;
   effectWz: WzEffectActionItem | undefined = undefined;
@@ -55,10 +55,12 @@ export abstract class CategorizedItem<Name extends string> {
     this.resolveEffectFrames();
   }
 
+  get allPieces() {
+    return Array.from(this.items.values()).flat();
+  }
+
   get isAllAncherBuilt() {
-    return !Array.from(this.items.values()).some(
-      (piece) => !piece.isAllAncherBuilt,
-    );
+    return !this.allPieces.some((piece) => !piece.isAllAncherBuilt);
   }
 
   /** do something before build ancher on each pieces */
@@ -77,7 +79,7 @@ export abstract class CategorizedItem<Name extends string> {
 
       this.ancherSetup(currentFrameAnchers, frame);
 
-      for (const item of this.items.values()) {
+      for (const item of this.allPieces) {
         const piece = item.frames[frame];
         if (piece && !piece.isAncherBuilt) {
           item.frames[frame].buildAncher?.(currentFrameAnchers);
@@ -161,12 +163,12 @@ export abstract class CategorizedItem<Name extends string> {
 
       pieces.push(characterItemPiece);
     }
-    this.unresolvedItems.set('effect', pieces);
+    appendUnresolvedItems(this, 'effect', [pieces]);
   }
 
   /** resolve all frames and build CharacterAnimatablePart Later */
   resolveFrames() {
-    const piecesByFrame = new Map<PieceName, CharacterItemPiece[]>();
+    const piecesByFrame = new Map<PieceName, [string, CharacterItemPiece[]]>();
     const isDefault = this.name === 'default' && this.frameCount === 1;
     for (let frame = 0; frame < this.frameCount; frame += 1) {
       /* the default frame might not contain frame */
@@ -214,13 +216,16 @@ export abstract class CategorizedItem<Name extends string> {
           restOfWzData[pieceName].z,
         );
 
-        if (!piecesByFrame.has(name)) {
+        let pieces = piecesByFrame.get(pieceName);
+
+        /* use pieceName prevent conflict before got resolved */
+        if (!pieces) {
           const initialPieces: CharacterItemPiece[] = new Array(
             this.frameCount,
           ).fill(EMPTY);
-          piecesByFrame.set(name, initialPieces);
+          pieces = [name, initialPieces];
+          piecesByFrame.set(pieceName, pieces);
         }
-        const pieces = piecesByFrame.get(name) || [];
 
         const renderPiecesInfo = {
           info: this.mainItem.info,
@@ -236,11 +241,13 @@ export abstract class CategorizedItem<Name extends string> {
         const characterItemPiece = this.isDyeable()
           ? new DyeableCharacterItemPiece(renderPiecesInfo, this.mainItem)
           : new CharacterItemPiece(renderPiecesInfo, this.mainItem);
-        pieces[frame] = characterItemPiece;
+        pieces[1][frame] = characterItemPiece;
       }
     }
 
-    this.unresolvedItems = piecesByFrame;
+    for (const [name, pieces] of piecesByFrame.values()) {
+      appendUnresolvedItems(this, name, [pieces]);
+    }
   }
 
   async prepareResoureceByFrame(index: number) {
@@ -249,41 +256,48 @@ export abstract class CategorizedItem<Name extends string> {
     }
     const assets = new Set<UnresolvedAsset>();
     for (const items of this.unresolvedItems.values()) {
-      const res = items[index]?.getResource() || [];
-      if (res?.length) {
-        for (const asset of res) {
-          assets.add(asset);
-        }
+      const itemResources = items.flatMap(
+        (item) => item[index]?.getResource?.() || [],
+      );
+      for (const asset of itemResources) {
+        assets.add(asset);
       }
     }
     await Assets.load(Array.from(assets));
 
     for (const [pieceName, pieces] of this.unresolvedItems) {
-      const existItem = this.items.get(pieceName as PieceName);
-      if (existItem) {
-        /* update certain frame */
-        existItem.frames = existItem.frames.map((frame, i) => {
-          if (i === index) {
-            return pieces[index];
-          }
-          return frame;
-        });
-      } else {
-        const isEffect = pieceName === 'effect' && this.effectWz !== undefined;
-        const frames = pieces.map((frame, i) => {
-          if (i === index) {
+      let existItems = this.items.get(pieceName as PieceName);
+      if (!existItems) {
+        const item = [] as CharacterAnimatablePart[];
+        this.items.set(pieceName as PieceName, item);
+        existItems = item;
+      }
+      for (let pieceIndex = 0; pieceIndex < pieces.length; pieceIndex += 1) {
+        const itemPieces = pieces[pieceIndex];
+        const existItem = existItems[pieceIndex];
+        if (existItem) {
+          /* update certain frame */
+          existItem.frames = existItem.frames.map((frame, i) => {
+            if (i === index) {
+              return itemPieces[index];
+            }
             return frame;
-          }
-          return EMPTY;
-        }) as CharacterItemPiece[];
-        this.items.set(
-          pieceName as PieceName,
-          new CharacterAnimatablePart(
+          });
+        } else {
+          const isEffect =
+            pieceName === 'effect' && this.effectWz !== undefined;
+          const frames = itemPieces.map((frame, i) => {
+            if (i === index) {
+              return frame;
+            }
+            return EMPTY;
+          }) as CharacterItemPiece[];
+          existItems[pieceIndex] = new CharacterAnimatablePart(
             this.mainItem,
             frames,
             isEffect ? this.effectWz?.z : undefined,
-          ),
-        );
+          );
+        }
       }
     }
   }
@@ -296,12 +310,12 @@ export abstract class CategorizedItem<Name extends string> {
 
     const assets = new Set<UnresolvedAsset>();
     for (const items of this.unresolvedItems.values()) {
-      for (const resources of items) {
-        const res = resources.getResource();
-        if (res) {
-          for (const asset of res) {
-            assets.add(asset);
-          }
+      for (const itemPieces of items) {
+        const itemResources = itemPieces.flatMap(
+          (item) => item.getResource?.() || [],
+        );
+        for (const asset of itemResources) {
+          assets.add(asset);
         }
       }
     }
@@ -310,21 +324,22 @@ export abstract class CategorizedItem<Name extends string> {
 
     for (const [pieceName, pieces] of this.unresolvedItems) {
       const isEffect = pieceName === 'effect' && this.effectWz !== undefined;
-      this.items.set(
-        pieceName as PieceName,
-        new CharacterAnimatablePart(
-          this.mainItem,
-          pieces,
-          isEffect ? this.effectWz?.z : undefined,
-        ),
-      );
+      for (const itemPieces of pieces) {
+        appendItems(this, pieceName, [
+          new CharacterAnimatablePart(
+            this.mainItem,
+            itemPieces,
+            isEffect ? this.effectWz?.z : undefined,
+          ),
+        ]);
+      }
     }
 
     this.unresolvedItems.clear();
   }
 
   destroy() {
-    for (const item of this.items.values()) {
+    for (const item of this.allPieces) {
       item.removeFromParent();
       item.destroy();
     }
@@ -356,5 +371,31 @@ export class CharacterFaceItem extends CategorizedItem<CharacterExpressions> {
   isDyeable() {
     const hasDye = this.mainItem.info.dye !== undefined;
     return hasDye && ExpressionsHasEye.includes(this.name);
+  }
+}
+
+function appendUnresolvedItems<T extends string>(
+  item: CategorizedItem<T>,
+  name: string,
+  items: CharacterItemPiece[][],
+) {
+  const existItem = item.unresolvedItems.get(name);
+  if (existItem) {
+    existItem.push(...items);
+  } else {
+    item.unresolvedItems.set(name, items);
+  }
+}
+
+function appendItems<T extends string>(
+  item: CategorizedItem<T>,
+  name: string,
+  items: CharacterAnimatablePart[],
+) {
+  const existItem = item.items.get(name as PieceName);
+  if (existItem) {
+    existItem.push(...items);
+  } else {
+    item.items.set(name as PieceName, items);
   }
 }
