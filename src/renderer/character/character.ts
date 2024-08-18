@@ -38,6 +38,11 @@ class ZmapContainer extends Container {
   }
   addCharacterPart(child: CharacterAnimatablePart) {
     this.addChild(child);
+    console.log(
+      'addCharacterPart',
+      this.requireLocks,
+      child.frames[0].slotName,
+    );
     this.refreshLock();
   }
   hasAllLocks(id: number, locks: string[]) {
@@ -62,6 +67,14 @@ class ZmapContainer extends Container {
       // force Cap using vslot
       if (part.item.islot.includes('Cp')) {
         locks = part.item.vslot;
+      } else if (
+        part.item.islot.length === 1 &&
+        part.item.islot[0] === 'Hd' &&
+        (this.name === 'accessoryOverHair' || this.name === 'hairShade')
+      ) {
+        /* try to fix ear rendering */
+        /* @TODO also need to fix rerender ears */
+        locks = ['Hd'];
       }
 
       // this logic is from maplestory.js, but why
