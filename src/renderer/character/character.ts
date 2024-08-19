@@ -35,6 +35,19 @@ class ZmapContainer extends Container {
     this.character = character;
     this.requireLocks =
       (CharacterLoader.smap?.[name] || '').match(/.{1,2}/g) || [];
+
+    // part of this logic is from maplestory.js
+    if (this.name === 'mailArm') {
+      this.requireLocks = ['Ma'];
+    } else if (this.name === 'backHead') {
+      /* backHead some how use ['Bd'] so force change it */
+      this.requireLocks = ['Hd'];
+    } else if (this.name === 'pants' || this.name === 'backPants') {
+      this.requireLocks = ['Pn'];
+    } else {
+      this.requireLocks =
+        (CharacterLoader.smap?.[name] || '').match(/.{1,2}/g) || [];
+    }
   }
   addCharacterPart(child: CharacterAnimatablePart) {
     this.addChild(child);
@@ -68,17 +81,12 @@ class ZmapContainer extends Container {
         (this.name === 'accessoryOverHair' || this.name === 'hairShade')
       ) {
         /* try to fix ear rendering */
-        /* @TODO also need to fix rerender ears */
         locks = ['Hd'];
       }
 
       // this logic is from maplestory.js, but why
-      if (this.name === 'mailArm') {
-        locks = ['Ma'];
-      } else if (this.name === 'mailChest') {
+      if (this.name === 'mailChest') {
         locks = part.item.vslot;
-      } else if (this.name === 'pants' || this.name === 'backPants') {
-        locks = ['Pn'];
       }
 
       if (this.hasAllLocks(part.item.info.id, locks)) {
@@ -512,7 +520,7 @@ export class Character extends Container {
     if (bodyFrame && bodyFrame.zIndex !== -1) {
       return bodyFrame;
     }
-    const backNode = this.currentBodyNode;
+    const backNode = this.currentBackBodyNode;
     return backNode?.frames[this.frame];
   }
 
