@@ -41,6 +41,10 @@ export class CharacterAnimatablePart extends BaseAnimatablePart<CharacterItemPie
     return this.frames.every((frame) => frame.isIndepened && frame.delay > 0);
   }
 
+  get firstFrameZmapLayer() {
+    return this.frames[0].z;
+  }
+
   async prepareResource() {
     await Assets.load(this.resources);
   }

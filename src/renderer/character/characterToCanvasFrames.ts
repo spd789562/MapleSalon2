@@ -38,6 +38,10 @@ export async function characterToCanvasFrames(
     character.action === CharacterAction.Alert ||
     character.action.startsWith('stand');
 
+  if (!character.currentBodyNode) {
+    throw new Error('Character body not found');
+  }
+
   const baseFrameCount = character.currentBodyNode.frames.length;
   const totalFrameCount = needBounce ? baseFrameCount * 2 - 2 : baseFrameCount;
 
@@ -54,7 +58,7 @@ export async function characterToCanvasFrames(
     const frame = i < baseFrameCount ? i : totalFrameCount - i;
     character.frame = frame;
     character.playPieces(character.currentPieces);
-    const currentBodyFrame = character.currentBodyFrame;
+    const currentBodyFrame = character.currentBodyFrame!;
     const canvas = extractCanvas(character, renderer) as HTMLCanvasElement;
     const bodyPos = currentBodyFrame?.ancher || { x: 0, y: 0 };
     const frameData: UnprocessedFrame = {

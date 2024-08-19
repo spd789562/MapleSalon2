@@ -3,7 +3,7 @@ import { type Application, Container, Ticker, EventEmitter } from 'pixi.js';
 
 import type { CharacterData } from '@/store/character/store';
 import type { ItemInfo, AncherName, Vec2, PieceSlot } from './const/data';
-import type { CategorizedItem } from './categorizedItem';
+import type { CategorizedItem, CharacterActionItem } from './categorizedItem';
 import type { CharacterAnimatablePart } from './characterAnimatablePart';
 import type {
   CharacterItemPiece,
@@ -38,11 +38,6 @@ class ZmapContainer extends Container {
   }
   addCharacterPart(child: CharacterAnimatablePart) {
     this.addChild(child);
-    console.log(
-      'addCharacterPart',
-      this.requireLocks,
-      child.frames[0].slotName,
-    );
     this.refreshLock();
   }
   hasAllLocks(id: number, locks: string[]) {
@@ -291,8 +286,12 @@ export class Character extends Container {
     this.reset();
     const pieces: CharacterAnimatablePart[] = [];
     let body: CharacterAnimatablePart | undefined = undefined;
+    const earPiece = this.getEarPiece();
+    const earLayer = earPiece?.firstFrameZmapLayer;
     for (const layer of zmap) {
-      const itemsByLayer = this.getItemsByLayer(layer);
+      const itemsByLayer = this.getItemsByLayer(layer).concat(
+        earPiece && earLayer === layer ? [earPiece] : [],
+      );
       if (itemsByLayer.length === 0) {
         continue;
       }
@@ -538,6 +537,22 @@ export class Character extends Container {
         yield layer;
       }
     };
+  }
+
+  getEarPiece() {
+    const headItem = Array.from(this.idItems.values()).find(
+      (item) => item.isHead,
+    );
+    if (!headItem) {
+      return;
+    }
+    const headCategoryItem = headItem.actionPieces.get(
+      this.action,
+    ) as CharacterActionItem;
+
+    const earItems = headCategoryItem?.getAvailableEar(this.earType);
+
+    return earItems?.[0];
   }
 
   getItemsByLayer(layer: PieceSlot) {

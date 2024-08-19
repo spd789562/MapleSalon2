@@ -13,7 +13,7 @@ import {
 import { CharacterLoader } from './loader';
 import { CharacterAnimatablePart } from './characterAnimatablePart';
 
-import { CharacterEarType } from '@/const/ears';
+import type { CharacterEarType } from '@/const/ears';
 import { CharacterAction } from '@/const/actions';
 import { ExpressionsHasEye } from '@/const/emotions';
 import { defaultAncher, handMoveDefaultAnchers } from './const/ancher';
@@ -168,7 +168,8 @@ export abstract class CategorizedItem<Name extends string> {
 
   /** resolve all frames and build CharacterAnimatablePart Later */
   resolveFrames() {
-    const piecesByFrame = new Map<PieceName, [string, CharacterItemPiece[]]>();
+    /* key by `${PieceName}-${z}` */
+    const piecesByFrame = new Map<string, [string, CharacterItemPiece[]]>();
     const isDefault = this.name === 'default' && this.frameCount === 1;
     for (let frame = 0; frame < this.frameCount; frame += 1) {
       /* the default frame might not contain frame */
@@ -190,33 +191,14 @@ export abstract class CategorizedItem<Name extends string> {
           continue;
         }
 
-        /* if pieces contains ear, only use character's */
-        if (pieceName.match(/ear/i)) {
-          const lowerCaseEarType = pieceName.toLowerCase();
-          const lowerCaseCharacterEarType =
-            this.mainItem.character.earType.toLowerCase();
-          if (lowerCaseCharacterEarType !== lowerCaseEarType) {
-            /* if character's ear is humanEar, but it not exist in wzData, then use ear instead */
-            const isUseHumanEar =
-              lowerCaseCharacterEarType ===
-              CharacterEarType.HumanEar.toLowerCase();
-            const hasHumanEar = !!restOfWzData[CharacterEarType.HumanEar];
-            if (isUseHumanEar && hasHumanEar) {
-              continue;
-            }
-            /* use ear if interate to it */
-            if (lowerCaseEarType !== CharacterEarType.Ear.toLowerCase()) {
-              continue;
-            }
-          }
-        }
+        const isEar = pieceName.match(/ear/i);
 
-        const name = this.resolveUseablePieceName(
-          pieceName,
-          restOfWzData[pieceName].z,
-        );
+        const name = isEar
+          ? pieceName
+          : this.resolveUseablePieceName(pieceName, restOfWzData[pieceName].z);
 
-        let pieces = piecesByFrame.get(pieceName);
+        const pieceNameHash = `${pieceName}-${name}`;
+        let pieces = piecesByFrame.get(pieceNameHash);
 
         /* use pieceName prevent conflict before got resolved */
         if (!pieces) {
@@ -224,7 +206,7 @@ export abstract class CategorizedItem<Name extends string> {
             this.frameCount,
           ).fill(EMPTY);
           pieces = [name, initialPieces];
-          piecesByFrame.set(pieceName, pieces);
+          piecesByFrame.set(pieceNameHash, pieces);
         }
 
         const renderPiecesInfo = {
@@ -361,6 +343,17 @@ export class CharacterActionItem extends CategorizedItem<CharacterAction> {
   }
   isDyeable() {
     return this.mainItem.info.dye !== undefined;
+  }
+  getAvailableEar(earType: CharacterEarType) {
+    /* this logic seems not right */
+    /* if character's ear is humanEar, but it not exist in wzData, then use ear instead */
+    // if (
+    //   earType === CharacterEarType.HumanEar &&
+    //   !this.items.has(CharacterEarType.HumanEar)
+    // ) {
+    //   return this.items.get(CharacterEarType.Ear);
+    // }
+    return this.items.get(earType);
   }
 }
 

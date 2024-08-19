@@ -19,6 +19,7 @@ import {
   isCashWeaponId,
   isHairId,
   isFaceAccessoryId,
+  isHeadId,
   isBodyId,
   isCapId,
 } from '@/utils/itemId';
@@ -79,6 +80,10 @@ export class CharacterItem implements RenderItemInfo {
 
   get isHair() {
     return isHairId(this.info.id);
+  }
+
+  get isHead() {
+    return isHeadId(this.info.id);
   }
 
   get isBody() {
