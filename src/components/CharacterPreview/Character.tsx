@@ -63,7 +63,9 @@ export const CharacterView = (props: CharacterViewProps) => {
         viewport.scaled <= MAX_ZOOM &&
         viewport.scaled >= MIN_ZOOM
       ) {
-        updateZoom(viewport.scaled, props.target);
+        const clampedScaled = (viewport.scaled * 100) / 100;
+        viewport.scaled = clampedScaled;
+        updateZoom(clampedScaled, props.target);
       }
     });
     viewport.on('moved', (e) => {
