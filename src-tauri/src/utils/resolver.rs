@@ -8,6 +8,8 @@ use wz_reader::{version::WzMapleVersion, SharedWzMutableKey, WzNode, WzNodeArc, 
 use super::{block_parse, block_parse_with_parent};
 use crate::{Error, Result};
 
+const WZ_ROOT_FOLDER_NEED_LOAD: [&str; 4] = ["Base", "Character", "Effect", "String"];
+
 pub async fn get_root_wz_file_path(dir: &DirEntry) -> Option<String> {
     let dir_name = dir.file_name();
     let mut inner_wz_name = dir_name.to_str().unwrap().to_string();
@@ -162,7 +164,9 @@ pub async fn resolve_base(path: &str, version: Option<WzMapleVersion>) -> Result
                 .at(file_name.to_str().unwrap())
                 .is_some();
 
-            if has_dir && is_valid {
+            let is_need_load = WZ_ROOT_FOLDER_NEED_LOAD.contains(&file_name.to_str().unwrap());
+
+            if has_dir && is_valid && is_need_load {
                 // let wz_path = get_root_wz_file_path(&item).await;
                 let wz_path = if item.file_type().await?.is_dir() {
                     get_root_wz_file_path(&item).await
