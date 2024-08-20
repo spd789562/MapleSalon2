@@ -442,13 +442,36 @@ export class Character extends Container {
       const isSkinGroup = pieceFrame.group === 'skin';
       if (pieceFrame) {
         const ancherName = pieceFrame.baseAncherName;
-        const ancher = currentAncher.get(ancherName);
+        let ancher = currentAncher.get(ancherName);
+
+        /* effect ancher use different stratgy */
+        if (piece.effectZindex !== undefined) {
+          if (piece.item.isCap) {
+            const baseAncher = {
+              x: 0,
+              y: 48,
+            };
+            /* cap effect use brow ancher */
+            const browAncher = currentAncher.get('brow') || { x: 0, y: 0 };
+            ancher = {
+              x: baseAncher.x + browAncher.x,
+              y: baseAncher.y + browAncher.y,
+            };
+          } else {
+            ancher = this.currentBodyFrame?.ancher || {
+              x: 0,
+              y: 0,
+            };
+          }
+        }
+
         /* setting the ancher on each piece */
         ancher &&
           piece.pivot?.copyFrom({
             x: -ancher.x,
             y: -ancher.y,
           });
+
         /* some part can play indenpendently */
         if (piece.canIndependentlyPlay && !isSkinGroup) {
           if (this.isAnimating) {
@@ -481,12 +504,6 @@ export class Character extends Container {
     /* use the ancher to set actual character offset */
     const bodyPos = this.currentBodyFrame?.ancher || { x: 0, y: 0 };
     this.pivot?.set(bodyPos.x, bodyPos.y);
-    for (const [layerName, layer] of this.zmapLayers.entries()) {
-      if (!layerName.includes('effect')) {
-        continue;
-      }
-      layer.position.set(bodyPos.x, bodyPos.y);
-    }
   }
 
   /** use backBody to check current action is turn character to back  */
