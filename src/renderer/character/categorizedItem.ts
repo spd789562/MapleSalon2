@@ -17,6 +17,7 @@ import type { CharacterEarType } from '@/const/ears';
 import { CharacterAction } from '@/const/actions';
 import { ExpressionsHasEye } from '@/const/emotions';
 import { defaultAncher, handMoveDefaultAnchers } from './const/ancher';
+import { isMixDyeableId } from '@/utils/itemId';
 
 export abstract class CategorizedItem<Name extends string> {
   name: Name;
@@ -342,7 +343,7 @@ export class CharacterActionItem extends CategorizedItem<CharacterAction> {
     }
   }
   isDyeable() {
-    return this.mainItem.info.dye !== undefined;
+    return isMixDyeableId(this.mainItem.info.id);
   }
   getAvailableEar(earType: CharacterEarType) {
     /* this logic seems not right */
@@ -362,7 +363,7 @@ export class CharacterFaceItem extends CategorizedItem<CharacterExpressions> {
     // do nothing
   }
   isDyeable() {
-    const hasDye = this.mainItem.info.dye !== undefined;
+    const hasDye = isMixDyeableId(this.mainItem.info.id);
     return hasDye && ExpressionsHasEye.includes(this.name);
   }
 }
