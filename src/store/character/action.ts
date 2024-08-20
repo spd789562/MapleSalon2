@@ -306,6 +306,30 @@ export function updateItemHsvInfo(
     );
   }
 }
+export function batchUpdateItemHsvInfo(
+  category: EquipSubCategory,
+  fields: Partial<Record<'hue' | 'saturation' | 'brightness', number>>,
+) {
+  const changesData = $currentItemChanges.get()[category];
+  if (changesData) {
+    $currentItemChanges.setKey(category, {
+      ...changesData,
+      ...fields,
+    });
+  } else {
+    const currentItem = $totalItems.get()[category];
+
+    if (!currentItem) {
+      return;
+    }
+
+    /* fill the changes first and then modify the value */
+    $currentItemChanges.setKey(
+      category,
+      Object.assign({}, currentItem, fields),
+    );
+  }
+}
 export function resetItemHsvInfo(category: EquipSubCategory) {
   const currentItems = $totalItems.get();
   const originItem = currentItems[category];

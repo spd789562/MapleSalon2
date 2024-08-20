@@ -21,7 +21,7 @@ export const EquipEdit = () => {
   });
 
   return (
-    <Box h="48">
+    <Box h="52">
       <Show when={item()}>
         {(item) => (
           <>

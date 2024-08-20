@@ -1,16 +1,22 @@
 import { Show, createMemo } from 'solid-js';
 import { css } from 'styled-system/css';
 
-import { updateItemHsvInfo, resetItemHsvInfo } from '@/store/character/action';
+import {
+  updateItemHsvInfo,
+  batchUpdateItemHsvInfo,
+  resetItemHsvInfo,
+} from '@/store/character/action';
 import { createGetItemChangeById } from '@/store/character/selector';
 import { getCharacterSubCategory } from '@/store/character/utils';
 import { useDynamicPureStore } from '@/store';
 
 import ResetIcon from 'lucide-solid/icons/rotate-ccw';
+import RandomLineIcon from 'mingcute_icon/svg/other/random_line.svg';
 import { VStack } from 'styled-system/jsx/vstack';
 import { HStack } from 'styled-system/jsx/hstack';
 import { SimpleSelect as Select } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import { IconButton } from '@/components/ui/icon-button';
 import { EquipHsvSlider } from './EquipHsvSlider';
 
 import { ColorRange } from '@/renderer/filter/hsvAdjustmentFilter';
@@ -75,6 +81,21 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
       resetItemHsvInfo(subCategory);
     }
   }
+  function handleRandomAll() {
+    const category = itemChange()?.category;
+    const data = {
+      hue: getRandomNumber(0, 360),
+      saturation: getRandomNumber(-100, 100),
+      brightness: getRandomNumber(-100, 100),
+    };
+    if (category === 'Head') {
+      batchUpdateItemHsvInfo('Head', data);
+      batchUpdateItemHsvInfo('Body', data);
+    } else if (category) {
+      const subCategory = getCharacterSubCategory(category);
+      batchUpdateItemHsvInfo(subCategory, data);
+    }
+  }
   const handleColorRangeChange = createItemChange('colorRange');
   const handleHueChange = createItemChange('hue');
   const handleSaturationChange = createItemChange('saturation');
@@ -99,6 +120,15 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
               handleColorRangeChange(Number(detail.value[0]));
             }}
           />
+          <IconButton
+            marginLeft="auto"
+            variant="outline"
+            size="sm"
+            onClick={handleRandomAll}
+            title="隨機染色"
+          >
+            <RandomLineIcon />
+          </IconButton>
         </HStack>
         <EquipHsvSlider
           title="色相"
@@ -137,3 +167,7 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
     </Show>
   );
 };
+
+function getRandomNumber(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
