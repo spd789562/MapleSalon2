@@ -73,11 +73,16 @@ export function isGloveId(id: number): boolean {
 }
 
 export function isShieldId(id: number): boolean {
-  return Math.floor(id / 10000) === 109;
+  const shortId = Math.floor(id / 10000);
+  return shortId === 109;
 }
 
 export function isCapeId(id: number): boolean {
   return Math.floor(id / 10000) === 110;
+}
+
+export function isDuelWeaponId(id: number): boolean {
+  return Math.floor(id / 10000) === 134;
 }
 
 export function isWeaponId(id: number): boolean {
@@ -169,6 +174,7 @@ export function getSubCategory(id: number): EquipSubCategory | null {
     case 108:
       return 'Glove';
     case 109:
+    case 134:
       return 'Shield';
     case 110:
       return 'Cape';
