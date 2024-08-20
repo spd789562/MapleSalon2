@@ -33,8 +33,7 @@ class ZmapContainer extends Container {
     this.name = name;
     this.zIndex = index;
     this.character = character;
-    this.requireLocks =
-      (CharacterLoader.smap?.[name] || '').match(/.{1,2}/g) || [];
+    this.requireLocks = [];
 
     // part of this logic is from maplestory.js
     if (this.name === 'mailArm') {
@@ -89,7 +88,11 @@ class ZmapContainer extends Container {
         locks = part.item.vslot;
       }
 
-      if (this.hasAllLocks(part.item.info.id, locks)) {
+      const hasSelfLock = this.hasAllLocks(part.item.info.id, part.item.vslot);
+      const hasLayerLock = this.hasAllLocks(part.item.info.id, locks);
+
+      // as long as one of the lock is ok, show the part
+      if (hasSelfLock || hasLayerLock) {
         child.visible = true;
       } else {
         child.visible = false;
@@ -442,7 +445,7 @@ export class Character extends Container {
         const ancher = currentAncher.get(ancherName);
         /* setting the ancher on each piece */
         ancher &&
-          piece.pivot.copyFrom({
+          piece.pivot?.copyFrom({
             x: -ancher.x,
             y: -ancher.y,
           });
