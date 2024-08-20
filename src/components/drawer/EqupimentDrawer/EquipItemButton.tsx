@@ -5,7 +5,7 @@ import type { EquipItem } from '@/store/string';
 import { selectNewItem } from '@/store/character/action';
 
 import { CssTooltip } from '@/components/ui/cssTooltip';
-import { LoadableEquipIcon } from '@/components/LoadableEquipIcon';
+import { LoadableEquipIcon } from '@/components/elements/LoadableEquipIcon';
 import { PreviewCharacter } from './PreviewCharacter';
 
 export interface EquipItemButtonProps {

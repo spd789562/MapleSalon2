@@ -12,7 +12,7 @@ import {
 import { Grid } from 'styled-system/jsx/grid';
 import { Button } from '@/components/ui/button';
 import * as RadioButtonGroup from '@/components/ui/radioButtonGroup';
-import { CategorySelectionIcon } from './CategorySelectionIcon';
+import { CategoryIcon } from '@/components/elements/CategoryIcon';
 
 import { AllCategory } from '@/const/equipments';
 
@@ -54,7 +54,7 @@ export const CategorySelection = () => {
               <RadioButtonGroup.ItemControl />
               <RadioButtonGroup.ItemHiddenInput />
               <RadioButtonGroup.ItemText>
-                <CategorySelectionIcon category={option().id} size={20} />
+                <CategoryIcon category={option().id} size={20} />
                 {option().label}
               </RadioButtonGroup.ItemText>
             </RadioButtonGroup.Item>
@@ -81,7 +81,7 @@ export const CategorySelectionToggle = () => {
   return (
     <Show when={isShowing()}>
       <Button variant="outline" w={32} onClick={handleClick}>
-        <CategorySelectionIcon category={option().id} size={20} />
+        <CategoryIcon category={option().id} size={20} />
         {option().label}
       </Button>
     </Show>

@@ -3,7 +3,7 @@ import { useStore } from '@nanostores/solid';
 import { $showItemDyeable } from '@/store/settingDialog';
 
 import { HStack } from 'styled-system/jsx/hstack';
-import { LoadableEquipIcon } from '@/components/LoadableEquipIcon';
+import { LoadableEquipIcon } from '@/components/elements/LoadableEquipIcon';
 
 const DEMO_ITEM_MALE_ID = 1040005;
 const DEMO_ITEM_MALE_NAME = '橙色棒球服';

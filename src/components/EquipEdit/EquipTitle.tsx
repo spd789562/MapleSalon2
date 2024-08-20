@@ -1,7 +1,7 @@
 import type { JSX } from 'solid-js';
 
 import { HStack } from 'styled-system/jsx/hstack';
-import { LoadableEquipIcon } from '@/components/LoadableEquipIcon';
+import { LoadableEquipIcon } from '@/components/elements/LoadableEquipIcon';
 
 export interface EquipTitleProps {
   id: number;

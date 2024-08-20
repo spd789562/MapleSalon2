@@ -6,13 +6,12 @@ import { setItemContextMenuTargetInfo } from '@/store/itemContextMenu';
 import { $showItemGender } from '@/store/settingDialog';
 
 import CircleHelpIcon from 'lucide-solid/icons/circle-help';
-import { Skeleton } from './ui/skeleton';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Flex } from 'styled-system/jsx/flex';
 
 import { useItemContextTrigger } from '@/context/itemContextMenu';
 
 import { getIconPath, getGender } from '@/utils/itemId';
-
 import { Gender } from '@/utils/itemId';
 
 import DyeableLabelIcon from '@/assets/color_label.png';

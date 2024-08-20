@@ -1,5 +1,3 @@
-import { Dynamic, Switch, Match, Show } from 'solid-js/web';
-
 import type { EquipCategorySelections } from '@/store/equipDrawer';
 
 import type { Icon } from 'lucide-solid';
@@ -21,13 +19,17 @@ import ShoeLineIcon from 'mingcute_icon/svg/part/shoe_line.svg';
 import GloveLineIcon from 'mingcute_icon/svg/part/glove_line.svg';
 import ySkewLineIcon from 'mingcute_icon/svg/design/y_skew_line.svg';
 import FaceLineIcon from 'mingcute_icon/svg/part/face_line.svg';
+import HairLineIcon from 'mingcute_icon/svg/part/hair_2_line.svg';
+import BabyLineIcon from 'mingcute_icon/svg/part/baby_line.svg';
 
-interface DynamicIcon {
+export interface DynamicIcon {
   type: IconType;
   icon: typeof Icon | SvgIcon;
 }
 
-const IconMap: Partial<Record<EquipCategorySelections, DynamicIcon>> = {
+export const CategoryIconMap: Partial<
+  Record<EquipCategorySelections, DynamicIcon>
+> = {
   Weapon: { type: IconType.Lucide, icon: SwordIcon },
   CashWeapon: { type: IconType.Lucide, icon: SwordsIcon },
   Cap: { type: IconType.Svg, icon: HatLineIcon },
@@ -42,33 +44,7 @@ const IconMap: Partial<Record<EquipCategorySelections, DynamicIcon>> = {
   Earrings: { type: IconType.Svg, icon: EarLineIcon },
   Shield: { type: IconType.Lucide, icon: ShieldIcon },
   Skin: { type: IconType.Svg, icon: FaceLineIcon },
+  Hair: { type: IconType.Svg, icon: HairLineIcon },
+  Face: { type: IconType.Svg, icon: BabyLineIcon },
   [AllCategory]: { type: IconType.Lucide, icon: LayoutGridIcon },
-};
-
-interface CategorySelectionIconProps {
-  category: EquipCategorySelections;
-  size: number;
-}
-export const CategorySelectionIcon = (props: CategorySelectionIconProps) => {
-  return (
-    <Show
-      when={IconMap[props.category]}
-      fallback={<LayoutGridIcon size={props.size} />}
-    >
-      {(icon) => (
-        <Switch>
-          <Match when={icon().type === IconType.Lucide}>
-            <Dynamic component={icon().icon} size={props.size} />
-          </Match>
-          <Match when={icon().type === IconType.Svg}>
-            <Dynamic
-              component={icon().icon}
-              width={props.size}
-              height={props.size}
-            />
-          </Match>
-        </Switch>
-      )}
-    </Show>
-  );
 };

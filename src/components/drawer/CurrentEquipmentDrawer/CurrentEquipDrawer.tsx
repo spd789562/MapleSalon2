@@ -18,7 +18,7 @@ import {
   Body,
   Footer,
 } from '@/components/ui/drawer';
-import { PinIconButton } from '@/components/PinIconButton';
+import { PinIconButton } from '@/components/elements/PinIconButton';
 
 interface EquipDrawerProps {
   header?: JSX.Element;

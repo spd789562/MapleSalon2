@@ -1,4 +1,3 @@
-import { GlTextureSystem } from 'pixi.js';
 import {
   createEffect,
   createMemo,
