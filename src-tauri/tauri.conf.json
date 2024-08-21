@@ -1,5 +1,5 @@
 {
-  "productName": "maplecharactercreator",
+  "productName": "MapleSalon2",
   "version": "0.0.0",
   "identifier": "com.maplecreator.io",
   "build": {
@@ -11,9 +11,9 @@
   "app": {
     "windows": [
       {
-        "title": "maplecharactercreator",
-        "width": 800,
-        "height": 600
+        "title": "MapleSalon2",
+        "width": 1024,
+        "height": 800
       }
     ],
     "security": {

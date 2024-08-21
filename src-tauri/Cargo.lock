@@ -2157,8 +2157,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "maplecharactercreator"
-version = "0.0.0"
+name = "maplesalon2"
+version = "0.0.1"
 dependencies = [
  "axum",
  "futures",
