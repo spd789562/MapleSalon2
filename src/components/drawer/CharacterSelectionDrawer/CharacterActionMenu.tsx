@@ -18,7 +18,7 @@ export const CharacterActionMenu = (props: CharacterActionMenuProps) => {
 
   function handleKeyDown(e: KeyboardEvent) {
     if (e.key === 'i') {
-      // rootProps.onSelect?.({ value: 'detail' });
+      rootProps.onSelect?.({ value: 'detail' });
     } else if (e.key === 'c') {
       rootProps.onSelect?.({ value: 'clone' });
     } else if (e.key === 'Delete') {
@@ -40,13 +40,13 @@ export const CharacterActionMenu = (props: CharacterActionMenuProps) => {
             <Menu.ItemGroup>
               <Menu.ItemGroupLabel>{localProps.name}</Menu.ItemGroupLabel>
               <Menu.Separator />
-              {/* <CharacterActionMenuItem
+              <CharacterActionMenuItem
                 value="detail"
                 icon={<InfoIcon size={12} />}
                 label="詳細資訊"
                 keybind="I"
                 keybindPx="2"
-              /> */}
+              />
               <CharacterActionMenuItem
                 value="clone"
                 icon={<CopyIcon size={12} />}

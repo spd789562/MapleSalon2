@@ -109,6 +109,9 @@ export const EquipItemIcon = styled(Box, {
     p: '1',
     borderRadius: 'sm',
     backgroundColor: 'bg.subtle',
+    _dark: {
+      backgroundColor: 'gray.8',
+    },
   },
 });
 

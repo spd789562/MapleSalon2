@@ -3,6 +3,8 @@ import { styled } from 'styled-system/jsx/factory';
 
 import { useDynamicPureStore } from '@/store';
 import { $hasAnyItemChanges } from '@/store/character/selector';
+import { $characterInfoDialogOpen } from '@/store/trigger';
+import { changeCurrentCharacterInfo } from '@/store/characterInfo';
 
 import {
   createGetCharacterById,
@@ -43,6 +45,15 @@ export const CharacterItem = (props: CharacterItemProps) => {
     cloneCharacter(props.id);
   };
 
+  const handleShowInfo = () => {
+    const data = characterData();
+    if (!data) {
+      return;
+    }
+    changeCurrentCharacterInfo(data);
+    $characterInfoDialogOpen.set(true);
+  };
+
   const handleRemove = () => {
     removeCharacter(props.id);
   };
@@ -58,8 +69,8 @@ export const CharacterItem = (props: CharacterItemProps) => {
   const handleMenuSelect = (details: SelectionDetails) => {
     if (details.value === 'clone') {
       handleClone();
-    } else if (details.value === 'info') {
-      console.warn('unimplemented');
+    } else if (details.value === 'detail') {
+      handleShowInfo();
     } else if (details.value === 'download') {
       handleDownlaod();
     } else if (details.value === 'delete') {
