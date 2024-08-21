@@ -25,9 +25,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
+        uses: oven-sh/setup-bun@v2
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
