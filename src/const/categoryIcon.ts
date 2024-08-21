@@ -9,6 +9,7 @@ import ShieldIcon from 'lucide-solid/icons/shield';
 import SwordIcon from 'lucide-solid/icons/sword';
 import SwordsIcon from 'lucide-solid/icons/swords';
 import GlassesIcon from 'lucide-solid/icons/glasses';
+import SmileIcon from 'lucide-solid/icons/smile';
 import SmilePlusIcon from 'lucide-solid/icons/smile-plus';
 import CoatLineIcon from 'mingcute_icon/svg/part/coat_line.svg';
 import HatLineIcon from 'mingcute_icon/svg/part/hat_line.svg';
@@ -20,7 +21,6 @@ import GloveLineIcon from 'mingcute_icon/svg/part/glove_line.svg';
 import ySkewLineIcon from 'mingcute_icon/svg/design/y_skew_line.svg';
 import FaceLineIcon from 'mingcute_icon/svg/part/face_line.svg';
 import HairLineIcon from 'mingcute_icon/svg/part/hair_2_line.svg';
-import BabyLineIcon from 'mingcute_icon/svg/part/baby_line.svg';
 
 export interface DynamicIcon {
   type: IconType;
@@ -45,6 +45,6 @@ export const CategoryIconMap: Partial<
   Shield: { type: IconType.Lucide, icon: ShieldIcon },
   Skin: { type: IconType.Svg, icon: FaceLineIcon },
   Hair: { type: IconType.Svg, icon: HairLineIcon },
-  Face: { type: IconType.Svg, icon: BabyLineIcon },
+  Face: { type: IconType.Svg, icon: SmileIcon },
   [AllCategory]: { type: IconType.Lucide, icon: LayoutGridIcon },
 };
