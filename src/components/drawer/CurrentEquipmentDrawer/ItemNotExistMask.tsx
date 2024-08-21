@@ -13,7 +13,7 @@ export const ItemNotExistMask = (props: ItemNotExistMaskProps) => {
     return !!CharacterLoader.getPiecePathIfExist(props.id);
   });
   return (
-    <Show when={isExistInCurrentVersion()}>
+    <Show when={!isExistInCurrentVersion()}>
       <Mask>
         <Text>裝備不存在此版本或無法讀取</Text>
       </Mask>
