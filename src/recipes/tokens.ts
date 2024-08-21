@@ -40,6 +40,9 @@ export const tokens: Tokens = {
     confirmModal: {
       value: 2500,
     },
+    itemContextMenu: {
+      value: 2600,
+    },
   },
   assets: {
     henesysBackground: {

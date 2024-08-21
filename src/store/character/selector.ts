@@ -14,10 +14,9 @@ import { getUpdateItems, getCharacterSubCategory } from './utils';
 import { getSubCategory } from '@/utils/itemId';
 
 import type { EquipSubCategory } from '@/const/equipments';
-import type { ItemInfo } from '@/renderer/character/const/data';
 
-import { FaceColor, type FaceColorId } from '@/const/face';
-import { HairColor, type HairColorId } from '@/const/hair';
+import type { FaceColorId } from '@/const/face';
+import type { HairColorId } from '@/const/hair';
 import { PreviewScene } from '@/const/scene';
 
 import { getHairColorId, getFaceColorId } from '@/utils/mixDye';

@@ -1,5 +1,6 @@
 import { Show, Switch, Match, createMemo } from 'solid-js';
 import { useStore } from '@nanostores/solid';
+import { styled } from 'styled-system/jsx/factory';
 
 import { createEquipItemByCategory } from '@/store/character/selector';
 import {
@@ -15,6 +16,7 @@ import { EllipsisText } from '@/components/ui/ellipsisText';
 import { EqipItemActions } from './EquipItemActions';
 import { EquipItemHSVInfo } from './EquipItemHSVInfo';
 import { EquipItemMixDyeInfo } from './EquipItemMixDyeInfo';
+import { ItemNotExistMask } from './ItemNotExistMask';
 
 import { isDyeableId, isMixDyeableId, isSkinPartId } from '@/utils/itemId';
 
@@ -55,37 +57,18 @@ export const EquipItem = (props: EquipItemProps) => {
   return (
     <Show when={item()}>
       {(item) => (
-        <Grid
-          py="1"
-          px="2"
-          borderRadius="md"
-          bg="bg.default"
-          width="full"
-          shadow="sm"
-          gridTemplateColumns="auto 1fr auto"
-          alignItems="center"
-        >
-          <Box
-            backgroundColor={{ base: 'bg.subtle', _dark: 'neutral.12' }}
-            p={1}
-            borderRadius="sm"
-          >
+        <EquipItemContainer>
+          <EquipItemIcon>
             <LoadableEquipIcon id={item().id} name={item().name} />
-          </Box>
-          <VStack
-            flex="1"
-            gap={1}
-            alignItems="flex-start"
-            overflow="hidden"
-            color="colorPalette.text"
-          >
-            <Box flex="1" fontSize="sm" width="full">
+          </EquipItemIcon>
+          <EquipItemInfo>
+            <EquipItemName>
               <Show when={item().name} fallback={item().id}>
                 <EllipsisText as="div" title={item().name}>
                   {item().name}
                 </EllipsisText>
               </Show>
-            </Box>
+            </EquipItemName>
             <Switch>
               <Match when={isDyeableId(item().id)}>
                 <EquipItemHSVInfo
@@ -98,10 +81,51 @@ export const EquipItem = (props: EquipItemProps) => {
                 <EquipItemMixDyeInfo id={item().id} dyeInfo={item().dye} />
               </Match>
             </Switch>
-          </VStack>
+          </EquipItemInfo>
           <EqipItemActions onEdit={handleEdit} onDelete={handleDelete()} />
-        </Grid>
+          <ItemNotExistMask id={item().id} />
+        </EquipItemContainer>
       )}
     </Show>
   );
 };
+
+export const EquipItemContainer = styled(Grid, {
+  base: {
+    py: '1',
+    px: '2',
+    borderRadius: 'md',
+    bg: 'bg.default',
+    width: 'full',
+    shadow: 'sm',
+    gridTemplateColumns: 'auto 1fr auto',
+    alignItems: 'center',
+    position: 'relative',
+  },
+});
+
+export const EquipItemIcon = styled(Box, {
+  base: {
+    p: '1',
+    borderRadius: 'sm',
+    backgroundColor: 'bg.subtle',
+  },
+});
+
+export const EquipItemName = styled(Box, {
+  base: {
+    flex: '1',
+    fontSize: 'sm',
+    width: 'full',
+  },
+});
+
+export const EquipItemInfo = styled(VStack, {
+  base: {
+    flex: '1',
+    gap: '1',
+    alignItems: 'flex-start',
+    overflow: 'hidden',
+    color: 'colorPalette.text',
+  },
+});
