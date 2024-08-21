@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: setup node
-        uses: oven-sh/setup-bun@v2
+        uses: actions/setup-node@v4
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -42,7 +42,7 @@ jobs:
         # You can remove the one that doesn't apply to your app to speed up the workflow a bit.
 
       - name: install frontend dependencies
-        run: bun install # change this to npm, pnpm or bun depending on which one you use.
+        run: npm install # change this to npm, pnpm or bun depending on which one you use.
 
       # If tagName and releaseId are omitted tauri-action will only build the app and won't try to upload any assets.
       - uses: tauri-apps/tauri-action@v0
