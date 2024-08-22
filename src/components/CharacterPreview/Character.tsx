@@ -1,7 +1,6 @@
 import { onMount, onCleanup, createEffect, createSignal } from 'solid-js';
 import type { ReadableAtom } from 'nanostores';
 
-
 import { $preferRenderer } from '@/store/renderer';
 import type { CharacterData } from '@/store/character/store';
 import {
@@ -12,6 +11,10 @@ import {
   updateCenter,
   updateZoom,
 } from '@/store/previewZoom';
+import {
+  resetUpscaleSource,
+  setUpscaleSource,
+} from '@/store/expirement/upscale';
 import { usePureStore } from '@/store';
 
 import { Application } from 'pixi.js';
@@ -77,6 +80,7 @@ export const CharacterView = (props: CharacterViewProps) => {
     container.appendChild(app.canvas);
     viewport.addChild(ch);
     app.stage.addChild(viewport);
+    setUpscaleSource(app.canvas);
 
     setIsInit(true);
   }
@@ -88,6 +92,7 @@ export const CharacterView = (props: CharacterViewProps) => {
   onCleanup(() => {
     ch.reset();
     app.destroy();
+    resetUpscaleSource();
   });
 
   createEffect(() => {

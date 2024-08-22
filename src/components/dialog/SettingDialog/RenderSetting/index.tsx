@@ -7,6 +7,7 @@ import { DefaultCharacterRenderingSwitch } from './DefaultCharacterRenderingSwit
 import { ShowItemGenderSwitch } from './ShowItemGenderSwitch';
 import { ShowItemDyeableSwitch } from './ShowItemDyeableSwitch';
 import { ItemEffectPreview } from './ItemEffectPreview';
+import { UpscaleSwitch } from './UpscaleSwitch';
 import { SettingTooltip } from '@/components/dialog/SettingDialog/SettingTooltip';
 
 export const RenderSetting = () => {
@@ -25,6 +26,9 @@ export const RenderSetting = () => {
         <ShowItemGenderSwitch />
         <ShowItemDyeableSwitch />
         <ItemEffectPreview />
+      </HStack>
+      <HStack gap="8">
+        <UpscaleSwitch />
       </HStack>
     </Stack>
   );

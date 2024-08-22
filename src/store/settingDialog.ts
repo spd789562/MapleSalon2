@@ -39,6 +39,7 @@ export interface AppSetting extends Record<string, unknown> {
   defaultCharacterRendering: boolean;
   showItemGender: boolean;
   showItemDyeable: boolean;
+  enableExperimentalUpscale: boolean;
 }
 
 const DEFAULT_SETTING: AppSetting = {
@@ -50,6 +51,7 @@ const DEFAULT_SETTING: AppSetting = {
   defaultCharacterRendering: false,
   showItemGender: true,
   showItemDyeable: true,
+  enableExperimentalUpscale: false,
 };
 
 export const $appSetting = deepMap<AppSetting>(DEFAULT_SETTING);
@@ -80,6 +82,10 @@ export const $showItemGender = computed(
 export const $showItemDyeable = computed(
   $appSetting,
   (setting) => setting.showItemDyeable,
+);
+export const $enableExperimentalUpscale = computed(
+  $appSetting,
+  (setting) => setting.enableExperimentalUpscale,
 );
 
 /* action */
@@ -151,4 +157,7 @@ export function setShowItemGender(value: boolean) {
 }
 export function setShowItemDyeable(value: boolean) {
   $appSetting.setKey('showItemDyeable', value);
+}
+export function setEnableExperimentalUpscale(value: boolean) {
+  $appSetting.setKey('enableExperimentalUpscale', value);
 }
