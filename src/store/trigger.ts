@@ -12,6 +12,8 @@ export const $sceneSelectionOpen = atom<boolean>(false);
 
 export const $showPreviousCharacter = atom<boolean>(false);
 
+export const $showUpscaledCharacter = atom<boolean>(false);
+
 export const $confirmDialogOpen = atom<boolean>(false);
 
 export const $settingDialogOpen = atom<boolean>(false);

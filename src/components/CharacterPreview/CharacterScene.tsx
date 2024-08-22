@@ -8,13 +8,18 @@ import {
   $previewCharacter,
   $sceneCustomColorStyle,
 } from '@/store/character/selector';
-import { $showPreviousCharacter } from '@/store/trigger';
+import {
+  $showPreviousCharacter,
+  $showUpscaledCharacter,
+} from '@/store/trigger';
 
 import LoaderCircle from 'lucide-solid/icons/loader-circle';
 import ChevronRightIcon from 'lucide-solid/icons/chevron-right';
 import { CharacterView } from './Character';
+import { UpscaleCharacter } from './UpscaleCharacter';
 import { CharacterSceneSelection } from './CharacterSceneSelection';
 import { ShowPreviousSwitch } from './ShowPreviousSwitch';
+import { ShowUpscaleSwitch } from './ShowUpscaleSwitch';
 import { ZoomControl } from './ZoomControl';
 
 import { PreviewSceneBackground } from '@/const/scene';
@@ -26,6 +31,7 @@ export const CharacterScene = () => {
   const scene = useStore($currentScene);
   const customColorStyle = useStore($sceneCustomColorStyle);
   const isShowComparison = useStore($showPreviousCharacter);
+  const isShowUpscale = useStore($showUpscaledCharacter);
 
   function handleLoad() {
     setIsLoading(true);
@@ -83,8 +89,12 @@ export const CharacterScene = () => {
         target="preview"
         isLockInteraction={isLockInteraction()}
       />
+      <Show when={isShowUpscale()}>
+        <UpscaleCharacter />
+      </Show>
       <TopTool>
         <ShowPreviousSwitch />
+        <ShowUpscaleSwitch />
       </TopTool>
       <BottomLeftTool>
         <ZoomControl />
@@ -144,6 +154,8 @@ const TopTool = styled('div', {
     transition: 'opacity 0.2s',
     backgroundColor: 'bg.default',
     boxShadow: 'md',
+    display: 'flex',
+    gap: 2,
     _hover: {
       opacity: 1,
     },
