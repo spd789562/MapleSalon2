@@ -46,7 +46,7 @@ export const CharacterView = (props: CharacterViewProps) => {
       height: 340,
       background: 0x000000,
       backgroundAlpha: 0,
-      antialias: true,
+      // antialias: true,
       preference: $preferRenderer.get(),
     });
     viewport = new ZoomContainer(app, {
@@ -80,7 +80,9 @@ export const CharacterView = (props: CharacterViewProps) => {
     container.appendChild(app.canvas);
     viewport.addChild(ch);
     app.stage.addChild(viewport);
-    setUpscaleSource(app.canvas);
+    if (props.target === 'preview') {
+      setUpscaleSource(app.canvas);
+    }
 
     setIsInit(true);
   }
@@ -92,7 +94,9 @@ export const CharacterView = (props: CharacterViewProps) => {
   onCleanup(() => {
     ch.reset();
     app.destroy();
-    resetUpscaleSource();
+    if (props.target === 'preview') {
+      setUpscaleSource(app.canvas);
+    }
   });
 
   createEffect(() => {
