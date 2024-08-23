@@ -1,7 +1,7 @@
 {
   "productName": "MapleSalon2",
-  "version": "0.0.0",
-  "identifier": "com.maplecreator.io",
+  "version": "0.1.0",
+  "identifier": "com.maplesalon.io",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -29,6 +29,14 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "windows": {
+      "nsis": {
+        "languages": ["English", "TradChinese"]
+      },
+      "wix": {
+        "language": ["en-US", "zh-TW", "zh-CN"]
+      }
+    }
   }
 }
