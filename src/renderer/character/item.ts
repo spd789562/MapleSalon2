@@ -206,8 +206,9 @@ export class CharacterItem implements RenderItemInfo {
       return;
     }
 
-    this.islot = (this.wz.info.islot.match(/.{1,2}/g) || []) as PieceIslot[];
-    this.vslot = (this.wz.info.vslot.match(/.{1,2}/g) || []) as PieceIslot[];
+    /* some item will not have info, WTF? */
+    this.islot = (this.wz.info?.islot?.match(/.{1,2}/g) || []) as PieceIslot[];
+    this.vslot = (this.wz.info?.vslot?.match(/.{1,2}/g) || []) as PieceIslot[];
 
     /* resolve dye */
     if (this.isFace && this.avaliableDye.size === 0) {
