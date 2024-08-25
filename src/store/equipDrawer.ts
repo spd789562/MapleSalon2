@@ -91,8 +91,9 @@ export const $categoryFilteredString = computed(
     $equipmentDrawerEquipTab,
     $currentEquipmentDrawerCategory,
     $equipmentStrings,
+    $equipmentDrawerOnlyShowDyeable,
   ],
-  (tab, category, strings) => {
+  (tab, category, strings, onlyShowDyeable) => {
     if (tab === EquipTab.History) {
       /* not subscribe $equipmentHistory here */
       return $equipmentHistory.get();
@@ -116,41 +117,36 @@ export const $categoryFilteredString = computed(
       });
     }
 
-    if (category === AllCategory) {
-      return strings;
+    let filteredStrings = strings;
+
+    if (category !== AllCategory) {
+      const mainCategory = getCategoryBySubCategory(category);
+      filteredStrings = strings.filter((item) => {
+        if (item.category === mainCategory) {
+          return getSubCategory(item.id) === category;
+        }
+        return false;
+      });
     }
 
-    const mainCategory = getCategoryBySubCategory(category);
-    return strings.filter((item) => {
-      if (item.category === mainCategory) {
-        return getSubCategory(item.id) === category;
-      }
-      return false;
-    });
+    if (!onlyShowDyeable) {
+      return filteredStrings;
+    }
+
+    return strings.filter(({ isDyeable }) => isDyeable);
   },
 );
 
 export const $equipmentDrawerEquipFilteredString = computed(
-  [
-    $categoryFilteredString,
-    $currentEquipmentDrawerSearch,
-    $equipmentDrawerOnlyShowDyeable,
-  ],
-  (strings, searchKey, onlyShowDyeable) => {
+  [$categoryFilteredString, $currentEquipmentDrawerSearch],
+  (strings, searchKey) => {
     if (searchKey) {
       return strings.filter((item) => {
         const isMatch =
           item.name.includes(searchKey) || item.id.toString() === searchKey;
-        if (!onlyShowDyeable) {
-          return isMatch;
-        }
-        return isMatch && item.isDyeable;
+        return isMatch;
       });
     }
-    if (!onlyShowDyeable) {
-      return strings;
-    }
-
-    return strings.filter(({ isDyeable }) => isDyeable);
+    return strings;
   },
 );
