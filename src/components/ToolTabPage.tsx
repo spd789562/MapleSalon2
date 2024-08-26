@@ -3,9 +3,9 @@ import { useStore } from '@nanostores/solid';
 
 import { $toolTab } from '@/store/toolTab';
 
-import { ActionTab } from './ActionTab';
-import { HairDyeTab } from './DyeTab/HairDyeTab';
-import { FaceDyeTab } from './DyeTab/FaceDyeTab';
+import { ActionTab } from './tab/ActionTab';
+import { HairDyeTab } from './tab/DyeTab/HairDyeTab';
+import { FaceDyeTab } from './tab/DyeTab/FaceDyeTab';
 
 import { ToolTab } from '@/const/toolTab';
 
