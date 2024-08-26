@@ -95,7 +95,7 @@ export const CharacterView = (props: CharacterViewProps) => {
     ch.reset();
     app.destroy();
     if (props.target === 'preview') {
-      setUpscaleSource(app.canvas);
+      resetUpscaleSource();
     }
   });
 

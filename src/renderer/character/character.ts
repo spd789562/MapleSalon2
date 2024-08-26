@@ -634,7 +634,6 @@ export class Character extends Container {
     if (!orderedItems) {
       return;
     }
-    console.log(orderedItems.map((item) => item.info.id));
     for (const item of orderedItems) {
       for (const slot of item.vslot) {
         this.locks.set(slot, item.info.id);
