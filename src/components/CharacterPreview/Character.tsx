@@ -15,11 +15,19 @@ import {
   resetUpscaleSource,
   setUpscaleSource,
 } from '@/store/expirement/upscale';
+import { $showUpscaledCharacter } from '@/store/trigger';
 import { usePureStore } from '@/store';
 
 import { Application } from 'pixi.js';
 import { Character } from '@/renderer/character/character';
 import { ZoomContainer } from '@/renderer/ZoomContainer';
+
+/* TEST */
+import { Anime4kFilter } from '@/renderer/filter/anime4k/Anime4kFilter';
+import {
+  PipelineType,
+  type PipelineOption,
+} from '@/renderer/filter/anime4k/const';
 
 export interface CharacterViewProps {
   onLoad: () => void;
@@ -32,8 +40,10 @@ export const CharacterView = (props: CharacterViewProps) => {
   const zoomInfo = usePureStore($previewZoomInfo);
   const characterData = usePureStore(props.store);
   const [isInit, setIsInit] = createSignal<boolean>(false);
+  const isShowUpscale = usePureStore($showUpscaledCharacter);
   let container!: HTMLDivElement;
   let viewport: ZoomContainer | undefined = undefined;
+  let upscaleFilter: Anime4kFilter | undefined = undefined;
   const app = new Application();
   const ch = new Character(app);
 
@@ -79,6 +89,7 @@ export const CharacterView = (props: CharacterViewProps) => {
     });
     container.appendChild(app.canvas);
     viewport.addChild(ch);
+
     app.stage.addChild(viewport);
     if (props.target === 'preview') {
       setUpscaleSource(app.canvas);
@@ -113,6 +124,28 @@ export const CharacterView = (props: CharacterViewProps) => {
   createEffect(async () => {
     if (isInit()) {
       await ch.update(characterData());
+    }
+  });
+
+  createEffect(async () => {
+    if (isShowUpscale()) {
+      await app.renderer.anime4k.preparePipeline([PipelineType.ModeBB]);
+      if (!upscaleFilter) {
+        upscaleFilter = new Anime4kFilter([
+          {
+            pipeline: PipelineType.ModeBB,
+            // params: {
+            //   strength: 0.5,
+            //   strength2: 1,
+            // },
+          } as PipelineOption,
+        ]);
+      }
+      /* TODO */
+      upscaleFilter.updatePipeine();
+      app.stage.filters = [upscaleFilter];
+    } else {
+      app.stage.filters = [];
     }
   });
 

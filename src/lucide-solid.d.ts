@@ -10,3 +10,5 @@ declare module 'dom-to-image-more' {
   import domToImage = require('dom-to-image');
   export = domToImage;
 }
+
+/// <reference path="./renderer/filter/anime4k/Anime4kSyetem.d.ts" />
