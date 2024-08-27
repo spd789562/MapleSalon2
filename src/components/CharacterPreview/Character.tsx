@@ -128,24 +128,22 @@ export const CharacterView = (props: CharacterViewProps) => {
   });
 
   createEffect(async () => {
-    if (isShowUpscale()) {
-      await app.renderer.anime4k.preparePipeline([PipelineType.ModeBB]);
-      if (!upscaleFilter) {
-        upscaleFilter = new Anime4kFilter([
-          {
-            pipeline: PipelineType.ModeBB,
-            // params: {
-            //   strength: 0.5,
-            //   strength2: 1,
-            // },
-          } as PipelineOption,
-        ]);
+    if (isInit() && viewport) {
+      if (isShowUpscale()) {
+        await app.renderer.anime4k.preparePipeline([PipelineType.ModeBB]);
+        if (!upscaleFilter) {
+          upscaleFilter = new Anime4kFilter([
+            {
+              pipeline: PipelineType.ModeBB,
+            },
+          ] as PipelineOption[]);
+        }
+        /* TODO */
+        upscaleFilter.updatePipeine();
+        viewport.filters = [upscaleFilter];
+      } else {
+        viewport.filters = [];
       }
-      /* TODO */
-      upscaleFilter.updatePipeine();
-      app.stage.filters = [upscaleFilter];
-    } else {
-      app.stage.filters = [];
     }
   });
 

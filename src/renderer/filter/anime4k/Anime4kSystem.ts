@@ -38,7 +38,8 @@ export class Anime4kFilterSystem implements System {
     new Map();
   private _sizedPipelineMap: Map<string, Map<string, Anime4KPipeline>> =
     new Map();
-  private _sizedRenderMap: Map<string, SizedRenderResourceTuple> = new Map();
+  private _sizedRenderMap: Map<string, SizedRenderResourceTuple> =
+    new Map();
   private _sizedBindGroupMap: Map<string, GPUBindGroup> = new Map();
   private _gpu!: GPU;
 
@@ -118,6 +119,7 @@ export class Anime4kFilterSystem implements System {
   ) {
     const pipelineHash = pipelines.map((p) => p.pipeline).join(',');
     const key = `${option.width}x${option.height}:${pipelineHash}`;
+    console.log(key);
     let resource = this._sizedRenderMap.get(key);
     if (!resource) {
       resource = this.setSizedRenderResource(option, pipelines);
