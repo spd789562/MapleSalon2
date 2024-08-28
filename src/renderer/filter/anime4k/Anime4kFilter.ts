@@ -28,9 +28,6 @@ const quadGeometry = new Geometry({
 });
 
 export class Anime4kFilter extends Filter {
-  mainTexture: GPUTexture | undefined;
-  _texture: GPUTexture | undefined;
-  public readonly renderPipeId = 'anime4kRender';
   loadedPipeline: PipelineOption[] = [];
 
   constructor(pipelines: PipelineOption[]) {
@@ -134,8 +131,8 @@ export class Anime4kFilter extends Filter {
       0,
     );
   }
-  public updatePipeine() {
-    /* TODO */
+  public updatePipeine(pipelines: PipelineOption[]) {
+    this.loadedPipeline = pipelines;
   }
   private getPixiGlobalBindGroup(
     filterManager: FilterSystem,

@@ -96,6 +96,10 @@ export async function initializeSavedSetting() {
       $appSetting.setKey('windowResizable', !!setting.windowResizable);
       $appSetting.setKey('showItemGender', setting.showItemGender ?? true);
       $appSetting.setKey('showItemDyeable', setting.showItemDyeable ?? true);
+      $appSetting.setKey(
+        'enableExperimentalUpscale',
+        !!setting.enableExperimentalUpscale,
+      );
       const defaultCharacterRendering = !!setting.defaultCharacterRendering;
       if (defaultCharacterRendering) {
         $appSetting.setKey('defaultCharacterRendering', true);

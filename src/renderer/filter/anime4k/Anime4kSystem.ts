@@ -119,7 +119,6 @@ export class Anime4kFilterSystem implements System {
   ) {
     const pipelineHash = pipelines.map((p) => p.pipeline).join(',');
     const key = `${option.width}x${option.height}:${pipelineHash}`;
-    console.log(key);
     let resource = this._sizedRenderMap.get(key);
     if (!resource) {
       resource = this.setSizedRenderResource(option, pipelines);

@@ -130,16 +130,20 @@ export const CharacterView = (props: CharacterViewProps) => {
   createEffect(async () => {
     if (isInit() && viewport) {
       if (isShowUpscale()) {
-        await app.renderer.anime4k.preparePipeline([PipelineType.ModeBB]);
+        /* to be configurable in the future */
+        const upscalePipelines = [
+          {
+            pipeline: PipelineType.ModeBB,
+          },
+        ] as PipelineOption[];
+
         if (!upscaleFilter) {
-          upscaleFilter = new Anime4kFilter([
-            {
-              pipeline: PipelineType.ModeBB,
-            },
-          ] as PipelineOption[]);
+          await app.renderer.anime4k.preparePipeline(
+            upscalePipelines.map((p) => p.pipeline),
+          );
+          upscaleFilter = new Anime4kFilter(upscalePipelines);
         }
-        /* TODO */
-        upscaleFilter.updatePipeine();
+        // upscaleFilter.updatePipeine(upscalePipelines);
         viewport.filters = [upscaleFilter];
       } else {
         viewport.filters = [];
