@@ -4,6 +4,8 @@ import { SettingDialog as Dialog } from './SettingDialog';
 import { WindowSetting } from './WindowSetting';
 import { ThemeSetting } from './ThemeSetting';
 import { RenderSetting } from './RenderSetting';
+import { OtherSetting } from './OtherSetting';
+import { SettingFooter } from './SettingFooter';
 
 export const SettingDialog = () => {
   return (
@@ -13,6 +15,8 @@ export const SettingDialog = () => {
         <WindowSetting />
         <ThemeSetting />
         <RenderSetting />
+        <OtherSetting />
+        <SettingFooter />
       </Stack>
     </Dialog>
   );
