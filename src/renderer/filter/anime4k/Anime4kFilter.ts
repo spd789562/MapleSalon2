@@ -13,7 +13,7 @@ import './Anime4kSystem';
 
 import sampleExternalTextureFrag from './sampleExternalTexture.wgsl';
 
-import { type PipelineOption, PipelineType } from './const';
+import type { PipelineOption } from './const';
 
 const quadGeometry = new Geometry({
   attributes: {
