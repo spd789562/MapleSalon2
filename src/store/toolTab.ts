@@ -1,23 +1,24 @@
-import { atom, deepMap } from 'nanostores';
+import { atom, deepMap, computed, batched } from 'nanostores';
 
 import type { EquipSubCategory } from '@/const/equipments';
-import { type ToolTab, ActionExportType } from '@/const/toolTab';
+import {
+  type ToolTab,
+  ActionExportType,
+  DyeOrder,
+  DyeType,
+} from '@/const/toolTab';
 import { CharacterAction } from '@/const/actions';
 
 export const $toolTab = atom<ToolTab | undefined>(undefined);
 
 export const $actionExportType = atom<ActionExportType>(ActionExportType.Gif);
 
-export const $onlyShowDyeable = atom<boolean>(false);
-export const $preserveOriginalDye = atom<boolean>(false);
+export const $onlyShowDyeable = atom<boolean>(true);
+export const $preserveOriginalDye = atom<boolean>(true);
 export const $selectedEquipSubCategory = atom<EquipSubCategory[]>([]);
 export const $dyeResultCount = atom<number>(72);
 export const $dyeAction = atom<CharacterAction>(CharacterAction.Stand1);
 
-export enum DyeOrder {
-  Up = 'up',
-  Down = 'down',
-}
 export interface DyeConfigOption {
   enabled: boolean;
   order: DyeOrder;
@@ -42,11 +43,29 @@ export const $dyeConfig = deepMap({
   },
 });
 
-/* actions */
-export function toggleDyeConfigEnabled(key: keyof DyeConfig, value: boolean) {
-  $dyeConfig.setKey(`${key}.enabled`, value);
+/* selector */
+export const $dyeTypeEnabled = batched($dyeConfig, (config) => {
+  for (const k of Object.values(DyeType) as DyeType[]) {
+    if (config[k].enabled) {
+      return k;
+    }
+  }
+  return undefined;
+});
+
+/* action */
+export function disableOtherDyeConfig(key: DyeType) {
+  for (const k of Object.values(DyeType) as DyeType[]) {
+    if (k !== key) {
+      $dyeConfig.setKey(`${k}.enabled`, false);
+    }
+  }
 }
-export function toggleDyeConfigOrder(key: keyof DyeConfig, order: DyeOrder) {
+export function toggleDyeConfigEnabled(key: DyeType, value: boolean) {
+  $dyeConfig.setKey(`${key}.enabled`, value);
+  disableOtherDyeConfig(key);
+}
+export function toggleDyeConfigOrder(key: DyeType, order: DyeOrder) {
   $dyeConfig.setKey(`${key}.order`, order);
 }
 export function selectDyeCategory(category: EquipSubCategory) {

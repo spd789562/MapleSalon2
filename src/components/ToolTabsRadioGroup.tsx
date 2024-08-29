@@ -24,6 +24,10 @@ const options = [
     value: ToolTab.FaceDye,
     label: ToolTabNames[ToolTab.FaceDye],
   },
+  {
+    value: ToolTab.ItemDye,
+    label: ToolTabNames[ToolTab.ItemDye],
+  },
 ];
 
 export const ToolTabsRadioGroup = () => {

@@ -29,3 +29,13 @@ export const ActionExportTypeMimeType: Record<ActionExportType, string> = {
   [ActionExportType.Apng]: 'image/png',
   [ActionExportType.Webp]: 'image/webp',
 };
+
+export enum DyeOrder {
+  Up = 'up',
+  Down = 'down',
+}
+export enum DyeType {
+  Hue = 'hue',
+  Saturation = 'saturation',
+  Lightness = 'lightness',
+}
