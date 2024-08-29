@@ -1,7 +1,7 @@
 import { useStore } from '@nanostores/solid';
 
 import {
-  $isRenderingDye,
+  $isExportable,
   $dyeResultCount,
   $dyeResultColumnCount,
 } from '@/store/toolTab';
@@ -15,7 +15,7 @@ import { ExportTableButton } from './ExportTableButton';
 import { ExportSeperateButton } from '../DyeTab/ExportSeperateButton';
 
 export const DyeResult = () => {
-  const isRenderingDye = useStore($isRenderingDye);
+  const isExportable = useStore($isExportable);
   const count = useStore($dyeResultCount);
   const columnCounts = useStore($dyeResultColumnCount);
   const dyeCharacterRefs: HTMLImageElement[] = [];
@@ -36,7 +36,7 @@ export const DyeResult = () => {
             images={dyeCharacterRefs}
             imageCounts={count()}
             columnCounts={columnCounts()}
-            disabled={isRenderingDye()}
+            disabled={!isExportable()}
           >
             匯出表格圖
           </ExportTableButton>
@@ -44,7 +44,7 @@ export const DyeResult = () => {
             fileName="dye-table.zip"
             images={dyeCharacterRefs}
             imageCounts={count()}
-            disabled={isRenderingDye()}
+            disabled={!isExportable()}
           >
             匯出(.zip)
           </ExportSeperateButton>

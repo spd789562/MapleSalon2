@@ -16,7 +16,7 @@ import { DyeResult } from './DyeResult';
 export const ItemDyeTab = () => {
   return (
     <Stack mb="4">
-      <CardContainer>
+      <CardContainer gap={4}>
         <ItemDyeTabTitle />
         <HStack>
           <Heading width="7rem">欲染色裝備</Heading>
