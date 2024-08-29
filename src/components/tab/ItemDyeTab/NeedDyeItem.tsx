@@ -64,7 +64,7 @@ export const NeedDyeItem = (props: NeedDyeItemProps) => {
               </EquipItemName>
             </EquipItemInfo>
             <CheckIconContainer class="check-icon">
-              <CheckIcon size="1em" />
+              <CheckIcon size=".75em" />
             </CheckIconContainer>
           </SelectableContainer>
         )}
@@ -127,5 +127,6 @@ const CheckIconContainer = styled('div', {
     backgroundColor: 'accent.default',
     display: 'none',
     borderRadius: '50%',
+    padding: '0.5',
   },
 });
