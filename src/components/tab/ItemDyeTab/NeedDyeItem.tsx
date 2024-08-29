@@ -1,8 +1,7 @@
-import { Show, createMemo, createEffect, splitProps } from 'solid-js';
+import { Show, createMemo, splitProps } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 import { styled } from 'styled-system/jsx/factory';
 
-import type { CharacterItemInfo } from '@/store/character/store';
 import { createEquipItemByCategory } from '@/store/character/selector';
 import { getEquipById } from '@/store/string';
 
@@ -15,7 +14,6 @@ import {
   EquipItemName,
   EquipItemInfo,
 } from '@/components/drawer/CurrentEquipmentDrawer/EquipItem';
-import { ItemNotExistMask } from '@/components/drawer/CurrentEquipmentDrawer/ItemNotExistMask';
 
 import type { EquipSubCategory } from '@/const/equipments';
 
@@ -81,7 +79,7 @@ const SelectableContainer = styled('button', {
     py: '1',
     px: '2',
     borderRadius: 'md',
-    width: 'full',
+    // width: 'full',
     gridTemplateColumns: 'auto 1fr',
     alignItems: 'center',
     position: 'relative',

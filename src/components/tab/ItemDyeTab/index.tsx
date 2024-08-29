@@ -10,10 +10,12 @@ import { NeedDyeItemToggleGroup } from './NeedDyeItemToggleGroup';
 import { DyeTypeRadioGroup } from './DyeTypeRadioGroup';
 import { ResultCountNumberInput } from './ResultCountNumberInput';
 import { ResultActionSelect } from './ResultActionSelect';
+import { StartDyeButton } from './StartDyeButton';
+import { DyeResult } from './DyeResult';
 
 export const ItemDyeTab = () => {
   return (
-    <Stack>
+    <Stack mb="4">
       <CardContainer>
         <ItemDyeTabTitle />
         <HStack>
@@ -35,8 +37,13 @@ export const ItemDyeTab = () => {
             <ResultCountNumberInput />
           </HStack>
         </HStack>
+        <div>
+          <StartDyeButton />
+        </div>
       </CardContainer>
-      <CardContainer></CardContainer>
+      <CardContainer>
+        <DyeResult />
+      </CardContainer>
     </Stack>
   );
 };

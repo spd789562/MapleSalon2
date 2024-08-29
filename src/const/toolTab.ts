@@ -37,5 +37,5 @@ export enum DyeOrder {
 export enum DyeType {
   Hue = 'hue',
   Saturation = 'saturation',
-  Lightness = 'lightness',
+  Birghtness = 'brightness',
 }

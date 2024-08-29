@@ -1,23 +1,23 @@
-import { atom, deepMap, computed, batched } from 'nanostores';
+import { atom, deepMap, batched, onSet } from 'nanostores';
 
 import type { EquipSubCategory } from '@/const/equipments';
-import {
-  type ToolTab,
-  ActionExportType,
-  DyeOrder,
-  DyeType,
-} from '@/const/toolTab';
+import { ToolTab, ActionExportType, DyeOrder, DyeType } from '@/const/toolTab';
 import { CharacterAction } from '@/const/actions';
 
 export const $toolTab = atom<ToolTab | undefined>(undefined);
 
 export const $actionExportType = atom<ActionExportType>(ActionExportType.Gif);
 
+/* item dye tab */
 export const $onlyShowDyeable = atom<boolean>(true);
 export const $preserveOriginalDye = atom<boolean>(true);
 export const $selectedEquipSubCategory = atom<EquipSubCategory[]>([]);
 export const $dyeResultCount = atom<number>(72);
 export const $dyeAction = atom<CharacterAction>(CharacterAction.Stand1);
+
+export const $dyeRenderId = atom<string | undefined>(undefined);
+export const $isRenderingDye = atom<boolean>(false);
+export const $dyeResultColumnCount = atom<number>(8);
 
 export interface DyeConfigOption {
   enabled: boolean;
@@ -26,21 +26,29 @@ export interface DyeConfigOption {
 export type DyeConfig = {
   hue: DyeConfigOption;
   saturation: DyeConfigOption;
-  lightness: DyeConfigOption;
+  brightness: DyeConfigOption;
 };
 export const $dyeConfig = deepMap({
   hue: {
-    enabled: false,
+    enabled: true,
     order: DyeOrder.Up,
   },
   saturation: {
     enabled: false,
     order: DyeOrder.Up,
   },
-  lightness: {
+  brightness: {
     enabled: false,
     order: DyeOrder.Up,
   },
+});
+
+/* effect */
+onSet($toolTab, ({ newValue }) => {
+  /* clean render id prevent render table againg when return */
+  if (newValue !== ToolTab.ItemDye) {
+    $dyeRenderId.set(undefined);
+  }
 });
 
 /* selector */

@@ -1,9 +1,10 @@
-import { For, Index } from 'solid-js';
-import { useStore } from '@nanostores/solid';
+import { Index } from 'solid-js';
 
-import { $onlyShowDyeable } from '@/store/toolTab';
+import { usePureStore } from '@/store';
+import { $onlyShowDyeable, $selectedEquipSubCategory } from '@/store/toolTab';
 
 import { Grid } from 'styled-system/jsx/grid';
+import { Stack } from 'styled-system/jsx/stack';
 import * as ToggleGroup from '@/components/ui/toggleGroup';
 
 import { NeedDyeItem } from './NeedDyeItem';
@@ -26,7 +27,11 @@ const CategoryList = [
 ] as EquipSubCategory[];
 
 export const NeedDyeItemToggleGroup = () => {
-  const onlyShowDyeable = useStore($onlyShowDyeable);
+  const onlyShowDyeable = usePureStore($onlyShowDyeable);
+
+  const handleValueChange = (details: ToggleGroup.ValueChangeDetails) => {
+    $selectedEquipSubCategory.set(details.value as EquipSubCategory[]);
+  };
 
   return (
     <ToggleGroup.Root
@@ -34,8 +39,10 @@ export const NeedDyeItemToggleGroup = () => {
       width="full"
       py="0.5"
       borderColor="transparent"
+      defaultValue={$selectedEquipSubCategory.get()}
+      onValueChange={handleValueChange}
     >
-      <Grid width="full" columns={7}>
+      <Stack width="full" direction="row" flexWrap="wrap">
         <Index each={CategoryList}>
           {(category) => (
             <ToggleGroup.Item
@@ -50,7 +57,7 @@ export const NeedDyeItemToggleGroup = () => {
             />
           )}
         </Index>
-      </Grid>
+      </Stack>
     </ToggleGroup.Root>
   );
 };
