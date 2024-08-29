@@ -16,10 +16,8 @@ export interface RootProps
     ToggleGroupVariantProps {}
 export const Root = withProvider<RootProps>(ToggleGroup.Root, 'root');
 
-export const Item = withContext<Assign<JsxStyleProps, ToggleGroup.ItemProps>>(
-  ToggleGroup.Item,
-  'item',
-);
+export type ItemProps = Assign<JsxStyleProps, ToggleGroup.ItemProps>;
+export const Item = withContext<ItemProps>(ToggleGroup.Item, 'item');
 
 export {
   ToggleGroupContext as Context,
