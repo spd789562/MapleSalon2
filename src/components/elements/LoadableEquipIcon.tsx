@@ -64,7 +64,11 @@ export const LoadableEquipIcon = (props: LoadableEquipIconProps) => {
       alignItems="center"
       isLoaded={isLoaded()}
     >
-      <IconContainer gender={gender()}>
+      <IconContainer
+        gender={gender()}
+        width={props.width}
+        height={props.height}
+      >
         <Show when={!isError()} fallback={<CircleHelpIcon />}>
           <img
             {...contextTriggerProps}
