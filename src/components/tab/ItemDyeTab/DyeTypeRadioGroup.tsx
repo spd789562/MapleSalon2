@@ -56,6 +56,6 @@ const ColorBlock = styled('div', {
     h: 3,
     ml: 2,
     borderRadius: 'sm',
-    boxShadow: 'sm',
+    boxShadow: 'md',
   },
 });

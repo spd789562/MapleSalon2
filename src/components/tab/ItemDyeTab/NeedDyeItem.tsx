@@ -77,8 +77,10 @@ const SelectableContainer = styled('button', {
   base: {
     display: 'grid',
     py: '1',
-    px: '2',
+    pl: '1',
+    pr: '2',
     borderRadius: 'md',
+    gap: '1',
     // width: 'full',
     gridTemplateColumns: 'auto 1fr',
     alignItems: 'center',
