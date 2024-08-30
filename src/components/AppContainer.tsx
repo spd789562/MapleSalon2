@@ -18,7 +18,7 @@ export const AppContainer = (props: AppContainerProps) => {
       class={css({
         position: 'relative',
         mx: { base: 0, lg: 2 },
-        mt: 4,
+        mt: 11,
         paddingLeft: isLeftDrawerPin()
           ? { base: 2, lg: '{sizes.xs}' }
           : { base: 2, '2xl': '{sizes.xs}' },
