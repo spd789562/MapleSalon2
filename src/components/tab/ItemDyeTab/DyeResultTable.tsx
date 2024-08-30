@@ -144,7 +144,9 @@ export function DyeResultTable(props: DyeResultTableProps) {
       if (!preserveOriginalDye) {
         for (const equipSubCategory of actualneedDyeCategories) {
           if (characterData.items[equipSubCategory]) {
-            characterData.items[equipSubCategory][dyeTypeEnabled] = 0;
+            characterData.items[equipSubCategory].hue = 0;
+            characterData.items[equipSubCategory].saturation = 0;
+            characterData.items[equipSubCategory].brightness = 0;
           }
         }
       }
