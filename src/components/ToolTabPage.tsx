@@ -3,9 +3,10 @@ import { useStore } from '@nanostores/solid';
 
 import { $toolTab } from '@/store/toolTab';
 
-import { ActionTab } from './ActionTab';
-import { HairDyeTab } from './DyeTab/HairDyeTab';
-import { FaceDyeTab } from './DyeTab/FaceDyeTab';
+import { ActionTab } from './tab/ActionTab';
+import { HairDyeTab } from './tab/DyeTab/HairDyeTab';
+import { FaceDyeTab } from './tab/DyeTab/FaceDyeTab';
+import { ItemDyeTab } from './tab/ItemDyeTab';
 
 import { ToolTab } from '@/const/toolTab';
 
@@ -22,6 +23,9 @@ export const ToolTabPage = () => {
       </Match>
       <Match when={tab() === ToolTab.FaceDye}>
         <FaceDyeTab />
+      </Match>
+      <Match when={tab() === ToolTab.ItemDye}>
+        <ItemDyeTab />
       </Match>
     </Switch>
   );

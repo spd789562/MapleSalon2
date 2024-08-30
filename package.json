@@ -1,6 +1,6 @@
 {
   "name": "maplecharactercreator",
-  "version": "0.0.0",
+  "version": "0.2.0",
   "description": "",
   "type": "module",
   "scripts": {
@@ -17,7 +17,7 @@
     "@ark-ui/solid": "^3.5.0",
     "@nanostores/solid": "^0.4.2",
     "@pdf-lib/upng": "^1.0.1",
-    "@tanstack/solid-virtual": "^3.5.1",
+    "@tanstack/solid-virtual": "^3.10.6",
     "@tauri-apps/api": ">=2.0.0-rc.0",
     "@tauri-apps/plugin-dialog": "^2.0.0-rc.0",
     "@tauri-apps/plugin-fs": "^2.0.0-rc.0",
@@ -30,11 +30,11 @@
     "lucide-solid": "^0.394.0",
     "mingcute_icon": "^2.9.4",
     "modern-gif": "^2.0.3",
-    "nanostores": "^0.10.3",
+    "nanostores": "^0.11.3",
     "p-queue": "^8.0.1",
     "pixi-filters": "^6.0.3",
     "pixi-viewport": "^5.0.3",
-    "pixi.js": "^8.3.3",
+    "pixi.js": "^8.3.4",
     "solid-js": "^1.7.8",
     "throttle-debounce": "^5.0.0",
     "wasm-webp": "^0.0.2"

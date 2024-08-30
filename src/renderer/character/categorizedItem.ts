@@ -192,7 +192,8 @@ export abstract class CategorizedItem<Name extends string> {
           continue;
         }
 
-        const isEar = pieceName.match(/ear/i);
+        /* some thing like capeArm also has ear... so only do end with here */
+        const isEar = pieceName.match(/ear$/i);
 
         const name = isEar
           ? pieceName

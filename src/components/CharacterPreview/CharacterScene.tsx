@@ -8,15 +8,11 @@ import {
   $previewCharacter,
   $sceneCustomColorStyle,
 } from '@/store/character/selector';
-import {
-  $showPreviousCharacter,
-  $showUpscaledCharacter,
-} from '@/store/trigger';
+import { $showPreviousCharacter } from '@/store/trigger';
 
 import LoaderCircle from 'lucide-solid/icons/loader-circle';
 import ChevronRightIcon from 'lucide-solid/icons/chevron-right';
 import { CharacterView } from './Character';
-import { UpscaleCharacter } from './UpscaleCharacter';
 import { CharacterSceneSelection } from './CharacterSceneSelection';
 import { ShowPreviousSwitch } from './ShowPreviousSwitch';
 import { ShowUpscaleSwitch } from './ShowUpscaleSwitch';
@@ -31,7 +27,6 @@ export const CharacterScene = () => {
   const scene = useStore($currentScene);
   const customColorStyle = useStore($sceneCustomColorStyle);
   const isShowComparison = useStore($showPreviousCharacter);
-  const isShowUpscale = useStore($showUpscaledCharacter);
 
   function handleLoad() {
     setIsLoading(true);
@@ -89,9 +84,6 @@ export const CharacterScene = () => {
         target="preview"
         isLockInteraction={isLockInteraction()}
       />
-      <Show when={isShowUpscale()}>
-        <UpscaleCharacter />
-      </Show>
       <TopTool>
         <ShowPreviousSwitch />
         <ShowUpscaleSwitch />

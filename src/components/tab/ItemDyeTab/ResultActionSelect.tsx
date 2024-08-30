@@ -1,16 +1,15 @@
 import { useStore } from '@nanostores/solid';
 
-import { $currentCharacterInfo } from '@/store/character/store';
-import { $currentAction } from '@/store/character/selector';
+import { $dyeAction } from '@/store/toolTab';
 
 import { ActionSelect as BaseActionSelect } from '@/components/elements/ActionSelect';
 
 import type { CharacterAction } from '@/const/actions';
 
-export const ActionSelect = () => {
-  const action = useStore($currentAction);
+export const ResultActionSelect = () => {
+  const action = useStore($dyeAction);
   function handleActionChange(action: CharacterAction | undefined) {
-    action && $currentCharacterInfo.setKey('action', action);
+    action && $dyeAction.set(action);
   }
 
   return (

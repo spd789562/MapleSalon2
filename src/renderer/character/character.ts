@@ -5,10 +5,7 @@ import type { CharacterData } from '@/store/character/store';
 import type { ItemInfo, AncherName, Vec2, PieceSlot } from './const/data';
 import type { CategorizedItem, CharacterActionItem } from './categorizedItem';
 import type { CharacterAnimatablePart } from './characterAnimatablePart';
-import type {
-  CharacterItemPiece,
-  DyeableCharacterItemPiece,
-} from './itemPiece';
+import type { CharacterItemPiece, DyeableCharacterItemPiece } from './itemPiece';
 
 import { CharacterLoader } from './loader';
 import { CharacterItem } from './item';
@@ -44,8 +41,7 @@ class ZmapContainer extends Container {
     } else if (this.name === 'pants' || this.name === 'backPants') {
       this.requireLocks = ['Pn'];
     } else {
-      this.requireLocks =
-        (CharacterLoader.smap?.[name] || '').match(/.{1,2}/g) || [];
+      this.requireLocks = (CharacterLoader.smap?.[name] || '').match(/.{1,2}/g) || [];
     }
   }
   addCharacterPart(child: CharacterAnimatablePart) {
@@ -70,13 +66,14 @@ class ZmapContainer extends Container {
       //     ? frame.item.vslot
       //     : this.requireLocks;
       let locks = this.requireLocks;
+      let itemMainLocks = part.item.islot; // something like Ma, Pn,Cp
 
       // force Cap using vslot
-      if (part.item.islot.includes('Cp')) {
+      if (itemMainLocks.includes('Cp')) {
         locks = part.item.vslot;
       } else if (
-        part.item.islot.length === 1 &&
-        part.item.islot[0] === 'Hd' &&
+        itemMainLocks.length === 1 &&
+        itemMainLocks[0] === 'Hd' &&
         (this.name === 'accessoryOverHair' || this.name === 'hairShade')
       ) {
         /* try to fix ear rendering */
@@ -86,6 +83,8 @@ class ZmapContainer extends Container {
       // this logic is from maplestory.js, but why
       if (this.name === 'mailChest') {
         locks = part.item.vslot;
+      } else if (this.name === 'shoes') {
+        itemMainLocks = ['So'];
       }
 
       const hasSelfLock = this.hasAllLocks(part.item.info.id, part.item.vslot);
@@ -185,9 +184,7 @@ export class Character extends Container {
     }
     this.isAnimating = characterData.isAnimating;
     const hasAttributeChanged = this.updateAttribute(characterData);
-    const hasAddAnyItem = await this.updateItems(
-      Object.values(characterData.items),
-    );
+    const hasAddAnyItem = await this.updateItems(Object.values(characterData.items));
     if (hasAttributeChanged || hasAddAnyItem || isStopToPlay) {
       await this.loadItems();
     } else if (isPlayingChanged) {
@@ -255,17 +252,13 @@ export class Character extends Container {
       return;
     }
     item.info = Object.assign({}, info, {
-      dye: (info as unknown as ItemInfo & { isDeleteDye: boolean }).isDeleteDye
-        ? undefined
-        : info.dye,
+      dye: (info as unknown as ItemInfo & { isDeleteDye: boolean }).isDeleteDye ? undefined : info.dye,
     });
     /* only update sprite already in render */
     const dyeableSprites = this.currentAllItem
       .flatMap((item) => Array.from(item.allPieces))
       .filter((piece) => piece.item.info.id === id)
-      .flatMap((piece) =>
-        piece.frames.filter((frame) => frame.isDyeable?.()),
-      ) as DyeableCharacterItemPiece[];
+      .flatMap((piece) => piece.frames.filter((frame) => frame.isDyeable?.())) as DyeableCharacterItemPiece[];
     for await (const sprites of dyeableSprites) {
       await sprites.updateDye();
     }
@@ -275,18 +268,14 @@ export class Character extends Container {
   get currentAllItem() {
     return Array.from(this.idItems.values())
       .map((item) => {
-        return item.isUseExpressionItem
-          ? item.actionPieces.get(this.expression)
-          : item.actionPieces.get(this.action);
+        return item.isUseExpressionItem ? item.actionPieces.get(this.expression) : item.actionPieces.get(this.action);
       })
       .filter((item) => item) as AnyCategorizedItem[];
   }
 
   /** get current pieces in character layers */
   get currentPieces() {
-    return Array.from(this.zmapLayers.values()).flatMap(
-      (layer) => layer.children as CharacterAnimatablePart[],
-    );
+    return Array.from(this.zmapLayers.values()).flatMap((layer) => layer.children as CharacterAnimatablePart[]);
   }
 
   render() {
@@ -300,9 +289,7 @@ export class Character extends Container {
     const earPiece = this.getEarPiece();
     const earLayer = earPiece?.firstFrameZmapLayer;
     for (const layer of zmap) {
-      const itemsByLayer = this.getItemsByLayer(layer).concat(
-        earPiece && earLayer === layer ? [earPiece] : [],
-      );
+      const itemsByLayer = this.getItemsByLayer(layer).concat(earPiece && earLayer === layer ? [earPiece] : []);
       if (itemsByLayer.length === 0) {
         continue;
       }
@@ -316,10 +303,7 @@ export class Character extends Container {
           if (existLayer) {
             container = existLayer;
           } else {
-            const zIndex =
-              piece.effectZindex >= 2
-                ? zmap.length + piece.effectZindex
-                : piece.effectZindex - 10;
+            const zIndex = piece.effectZindex >= 2 ? zmap.length + piece.effectZindex : piece.effectZindex - 10;
             container = new ZmapContainer(effectLayerName, zIndex, this);
             this.addChild(container);
             this.zmapLayers.set(effectLayerName, container);
@@ -329,10 +313,7 @@ export class Character extends Container {
           this.addChild(container);
           this.zmapLayers.set(layer, container);
         }
-        if (
-          isBackAction(this.action) &&
-          layer.toLocaleLowerCase().includes('face')
-        ) {
+        if (isBackAction(this.action) && layer.toLocaleLowerCase().includes('face')) {
           container.visible = false;
         }
         if ((layer === 'body' || layer === 'backBody') && piece.item.isBody) {
@@ -398,8 +379,7 @@ export class Character extends Container {
   playByBody(body: CharacterAnimatablePart) {
     const pieces = this.currentPieces;
     const maxFrame = body.frames.length;
-    const needBounce =
-      this.action === CharacterAction.Alert || this.action.startsWith('stand');
+    const needBounce = this.action === CharacterAction.Alert || this.action.startsWith('stand');
 
     this.currentTicker = (delta) => {
       this.currentDelta += delta.deltaMS;
@@ -437,8 +417,7 @@ export class Character extends Container {
     }
     for (const piece of pieces) {
       const pieceFrameIndex = piece.frames[frame] ? frame : 0;
-      const pieceFrame = (piece.frames[frame] ||
-        piece.frames[0]) as CharacterItemPiece;
+      const pieceFrame = (piece.frames[frame] || piece.frames[0]) as CharacterItemPiece;
       const isSkinGroup = pieceFrame.group === 'skin';
       if (pieceFrame) {
         const ancherName = pieceFrame.baseAncherName;
@@ -452,7 +431,10 @@ export class Character extends Container {
               y: 48,
             };
             /* cap effect use brow ancher */
-            const browAncher = currentAncher.get('brow') || { x: 0, y: 0 };
+            const browAncher = currentAncher.get('brow') || {
+              x: 0,
+              y: 0,
+            };
             ancher = {
               x: baseAncher.x + browAncher.x,
               y: baseAncher.y + browAncher.y,
@@ -515,15 +497,15 @@ export class Character extends Container {
 
   get currentFrontBodyNode() {
     const body = this.zmapLayers.get('body');
-    return body?.children.find(
-      (child) => (child as CharacterAnimatablePart).item.isBody,
-    ) as CharacterAnimatablePart | undefined;
+    return body?.children.find((child) => (child as CharacterAnimatablePart).item.isBody) as
+      | CharacterAnimatablePart
+      | undefined;
   }
   get currentBackBodyNode() {
     const body = this.zmapLayers.get('backBody');
-    return body?.children.find(
-      (child) => (child as CharacterAnimatablePart).item.isBody,
-    ) as CharacterAnimatablePart | undefined;
+    return body?.children.find((child) => (child as CharacterAnimatablePart).item.isBody) as
+      | CharacterAnimatablePart
+      | undefined;
   }
 
   get currentBodyNode() {
@@ -545,14 +527,10 @@ export class Character extends Container {
   }
 
   get isAllAncherBuilt() {
-    return Array.from(this.idItems.values()).every(
-      (item) => item.isAllAncherBuilt,
-    );
+    return Array.from(this.idItems.values()).every((item) => item.isAllAncherBuilt);
   }
   get isCurrentActionAncherBuilt() {
-    return Array.from(this.idItems.values()).every((item) =>
-      item.isActionAncherBuilt(this.action),
-    );
+    return Array.from(this.idItems.values()).every((item) => item.isActionAncherBuilt(this.action));
   }
 
   get effectLayers() {
@@ -568,15 +546,11 @@ export class Character extends Container {
   }
 
   getEarPiece() {
-    const headItem = Array.from(this.idItems.values()).find(
-      (item) => item.isHead,
-    );
+    const headItem = Array.from(this.idItems.values()).find((item) => item.isHead);
     if (!headItem) {
       return;
     }
-    const headCategoryItem = headItem.actionPieces.get(
-      this.action,
-    ) as CharacterActionItem;
+    const headCategoryItem = headItem.actionPieces.get(this.action) as CharacterActionItem;
 
     const earItems = headCategoryItem?.getAvailableEar(this.earType);
 
@@ -671,10 +645,7 @@ export class Character extends Container {
     for (const action of Object.values(CharacterAction)) {
       for (const item of this.idItems.values()) {
         const ancher = this.actionAnchers.get(action);
-        this.actionAnchers.set(
-          action,
-          item.tryBuildAncher(action, ancher || []),
-        );
+        this.actionAnchers.set(action, item.tryBuildAncher(action, ancher || []));
       }
     }
   }
@@ -723,14 +694,12 @@ export class Character extends Container {
   }
   private updateHandTypeByAction() {
     if (
-      (this.action === CharacterAction.Walk1 ||
-        this.action === CharacterAction.Stand1) &&
+      (this.action === CharacterAction.Walk1 || this.action === CharacterAction.Stand1) &&
       this.#_handType === CharacterHandType.DoubleHand
     ) {
       this.#_handType = CharacterHandType.SingleHand;
     } else if (
-      (this.action === CharacterAction.Walk2 ||
-        this.action === CharacterAction.Stand2) &&
+      (this.action === CharacterAction.Walk2 || this.action === CharacterAction.Stand2) &&
       this.#_handType === CharacterHandType.SingleHand
     ) {
       this.#_handType = CharacterHandType.DoubleHand;

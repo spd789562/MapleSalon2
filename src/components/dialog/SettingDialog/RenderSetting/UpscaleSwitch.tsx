@@ -24,7 +24,7 @@ export const UpscaleSwitch = () => {
     >
       <HStack gap="1">
         <Text>實驗性高清預覽</Text>
-        <SettingTooltip tooltip="新增按鈕顯示高清化的角色預覽，開啟時顯示高清版(Anime4K)的圖片在旁邊，此功能可能造成極大的效能影響，請確認有足夠的電腦資源再使用" />
+        <SettingTooltip tooltip="新增按鈕顯示高清化的角色預覽，開啟時顯示高清版(Anime4K)的角色預覽，此功能可能造成一些效能影響，請確認有足夠的電腦資源再使用" />
       </HStack>
     </Switch>
   );

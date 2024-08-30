@@ -59,6 +59,7 @@ export const CharacterSceneColorPicker = (
       defaultValue="#ffffff"
       positioning={{
         strategy: 'fixed',
+        placement: 'top-end'
       }}
       onInteractOutside={handleOutsideClick}
       onValueChange={handleColorChange}

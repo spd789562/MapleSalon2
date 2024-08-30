@@ -9,6 +9,14 @@ import {
 
 type ExtractTarget = Parameters<ExtractSystem['texture']>[0];
 
+export function getBlobFromCanvas(canvas: HTMLCanvasElement) {
+  return new Promise<Blob | null>((resolve) => {
+    canvas.toBlob?.((blob) => {
+      resolve(blob as unknown as Blob);
+    }, 'image/png');
+  });
+}
+
 export function extractCanvas(target: ExtractTarget, renderer: Renderer) {
   const texture = renderer.extract.texture(target);
 

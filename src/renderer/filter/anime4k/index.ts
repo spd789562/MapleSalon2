@@ -114,7 +114,9 @@ export async function createGpuDevice(canvas: HTMLCanvasElement) {
   if (!adapter) {
     throw new Error('WebGPU is not supported');
   }
-  const device = await adapter.requestDevice();
+  const device = await adapter.requestDevice({
+    label: 'Test Anime4k GPU Device',
+  });
   const context = canvas.getContext('webgpu') as GPUCanvasContext;
   const presentationFormat = navigator.gpu.getPreferredCanvasFormat();
   context.configure({

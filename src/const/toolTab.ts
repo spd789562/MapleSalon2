@@ -2,12 +2,14 @@ export enum ToolTab {
   AllAction = 'allAction',
   HairDye = 'hairDye',
   FaceDye = 'faceDye',
+  ItemDye = 'itemDye',
 }
 
 export const ToolTabNames: Record<ToolTab, string> = {
   [ToolTab.AllAction]: '全部動作',
   [ToolTab.HairDye]: '髮型顏色',
   [ToolTab.FaceDye]: '臉型顏色',
+  [ToolTab.ItemDye]: '裝備染色表',
 };
 
 export enum ActionExportType {
@@ -27,3 +29,13 @@ export const ActionExportTypeMimeType: Record<ActionExportType, string> = {
   [ActionExportType.Apng]: 'image/png',
   [ActionExportType.Webp]: 'image/webp',
 };
+
+export enum DyeOrder {
+  Up = 'up',
+  Down = 'down',
+}
+export enum DyeType {
+  Hue = 'hue',
+  Saturation = 'saturation',
+  Birghtness = 'brightness',
+}

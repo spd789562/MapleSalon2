@@ -22,8 +22,12 @@ interface EquipDrawerProps {
 }
 export const EquipDrawer = (props: EquipDrawerProps) => {
   const isOpen = useStore($equpimentDrawerOpen);
+  const isPinned = useStore($equpimentDrawerPin);
 
   function handleClose(_: unknown) {
+    if (isPinned()) {
+      return;
+    }
     $equpimentDrawerOpen.set(false);
   }
 
@@ -44,7 +48,11 @@ export const EquipDrawer = (props: EquipDrawerProps) => {
               {props.header}
               <HStack position="absolute" top="1" right="1">
                 <PinIconButton store={$equpimentDrawerPin} variant="ghost" />
-                <IconButton variant="ghost" onClick={handleClose}>
+                <IconButton
+                  variant="ghost"
+                  onClick={handleClose}
+                  disabled={isPinned()}
+                >
                   <CloseIcon />
                 </IconButton>
               </HStack>
