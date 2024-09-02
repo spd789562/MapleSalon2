@@ -9,6 +9,7 @@ export interface WzItemInfo {
   vslot: string;
   colorvar: boolean;
   royalSpecial: boolean;
+  nameTag?: number;
 }
 
 export type WzPieceFrame = Record<PieceName, WzPieceInfo> & {

@@ -21,6 +21,7 @@ import { CharacterExpressions } from '@/const/emotions';
 import { CharacterEarType } from '@/const/ears';
 import { CharacterHandType } from '@/const/hand';
 import type { PieceIslot } from './const/slot';
+import { BaseNameTag } from '../nameTag/baseNameTag';
 
 type AnyCategorizedItem = CategorizedItem<string>;
 
@@ -33,6 +34,7 @@ export interface CharacterAttributes {
 
 export class Character extends Container {
   name = '';
+  nameTag: BaseNameTag;
   idItems = new Map<number, CharacterItem>();
   actionAnchers = new Map<CharacterAction, Map<AncherName, Vec2>[]>();
 
@@ -43,6 +45,7 @@ export class Character extends Container {
   #_renderId = '';
 
   zmapLayers = new Map<PieceSlot, CharacterZmapContainer>();
+  bodyContainer = new Container();
   locks = new Map<PieceSlot, number>();
 
   frame = 0;
@@ -65,8 +68,14 @@ export class Character extends Container {
 
   constructor(app?: Application) {
     super();
-    this.sortableChildren = true;
+    // this.sortableChildren = true;
+    this.bodyContainer.sortableChildren = true;
     this.app = app;
+    this.nameTag = new BaseNameTag('');
+    this.nameTag.visible = false;
+    this.nameTag.position.set(0, 6);
+    this.addChild(this.bodyContainer);
+    this.addChild(this.nameTag);
   }
 
   get action() {
@@ -111,6 +120,17 @@ export class Character extends Container {
     const hasAddAnyItem = await this.updateItems(
       Object.values(characterData.items),
     );
+
+    if (characterData.showNameTag) {
+      this.nameTag.visible = true;
+      await this.nameTag.updateNameTagData(
+        characterData.name || '',
+        characterData.nameTagId,
+      );
+    } else {
+      this.nameTag.visible = false;
+    }
+
     if (hasAttributeChanged || hasAddAnyItem || isStopToPlay) {
       await this.loadItems();
     } else if (isPlayingChanged) {
@@ -248,7 +268,7 @@ export class Character extends Container {
               zIndex,
               this,
             );
-            this.addChild(container);
+            this.bodyContainer.addChild(container);
             this.zmapLayers.set(effectLayerName, container);
           }
         } else if (!container) {
@@ -257,7 +277,7 @@ export class Character extends Container {
             zmap.indexOf(layer),
             this,
           );
-          this.addChild(container);
+          this.bodyContainer.addChild(container);
           this.zmapLayers.set(layer, container);
         }
         if (
@@ -298,6 +318,7 @@ export class Character extends Container {
     }
     this.isAnimating = true;
     this.frame = frame;
+    this.nameTag.play();
     return this.loadItems();
   }
   stop() {
@@ -309,6 +330,7 @@ export class Character extends Container {
       Ticker.shared.remove(this.currentTicker);
       this.currentTicker = undefined;
     }
+    this.nameTag.stop();
   }
   reset() {
     this.stop();
@@ -437,7 +459,7 @@ export class Character extends Container {
   updateCharacterPivotByBodyPiece() {
     /* use the ancher to set actual character offset */
     const bodyPos = this.currentBodyFrame?.ancher || { x: 0, y: 0 };
-    this.pivot?.set(bodyPos.x, bodyPos.y);
+    this.bodyContainer.pivot?.set(bodyPos.x, bodyPos.y);
   }
 
   /** use backBody to check current action is turn character to back  */

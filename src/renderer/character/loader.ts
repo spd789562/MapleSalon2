@@ -3,6 +3,7 @@ import { $apiHost } from '@/store/const';
 
 import type { Zmap, Smap } from './const/data';
 import type { WzItem, WzEffectItem } from './const/wz';
+import type { WzNameTag } from '../nameTag/wz';
 
 import { getItemFolderFromId } from '@/utils/itemFolder';
 
@@ -19,10 +20,14 @@ class Loader {
       this.loadSmap(),
       this.loadWzImageFolder(),
       this.loadEffect(),
+      this.loadNameTag(),
     ]);
   }
   async loadEffect() {
     return await fetch(`${this.apiHost}/node/parse/Effect/ItemEff.img`);
+  }
+  async loadNameTag() {
+    return await fetch(`${this.apiHost}/node/parse/UI/NameTag.img`);
   }
   async loadZmap() {
     this.zmap = await fetch(`${this.apiHost}/mapping/zmap`).then((res) =>
@@ -90,9 +95,9 @@ class Loader {
     if (!path) {
       return null;
     }
-    return await this.getPieceWzByPath(path);
+    return await this.getPieceWzByPath<WzItem>(path);
   }
-  async getPieceWzByPath(path: string): Promise<WzItem | null> {
+  async getPieceWzByPath<T>(path: string): Promise<T | null> {
     if (!Assets.cache.has(path)) {
       await this.createParsePromise(path);
     } else if (this.loadingMap.get(path)) {
@@ -100,7 +105,7 @@ class Loader {
       this.loadingMap.delete(path);
     }
 
-    const data = await Assets.load<WzItem>({
+    const data = await Assets.load<T>({
       alias: path,
       loadParser: 'loadJson',
       src: `${this.apiHost}/node/json/${path}?force_parse=true&simple=true&cache=14400`,
@@ -118,6 +123,10 @@ class Loader {
     }).catch(() => null);
 
     return data;
+  }
+  async getNameTagWz(id: number): Promise<WzNameTag | null> {
+    const path = `UI/NameTag.img/${id}`;
+    return await this.getPieceWzByPath<WzNameTag>(path);
   }
 
   getPieceUrl(path: string) {
