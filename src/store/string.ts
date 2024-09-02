@@ -10,6 +10,7 @@ const MAX_HISTORY_SIZE = 200;
 export interface ItemExtraInfo {
   isDyeable: boolean;
   isCash: boolean;
+  isNameTag: boolean;
   hasEffect: boolean;
 }
 
@@ -21,6 +22,17 @@ export interface EquipItem extends Partial<ItemExtraInfo> {
   /* the item is got extra item info such as can dye or cash item */
   isFetchExtra?: boolean;
 }
+
+/* [category, id, name, isCash, isDyeable, hasEffect, isNameTag] */
+type EquipStringResponseItem = [
+  EquipCategory,
+  string,
+  string,
+  boolean,
+  boolean,
+  boolean,
+  boolean,
+];
 
 /** all items  */
 export const $equipmentStrings = atom<EquipItem[]>([]);
@@ -44,9 +56,9 @@ export async function prepareAndFetchEquipStrings() {
   await fetch(`${$apiHost.get()}/string/equip/prepare?extra=true`);
   const strings = await fetch(`${$apiHost.get()}/string/equip?cache=14400`)
     .then((res) => res.json())
-    .then((res: [string, string, string, boolean, boolean, boolean][]) =>
+    .then((res: EquipStringResponseItem[]) =>
       res.map(
-        ([category, id, name, isCash, isDyeable, hasEffect]) =>
+        ([category, id, name, isCash, isDyeable, hasEffect, isNameTag]) =>
           ({
             category,
             id: Number.parseInt(id),
@@ -54,6 +66,7 @@ export async function prepareAndFetchEquipStrings() {
             isCash,
             isDyeable,
             hasEffect,
+            isNameTag,
           }) as EquipItem,
       ),
     );

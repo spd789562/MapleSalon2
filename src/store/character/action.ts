@@ -232,9 +232,25 @@ export function addItemToChanges(
 }
 
 export function selectNewItem(
-  item: { id: number; name: string; hasEffect?: boolean; isDyeable?: boolean },
+  item: {
+    id: number;
+    name: string;
+    hasEffect?: boolean;
+    isDyeable?: boolean;
+    isNameTag?: boolean;
+  },
   addToHistory = true,
 ) {
+  if (item.isNameTag) {
+    appendHistory({
+      category: EquipCategory.Unknown,
+      id: item.id,
+      name: item.name,
+      isNameTag: true,
+    });
+    return setCharacterNameTag(item.id);
+  }
+
   let category = getSubCategory(item.id);
   if (!category) {
     return;
@@ -344,4 +360,14 @@ export function resetItemHsvInfo(category: EquipSubCategory) {
       }),
     );
   }
+}
+
+export function toggleShowNameTag(isShow: boolean) {
+  $currentCharacterInfo.setKey('showNameTag', isShow);
+}
+export function setCharacterNameTag(id: number | undefined) {
+  $currentCharacterInfo.setKey('nameTagId', id);
+}
+export function setCharacterName(name: string) {
+  $currentCharacterInfo.setKey('name', name);
 }

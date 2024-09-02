@@ -35,6 +35,7 @@ const options: {
   { id: 'Earrings', label: '耳環' },
   { id: 'Shield', label: '盾牌' },
   { id: 'Skin', label: '膚色' },
+  { id: 'NameTag', label: '名牌' },
 ];
 
 export const CategorySelection = () => {

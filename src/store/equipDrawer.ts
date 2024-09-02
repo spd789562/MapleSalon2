@@ -117,6 +117,10 @@ export const $categoryFilteredString = computed(
       });
     }
 
+    if (category === 'NameTag') {
+      return strings.filter((item) => item.isNameTag);
+    }
+
     let filteredStrings = strings;
 
     if (category !== AllCategory) {

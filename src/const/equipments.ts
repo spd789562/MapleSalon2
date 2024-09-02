@@ -50,6 +50,7 @@ const ValidEquipSubCategory = [
   'Face Accessory',
   'Eye Decoration',
   'Earrings',
+  'NameTag',
 ];
 
 export type EquipSubCategory =
@@ -84,7 +85,8 @@ export type EquipSubCategory =
   // 'Unknown' |
   | 'Face Accessory'
   | 'Eye Decoration'
-  | 'Earrings';
+  | 'Earrings'
+  | 'NameTag';
 
 export type UnavailableEquipCategory =
   | EquipCategory.Dragon
