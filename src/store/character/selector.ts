@@ -41,6 +41,18 @@ export const $isAnimating = computed(
   $currentCharacterInfo,
   (info) => info.isAnimating,
 );
+export const $currentName = computed(
+  $currentCharacterInfo,
+  (info) => info.name,
+);
+export const $currentNameTagId = computed(
+  $currentCharacterInfo,
+  (info) => info.nameTagId,
+);
+export const $showNameTag = computed(
+  $currentCharacterInfo,
+  (info) => info.showNameTag,
+);
 
 export const $currentCharacter = batched(
   [$currentCharacterItems, $currentCharacterInfo],
