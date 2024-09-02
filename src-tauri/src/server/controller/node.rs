@@ -66,7 +66,7 @@ pub async fn get_json(
 ) -> Result<impl IntoResponse> {
     let is_simple = param.simple.unwrap_or(false);
     let json = if is_simple {
-        node.read().unwrap().to_simple_json()
+        handlers::json::to_simple_json(&node.read().unwrap())
     } else {
         node.read().unwrap().to_json()
     }?;

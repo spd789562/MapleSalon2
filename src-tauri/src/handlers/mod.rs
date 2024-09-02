@@ -1,5 +1,6 @@
 mod image_map;
 mod item;
+pub mod json;
 pub mod path;
 mod png;
 mod smap;
