@@ -27,7 +27,7 @@ export class NameTagAnimatedBackground extends Container {
   stop() {
     const sprite = this.preparedSprite.get(this.size);
     if (sprite) {
-      sprite.stop();
+      sprite.gotoAndStop(0);
     }
   }
   reset() {
@@ -75,7 +75,7 @@ export class NameTagAnimatedBackground extends Container {
     const sprite = this.preparedSprite.get(size);
     if (sprite) {
       const currentSprite = this.preparedSprite.get(this.size);
-      if (currentSprite) {
+      if (currentSprite && this.size !== size) {
         currentSprite.stop();
         this.removeChild(currentSprite);
       }

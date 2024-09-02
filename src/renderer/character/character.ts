@@ -305,6 +305,7 @@ export class Character extends Container {
 
     this.playPieces(this.currentPieces);
     if (this.isAnimating) {
+      this.nameTag.play();
       this.playByBody(body);
     }
 
