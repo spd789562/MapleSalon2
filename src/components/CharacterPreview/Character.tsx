@@ -1,4 +1,4 @@
-import { onMount, onCleanup, createEffect, createSignal } from 'solid-js';
+import { onMount, onCleanup, createEffect, createSignal, from } from 'solid-js';
 import type { ReadableAtom } from 'nanostores';
 
 import { $preferRenderer } from '@/store/renderer';
@@ -38,7 +38,7 @@ export interface CharacterViewProps {
 }
 export const CharacterView = (props: CharacterViewProps) => {
   const zoomInfo = usePureStore($previewZoomInfo);
-  const characterData = usePureStore(props.store);
+  const characterData = from(props.store);
   const [isInit, setIsInit] = createSignal<boolean>(false);
   const isShowUpscale = usePureStore($showUpscaledCharacter);
   let container!: HTMLDivElement;
@@ -122,8 +122,9 @@ export const CharacterView = (props: CharacterViewProps) => {
   });
 
   createEffect(async () => {
-    if (isInit()) {
-      await ch.update(characterData());
+    const data = characterData();
+    if (isInit() && data) {
+      await ch.update(data);
     }
   });
 
