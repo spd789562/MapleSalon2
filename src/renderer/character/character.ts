@@ -1,5 +1,11 @@
 import { createUniqueId } from 'solid-js';
-import { type Application, Container, Ticker, EventEmitter } from 'pixi.js';
+import {
+  type Application,
+  Container,
+  Ticker,
+  EventEmitter,
+  type DestroyOptions,
+} from 'pixi.js';
 
 import type { CharacterData } from '@/store/character/store';
 import type { ItemInfo, AncherName, Vec2, PieceSlot } from './const/data';
@@ -692,5 +698,18 @@ export class Character extends Container {
     ) {
       this.#_handType = CharacterHandType.DoubleHand;
     }
+  }
+  destroy(options?: DestroyOptions) {
+    this.reset();
+    super.destroy(options);
+    this.loadEvent.removeAllListeners();
+    this.zmapLayers.clear();
+    this.locks.clear();
+    this.actionAnchers.clear();
+    this.bodyContainer = undefined as unknown as any;
+    for (const item of this.idItems.values()) {
+      item.destroy();
+    }
+    this.idItems.clear();
   }
 }

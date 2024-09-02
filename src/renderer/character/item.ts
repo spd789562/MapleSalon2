@@ -332,5 +332,6 @@ export class CharacterItem implements RenderItemInfo {
     for (const actionItem of this.actionPieces.values()) {
       actionItem.destroy();
     }
+    this.actionPieces.clear();
   }
 }
