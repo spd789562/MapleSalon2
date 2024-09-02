@@ -2,7 +2,8 @@ use rayon::prelude::*;
 use wz_reader::{WzNodeArc, WzNodeCast};
 
 use super::item::{
-    get_is_cash_item, get_is_colorvar, get_item_info_node, get_item_node_from_category,
+    get_is_cash_item, get_is_colorvar, get_is_name_tag, get_item_info_node,
+    get_item_node_from_category,
 };
 use super::path::{CHARACTER_ITEM_PATH, EQUIP_EFFECT_PATH, EQUIP_STRING_PATH};
 
@@ -163,7 +164,7 @@ pub fn resolve_equip_string(
 
                     if let Some(string) = text_node_read.try_as_string() {
                         if let Ok(text) = string.get_string() {
-                            result.push((category.clone(), name, text, false, false, false));
+                            result.push((category.clone(), name, text, false, false, false, false));
                         }
                     }
 
@@ -201,6 +202,7 @@ pub fn resolve_equip_string(
                         if let Some(info_node) = info_node {
                             item.3 = get_is_cash_item(&info_node);
                             item.4 = get_is_colorvar(&info_node);
+                            item.6 = get_is_name_tag(&info_node);
                         }
                     }
                     if effect_node.read().unwrap().at(&item.1).is_some() {

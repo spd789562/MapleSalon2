@@ -1,6 +1,10 @@
 #![allow(dead_code)]
 use wz_reader::{WzNodeArc, WzNodeCast};
 
+pub const CASH_ITEM_KEY: &'static str = "cash";
+pub const COLORVAR_KEY: &'static str = "colorvar";
+pub const NAME_TAG_KEY: &'static str = "nameTag";
+
 pub fn get_item_node(
     character_node: &WzNodeArc,
     category: &str,
@@ -31,11 +35,15 @@ pub fn get_is_cash_item(info_node: &WzNodeArc) -> bool {
     info_node
         .read()
         .unwrap()
-        .at("cash")
+        .at(CASH_ITEM_KEY)
         .and_then(|cash_node| cash_node.read().unwrap().try_as_int().map(|x| *x == 1))
         .unwrap_or(false)
 }
 
 pub fn get_is_colorvar(info_node: &WzNodeArc) -> bool {
-    info_node.read().unwrap().at("colorvar").is_some()
+    info_node.read().unwrap().at(COLORVAR_KEY).is_some()
+}
+
+pub fn get_is_name_tag(info_node: &WzNodeArc) -> bool {
+    info_node.read().unwrap().at(NAME_TAG_KEY).is_some()
 }
