@@ -16,7 +16,11 @@ export const Character = () => {
           <SimpleCharacter
             title=""
             items={items()}
+            name={currentCharacterInfo()?.name}
             earType={currentCharacterInfo()?.earType}
+            handType={currentCharacterInfo()?.handType}
+            showNameTag={currentCharacterInfo()?.showNameTag}
+            nameTagId={currentCharacterInfo()?.nameTagId}
           />
         )}
       </Show>

@@ -1,7 +1,8 @@
-import { Show, createSignal } from 'solid-js';
+import { Show, createSignal, createMemo } from 'solid-js';
 
 import { usePureStore } from '@/store';
 import { $currentCharacterInfo } from '@/store/characterInfo';
+import { getEquipById } from '@/store/string';
 
 import { useExportContent } from './CharacterInfoDialog';
 
@@ -25,12 +26,20 @@ import { toaster } from '@/components/GlobalToast';
  * |  (Overall|Coat)      | FaceAcc  |
  * |  Pants               | Earrings |
  * |  Cape                | Glove    |
- * |  Shoes               |          |
+ * |  Shoes               | NameTag  |
  */
 export const EquipItemGrid = () => {
   const [isExporting, setIsExporting] = createSignal(false);
   const exportContent = useExportContent();
   const currentCharacterInfo = usePureStore($currentCharacterInfo);
+
+  const nameTagItem = createMemo(() => {
+    const id = currentCharacterInfo()?.nameTagId;
+    if (!id) {
+      return undefined;
+    }
+    return getEquipById(id);
+  });
 
   async function handleCopyToClipboard() {
     if (!exportContent) {
@@ -102,7 +111,8 @@ export const EquipItemGrid = () => {
           <EquipItem category="Cape" item={items().Cape} />
           <EquipItem category="Glove" item={items().Glove} />
           <EquipItem category="Shoes" item={items().Shoes} />
-          <Stack direction="row" alignItems="flex-end" justify="flex-end">
+          <EquipItem category="NameTag" item={nameTagItem()} />
+          <Stack direction="row" alignItems="flex-end" justify="flex-end" gridColumn="2/2">
             <Show when={!isExporting()}>
               <IconButton
                 onClick={handleCopyToClipboard}

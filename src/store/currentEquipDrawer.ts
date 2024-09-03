@@ -21,16 +21,28 @@ export const $currentItemKeys = computed($totalItems, (items) => {
 });
 
 /* actions */
-export function openSkinSelection() {
+export function openCertainCategory(category: EquipSubCategory) {
   if (!$equpimentDrawerOpen.get()) {
     $equpimentDrawerOpen.set(true);
+  }
+  if (category === 'Hair') {
+    return $equipmentDrawerEquipTab.set(EquipTab.Hair);
+  }
+  if (category === 'Face') {
+    return $equipmentDrawerEquipTab.set(EquipTab.Face);
   }
   if ($equipmentDrawerEquipTab.get() !== EquipTab.Equip) {
     $equipmentDrawerEquipTab.set(EquipTab.Equip);
   }
-  if ($equipmentDrawerEquipCategory.get() !== 'Skin') {
-    $equipmentDrawerEquipCategory.set('Skin');
+  if ($equipmentDrawerEquipCategory.get() !== category) {
+    $equipmentDrawerEquipCategory.set(category);
   }
+}
+export function openSkinSelection() {
+  openCertainCategory('Skin');
+}
+export function openNameTagSelection() {
+  openCertainCategory('NameTag');
 }
 export function editCurrentItem(data: {
   id: number;

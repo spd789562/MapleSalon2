@@ -69,12 +69,15 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
     if (isInit()) {
       const app = $globalRenderer.get();
       const characterData = {
+        name: props.name,
         frame: props.frame || 0,
         isAnimating: !!props.isAnimating,
         action: props.action || CharacterAction.Stand1,
         expression: props.expression || CharacterExpressions.Default,
         earType: props.earType || CharacterEarType.HumanEar,
         handType: props.handType || CharacterHandType.SingleHand,
+        nameTagId: props.nameTagId,
+        showNameTag: !!props.showNameTag,
         items: totalItems(),
       };
       const hash = makeCharacterHash(characterData);
