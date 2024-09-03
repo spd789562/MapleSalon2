@@ -110,8 +110,8 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
             y: -offsetBounds.y,
           };
           const calcOffset = {
-            x: Math.floor(imageCenter.x - bellyPos.x) - 4,
-            y: Math.floor(imageCenter.y - bellyPos.y) + 10,
+            x: Math.floor(imageCenter.x - bellyPos.x) + 4,
+            y: Math.floor(imageCenter.y - bellyPos.y) + 30,
           };
           /* prevent pixi's error */
           character.effects = [];
