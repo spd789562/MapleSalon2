@@ -96,9 +96,12 @@ export const CharacterItem = (props: CharacterItemProps) => {
             <CharacterItemPositioner>
               <SimpleCharacter
                 title={character().name}
+                name={character().name}
                 items={character().items}
                 earType={character().earType}
                 handType={character().handType}
+                showNameTag={character().showNameTag}
+                nameTagId={character().nameTagId}
                 noMaxWidth={true}
                 useOffset={true}
               />
