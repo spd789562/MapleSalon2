@@ -61,11 +61,10 @@ export class BaseNameTag extends Container {
 
   /**
    * get name tag color from clr, which is from wz data
-   * @param clr seems store as 2^25 with sign
+   * @param clr color value need to munus from white
    */
   private getNameTageColor(clr: number) {
-    // if want to see the hex value, use (2**24 + clr).toString(16)
-    return 2 ** 24 + clr;
+    return 0xffffff + 1 + clr;
   }
   async loadWz() {
     const id = this.id as number;
