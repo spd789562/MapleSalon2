@@ -9,6 +9,9 @@ export class NameTagColorBackground extends Container {
     super();
     this.addChild(this.graphic);
   }
+  get topOffset() {
+    return 2;
+  }
   updatePiece(_: unknown) {}
   async prepareResource() {}
   renderBackground() {

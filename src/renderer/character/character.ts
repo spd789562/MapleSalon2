@@ -79,7 +79,7 @@ export class Character extends Container {
     this.app = app;
     this.nameTag = new BaseNameTag('');
     this.nameTag.visible = false;
-    this.nameTag.position.set(0, 6);
+    this.nameTag.position.set(0, 3);
     this.addChild(this.bodyContainer);
     this.addChild(this.nameTag);
   }

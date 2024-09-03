@@ -18,6 +18,9 @@ export class NameTagAnimatedBackground extends Container {
   _nameWidth = 30;
 
   type = 'animated';
+  get topOffset() {
+    return this.wz?.heightoffset || 0;
+  }
   play() {
     const sprite = this.preparedSprite.get(this.size);
     if (sprite) {

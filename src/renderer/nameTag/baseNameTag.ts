@@ -139,5 +139,6 @@ export class BaseNameTag extends Container {
     this.textNode.pivot.x = this.textNode.width / 2;
     this.textNode.pivot.y = -1;
     this.textNode.style.fill = this.textColor;
+    this.pivot.y = -(this.background?.topOffset || 0);
   }
 }

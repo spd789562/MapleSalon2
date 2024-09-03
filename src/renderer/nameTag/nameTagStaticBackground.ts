@@ -20,6 +20,9 @@ export class NameTagStaticBackground extends Container {
     this.right = new Sprite();
     this.addChild(this.left, this.center, this.right);
   }
+  get topOffset() {
+    return this.centerPiece?.origin.y || 0;
+  }
   updatePiece(wz: WzNameTagData) {
     this.leftPiece = wz.w && new NameTagPiece(wz.w);
     this.centerPiece = wz.c && new NameTagPiece(wz.c);
@@ -60,6 +63,7 @@ export class NameTagStaticBackground extends Container {
     this.right.pivot.copyFrom(rightAncher);
 
     this.pivot.x = this.center.width / 2;
+    // this.pivot.y = -centerAncher.y;
   }
   set nameWidth(width: number) {
     this._nameWidth = width;
