@@ -2,7 +2,7 @@ import { onMount, onCleanup, createEffect, createSignal, from } from 'solid-js';
 import type { ReadableAtom } from 'nanostores';
 
 import { $preferRenderer } from '@/store/renderer';
-import type { CharacterData } from '@/store/character/store';
+import type { CharacterData, CharacterItemInfo } from '@/store/character/store';
 import {
   MAX_ZOOM,
   MIN_ZOOM,
@@ -21,13 +21,13 @@ import { usePureStore } from '@/store';
 import { Application } from 'pixi.js';
 import { Character } from '@/renderer/character/character';
 import { ZoomContainer } from '@/renderer/ZoomContainer';
-
-/* TEST */
 import { Anime4kFilter } from '@/renderer/filter/anime4k/Anime4kFilter';
 import {
   PipelineType,
   type PipelineOption,
 } from '@/renderer/filter/anime4k/const';
+
+import { toaster } from '@/components/GlobalToast';
 
 export interface CharacterViewProps {
   onLoad: () => void;
@@ -49,6 +49,19 @@ export const CharacterView = (props: CharacterViewProps) => {
 
   ch.loadEvent.addListener('loading', props.onLoad);
   ch.loadEvent.addListener('loaded', props.onLoaded);
+
+  if (props.target === 'preview') {
+    ch.loadEvent.addListener(
+      'error',
+      function onEquipLoadError(payload: CharacterItemInfo[]) {
+        const names = payload.map((item) => item.name || item.id).join(', ');
+        toaster.error({
+          title: '裝備載入失敗',
+          description: `下列裝備載入失敗：${names}`,
+        });
+      },
+    );
+  }
 
   async function initScene() {
     await app.init({
@@ -103,8 +116,9 @@ export const CharacterView = (props: CharacterViewProps) => {
   });
 
   onCleanup(() => {
-    ch.reset();
-    app.destroy();
+    app.destroy(undefined, {
+      children: true,
+    });
     if (props.target === 'preview') {
       resetUpscaleSource();
     }

@@ -4,6 +4,7 @@ import {
   Container,
   Ticker,
   EventEmitter,
+  Graphics,
   type DestroyOptions,
 } from 'pixi.js';
 
@@ -30,6 +31,20 @@ import type { PieceIslot } from './const/slot';
 import { BaseNameTag } from '../nameTag/baseNameTag';
 
 type AnyCategorizedItem = CategorizedItem<string>;
+
+function generateDebugAncher(radius = 8, color = 0xff0000) {
+  const graphics = new Graphics();
+  graphics.moveTo(-radius, 0);
+  graphics.lineTo(radius, 0);
+  graphics.moveTo(0, -radius);
+  graphics.lineTo(0, radius);
+  graphics.stroke({
+    color,
+    width: 1,
+  });
+
+  return graphics;
+}
 
 export interface CharacterAttributes {
   action: CharacterAction;
@@ -70,7 +85,7 @@ export class Character extends Container {
 
   isLoading = false;
   loadFlashTimer = 0;
-  loadEvent = new EventEmitter<'loading' | 'loaded'>();
+  loadEvent = new EventEmitter<'loading' | 'loaded' | 'error'>();
 
   constructor(app?: Application) {
     super();
@@ -400,51 +415,52 @@ export class Character extends Container {
       const pieceFrame = (piece.frames[frame] ||
         piece.frames[0]) as CharacterItemPiece;
       const isSkinGroup = pieceFrame.group === 'skin';
-      if (pieceFrame) {
-        const ancherName = pieceFrame.baseAncherName;
-        let ancher = currentAncher.get(ancherName);
+      if (!pieceFrame) {
+        continue;
+      }
+      const ancherName = pieceFrame.baseAncherName;
+      let ancher = currentAncher.get(ancherName);
 
-        /* effect ancher use different stratgy */
-        if (piece.effectZindex !== undefined) {
-          if (piece.item.isCap) {
-            const baseAncher = {
-              x: 0,
-              y: 48,
-            };
-            /* cap effect use brow ancher */
-            const browAncher = currentAncher.get('brow') || {
-              x: 0,
-              y: 0,
-            };
-            ancher = {
-              x: baseAncher.x + browAncher.x,
-              y: baseAncher.y + browAncher.y,
-            };
-          } else {
-            ancher = this.currentBodyFrame?.ancher || {
-              x: 0,
-              y: 0,
-            };
-          }
-        }
-
-        /* setting the ancher on each piece */
-        ancher &&
-          piece.pivot?.copyFrom({
-            x: -ancher.x,
-            y: -ancher.y,
-          });
-
-        /* some part can play indenpendently */
-        if (piece.canIndependentlyPlay && !isSkinGroup) {
-          if (this.isAnimating) {
-            !piece.playing && piece.play();
-          } else {
-            piece.stop();
-          }
+      /* effect ancher use different stratgy */
+      if (piece.effectZindex !== undefined) {
+        if (piece.item.isCap) {
+          const baseAncher = {
+            x: 0,
+            y: 48,
+          };
+          /* cap effect use brow ancher */
+          const browAncher = currentAncher.get('brow') || {
+            x: 0,
+            y: 0,
+          };
+          ancher = {
+            x: baseAncher.x + browAncher.x,
+            y: baseAncher.y + browAncher.y,
+          };
         } else {
-          piece.currentFrame = pieceFrameIndex;
+          ancher = this.currentBodyFrame?.ancher || {
+            x: 0,
+            y: 0,
+          };
         }
+      }
+
+      /* setting the ancher on each piece */
+      ancher &&
+        piece.pivot?.copyFrom({
+          x: -ancher.x,
+          y: -ancher.y,
+        });
+
+      /* some part can play indenpendently */
+      if (piece.canIndependentlyPlay && !isSkinGroup) {
+        if (this.isAnimating) {
+          !piece.playing && piece.play();
+        } else {
+          piece.stop();
+        }
+      } else {
+        piece.currentFrame = pieceFrameIndex;
       }
     }
     this.updateCharacterFaceVisibility();
@@ -568,24 +584,34 @@ export class Character extends Container {
     }, 100);
 
     const loadItems = Array.from(this.idItems.values()).map(async (item) => {
-      await item.load();
-      if (this.isAnimating) {
-        if (item.isUseExpressionItem) {
-          await item.prepareActionResource(this.expression);
+      try {
+        await item.load();
+        if (this.isAnimating) {
+          if (item.isUseExpressionItem) {
+            await item.prepareActionResource(this.expression);
+          } else {
+            await item.prepareActionResource(this.action);
+          }
+        } else if (item.isUseExpressionItem) {
+          await item.prepareActionResourceByFrame(this.expression, this.frame);
         } else {
-          await item.prepareActionResource(this.action);
+          await item.prepareActionResourceByFrame(this.action, this.frame);
         }
-      } else if (item.isUseExpressionItem) {
-        await item.prepareActionResourceByFrame(this.expression, this.frame);
-      } else {
-        await item.prepareActionResourceByFrame(this.action, this.frame);
+      } catch (_) {
+        return item.info;
       }
     });
 
-    await Promise.all(loadItems);
+    const errorItems = await Promise.all(loadItems).then((items) =>
+      items.filter((item) => item),
+    );
 
     if (this.#_renderId !== renderId) {
       return;
+    }
+
+    if (errorItems.length > 0) {
+      this.loadEvent.emit('error', errorItems);
     }
 
     const itemCount = this.idItems.size;
