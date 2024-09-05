@@ -637,8 +637,12 @@ export class Character extends Container {
 
   buildLock() {
     this.locks.clear();
+    // build id from small to big
+    const sortedItem = Array.from(this.idItems.entries())
+      .sort((a, b) => a[0] - b[0])
+      .map(([, item]) => item);
     const orderedItems = CharacterLoader.zmap?.reduce((acc, layer) => {
-      for (const item of this.idItems.values()) {
+      for (const item of sortedItem) {
         if (item.islot.includes(layer as PieceIslot)) {
           acc.push(item);
         }

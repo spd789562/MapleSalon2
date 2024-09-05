@@ -99,7 +99,6 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
           await simpleCharacterLoadingQueue.add(() =>
             character.update(characterData),
           );
-          // await character.update(characterData);
           const offsetBounds = character.getLocalBounds();
           const imageCenter = {
             x: offsetBounds.width / 2,
