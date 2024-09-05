@@ -21,6 +21,11 @@ const options = [
     colorBlockStyle: PreviewSceneBackground.alpha,
   },
   {
+    value: PreviewScene.Grid,
+    label: PreviewSceneNames.grid,
+    colorBlockStyle: PreviewSceneBackground.grid,
+  },
+  {
     value: PreviewScene.Henesys,
     label: PreviewSceneNames.henesys,
     colorBlockStyle: {
