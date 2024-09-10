@@ -123,9 +123,9 @@ export abstract class CategorizedItem<Name extends string> {
     const effectPos = this.effectWz.pos ?? -1;
 
     /* pos logic is from MapleNecrocer */
-    // if (effectPos === 0 || effectPos === 1) {
-    //   basePos.x = -10;
-    // }
+    if (effectPos === 0 || effectPos === 1) {
+      basePos.x = -10;
+    }
     if (effectPos === 1) {
       basePos.y = -50;
     }

@@ -423,26 +423,19 @@ export class Character extends Container {
 
       /* effect ancher use different stratgy */
       if (piece.effectZindex !== undefined) {
-        if (piece.item.isCap) {
-          const baseAncher = {
-            x: 0,
-            y: 48,
-          };
-          /* cap effect use brow ancher */
-          const browAncher = currentAncher.get('brow') || {
-            x: 0,
-            y: 0,
-          };
-          ancher = {
-            x: baseAncher.x + browAncher.x,
-            y: baseAncher.y + browAncher.y,
-          };
-        } else {
-          ancher = this.currentBodyFrame?.ancher || {
-            x: 0,
-            y: 0,
-          };
-        }
+        const baseAncher = {
+          x: 10,
+          y: 48,
+        };
+        /* cap effect use brow ancher */
+        const browAncher = currentAncher.get('brow') || {
+          x: 0,
+          y: 0,
+        };
+        ancher = {
+          x: baseAncher.x + browAncher.x,
+          y: baseAncher.y + browAncher.y,
+        };
       }
 
       /* setting the ancher on each piece */
