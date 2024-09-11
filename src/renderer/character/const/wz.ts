@@ -10,6 +10,7 @@ export interface WzItemInfo {
   colorvar: boolean;
   royalSpecial: boolean;
   nameTag?: number;
+  invisibleFace?: number;
 }
 
 export type WzPieceFrame = Record<PieceName, WzPieceInfo> & {

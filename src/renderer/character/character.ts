@@ -10,7 +10,11 @@ import {
 
 import type { CharacterData } from '@/store/character/store';
 import type { ItemInfo, AncherName, Vec2, PieceSlot } from './const/data';
-import type { CategorizedItem, CharacterActionItem } from './categorizedItem';
+import type {
+  CategorizedItem,
+  CharacterActionItem,
+  CharacterFaceItem,
+} from './categorizedItem';
 import type { CharacterAnimatablePart } from './characterAnimatablePart';
 import type {
   CharacterItemPiece,
@@ -261,6 +265,7 @@ export class Character extends Container {
     this.reset();
     const pieces: CharacterAnimatablePart[] = [];
     let body: CharacterAnimatablePart | undefined = undefined;
+    let isOverrideFace = false;
     const earPiece = this.getEarPiece();
     const earLayer = earPiece?.firstFrameZmapLayer;
     for (const layer of zmap) {
@@ -310,6 +315,9 @@ export class Character extends Container {
         if ((layer === 'body' || layer === 'backBody') && piece.item.isBody) {
           body = piece;
         }
+        if (piece.item.isOverrideFace) {
+          isOverrideFace = true;
+        }
         // not sure why need to do this while it already initialized in constructor
         piece.frameChanges(0);
 
@@ -322,6 +330,13 @@ export class Character extends Container {
     if (!body) {
       console.error('No body found');
       return;
+    }
+
+    if (this.facePiece) {
+      const facePiece = this.facePiece;
+      for (const item of facePiece.allPieces) {
+        item.visible = !isOverrideFace;
+      }
     }
 
     this.playPieces(this.currentPieces);
@@ -520,13 +535,21 @@ export class Character extends Container {
       }
     };
   }
-
+  get facePiece() {
+    const faceItem = Array.from(this.idItems.values()).find(
+      (item) => item.isFace,
+    );
+    if (!faceItem) {
+      return undefined;
+    }
+    return faceItem.actionPieces.get(this.expression) as CharacterFaceItem;
+  }
   getEarPiece() {
     const headItem = Array.from(this.idItems.values()).find(
       (item) => item.isHead,
     );
     if (!headItem) {
-      return;
+      return undefined;
     }
     const headCategoryItem = headItem.actionPieces.get(
       this.action,
