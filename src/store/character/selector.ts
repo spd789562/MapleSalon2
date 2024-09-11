@@ -124,7 +124,7 @@ export function getCurrentFaceColor(): FaceColorId {
 }
 export function getHasAnyChanges() {
   return (
-    Object.keys($currentItemChanges.get()).length > 0 &&
+    Object.keys($currentItemChanges.get()).length > 0 ||
     Object.keys($currentInfoChanges.get()).length > 0
   );
 }
