@@ -419,25 +419,7 @@ export class Character extends Container {
         continue;
       }
       const ancherName = pieceFrame.baseAncherName;
-      let ancher = currentAncher.get(ancherName);
-
-      /* effect ancher use different stratgy */
-      if (piece.effectZindex !== undefined) {
-        const baseAncher = {
-          x: 10,
-          y: 48,
-        };
-        /* cap effect use brow ancher */
-        const browAncher = currentAncher.get('brow') || {
-          x: 0,
-          y: 0,
-        };
-        ancher = {
-          x: baseAncher.x + browAncher.x,
-          y: baseAncher.y + browAncher.y,
-        };
-      }
-
+      const ancher = currentAncher.get(ancherName);
       /* setting the ancher on each piece */
       ancher &&
         piece.pivot?.copyFrom({
@@ -450,7 +432,7 @@ export class Character extends Container {
         if (this.isAnimating) {
           !piece.playing && piece.play();
         } else {
-          piece.stop();
+          piece.gotoAndStop(0);
         }
       } else {
         piece.currentFrame = pieceFrameIndex;
