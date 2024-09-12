@@ -1,6 +1,7 @@
 import { Index } from 'solid-js';
 import { VStack } from 'styled-system/jsx/vstack';
 import { EquipItem } from './EquipItem';
+import { NameTagItem } from './NameTagItem';
 import type { EquipSubCategory } from '@/const/equipments';
 
 const CategoryList = [
@@ -27,6 +28,7 @@ export const CurrentEquipList = () => {
       <Index each={CategoryList}>
         {(category) => <EquipItem category={category()} />}
       </Index>
+      <NameTagItem />
     </VStack>
   );
 };

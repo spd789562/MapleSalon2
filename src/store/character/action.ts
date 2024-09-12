@@ -4,6 +4,7 @@ import {
   $currentCharacterItems,
   $currentCharacterInfo,
   $currentItemChanges,
+  $currentInfoChanges,
 } from './store';
 import {
   $totalItems,
@@ -26,6 +27,10 @@ import {
 import { getSubCategory, getBodyId, getHeadIdFromBodyId } from '@/utils/itemId';
 
 import { EquipCategory, type EquipSubCategory } from '@/const/equipments';
+import type { CharacterAction } from '@/const/actions';
+import type { CharacterExpressions } from '@/const/emotions';
+import type { CharacterEarType } from '@/const/ears';
+import type { CharacterHandType } from '@/const/hand';
 
 export function changeCurrentCharacter(character: Partial<CharacterData>) {
   if (character.items) {
@@ -49,6 +54,12 @@ export function changeCurrentCharacter(character: Partial<CharacterData>) {
     if (character.handType) {
       updateInfo.handType = character.handType;
     }
+    if (character.showNameTag !== undefined) {
+      updateInfo.showNameTag = character.showNameTag;
+    }
+    if (character.nameTagId) {
+      updateInfo.nameTagId = character.nameTagId;
+    }
     $currentCharacterInfo.set(updateInfo);
 
     $currentItem.set(undefined);
@@ -58,10 +69,15 @@ export function changeCurrentCharacter(character: Partial<CharacterData>) {
 
 export function applyCharacterChanges() {
   $currentCharacterItems.set(deepCloneCharacterItems($totalItems.get()));
-  $currentItemChanges.set({});
+  $currentCharacterInfo.set({
+    ...$currentCharacterInfo.get(),
+    ...$currentInfoChanges.get(),
+  });
+  resetCharacterChanges();
 }
 export function resetCharacterChanges() {
   $currentItemChanges.set({});
+  $currentInfoChanges.set({});
 }
 
 export function updateChangesSkin(item: {
@@ -232,9 +248,25 @@ export function addItemToChanges(
 }
 
 export function selectNewItem(
-  item: { id: number; name: string; hasEffect?: boolean; isDyeable?: boolean },
+  item: {
+    id: number;
+    name: string;
+    hasEffect?: boolean;
+    isDyeable?: boolean;
+    isNameTag?: boolean;
+  },
   addToHistory = true,
 ) {
+  if (item.isNameTag) {
+    appendHistory({
+      category: EquipCategory.Unknown,
+      id: item.id,
+      name: item.name,
+      isNameTag: true,
+    });
+    return setCharacterNameTag(item.id);
+  }
+
   let category = getSubCategory(item.id);
   if (!category) {
     return;
@@ -344,4 +376,29 @@ export function resetItemHsvInfo(category: EquipSubCategory) {
       }),
     );
   }
+}
+/* info actions */
+export function toggleIsAnimating(isAnimating: boolean) {
+  $currentCharacterInfo.setKey('isAnimating', isAnimating);
+}
+export function setCharacterAction(action: CharacterAction) {
+  $currentCharacterInfo.setKey('action', action);
+}
+export function setCharacterExpression(expression: CharacterExpressions) {
+  $currentCharacterInfo.setKey('expression', expression);
+}
+export function setCharacterEarType(earType: CharacterEarType) {
+  $currentInfoChanges.setKey('earType', earType);
+}
+export function setCharacterHandType(handType: CharacterHandType) {
+  $currentInfoChanges.setKey('handType', handType);
+}
+export function toggleShowNameTag(isShow: boolean) {
+  $currentInfoChanges.setKey('showNameTag', isShow);
+}
+export function setCharacterNameTag(id: number | undefined) {
+  $currentInfoChanges.setKey('nameTagId', id);
+}
+export function setCharacterName(name: string) {
+  $currentInfoChanges.setKey('name', name);
 }

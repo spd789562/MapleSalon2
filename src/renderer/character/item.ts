@@ -52,6 +52,7 @@ export class CharacterItem implements RenderItemInfo {
   wz: WzItem | null = null;
   effectWz: WzEffectItem | null = null;
   isCleanedWz = false;
+  isOverrideFace = false;
 
   filters: (HsvAdjustmentFilter | Filter)[] = [];
 
@@ -210,6 +211,7 @@ export class CharacterItem implements RenderItemInfo {
     /* some item will not have info, WTF? */
     this.islot = (this.wz.info?.islot?.match(/.{1,2}/g) || []) as PieceIslot[];
     this.vslot = (this.wz.info?.vslot?.match(/.{1,2}/g) || []) as PieceIslot[];
+    this.isOverrideFace = this.wz.info?.invisibleFace === 1;
 
     /* a shoe should alwasy be a shoe! pls */
     if (isShoesId(this.info.id) && !this.islot.includes('So')) {
@@ -332,5 +334,6 @@ export class CharacterItem implements RenderItemInfo {
     for (const actionItem of this.actionPieces.values()) {
       actionItem.destroy();
     }
+    this.actionPieces.clear();
   }
 }

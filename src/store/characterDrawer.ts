@@ -25,6 +25,7 @@ const DEFAULT_CHARACTER: SaveCharacterData = {
   name: 'name',
   earType: CharacterEarType.HumanEar,
   handType: CharacterHandType.SingleHand,
+  showNameTag: false,
   items: {
     Head: {
       id: 2000,
@@ -42,6 +43,8 @@ export interface SaveCharacterInfo {
   name: string;
   earType: CharacterEarType;
   handType: CharacterHandType;
+  nameTagId?: number;
+  showNameTag: boolean;
 }
 
 export interface SaveCharacterData extends SaveCharacterInfo {
@@ -182,6 +185,8 @@ export function saveCurrentCharacter(newId?: boolean) {
     name: currentCharacter.name || 'name',
     earType: currentCharacter.earType,
     handType: currentCharacter.handType,
+    showNameTag: currentCharacter.showNameTag,
+    nameTagId: currentCharacter.nameTagId,
     items: currentCharacter.items,
   };
   return saveCharacter(data);

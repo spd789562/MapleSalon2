@@ -64,6 +64,24 @@ export abstract class CategorizedItem<Name extends string> {
     return !this.allPieces.some((piece) => !piece.isAllAncherBuilt);
   }
 
+  get effectBasePos() {
+    const basePos = {
+      x: 10,
+      y: 50,
+    };
+    const effectPos = this.effectWz?.pos ?? -1;
+
+    /* pos logic is from MapleNecrocer */
+    if (effectPos === 0 || effectPos === 1) {
+      basePos.x = 0;
+    }
+    if (effectPos === 1) {
+      basePos.y = 0;
+    }
+
+    return basePos;
+  }
+
   /** do something before build ancher on each pieces */
   abstract ancherSetup(ancherMap: Map<AncherName, Vec2>, frame: number): void;
 
@@ -99,6 +117,10 @@ export abstract class CategorizedItem<Name extends string> {
     if (zmap.includes(name)) {
       return name;
     }
+    // try to resolve number z
+    if (!Number.isNaN(Number(z))) {
+      return zmap[zmap.length - 10 - Number(z)];
+    }
     return this.mainItem.islot[0];
   }
 
@@ -116,19 +138,7 @@ export abstract class CategorizedItem<Name extends string> {
     );
     const pieces: CharacterItemPiece[] = [];
 
-    const basePos = {
-      x: 0,
-      y: 0,
-    };
-    const effectPos = this.effectWz.pos ?? -1;
-
-    /* pos logic is from MapleNecrocer */
-    // if (effectPos === 0 || effectPos === 1) {
-    //   basePos.x = -10;
-    // }
-    if (effectPos === 1) {
-      basePos.y = -50;
-    }
+    const basePos = this.effectBasePos;
 
     for (let frame = 0; frame <= maxFrame; frame += 1) {
       const piece = this.effectWz[frame];
@@ -157,6 +167,7 @@ export abstract class CategorizedItem<Name extends string> {
         this.mainItem,
         true,
       );
+      characterItemPiece.baseAncherName = 'brow';
       characterItemPiece.position = {
         x: -piece.origin.x + basePos.x,
         y: -piece.origin.y + basePos.y,
@@ -211,13 +222,30 @@ export abstract class CategorizedItem<Name extends string> {
           piecesByFrame.set(pieceNameHash, pieces);
         }
 
+        let ancherMap = piece.map as AncherMap;
+
+        if (!ancherMap) {
+          /* some item has effect and it doesn't have ancher it self, try to use effect's ancher */
+          if (this.effectWz && !this.effectWz.pos) {
+            const effectPost = this.effectBasePos;
+            ancherMap = {
+              brow: {
+                x: -effectPost.x,
+                y: -effectPost.y,
+              },
+            };
+          } else {
+            ancherMap = defaultAncher;
+          }
+        }
+
         const renderPiecesInfo = {
           info: this.mainItem.info,
           url: pieceUrl,
           origin: piece.origin,
           z: piece.z,
           slot: pieceName,
-          map: (piece.map as AncherMap) || defaultAncher,
+          map: ancherMap,
           delay: delay,
           group: piece.group,
         };

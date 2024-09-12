@@ -21,6 +21,7 @@ export const EquipItemButton = (props: EquipItemButtonProps) => {
       name: props.item.name,
       hasEffect: props.item.hasEffect,
       isDyeable: props.item.isDyeable,
+      isNameTag: props.item.isNameTag,
     });
   }
 

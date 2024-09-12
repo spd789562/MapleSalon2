@@ -80,6 +80,9 @@ const BackgroundBlock = styled('div', {
       alpha: {
         ...PreviewSceneBackground.alpha,
       },
+      grid: {
+        ...PreviewSceneBackground.grid,
+      },
       color: {
         border: '1px solid',
         borderColor: 'border.muted',

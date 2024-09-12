@@ -188,7 +188,7 @@ pub(crate) async fn search_by_equip_name<R: Runtime>(
 
     Ok(string_dict
         .iter()
-        .filter_map(|(_, id, text, _, _, _)| {
+        .filter_map(|(_, id, text, _, _, _, _)| {
             if text.contains(&name) {
                 Some((id.clone(), text.clone()))
             } else {

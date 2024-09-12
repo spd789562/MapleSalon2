@@ -11,6 +11,7 @@ import SwordsIcon from 'lucide-solid/icons/swords';
 import GlassesIcon from 'lucide-solid/icons/glasses';
 import SmileIcon from 'lucide-solid/icons/smile';
 import SmilePlusIcon from 'lucide-solid/icons/smile-plus';
+import IdCardIcon from 'lucide-solid/icons/id-card';
 import CoatLineIcon from 'mingcute_icon/svg/part/coat_line.svg';
 import HatLineIcon from 'mingcute_icon/svg/part/hat_line.svg';
 import EarLineIcon from 'mingcute_icon/svg/part/ear_line.svg';
@@ -46,5 +47,6 @@ export const CategoryIconMap: Partial<
   Skin: { type: IconType.Svg, icon: FaceLineIcon },
   Hair: { type: IconType.Svg, icon: HairLineIcon },
   Face: { type: IconType.Svg, icon: SmileIcon },
+  NameTag: { type: IconType.Lucide, icon: IdCardIcon },
   [AllCategory]: { type: IconType.Lucide, icon: LayoutGridIcon },
 };

@@ -1,14 +1,29 @@
 import { createUniqueId } from 'solid-js';
-import { type Application, Container, Ticker, EventEmitter } from 'pixi.js';
+import {
+  type Application,
+  Container,
+  Ticker,
+  EventEmitter,
+  Graphics,
+  type DestroyOptions,
+} from 'pixi.js';
 
 import type { CharacterData } from '@/store/character/store';
 import type { ItemInfo, AncherName, Vec2, PieceSlot } from './const/data';
-import type { CategorizedItem, CharacterActionItem } from './categorizedItem';
+import type {
+  CategorizedItem,
+  CharacterActionItem,
+  CharacterFaceItem,
+} from './categorizedItem';
 import type { CharacterAnimatablePart } from './characterAnimatablePart';
-import type { CharacterItemPiece, DyeableCharacterItemPiece } from './itemPiece';
+import type {
+  CharacterItemPiece,
+  DyeableCharacterItemPiece,
+} from './itemPiece';
 
 import { CharacterLoader } from './loader';
 import { CharacterItem } from './item';
+import { CharacterZmapContainer } from './characterZmapContainer';
 
 import { isMixDyeableId } from '@/utils/itemId';
 
@@ -17,87 +32,22 @@ import { CharacterExpressions } from '@/const/emotions';
 import { CharacterEarType } from '@/const/ears';
 import { CharacterHandType } from '@/const/hand';
 import type { PieceIslot } from './const/slot';
+import { BaseNameTag } from '../nameTag/baseNameTag';
 
 type AnyCategorizedItem = CategorizedItem<string>;
 
-class ZmapContainer extends Container {
-  name: PieceSlot;
-  character: Character;
-  requireLocks: PieceSlot[];
+function generateDebugAncher(radius = 8, color = 0xff0000) {
+  const graphics = new Graphics();
+  graphics.moveTo(-radius, 0);
+  graphics.lineTo(radius, 0);
+  graphics.moveTo(0, -radius);
+  graphics.lineTo(0, radius);
+  graphics.stroke({
+    color,
+    width: 1,
+  });
 
-  constructor(name: PieceSlot, index: number, character: Character) {
-    super();
-    this.name = name;
-    this.zIndex = index;
-    this.character = character;
-    this.requireLocks = [];
-
-    // part of this logic is from maplestory.js
-    if (this.name === 'mailArm') {
-      this.requireLocks = ['Ma'];
-    } else if (this.name === 'backHead') {
-      /* backHead some how use ['Bd'] so force change it */
-      this.requireLocks = ['Hd'];
-    } else if (this.name === 'pants' || this.name === 'backPants') {
-      this.requireLocks = ['Pn'];
-    } else {
-      this.requireLocks = (CharacterLoader.smap?.[name] || '').match(/.{1,2}/g) || [];
-    }
-  }
-  addCharacterPart(child: CharacterAnimatablePart) {
-    this.addChild(child);
-    this.refreshLock();
-  }
-  hasAllLocks(id: number, locks: string[]) {
-    return locks.every((lock) => {
-      const requiredLock = this.character.locks.get(lock);
-      return !requiredLock || requiredLock === id;
-    });
-  }
-  refreshLock() {
-    for (const child of this.children) {
-      const part = child as CharacterAnimatablePart;
-      if (!part.item) {
-        continue;
-      }
-      // using the fewer locks, but seems not right.
-      // let locks =
-      //   frame.item.vslot.length < this.requireLocks.length
-      //     ? frame.item.vslot
-      //     : this.requireLocks;
-      let locks = this.requireLocks;
-      let itemMainLocks = part.item.islot; // something like Ma, Pn,Cp
-
-      // force Cap using vslot
-      if (itemMainLocks.includes('Cp')) {
-        locks = part.item.vslot;
-      } else if (
-        itemMainLocks.length === 1 &&
-        itemMainLocks[0] === 'Hd' &&
-        (this.name === 'accessoryOverHair' || this.name === 'hairShade')
-      ) {
-        /* try to fix ear rendering */
-        locks = ['Hd'];
-      }
-
-      // this logic is from maplestory.js, but why
-      if (this.name === 'mailChest') {
-        locks = part.item.vslot;
-      } else if (this.name === 'shoes') {
-        itemMainLocks = ['So'];
-      }
-
-      const hasSelfLock = this.hasAllLocks(part.item.info.id, part.item.vslot);
-      const hasLayerLock = this.hasAllLocks(part.item.info.id, locks);
-
-      // as long as one of the lock is ok, show the part
-      if (hasSelfLock || hasLayerLock) {
-        child.visible = true;
-      } else {
-        child.visible = false;
-      }
-    }
-  }
+  return graphics;
 }
 
 export interface CharacterAttributes {
@@ -109,6 +59,7 @@ export interface CharacterAttributes {
 
 export class Character extends Container {
   name = '';
+  nameTag: BaseNameTag;
   idItems = new Map<number, CharacterItem>();
   actionAnchers = new Map<CharacterAction, Map<AncherName, Vec2>[]>();
 
@@ -118,7 +69,8 @@ export class Character extends Container {
   #_handType = CharacterHandType.DoubleHand;
   #_renderId = '';
 
-  zmapLayers = new Map<PieceSlot, ZmapContainer>();
+  zmapLayers = new Map<PieceSlot, CharacterZmapContainer>();
+  bodyContainer = new Container();
   locks = new Map<PieceSlot, number>();
 
   frame = 0;
@@ -137,12 +89,18 @@ export class Character extends Container {
 
   isLoading = false;
   loadFlashTimer = 0;
-  loadEvent = new EventEmitter<'loading' | 'loaded'>();
+  loadEvent = new EventEmitter<'loading' | 'loaded' | 'error'>();
 
   constructor(app?: Application) {
     super();
-    this.sortableChildren = true;
+    // this.sortableChildren = true;
+    this.bodyContainer.sortableChildren = true;
     this.app = app;
+    this.nameTag = new BaseNameTag('');
+    this.nameTag.visible = false;
+    this.nameTag.position.set(0, 3);
+    this.addChild(this.bodyContainer);
+    this.addChild(this.nameTag);
   }
 
   get action() {
@@ -184,7 +142,20 @@ export class Character extends Container {
     }
     this.isAnimating = characterData.isAnimating;
     const hasAttributeChanged = this.updateAttribute(characterData);
-    const hasAddAnyItem = await this.updateItems(Object.values(characterData.items));
+    const hasAddAnyItem = await this.updateItems(
+      Object.values(characterData.items),
+    );
+
+    if (characterData.showNameTag) {
+      this.nameTag.visible = true;
+      await this.nameTag.updateNameTagData(
+        characterData.name || '',
+        characterData.nameTagId,
+      );
+    } else {
+      this.nameTag.visible = false;
+    }
+
     if (hasAttributeChanged || hasAddAnyItem || isStopToPlay) {
       await this.loadItems();
     } else if (isPlayingChanged) {
@@ -252,13 +223,17 @@ export class Character extends Container {
       return;
     }
     item.info = Object.assign({}, info, {
-      dye: (info as unknown as ItemInfo & { isDeleteDye: boolean }).isDeleteDye ? undefined : info.dye,
+      dye: (info as unknown as ItemInfo & { isDeleteDye: boolean }).isDeleteDye
+        ? undefined
+        : info.dye,
     });
     /* only update sprite already in render */
     const dyeableSprites = this.currentAllItem
       .flatMap((item) => Array.from(item.allPieces))
       .filter((piece) => piece.item.info.id === id)
-      .flatMap((piece) => piece.frames.filter((frame) => frame.isDyeable?.())) as DyeableCharacterItemPiece[];
+      .flatMap((piece) =>
+        piece.frames.filter((frame) => frame.isDyeable?.()),
+      ) as DyeableCharacterItemPiece[];
     for await (const sprites of dyeableSprites) {
       await sprites.updateDye();
     }
@@ -268,14 +243,18 @@ export class Character extends Container {
   get currentAllItem() {
     return Array.from(this.idItems.values())
       .map((item) => {
-        return item.isUseExpressionItem ? item.actionPieces.get(this.expression) : item.actionPieces.get(this.action);
+        return item.isUseExpressionItem
+          ? item.actionPieces.get(this.expression)
+          : item.actionPieces.get(this.action);
       })
       .filter((item) => item) as AnyCategorizedItem[];
   }
 
   /** get current pieces in character layers */
   get currentPieces() {
-    return Array.from(this.zmapLayers.values()).flatMap((layer) => layer.children as CharacterAnimatablePart[]);
+    return Array.from(this.zmapLayers.values()).flatMap(
+      (layer) => layer.children as CharacterAnimatablePart[],
+    );
   }
 
   render() {
@@ -286,10 +265,13 @@ export class Character extends Container {
     this.reset();
     const pieces: CharacterAnimatablePart[] = [];
     let body: CharacterAnimatablePart | undefined = undefined;
+    let isOverrideFace = false;
     const earPiece = this.getEarPiece();
     const earLayer = earPiece?.firstFrameZmapLayer;
     for (const layer of zmap) {
-      const itemsByLayer = this.getItemsByLayer(layer).concat(earPiece && earLayer === layer ? [earPiece] : []);
+      const itemsByLayer = this.getItemsByLayer(layer).concat(
+        earPiece && earLayer === layer ? [earPiece] : [],
+      );
       if (itemsByLayer.length === 0) {
         continue;
       }
@@ -303,21 +285,38 @@ export class Character extends Container {
           if (existLayer) {
             container = existLayer;
           } else {
-            const zIndex = piece.effectZindex >= 2 ? zmap.length + piece.effectZindex : piece.effectZindex - 10;
-            container = new ZmapContainer(effectLayerName, zIndex, this);
-            this.addChild(container);
+            const zIndex =
+              piece.effectZindex >= 2
+                ? zmap.length + piece.effectZindex
+                : piece.effectZindex - 10;
+            container = new CharacterZmapContainer(
+              effectLayerName,
+              zIndex,
+              this,
+            );
+            this.bodyContainer.addChild(container);
             this.zmapLayers.set(effectLayerName, container);
           }
         } else if (!container) {
-          container = new ZmapContainer(layer, zmap.indexOf(layer), this);
-          this.addChild(container);
+          container = new CharacterZmapContainer(
+            layer,
+            zmap.indexOf(layer),
+            this,
+          );
+          this.bodyContainer.addChild(container);
           this.zmapLayers.set(layer, container);
         }
-        if (isBackAction(this.action) && layer.toLocaleLowerCase().includes('face')) {
+        if (
+          isBackAction(this.action) &&
+          layer.toLocaleLowerCase().includes('face')
+        ) {
           container.visible = false;
         }
         if ((layer === 'body' || layer === 'backBody') && piece.item.isBody) {
           body = piece;
+        }
+        if (piece.item.isOverrideFace) {
+          isOverrideFace = true;
         }
         // not sure why need to do this while it already initialized in constructor
         piece.frameChanges(0);
@@ -333,8 +332,16 @@ export class Character extends Container {
       return;
     }
 
+    if (this.facePiece) {
+      const facePiece = this.facePiece;
+      for (const item of facePiece.allPieces) {
+        item.visible = !isOverrideFace;
+      }
+    }
+
     this.playPieces(this.currentPieces);
     if (this.isAnimating) {
+      this.nameTag.play();
       this.playByBody(body);
     }
 
@@ -348,6 +355,7 @@ export class Character extends Container {
     }
     this.isAnimating = true;
     this.frame = frame;
+    this.nameTag.play();
     return this.loadItems();
   }
   stop() {
@@ -359,6 +367,7 @@ export class Character extends Container {
       Ticker.shared.remove(this.currentTicker);
       this.currentTicker = undefined;
     }
+    this.nameTag.stop();
   }
   reset() {
     this.stop();
@@ -379,7 +388,8 @@ export class Character extends Container {
   playByBody(body: CharacterAnimatablePart) {
     const pieces = this.currentPieces;
     const maxFrame = body.frames.length;
-    const needBounce = this.action === CharacterAction.Alert || this.action.startsWith('stand');
+    const needBounce =
+      this.action === CharacterAction.Alert || this.action.startsWith('stand');
 
     this.currentTicker = (delta) => {
       this.currentDelta += delta.deltaMS;
@@ -417,53 +427,30 @@ export class Character extends Container {
     }
     for (const piece of pieces) {
       const pieceFrameIndex = piece.frames[frame] ? frame : 0;
-      const pieceFrame = (piece.frames[frame] || piece.frames[0]) as CharacterItemPiece;
+      const pieceFrame = (piece.frames[frame] ||
+        piece.frames[0]) as CharacterItemPiece;
       const isSkinGroup = pieceFrame.group === 'skin';
-      if (pieceFrame) {
-        const ancherName = pieceFrame.baseAncherName;
-        let ancher = currentAncher.get(ancherName);
+      if (!pieceFrame) {
+        continue;
+      }
+      const ancherName = pieceFrame.baseAncherName;
+      const ancher = currentAncher.get(ancherName);
+      /* setting the ancher on each piece */
+      ancher &&
+        piece.pivot?.copyFrom({
+          x: -ancher.x,
+          y: -ancher.y,
+        });
 
-        /* effect ancher use different stratgy */
-        if (piece.effectZindex !== undefined) {
-          if (piece.item.isCap) {
-            const baseAncher = {
-              x: 0,
-              y: 48,
-            };
-            /* cap effect use brow ancher */
-            const browAncher = currentAncher.get('brow') || {
-              x: 0,
-              y: 0,
-            };
-            ancher = {
-              x: baseAncher.x + browAncher.x,
-              y: baseAncher.y + browAncher.y,
-            };
-          } else {
-            ancher = this.currentBodyFrame?.ancher || {
-              x: 0,
-              y: 0,
-            };
-          }
-        }
-
-        /* setting the ancher on each piece */
-        ancher &&
-          piece.pivot?.copyFrom({
-            x: -ancher.x,
-            y: -ancher.y,
-          });
-
-        /* some part can play indenpendently */
-        if (piece.canIndependentlyPlay && !isSkinGroup) {
-          if (this.isAnimating) {
-            !piece.playing && piece.play();
-          } else {
-            piece.stop();
-          }
+      /* some part can play indenpendently */
+      if (piece.canIndependentlyPlay && !isSkinGroup) {
+        if (this.isAnimating) {
+          !piece.playing && piece.play();
         } else {
-          piece.currentFrame = pieceFrameIndex;
+          piece.gotoAndStop(0);
         }
+      } else {
+        piece.currentFrame = pieceFrameIndex;
       }
     }
     this.updateCharacterFaceVisibility();
@@ -485,7 +472,7 @@ export class Character extends Container {
   updateCharacterPivotByBodyPiece() {
     /* use the ancher to set actual character offset */
     const bodyPos = this.currentBodyFrame?.ancher || { x: 0, y: 0 };
-    this.pivot?.set(bodyPos.x, bodyPos.y);
+    this.bodyContainer.pivot?.set(bodyPos.x, bodyPos.y);
   }
 
   /** use backBody to check current action is turn character to back  */
@@ -497,15 +484,15 @@ export class Character extends Container {
 
   get currentFrontBodyNode() {
     const body = this.zmapLayers.get('body');
-    return body?.children.find((child) => (child as CharacterAnimatablePart).item.isBody) as
-      | CharacterAnimatablePart
-      | undefined;
+    return body?.children.find(
+      (child) => (child as CharacterAnimatablePart).item.isBody,
+    ) as CharacterAnimatablePart | undefined;
   }
   get currentBackBodyNode() {
     const body = this.zmapLayers.get('backBody');
-    return body?.children.find((child) => (child as CharacterAnimatablePart).item.isBody) as
-      | CharacterAnimatablePart
-      | undefined;
+    return body?.children.find(
+      (child) => (child as CharacterAnimatablePart).item.isBody,
+    ) as CharacterAnimatablePart | undefined;
   }
 
   get currentBodyNode() {
@@ -527,10 +514,14 @@ export class Character extends Container {
   }
 
   get isAllAncherBuilt() {
-    return Array.from(this.idItems.values()).every((item) => item.isAllAncherBuilt);
+    return Array.from(this.idItems.values()).every(
+      (item) => item.isAllAncherBuilt,
+    );
   }
   get isCurrentActionAncherBuilt() {
-    return Array.from(this.idItems.values()).every((item) => item.isActionAncherBuilt(this.action));
+    return Array.from(this.idItems.values()).every((item) =>
+      item.isActionAncherBuilt(this.action),
+    );
   }
 
   get effectLayers() {
@@ -544,13 +535,25 @@ export class Character extends Container {
       }
     };
   }
-
-  getEarPiece() {
-    const headItem = Array.from(this.idItems.values()).find((item) => item.isHead);
-    if (!headItem) {
-      return;
+  get facePiece() {
+    const faceItem = Array.from(this.idItems.values()).find(
+      (item) => item.isFace,
+    );
+    if (!faceItem) {
+      return undefined;
     }
-    const headCategoryItem = headItem.actionPieces.get(this.action) as CharacterActionItem;
+    return faceItem.actionPieces.get(this.expression) as CharacterFaceItem;
+  }
+  getEarPiece() {
+    const headItem = Array.from(this.idItems.values()).find(
+      (item) => item.isHead,
+    );
+    if (!headItem) {
+      return undefined;
+    }
+    const headCategoryItem = headItem.actionPieces.get(
+      this.action,
+    ) as CharacterActionItem;
 
     const earItems = headCategoryItem?.getAvailableEar(this.earType);
 
@@ -579,24 +582,34 @@ export class Character extends Container {
     }, 100);
 
     const loadItems = Array.from(this.idItems.values()).map(async (item) => {
-      await item.load();
-      if (this.isAnimating) {
-        if (item.isUseExpressionItem) {
-          await item.prepareActionResource(this.expression);
+      try {
+        await item.load();
+        if (this.isAnimating) {
+          if (item.isUseExpressionItem) {
+            await item.prepareActionResource(this.expression);
+          } else {
+            await item.prepareActionResource(this.action);
+          }
+        } else if (item.isUseExpressionItem) {
+          await item.prepareActionResourceByFrame(this.expression, this.frame);
         } else {
-          await item.prepareActionResource(this.action);
+          await item.prepareActionResourceByFrame(this.action, this.frame);
         }
-      } else if (item.isUseExpressionItem) {
-        await item.prepareActionResourceByFrame(this.expression, this.frame);
-      } else {
-        await item.prepareActionResourceByFrame(this.action, this.frame);
+      } catch (_) {
+        return item.info;
       }
     });
 
-    await Promise.all(loadItems);
+    const errorItems = await Promise.all(loadItems).then((items) =>
+      items.filter((item) => item),
+    );
 
     if (this.#_renderId !== renderId) {
       return;
+    }
+
+    if (errorItems.length > 0) {
+      this.loadEvent.emit('error', errorItems);
     }
 
     const itemCount = this.idItems.size;
@@ -622,8 +635,12 @@ export class Character extends Container {
 
   buildLock() {
     this.locks.clear();
+    // build id from small to big
+    const sortedItem = Array.from(this.idItems.entries())
+      .sort((a, b) => a[0] - b[0])
+      .map(([, item]) => item);
     const orderedItems = CharacterLoader.zmap?.reduce((acc, layer) => {
-      for (const item of this.idItems.values()) {
+      for (const item of sortedItem) {
         if (item.islot.includes(layer as PieceIslot)) {
           acc.push(item);
         }
@@ -645,7 +662,10 @@ export class Character extends Container {
     for (const action of Object.values(CharacterAction)) {
       for (const item of this.idItems.values()) {
         const ancher = this.actionAnchers.get(action);
-        this.actionAnchers.set(action, item.tryBuildAncher(action, ancher || []));
+        this.actionAnchers.set(
+          action,
+          item.tryBuildAncher(action, ancher || []),
+        );
       }
     }
   }
@@ -694,15 +714,30 @@ export class Character extends Container {
   }
   private updateHandTypeByAction() {
     if (
-      (this.action === CharacterAction.Walk1 || this.action === CharacterAction.Stand1) &&
+      (this.action === CharacterAction.Walk1 ||
+        this.action === CharacterAction.Stand1) &&
       this.#_handType === CharacterHandType.DoubleHand
     ) {
       this.#_handType = CharacterHandType.SingleHand;
     } else if (
-      (this.action === CharacterAction.Walk2 || this.action === CharacterAction.Stand2) &&
+      (this.action === CharacterAction.Walk2 ||
+        this.action === CharacterAction.Stand2) &&
       this.#_handType === CharacterHandType.SingleHand
     ) {
       this.#_handType = CharacterHandType.DoubleHand;
     }
+  }
+  destroy(options?: DestroyOptions) {
+    this.reset();
+    super.destroy(options);
+    this.loadEvent.removeAllListeners();
+    this.zmapLayers.clear();
+    this.locks.clear();
+    this.actionAnchers.clear();
+    this.bodyContainer = undefined as unknown as any;
+    for (const item of this.idItems.values()) {
+      item.destroy();
+    }
+    this.idItems.clear();
   }
 }

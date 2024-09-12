@@ -8,6 +8,9 @@ export function makeCharacterHash(character: CharacterData) {
     character.handType,
     character.frame,
     character.isAnimating,
+    character.name,
+    character.showNameTag,
+    character.nameTagId,
   ].join(',');
 
   for (const key in character.items) {

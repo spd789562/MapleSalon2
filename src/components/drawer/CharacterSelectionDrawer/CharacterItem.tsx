@@ -2,7 +2,7 @@ import { createMemo, Show } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
 
 import { useDynamicPureStore } from '@/store';
-import { $hasAnyItemChanges } from '@/store/character/selector';
+import { getHasAnyChanges } from '@/store/character/selector';
 import { $characterInfoDialogOpen } from '@/store/trigger';
 import { changeCurrentCharacterInfo } from '@/store/characterInfo';
 import { openDialog, DialogType } from '@/store/confirmDialog';
@@ -34,7 +34,7 @@ export const CharacterItem = (props: CharacterItemProps) => {
     if (!data) {
       return;
     }
-    const hasChanges = $hasAnyItemChanges.get();
+    const hasChanges = getHasAnyChanges();
     if (hasChanges) {
       /* do something like popup */
       openDialog({
@@ -96,9 +96,12 @@ export const CharacterItem = (props: CharacterItemProps) => {
             <CharacterItemPositioner>
               <SimpleCharacter
                 title={character().name}
+                name={character().name}
                 items={character().items}
                 earType={character().earType}
                 handType={character().handType}
+                showNameTag={character().showNameTag}
+                nameTagId={character().nameTagId}
                 noMaxWidth={true}
                 useOffset={true}
               />

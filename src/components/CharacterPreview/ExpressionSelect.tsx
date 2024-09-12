@@ -1,7 +1,7 @@
 import { useStore } from '@nanostores/solid';
 
-import { $currentCharacterInfo } from '@/store/character/store';
 import { $currentExpression } from '@/store/character/selector';
+import { setCharacterExpression } from '@/store/character/action';
 
 import { SimpleSelect, type ValueChangeDetails } from '@/components/ui/select';
 
@@ -110,11 +110,7 @@ export const ExpressionSelect = () => {
   const action = useStore($currentExpression);
   function handleActionChange(details: ValueChangeDetails) {
     const firstItem = details.value?.[0];
-    firstItem &&
-      $currentCharacterInfo.setKey(
-        'expression',
-        firstItem as CharacterExpressions,
-      );
+    firstItem && setCharacterExpression(firstItem as CharacterExpressions);
   }
 
   return (

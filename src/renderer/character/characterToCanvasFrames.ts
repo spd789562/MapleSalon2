@@ -60,21 +60,21 @@ export async function characterToCanvasFrames(
     character.playPieces(character.currentPieces);
     const currentBodyFrame = character.currentBodyFrame!;
     const canvas = extractCanvas(character, renderer) as HTMLCanvasElement;
-    const bodyPos = currentBodyFrame?.ancher || { x: 0, y: 0 };
+    const frameBound = character.getLocalBounds();
     const frameData: UnprocessedFrame = {
       canvas,
       delay: currentBodyFrame.delay,
       width: canvas.width,
       height: canvas.height,
-      left: -bodyPos.x,
-      top: -bodyPos.y,
+      left: frameBound.left,
+      top: frameBound.top,
     };
     unprocessedFrames.push(frameData);
 
-    bound.left = Math.min(bound.left, -bodyPos.x);
-    bound.top = Math.min(bound.top, -bodyPos.y);
-    bound.right = Math.max(bound.right, canvas.width - bodyPos.x);
-    bound.bottom = Math.max(bound.bottom, canvas.height - bodyPos.y);
+    bound.left = Math.min(bound.left, frameBound.left);
+    bound.top = Math.min(bound.top, frameBound.top);
+    bound.right = Math.max(bound.right, frameBound.right);
+    bound.bottom = Math.max(bound.bottom, frameBound.bottom);
 
     await nextTick();
   }

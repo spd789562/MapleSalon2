@@ -8,6 +8,8 @@ import { ExpressionSelect } from './ExpressionSelect';
 import { ActionSelect } from './ActionSelect';
 import { AnimatingSwitch } from './AnimatingSwitch';
 import { CharacterScene } from './CharacterScene';
+import { NameInput } from './NameInput';
+import { NameTagSwitch } from './NameTagSwitch';
 import { ResetButton } from './ResetButton';
 import { SaveButton } from './SaveButton';
 
@@ -27,6 +29,8 @@ export const CharacterPreview = () => {
       </HStack>
       <CharacterScene />
       <HStack mt="2">
+        <NameInput />
+        <NameTagSwitch />
         <HStack marginLeft="auto">
           <ResetButton />
           <SaveButton />

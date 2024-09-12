@@ -1,7 +1,7 @@
 import { useStore } from '@nanostores/solid';
 
-import { $currentCharacterInfo } from '@/store/character/store';
 import { $currentEarType } from '@/store/character/selector';
+import { setCharacterEarType } from '@/store/character/action';
 
 import {
   SimpleToggleGroup,
@@ -33,8 +33,7 @@ export const EarTypeToggleGroup = () => {
   const earType = useStore($currentEarType);
   function handleEarTypeChange(details: ValueChangeDetails) {
     const firstItem = details.value?.[0];
-    firstItem &&
-      $currentCharacterInfo.setKey('earType', firstItem as CharacterEarType);
+    firstItem && setCharacterEarType(firstItem as CharacterEarType);
   }
 
   return (

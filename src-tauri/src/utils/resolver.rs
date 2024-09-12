@@ -8,7 +8,7 @@ use wz_reader::{version::WzMapleVersion, SharedWzMutableKey, WzNode, WzNodeArc, 
 use super::{block_parse, block_parse_with_parent};
 use crate::{Error, Result};
 
-const WZ_ROOT_FOLDER_NEED_LOAD: [&str; 4] = ["Base", "Character", "Effect", "String"];
+const WZ_ROOT_FOLDER_NEED_LOAD: [&str; 5] = ["Base", "Character", "Effect", "String", "UI"];
 
 pub async fn get_root_wz_file_path(dir: &DirEntry) -> Option<String> {
     let dir_name = dir.file_name();

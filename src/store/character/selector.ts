@@ -6,6 +6,7 @@ import {
   $currentCharacterInfo,
   $currentCharacterItems,
   $currentItemChanges,
+  $currentInfoChanges,
   $currentScene,
   $sceneCustomColor,
 } from './store';
@@ -21,6 +22,14 @@ import { PreviewScene } from '@/const/scene';
 
 import { getHairColorId, getFaceColorId } from '@/utils/mixDye';
 
+export const $totalInfo = batched(
+  [$currentCharacterInfo, $currentInfoChanges],
+  (info, changes) => ({
+    ...info,
+    ...changes,
+  }),
+);
+
 export const $currentAction = computed(
   $currentCharacterInfo,
   (info) => info.action,
@@ -29,18 +38,16 @@ export const $currentExpression = computed(
   $currentCharacterInfo,
   (info) => info.expression,
 );
-export const $currentEarType = computed(
-  $currentCharacterInfo,
-  (info) => info.earType,
-);
-export const $currentHandType = computed(
-  $currentCharacterInfo,
-  (info) => info.handType,
-);
 export const $isAnimating = computed(
   $currentCharacterInfo,
   (info) => info.isAnimating,
 );
+/* those it change and savable need to be merged */
+export const $currentEarType = computed($totalInfo, (info) => info.earType);
+export const $currentHandType = computed($totalInfo, (info) => info.handType);
+export const $currentName = computed($totalInfo, (info) => info.name);
+export const $currentNameTagId = computed($totalInfo, (info) => info.nameTagId);
+export const $showNameTag = computed($totalInfo, (info) => info.showNameTag);
 
 export const $currentCharacter = batched(
   [$currentCharacterItems, $currentCharacterInfo],
@@ -60,12 +67,8 @@ export const $totalItemsApplyDeletion = batched(
   getUpdateItems,
 );
 
-export const $hasAnyItemChanges = computed(
-  [$currentItemChanges],
-  (items) => Object.keys(items).length > 0,
-);
 export const $previewCharacter = computed(
-  [$currentCharacterInfo, $totalItemsApplyDeletion],
+  [$totalInfo, $totalItemsApplyDeletion],
   (info, items) => {
     return {
       ...info,
@@ -118,4 +121,10 @@ export function getCurrentFaceColor(): FaceColorId {
     return 0; // default face color black
   }
   return getFaceColorId(face.id);
+}
+export function getHasAnyChanges() {
+  return (
+    Object.keys($currentItemChanges.get()).length > 0 ||
+    Object.keys($currentInfoChanges.get()).length > 0
+  );
 }

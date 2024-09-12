@@ -3,12 +3,14 @@ import { css } from 'styled-system/css';
 
 export enum PreviewScene {
   Alpha = 'alpha',
+  Grid = 'grid',
   Color = 'color',
   Henesys = 'henesys',
 }
 
 export const PreviewSceneNames: Record<PreviewScene, string> = {
   [PreviewScene.Alpha]: '透明背景',
+  [PreviewScene.Grid]: '灰網格背景',
   [PreviewScene.Color]: '純色背景',
   [PreviewScene.Henesys]: '弓箭手村背景',
 };
@@ -20,6 +22,14 @@ export const PreviewSceneBackground: Record<PreviewScene, SystemStyleObject> = {
     backgroundSize: '16px 16px',
     backgroundRepeat: 'repeat',
   },
+  [PreviewScene.Grid]: {
+    backgroundColor: '#eee',
+    backgroundImage:
+      'linear-gradient(90deg, #ccc 1px, transparent 0), linear-gradient(180deg, #ccc 1px, transparent 0)',
+    backgroundSize: '12px 12px',
+    backgroundPosition: '6px 6px',
+    backgroundRepeat: 'repeat',
+  },
   [PreviewScene.Color]: {},
   [PreviewScene.Henesys]: {
     backgroundImage: 'henesysBackground',
@@ -27,12 +37,14 @@ export const PreviewSceneBackground: Record<PreviewScene, SystemStyleObject> = {
 };
 /* for panda css generate css token */
 const _ = [
+  css.raw(PreviewSceneBackground.grid),
   css.raw(PreviewSceneBackground.alpha),
   css.raw(PreviewSceneBackground.henesys),
 ];
 
 export const PreviewSceneThemeMap: Record<PreviewScene, string> = {
   [PreviewScene.Alpha]: 'light',
+  [PreviewScene.Grid]: 'light',
   [PreviewScene.Color]: 'light',
   [PreviewScene.Henesys]: 'light',
 };

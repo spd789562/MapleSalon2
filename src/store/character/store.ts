@@ -16,6 +16,8 @@ export type CharacterItems = Record<EquipSubCategory, CharacterItemInfo>;
 export interface CharacterInfo {
   id?: string;
   name?: string;
+  nameTagId?: number;
+  showNameTag: boolean;
   frame: number;
   isAnimating: boolean;
   action: CharacterAction;
@@ -101,10 +103,14 @@ if (import.meta.env.DEV) {
 export const $currentCharacterItems =
   deepMap<Partial<CharacterItems>>(DefaultItems);
 
-export const $currentCharacterInfo = map({
+export const $currentCharacterInfo = deepMap<
+  CharacterInfo & Record<string, unknown>
+>({
   id: 'default',
   name: 'default',
   frame: 0,
+  nameTagId: undefined,
+  showNameTag: true,
   isAnimating: true,
   action: CharacterAction.Stand1,
   expression: CharacterExpressions.Default,
@@ -125,3 +131,5 @@ export const $enableCharacterPreview = atom<boolean>(false);
 export const $currentItemChanges = deepMap<
   Partial<CharacterItems & Record<string, unknown>>
 >({});
+
+export const $currentInfoChanges = deepMap<Partial<CharacterInfo>>({});
