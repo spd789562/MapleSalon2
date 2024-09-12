@@ -137,7 +137,7 @@ export const $categoryFilteredString = computed(
       return filteredStrings;
     }
 
-    return strings.filter(({ isDyeable }) => isDyeable);
+    return filteredStrings.filter(({ isDyeable }) => isDyeable);
   },
 );
 
