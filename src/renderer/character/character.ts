@@ -85,17 +85,14 @@ export class Character extends Container {
   currentDelta = 0;
   currentTicker?: (delta: Ticker) => void;
 
-  app?: Application;
-
   isLoading = false;
   loadFlashTimer = 0;
   loadEvent = new EventEmitter<'loading' | 'loaded' | 'error'>();
 
-  constructor(app?: Application) {
+  constructor() {
     super();
     // this.sortableChildren = true;
     this.bodyContainer.sortableChildren = true;
-    this.app = app;
     this.nameTag = new BaseNameTag('');
     this.nameTag.visible = false;
     this.nameTag.position.set(0, 3);

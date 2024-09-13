@@ -1,7 +1,10 @@
 import { onMount, onCleanup, createEffect, createSignal, from } from 'solid-js';
 import type { ReadableAtom } from 'nanostores';
 
-import { $preferRenderer } from '@/store/renderer';
+import {
+  $isGlobalRendererInitialized,
+  $globalRenderer,
+} from '@/store/renderer';
 import type { CharacterData, CharacterItemInfo } from '@/store/character/store';
 import {
   MAX_ZOOM,
@@ -11,14 +14,9 @@ import {
   updateCenter,
   updateZoom,
 } from '@/store/previewZoom';
-import {
-  resetUpscaleSource,
-  setUpscaleSource,
-} from '@/store/expirement/upscale';
 import { $showUpscaledCharacter } from '@/store/trigger';
 import { usePureStore } from '@/store';
 
-import { Application } from 'pixi.js';
 import { Character } from '@/renderer/character/character';
 import { ZoomContainer } from '@/renderer/ZoomContainer';
 import { Anime4kFilter } from '@/renderer/filter/anime4k/Anime4kFilter';
@@ -29,36 +27,40 @@ import {
 
 import { toaster } from '@/components/GlobalToast';
 
-export interface CharacterViewProps {
+export interface CharacterPreviewViewProps {
   onLoad: () => void;
   onLoaded: () => void;
   store: ReadableAtom<CharacterData>;
   target: string;
   isLockInteraction: boolean;
 }
-export const CharacterView = (props: CharacterViewProps) => {
+export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   const zoomInfo = usePureStore($previewZoomInfo);
   const characterData = from(props.store);
+  const isRendererInitialized = usePureStore($isGlobalRendererInitialized);
   const [isInit, setIsInit] = createSignal<boolean>(false);
   const isShowUpscale = usePureStore($showUpscaledCharacter);
   let container!: HTMLDivElement;
   let viewport: ZoomContainer | undefined = undefined;
   let upscaleFilter: Anime4kFilter | undefined = undefined;
-  const app = new Application();
+  // const app = new Application();
   const ch = new Character();
 
   ch.loadEvent.addListener('loading', props.onLoad);
   ch.loadEvent.addListener('loaded', props.onLoaded);
+  ch.loadEvent.addListener(
+    'error',
+    function onEquipLoadError(payload: CharacterItemInfo[]) {
+      const names = payload.map((item) => item.name || item.id).join(', ');
+      toaster.error({
+        title: '裝備載入失敗',
+        description: `下列裝備載入失敗：${names}`,
+      });
+    },
+  );
 
-  async function initScene() {
-    await app.init({
-      width: 300,
-      height: 340,
-      background: 0x000000,
-      backgroundAlpha: 0,
-      // antialias: true,
-      preference: $preferRenderer.get(),
-    });
+  function initScene() {
+    const app = $globalRenderer.get();
     viewport = new ZoomContainer(app, {
       width: 300,
       height: 340,
@@ -95,14 +97,23 @@ export const CharacterView = (props: CharacterViewProps) => {
     setIsInit(true);
   }
 
-  onMount(() => {
-    initScene();
+  // onMount(() => {
+  //   initScene();
+  // });
+  createEffect(() => {
+    if (isRendererInitialized()) {
+      initScene();
+    }
   });
 
   onCleanup(() => {
-    app.destroy(undefined, {
-      children: true,
-    });
+    const app = $globalRenderer.get();
+    if (viewport) {
+      app.stage.removeChild(viewport);
+      viewport.destroy({
+        children: true,
+      });
+    }
   });
 
   createEffect(() => {
@@ -134,6 +145,7 @@ export const CharacterView = (props: CharacterViewProps) => {
         ] as PipelineOption[];
 
         if (!upscaleFilter) {
+          const app = $globalRenderer.get();
           await app.renderer.anime4k.preparePipeline(
             upscalePipelines.map((p) => p.pipeline),
           );

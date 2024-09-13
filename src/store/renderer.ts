@@ -16,7 +16,7 @@ export async function initialGlobalRenderer() {
   await CharacterLoader.init();
   await app.init({
     width: 300,
-    height: 300,
+    height: 340,
     backgroundAlpha: 0,
     useBackBuffer: true,
     preference: $preferRenderer.get(),

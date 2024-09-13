@@ -13,6 +13,7 @@ import { $showPreviousCharacter } from '@/store/trigger';
 import LoaderCircle from 'lucide-solid/icons/loader-circle';
 import ChevronRightIcon from 'lucide-solid/icons/chevron-right';
 import { CharacterView } from './Character';
+import { CharacterPreviewView } from './CharacterPreview';
 import { CharacterSceneSelection } from './CharacterSceneSelection';
 import { ShowPreviousSwitch } from './ShowPreviousSwitch';
 import { ShowUpscaleSwitch } from './ShowUpscaleSwitch';
@@ -77,7 +78,7 @@ export const CharacterScene = () => {
           <ChevronRightIcon size={32} />
         </CompareSeparator>
       </Show>
-      <CharacterView
+      <CharacterPreviewView
         onLoad={handleLoad}
         onLoaded={handleLoaded}
         store={$previewCharacter}
