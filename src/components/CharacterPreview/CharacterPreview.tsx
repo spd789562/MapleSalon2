@@ -97,9 +97,6 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     setIsInit(true);
   }
 
-  // onMount(() => {
-  //   initScene();
-  // });
   createEffect(() => {
     if (isRendererInitialized()) {
       initScene();
@@ -114,6 +111,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
         children: true,
       });
     }
+    container.children.length && container.removeChild(app.canvas);
   });
 
   createEffect(() => {

@@ -76,7 +76,7 @@ export const ActionCharacter = (props: ActionCharacterProps) => {
   });
 
   onCleanup(() => {
-    character.reset();
+    props.mainApp.stage.removeChild(character);
   });
 
   return null;

@@ -1,9 +1,11 @@
 import { Index, onCleanup, onMount, createSignal } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
 
-import { Application } from 'pixi.js';
-
-import { $preferRenderer } from '@/store/renderer';
+import {
+  $preferRenderer,
+  $actionRenderer,
+  $isActionRendererInitialized,
+} from '@/store/renderer';
 
 import { VStack } from 'styled-system/jsx/vstack';
 import { Grid } from 'styled-system/jsx/grid';
@@ -21,7 +23,7 @@ export const ActionTab = () => {
   const canvasResizeObserver = new ResizeObserver(handleCanvasResize);
   let appContainer!: HTMLDivElement;
   const characterRefs: ActionCharacterRef[] = [];
-  const app = new Application();
+  const app = $actionRenderer.get();
 
   function handleRef(i: number) {
     return (element: ActionCharacterRef) => {
@@ -39,18 +41,22 @@ export const ActionTab = () => {
   }
 
   onMount(async () => {
-    await app.init({
-      resizeTo: appContainer,
-      backgroundAlpha: 0,
-      preference: $preferRenderer.get(),
-    });
+    const isInitialized = $isActionRendererInitialized.get();
+    if (!isInitialized) {
+      await app.init({
+        resizeTo: appContainer,
+        backgroundAlpha: 0,
+        preference: $preferRenderer.get(),
+      });
+      $isActionRendererInitialized.set(true);
+    }
     appContainer.appendChild(app.canvas);
+    app.resizeTo = appContainer;
     canvasResizeObserver.observe(appContainer);
   });
 
   onCleanup(() => {
     canvasResizeObserver.disconnect();
-    app.destroy();
   });
 
   return (
