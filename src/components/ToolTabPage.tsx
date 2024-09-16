@@ -3,6 +3,7 @@ import { useStore } from '@nanostores/solid';
 
 import { $toolTab } from '@/store/toolTab';
 
+import { CharacterPreview } from './CharacterPreview';
 import { ActionTab } from './tab/ActionTab';
 import { HairDyeTab } from './tab/DyeTab/HairDyeTab';
 import { FaceDyeTab } from './tab/DyeTab/FaceDyeTab';
@@ -15,6 +16,9 @@ export const ToolTabPage = () => {
 
   return (
     <Switch>
+      <Match when={tab() === ToolTab.Character}>
+        <CharacterPreview />
+      </Match>
       <Match when={tab() === ToolTab.AllAction}>
         <ActionTab />
       </Match>

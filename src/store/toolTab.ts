@@ -1,19 +1,12 @@
 import { atom, deepMap, batched, onSet } from 'nanostores';
 
 import type { EquipSubCategory } from '@/const/equipments';
-import {
-  ToolTab,
-  ActionExportType,
-  DyeOrder,
-  DyeType,
-} from '@/const/toolTab';
+import { ToolTab, ActionExportType, DyeOrder, DyeType } from '@/const/toolTab';
 import { CharacterAction } from '@/const/actions';
 
-export const $toolTab = atom<ToolTab | undefined>(undefined);
+export const $toolTab = atom<ToolTab | undefined>(ToolTab.Character);
 
-export const $actionExportType = atom<ActionExportType>(
-  ActionExportType.Gif,
-);
+export const $actionExportType = atom<ActionExportType>(ActionExportType.Gif);
 
 /* item dye tab */
 export const $onlyShowDyeable = atom<boolean>(true);
@@ -94,10 +87,7 @@ export function selectDyeCategory(category: EquipSubCategory) {
   if (current.includes(category)) {
     return;
   }
-  $selectedEquipSubCategory.set([
-    ...$selectedEquipSubCategory.get(),
-    category,
-  ]);
+  $selectedEquipSubCategory.set([...$selectedEquipSubCategory.get(), category]);
 }
 export function deselectDyeCategory(category: EquipSubCategory) {
   $selectedEquipSubCategory.set(
