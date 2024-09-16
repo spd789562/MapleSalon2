@@ -156,7 +156,7 @@ export class Character extends Container {
     if (hasAttributeChanged || hasAddAnyItem || isStopToPlay) {
       await this.loadItems();
     } else if (isPlayingChanged) {
-      this.render();
+      this.renderCharacter();
     }
   }
 
@@ -254,12 +254,13 @@ export class Character extends Container {
     );
   }
 
-  render() {
+  renderCharacter() {
     const zmap = CharacterLoader?.zmap;
     if (!zmap) {
       return;
     }
     this.reset();
+    this.updateActionByWeapon();
     const pieces: CharacterAnimatablePart[] = [];
     let body: CharacterAnimatablePart | undefined = undefined;
     let isOverrideFace = false;
@@ -532,6 +533,9 @@ export class Character extends Container {
       }
     };
   }
+  get weaponItem() {
+    return Array.from(this.idItems.values()).find((item) => item.isWeapon);
+  }
   get facePiece() {
     const faceItem = Array.from(this.idItems.values()).find(
       (item) => item.isFace,
@@ -578,6 +582,16 @@ export class Character extends Container {
       }
     }, 100);
 
+    const weaponItem = this.weaponItem;
+    if (weaponItem) {
+      try {
+        await weaponItem.load();
+        this.updateActionByWeapon();
+      } catch (_) {
+        // errorItems.push(weaponItem.info);
+      }
+    }
+
     const loadItems = Array.from(this.idItems.values()).map(async (item) => {
       try {
         await item.load();
@@ -610,6 +624,9 @@ export class Character extends Container {
     }
 
     const itemCount = this.idItems.size;
+
+    this.resetAncherByAction(this.action);
+
     // try to build ancher but up to 2 times of item count
     for (let i = 0; i < itemCount * 4; i++) {
       if (this.isCurrentActionAncherBuilt) {
@@ -627,7 +644,7 @@ export class Character extends Container {
 
     await Promise.all(mixDyeItems);
 
-    this.render();
+    this.renderCharacter();
   }
 
   buildLock() {
@@ -671,6 +688,9 @@ export class Character extends Container {
       const ancher = this.actionAnchers.get(action);
       this.actionAnchers.set(action, item.tryBuildAncher(action, ancher || []));
     }
+  }
+  resetAncherByAction(action: CharacterAction) {
+    this.actionAnchers.delete(action);
   }
 
   toggleEffectVisibility(isHide?: boolean, includeNormal = false) {
@@ -722,6 +742,27 @@ export class Character extends Container {
       this.#_handType === CharacterHandType.SingleHand
     ) {
       this.#_handType = CharacterHandType.DoubleHand;
+    }
+  }
+  private updateActionByWeapon() {
+    const weaponItem = this.weaponItem;
+    if (!weaponItem) {
+      return;
+    }
+    const hasStand1 = weaponItem.actionPieces.has(CharacterAction.Stand1);
+    const hasStand2 = weaponItem.actionPieces.has(CharacterAction.Stand2);
+    const hasWalk1 = weaponItem.actionPieces.has(CharacterAction.Walk1);
+    const hasWalk2 = weaponItem.actionPieces.has(CharacterAction.Walk2);
+
+    // that not consider the case of not have both stand1 and stand2
+    if (this.action === CharacterAction.Stand1 && !hasStand1) {
+      this.action = CharacterAction.Stand2;
+    } else if (this.action === CharacterAction.Stand2 && !hasStand2) {
+      this.action = CharacterAction.Stand1;
+    } else if (this.action === CharacterAction.Walk1 && !hasWalk1) {
+      this.action = CharacterAction.Walk2;
+    } else if (this.action === CharacterAction.Walk2 && !hasWalk2) {
+      this.action = CharacterAction.Walk1;
     }
   }
   destroy(options?: DestroyOptions) {
