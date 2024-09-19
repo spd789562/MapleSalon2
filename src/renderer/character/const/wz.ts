@@ -1,3 +1,4 @@
+import type { CharacterAction } from '@/const/actions';
 import type { PieceName, PieceZ, PieceGroup, AncherMap, Vec2 } from './data';
 
 export type WzItem = Record<string, Record<number, WzPieceFrame>> & {
@@ -36,4 +37,12 @@ export interface WzPieceInfo {
   group?: PieceGroup;
   map?: AncherMap;
   path?: string;
+}
+
+export interface WzActionInstruction {
+  action: CharacterAction;
+  frame: number;
+  delay?: number;
+  move?: Vec2;
+  flip?: 1;
 }
