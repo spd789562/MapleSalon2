@@ -30,20 +30,15 @@ export async function characterToCanvasFrames(
   const isOriginalAnimating = character.isAnimating;
   character.stop();
   /* hide effect except weapons effect */
-  character.render();
+  character.renderCharacter();
   character.toggleEffectVisibility(true, false);
   await nextTick();
 
-  const needBounce =
-    character.action === CharacterAction.Alert ||
-    character.action.startsWith('stand');
-
-  if (!character.currentBodyNode) {
+  if (!character.currentInstructions) {
     throw new Error('Character body not found');
   }
 
-  const baseFrameCount = character.currentBodyNode.frames.length;
-  const totalFrameCount = needBounce ? baseFrameCount * 2 - 2 : baseFrameCount;
+  const totalFrameCount = character.currentInstructions.length;
 
   const unprocessedFrames: UnprocessedFrame[] = [];
 
@@ -55,15 +50,14 @@ export async function characterToCanvasFrames(
   };
 
   for (let i = 0; i < totalFrameCount; i++) {
-    const frame = i < baseFrameCount ? i : totalFrameCount - i;
-    character.frame = frame;
-    character.playPieces(character.currentPieces);
-    const currentBodyFrame = character.currentBodyFrame!;
+    const frame = i;
+    character.instructionFrame = frame;
+    character.playBodyFrame();
     const canvas = extractCanvas(character, renderer) as HTMLCanvasElement;
     const frameBound = character.getLocalBounds();
     const frameData: UnprocessedFrame = {
       canvas,
-      delay: currentBodyFrame.delay,
+      delay: character.currentInstruction.delay || 100,
       width: canvas.width,
       height: canvas.height,
       left: frameBound.left,

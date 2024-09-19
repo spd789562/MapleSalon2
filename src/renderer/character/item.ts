@@ -100,17 +100,12 @@ export class CharacterItem implements RenderItemInfo {
     return isWeaponId(this.info.id) || isCashWeaponId(this.info.id);
   }
 
-  get isAllAncherBuilt() {
-    return Array.from(this.actionPieces.values()).every(
-      (actionItem) => actionItem.isAllAncherBuilt,
-    );
-  }
-  isActionAncherBuilt(action: CharacterAction) {
+  isAncherAncherBuiltByFrame(action: CharacterAction, frame: number) {
     const actionItem = this.actionPieces.get(action);
     if (!actionItem) {
       return true;
     }
-    return actionItem.isAllAncherBuilt;
+    return actionItem.isAllAncherBuiltByFrame(frame);
   }
 
   private loadFace(wz: WzItem) {
@@ -245,17 +240,22 @@ export class CharacterItem implements RenderItemInfo {
     if (!actionItem) {
       return;
     }
-    await actionItem.prepareResourece();
+    await actionItem.loadResource();
+    actionItem.prepareResourece();
+    actionItem.prepareAnimatableResourece();
   }
   async prepareActionResourceByFrame(
     name: CharacterAction | CharacterExpressions,
     frame: number,
   ) {
     const actionItem = this.actionPieces.get(name);
+
     if (!actionItem) {
       return;
     }
-    await actionItem.prepareResoureceByFrame(frame);
+    await actionItem.loadResourceByFrame(frame);
+    actionItem.prepareResoureceByFrame(frame);
+    actionItem.prepareAnimatableResoureceByFrame(frame);
   }
 
   tryBuildAncher(
@@ -272,6 +272,23 @@ export class CharacterItem implements RenderItemInfo {
       return currentAnchers;
     }
     return item.tryBuildAncher(currentAnchers);
+  }
+
+  tryBuildAncherByFrame(
+    action: CharacterAction,
+    currentAnchers: Map<AncherName, Vec2>,
+    frame: number,
+  ): Map<AncherName, Vec2> {
+    let item: CharacterActionItem | CharacterFaceItem | undefined;
+    if (this.isUseExpressionItem) {
+      item = this.actionPieces.get(this.character.expression);
+    } else {
+      item = this.actionPieces.get(action);
+    }
+    if (!item) {
+      return currentAnchers;
+    }
+    return item.tryBuildAncherByFrame(currentAnchers, frame);
   }
 
   updateFilter() {

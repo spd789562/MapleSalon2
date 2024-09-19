@@ -2,6 +2,7 @@ import { Container } from 'pixi.js';
 
 import type { PieceSlot } from './const/data';
 import type { CharacterAnimatablePart } from './characterAnimatablePart';
+import type { CharacterStaticPart } from './characterStaticPart';
 import type { Character } from './character';
 
 import { CharacterLoader } from './loader';
@@ -31,9 +32,9 @@ export class CharacterZmapContainer extends Container {
         (CharacterLoader.smap?.[name] || '').match(/.{1,2}/g) || [];
     }
   }
-  addCharacterPart(child: CharacterAnimatablePart) {
+  addCharacterPart(child: CharacterAnimatablePart | CharacterStaticPart) {
     this.addChild(child);
-    this.refreshLock();
+    // this.refreshLock();
   }
   hasAllLocks(id: number, locks: string[]) {
     return locks.every((lock) => {
