@@ -19,6 +19,10 @@ const options = [
     label: '雙手',
     value: CharacterHandType.DoubleHand,
   },
+  {
+    label: '火槍',
+    value: CharacterHandType.Gun,
+  },
 ];
 
 export const HandTypeToggleGroup = () => {

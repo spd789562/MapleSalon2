@@ -5,6 +5,7 @@ import { HStack } from 'styled-system/jsx/hstack';
 import { Heading } from '@/components/ui/heading';
 import { Text } from '@/components/ui/text';
 import { ExportTypeToggleGroup } from './ExportTypeToggleGroup';
+import { ExportHandTypeToggleGroup } from './ExportHandTypeToggleGroup';
 import { ExportAnimateButton } from './ExportAnimateButton';
 import { ExportFrameButton } from './ExportFrameButton';
 import type { ActionCharacterRef } from './ActionCharacter';
@@ -22,6 +23,10 @@ export const ActionTabTitle = (props: ActionTabTitleProps) => {
         </Text>
       </VStack>
       <HStack marginLeft="auto">
+        <HStack>
+          <div>手勢</div>
+          <ExportHandTypeToggleGroup />
+        </HStack>
         <HStack>
           <div>動圖格式</div>
           <ExportTypeToggleGroup />
