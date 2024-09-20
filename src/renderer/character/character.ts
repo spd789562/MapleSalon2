@@ -68,6 +68,7 @@ export class Character extends Container {
   #_renderId = '';
 
   zmapLayers = new Map<PieceSlot, CharacterZmapContainer>();
+  effectLayers = new Map<number, Container>();
   bodyContainer = new Container();
   bodyFrame = new Container();
   locks = new Map<PieceSlot, number>();
@@ -198,8 +199,9 @@ export class Character extends Container {
     }
     if (attributes.instruction !== this.#_instruction) {
       hasChange = true;
-      this.instruction = 'handgun';
+      this.instruction = attributes.instruction;
     }
+
     return hasChange;
   }
 
@@ -260,6 +262,9 @@ export class Character extends Container {
       })
       .filter((item) => item) as AnyCategorizedItem[];
   }
+  get allEffectPieces() {
+    return this.currentAllItem.flatMap((item) => item.allAnimatablePieces);
+  }
 
   getOrCreatZmapLayer(zmap: Zmap, layer: PieceSlot) {
     let container = this.zmapLayers.get(layer);
@@ -267,6 +272,16 @@ export class Character extends Container {
       container = new CharacterZmapContainer(layer, zmap.indexOf(layer), this);
       this.bodyFrame.addChild(container);
       this.zmapLayers.set(layer, container);
+    }
+    return container;
+  }
+  getOrCreatEffectLayer(zIndex: number) {
+    let container = this.effectLayers.get(zIndex);
+    if (!container) {
+      container = new Container();
+      container.zIndex = zIndex >= 2 ? zIndex + 200 : zIndex - 10;
+      this.bodyFrame.addChild(container);
+      this.effectLayers.set(zIndex, container);
     }
     return container;
   }
@@ -279,6 +294,19 @@ export class Character extends Container {
     this.reset();
     this.updateActionByWeapon();
 
+    for (const effectPieces of this.allEffectPieces) {
+      if (effectPieces.effectZindex === undefined) {
+        continue;
+      }
+      const effectLayer = this.getOrCreatEffectLayer(effectPieces.effectZindex);
+      effectLayer.addChild(effectPieces);
+      if (this.isAnimating) {
+        effectPieces.play();
+      } else {
+        effectPieces.gotoAndStop(0);
+      }
+    }
+
     for (const instruction of this.currentInstructions) {
       const frameKey = `${instruction.action}-${instruction.frame}` as const;
       const bodyFrame = this.bodyFrameMap.get(frameKey);
@@ -286,7 +314,6 @@ export class Character extends Container {
         continue;
       }
       bodyFrame.updatePieces();
-      // bodyFrame.renderPieces();
     }
     if (this.isAnimating) {
       this.nameTag.play();
@@ -320,6 +347,9 @@ export class Character extends Container {
   }
   reset() {
     this.stop();
+    for (const effectContainer of this.effectLayers.values()) {
+      effectContainer.removeChildren();
+    }
   }
 
   getInstructionsByBody(action: CharacterAction) {
@@ -387,9 +417,9 @@ export class Character extends Container {
     const bodyFrame = this.bodyFrameMap.get(key);
     bodyFrame?.renderPieces();
     if (instruction.move) {
-      this.position.copyFrom(instruction.move);
+      this.bodyFrame.position.copyFrom(instruction.move);
     } else {
-      this.position.set(0, 0);
+      this.bodyFrame.position.set(0, 0);
     }
   }
 
@@ -410,17 +440,17 @@ export class Character extends Container {
     }) as CharacterBodyFrame[];
   }
 
-  get effectLayers() {
-    const zMapLayers = this.zmapLayers;
-    return function* effectGenerator() {
-      for (const [layerName, layer] of zMapLayers.entries()) {
-        if (!layerName.includes('effect')) {
-          continue;
-        }
-        yield layer;
-      }
-    };
-  }
+  // get effectLayers() {
+  //   const zMapLayers = this.zmapLayers;
+  //   return function* effectGenerator() {
+  //     for (const [layerName, layer] of zMapLayers.entries()) {
+  //       if (!layerName.includes('effect')) {
+  //         continue;
+  //       }
+  //       yield layer;
+  //     }
+  //   };
+  // }
   get weaponItem() {
     return Array.from(this.idItems.values()).find((item) => item.isWeapon);
   }
@@ -494,6 +524,11 @@ export class Character extends Container {
     const loadItems = Array.from(this.idItems.values()).map(async (item) => {
       try {
         await item.load();
+        if (this.isAnimating) {
+          await item.prepareActionAnimatableResource(
+            item.isUseExpressionItem ? this.expression : this.action,
+          );
+        }
       } catch (_) {
         return item.info;
       }
@@ -568,7 +603,7 @@ export class Character extends Container {
 
   toggleEffectVisibility(isHide?: boolean, includeNormal = false) {
     this.isHideAllEffect = isHide ?? !this.isHideAllEffect;
-    for (const layer of this.effectLayers()) {
+    for (const layer of this.effectLayers.values()) {
       if (layer.name === 'effect' && !includeNormal) {
         layer.visible = true;
       } else {

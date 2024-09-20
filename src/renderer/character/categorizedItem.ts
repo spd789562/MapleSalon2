@@ -75,6 +75,9 @@ export abstract class CategorizedItem<Name extends string> {
   get allPieces() {
     return Array.from(this.items.values()).flat().flat();
   }
+  get allAnimatablePieces() {
+    return Array.from(this.animatableItems.values()).flat();
+  }
 
   get effectBasePos() {
     const basePos = {
@@ -368,6 +371,29 @@ export abstract class CategorizedItem<Name extends string> {
     }
   }
 
+  async loadAnimatableResource() {
+    // if unresolvedItems is empty, it means the item is already loaded
+    if (this.unresolvedItems.size === 0) {
+      return;
+    }
+    const assets = new Set<UnresolvedAsset>();
+    for (const [pieceName, items] of this.unresolvedItems) {
+      const isEffect = pieceName === 'effect' && this.effectWz !== undefined;
+      if (!isEffect) {
+        continue;
+      }
+      for (const itemPieces of items) {
+        const itemResources = itemPieces.flatMap(
+          (item) => item.getResource?.() || [],
+        );
+        for (const asset of itemResources) {
+          assets.add(asset);
+        }
+      }
+    }
+
+    await Assets.load(Array.from(assets));
+  }
   async loadResource() {
     // if unresolvedItems is empty, it means the item is already loaded
     if (this.unresolvedItems.size === 0) {
@@ -431,6 +457,10 @@ export abstract class CategorizedItem<Name extends string> {
 
   destroy() {
     for (const item of this.allPieces) {
+      item.removeFromParent();
+      item.destroy();
+    }
+    for (const item of this.allAnimatablePieces) {
       item.removeFromParent();
       item.destroy();
     }

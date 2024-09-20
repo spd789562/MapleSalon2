@@ -134,8 +134,25 @@ export class CharacterBodyFrame {
       facePiece.visible = !isOverrideFace;
     }
 
+    this.updateEffectAncher();
     this.updateCharacterFaceVisibility();
     this.updateCharacterPivotByBodyPiece();
+  }
+
+  updateEffectAncher() {
+    /* also need to update effect's ancher */
+    for (const effectPieces of this.character.allEffectPieces) {
+      const effectAncherName = effectPieces.frames[0]?.baseAncherName;
+      if (!effectAncherName) {
+        continue;
+      }
+      const effectAncher = this.anchers.get(effectAncherName);
+      effectAncher &&
+        effectPieces.pivot?.copyFrom({
+          x: -effectAncher.x,
+          y: -effectAncher.y,
+        });
+    }
   }
 
   async updateMixDye(id: number) {

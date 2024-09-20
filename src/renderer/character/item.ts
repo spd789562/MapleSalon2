@@ -235,6 +235,16 @@ export class CharacterItem implements RenderItemInfo {
     }
   }
 
+  async prepareActionAnimatableResource(
+    name: CharacterAction | CharacterExpressions,
+  ) {
+    const actionItem = this.actionPieces.get(name);
+    if (!actionItem) {
+      return;
+    }
+    await actionItem.loadAnimatableResource();
+    actionItem.prepareAnimatableResourece();
+  }
   async prepareActionResource(name: CharacterAction | CharacterExpressions) {
     const actionItem = this.actionPieces.get(name);
     if (!actionItem) {
