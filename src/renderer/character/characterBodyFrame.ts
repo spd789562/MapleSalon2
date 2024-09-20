@@ -1,5 +1,3 @@
-import { Container, type DestroyOptions } from 'pixi.js';
-
 import type { PieceSlot } from './const/data';
 import { defaultAncher } from './const/ancher';
 import type { CharacterStaticPart } from './characterStaticPart';
@@ -8,13 +6,16 @@ import type { Character } from './character';
 import type { CharacterActionItem, CategorizedItem } from './categorizedItem';
 
 import { CharacterLoader } from './loader';
-import { CharacterZmapContainer } from './characterZmapContainer';
 
 import { CharacterAction } from '@/const/actions';
 
 type AnyCategorizedItem = CategorizedItem<string>;
 
-export class CharacterBodyFrame extends Container {
+/**
+ * A CharacterBodyFrame is represent a character frame and action
+ * and hold references to all piece will need in this action and frame
+ */
+export class CharacterBodyFrame {
   character: Character;
 
   anchers = new Map([['navel', defaultAncher.navel]]);
@@ -22,11 +23,9 @@ export class CharacterBodyFrame extends Container {
   action = CharacterAction.Stand1;
   frame = 0;
 
-  zmapLayers = new Map<PieceSlot, CharacterZmapContainer>();
   pieces: [PieceSlot, CharacterStaticPart[]][] = [];
 
   constructor(character: Character, action: CharacterAction, frame: number) {
-    super();
     this.character = character;
     this.action = action;
     this.frame = frame;
@@ -74,7 +73,6 @@ export class CharacterBodyFrame extends Container {
     if (!zmap) {
       return;
     }
-    this.reset();
     const earPiece = this.earPiece;
     const earLayer = earPiece?.[0]?.frameData.z;
 
@@ -100,20 +98,12 @@ export class CharacterBodyFrame extends Container {
     if (!zmap) {
       return;
     }
+    this.clearnContainerChild();
 
     let isOverrideFace = false;
 
     for (const [layer, pieces] of this.pieces) {
-      let container = this.zmapLayers.get(layer);
-      if (!container) {
-        container = new CharacterZmapContainer(
-          layer,
-          zmap.indexOf(layer),
-          this.character,
-        );
-        this.addChild(container);
-        this.zmapLayers.set(layer, container);
-      }
+      const container = this.character.getOrCreatZmapLayer(zmap, layer);
 
       for (const piece of pieces) {
         if (piece.isEmpty) {
@@ -177,17 +167,13 @@ export class CharacterBodyFrame extends Container {
     this.clearnContainerChild();
   }
   clearnContainerChild() {
-    for (const [layer, container] of this.zmapLayers.entries()) {
-      // not remove face's child for now, it will cause some face missing bug
-      if (layer === 'face') {
-        continue;
-      }
+    for (const container of this.character.zmapLayers.values()) {
       container.removeChildren();
     }
   }
   /** update face when character turn to back */
   updateCharacterFaceVisibility() {
-    const faceLayer = this.zmapLayers.get('face');
+    const faceLayer = this.character.zmapLayers.get('face');
     if (faceLayer) {
       if (this.isBackAction) {
         faceLayer.visible = false;
@@ -199,7 +185,7 @@ export class CharacterBodyFrame extends Container {
   updateCharacterPivotByBodyPiece() {
     /* use the ancher to set actual character offset */
     const bodyPos = this.bodyFrame?.ancher || { x: 0, y: 0 };
-    this.pivot?.set(bodyPos.x, bodyPos.y);
+    this.character.bodyFrame.pivot?.set(bodyPos.x, bodyPos.y);
   }
 
   get facePiece() {
@@ -234,14 +220,14 @@ export class CharacterBodyFrame extends Container {
   }
 
   get frontBodyNode() {
-    const body = this.zmapLayers.get('body');
+    const body = this.character.zmapLayers.get('body');
 
     return body?.children.find(
       (child) => (child as CharacterStaticPart).item.isBody,
     ) as CharacterStaticPart | undefined;
   }
   get backBodyNode() {
-    const body = this.zmapLayers.get('backBody');
+    const body = this.character.zmapLayers.get('backBody');
     return body?.children.find(
       (child) => (child as CharacterStaticPart).item.isBody,
     ) as CharacterStaticPart | undefined;
@@ -271,10 +257,8 @@ export class CharacterBodyFrame extends Container {
     );
   }
 
-  destroy(options?: DestroyOptions) {
+  destroy() {
     this.clearnContainerChild();
-    super.destroy(options);
-    this.zmapLayers.clear();
     this.anchers.clear();
   }
 }

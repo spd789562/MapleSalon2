@@ -43,7 +43,7 @@ export class CharacterStaticPart extends Container {
     this.position.copyFrom(frame.position);
   }
   updateAncher() {
-    this.position.copyFrom(this.frameData.position);
+    this.position?.copyFrom(this.frameData.position);
   }
 
   clone() {

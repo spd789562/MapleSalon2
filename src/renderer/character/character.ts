@@ -8,7 +8,7 @@ import {
 } from 'pixi.js';
 
 import type { CharacterData } from '@/store/character/store';
-import type { ItemInfo, AncherName, Vec2, PieceSlot } from './const/data';
+import type { ItemInfo, AncherName, Vec2, PieceSlot, Zmap } from './const/data';
 import type { PieceIslot } from './const/slot';
 import type { WzActionInstruction } from './const/wz';
 import type { CategorizedItem, CharacterActionItem } from './categorizedItem';
@@ -21,7 +21,7 @@ import type {
 import { CharacterLoader } from './loader';
 import { CharacterItem } from './item';
 import { CharacterBodyFrame } from './characterBodyFrame';
-import type { CharacterZmapContainer } from './characterZmapContainer';
+import { CharacterZmapContainer } from './characterZmapContainer';
 
 import { isMixDyeableId } from '@/utils/itemId';
 
@@ -69,12 +69,12 @@ export class Character extends Container {
 
   zmapLayers = new Map<PieceSlot, CharacterZmapContainer>();
   bodyContainer = new Container();
+  bodyFrame = new Container();
   locks = new Map<PieceSlot, number>();
 
   frame = 0;
   _instructionFrame = 0;
   currentInstructions: WzActionInstruction[] = [];
-  usedKey: `${CharacterAction}-${number}`[] = [];
   bodyFrameMap = new Map<`${CharacterAction}-${number}`, CharacterBodyFrame>();
   /** is character playing bounced action */
   isPlaying = false;
@@ -99,6 +99,7 @@ export class Character extends Container {
     this.nameTag.position.set(0, 3);
     this.addChild(this.bodyContainer);
     this.addChild(this.nameTag);
+    this.bodyContainer.addChild(this.bodyFrame);
   }
 
   get action() {
@@ -260,6 +261,16 @@ export class Character extends Container {
       .filter((item) => item) as AnyCategorizedItem[];
   }
 
+  getOrCreatZmapLayer(zmap: Zmap, layer: PieceSlot) {
+    let container = this.zmapLayers.get(layer);
+    if (!container) {
+      container = new CharacterZmapContainer(layer, zmap.indexOf(layer), this);
+      this.bodyFrame.addChild(container);
+      this.zmapLayers.set(layer, container);
+    }
+    return container;
+  }
+
   renderCharacter() {
     const zmap = CharacterLoader?.zmap;
     if (!zmap) {
@@ -268,14 +279,14 @@ export class Character extends Container {
     this.reset();
     this.updateActionByWeapon();
 
-    for (const instruction of this.currentInstructions.reverse()) {
+    for (const instruction of this.currentInstructions) {
       const frameKey = `${instruction.action}-${instruction.frame}` as const;
       const bodyFrame = this.bodyFrameMap.get(frameKey);
       if (!bodyFrame) {
         continue;
       }
       bodyFrame.updatePieces();
-      bodyFrame.renderPieces();
+      // bodyFrame.renderPieces();
     }
     if (this.isAnimating) {
       this.nameTag.play();
@@ -374,54 +385,11 @@ export class Character extends Container {
     const instruction = this.currentInstruction;
     const key = `${instruction.action}-${instruction.frame}` as const;
     const bodyFrame = this.bodyFrameMap.get(key);
-    if (bodyFrame) {
-      bodyFrame.renderPieces();
-      this.bodyContainer.removeChildren();
-      this.bodyContainer.addChild(bodyFrame);
-    }
+    bodyFrame?.renderPieces();
     if (instruction.move) {
-      this.bodyContainer.position.copyFrom(instruction.move);
+      this.position.copyFrom(instruction.move);
     } else {
-      this.bodyContainer.position.set(0, 0);
-    }
-  }
-
-  /** set pieces to current frame */
-  playPieces(pieces: CharacterAnimatablePart[]) {
-    const frame = this.frame;
-
-    const currentAncher = this.actionAnchers.get(this.action)?.[frame];
-
-    if (!currentAncher) {
-      return;
-    }
-    for (const piece of pieces) {
-      const pieceFrameIndex = piece.frames[frame] ? frame : 0;
-      const pieceFrame = (piece.frames[frame] ||
-        piece.frames[0]) as CharacterItemPiece;
-      const isSkinGroup = pieceFrame.group === 'skin';
-      if (!pieceFrame) {
-        continue;
-      }
-      const ancherName = pieceFrame.baseAncherName;
-      const ancher = currentAncher.get(ancherName);
-      /* setting the ancher on each piece */
-      ancher &&
-        piece.pivot?.copyFrom({
-          x: -ancher.x,
-          y: -ancher.y,
-        });
-
-      /* some part can play indenpendently */
-      if (piece.canIndependentlyPlay && !isSkinGroup) {
-        if (this.isAnimating) {
-          !piece.playing && piece.play();
-        } else {
-          piece.gotoAndStop(0);
-        }
-      } else {
-        piece.currentFrame = pieceFrameIndex;
-      }
+      this.position.set(0, 0);
     }
   }
 
@@ -478,7 +446,7 @@ export class Character extends Container {
       if (this.isLoading) {
         this.loadEvent.emit('loading');
       }
-    }, 100);
+    }, 50);
     const bodyItem = this.bodyItem;
     if (bodyItem) {
       await bodyItem.load().catch((_) => undefined);
@@ -486,6 +454,10 @@ export class Character extends Container {
     // generate animation instruction by body
     if (!this.instruction) {
       this.currentInstructions = this.getInstructionsByBody(this.action);
+    }
+
+    if (!this.isAnimating) {
+      this.currentInstructions = this.currentInstructions.slice(0, 1);
     }
 
     const usedBodyFrame: CharacterBodyFrame[] = [];
@@ -651,5 +623,6 @@ export class Character extends Container {
       item.destroy();
     }
     this.idItems.clear();
+    this.bodyFrameMap.clear();
   }
 }
