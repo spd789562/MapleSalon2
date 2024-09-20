@@ -37,6 +37,9 @@ import { CharacterAction } from '@/const/actions';
 import { CharacterExpressions } from '@/const/emotions';
 import { CharacterHandType } from '@/const/hand';
 
+const BaseWeaponId = 30;
+const GunWeaponId = 49;
+
 export class CharacterItem implements RenderItemInfo {
   info: ItemInfo;
   islot: PieceIslot[];
@@ -173,12 +176,21 @@ export class CharacterItem implements RenderItemInfo {
   private loadWeapon(wz: WzItem) {
     const isSingleHand =
       this.character.handType === CharacterHandType.SingleHand;
+    const isGunHand = this.character.handType === CharacterHandType.Gun;
+    const baseWz = wz[BaseWeaponId] as unknown as WzItem;
+    const GunWz = wz[GunWeaponId] as unknown as WzItem;
+
+    /* gun's use 49 code */
+    if (isGunHand && GunWz?.[this.character.action]) {
+      return this.loadAction(GunWz);
+    }
+
+    /* if has 30, just use 30 */
+    if (baseWz?.[this.character.action]) {
+      return this.loadAction(baseWz);
+    }
     const idIncurrment = isSingleHand ? -1 : 1;
     const [start, end] = isSingleHand ? [69, 29] : [30, 70];
-    /* if has 30, just use 30 */
-    if ((wz[30] as unknown as WzItem)?.[this.character.action]) {
-      return this.loadAction(wz[30] as unknown as WzItem);
-    }
 
     /* single hand weapon usually has higher id */
     for (let id = start; id !== end; id += idIncurrment) {

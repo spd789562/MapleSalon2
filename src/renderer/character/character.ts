@@ -8,16 +8,10 @@ import {
 } from 'pixi.js';
 
 import type { CharacterData } from '@/store/character/store';
-import type { ItemInfo, AncherName, Vec2, PieceSlot, Zmap } from './const/data';
+import type { ItemInfo, PieceSlot, Zmap } from './const/data';
 import type { PieceIslot } from './const/slot';
 import type { WzActionInstruction } from './const/wz';
 import type { CategorizedItem, CharacterActionItem } from './categorizedItem';
-import type { CharacterAnimatablePart } from './characterAnimatablePart';
-import type {
-  CharacterItemPiece,
-  DyeableCharacterItemPiece,
-} from './itemPiece';
-
 import { CharacterLoader } from './loader';
 import { CharacterItem } from './item';
 import { CharacterBodyFrame } from './characterBodyFrame';
@@ -249,7 +243,7 @@ export class Character extends Container {
         : info.dye,
     });
     /* only update sprite already in render */
-    await Promise.all(this.bodyFrames.map((frame) => frame.updateMixDye(id)));
+    await Promise.all(this.bodyFrames.map((frame) => frame?.updateMixDye(id)));
   }
 
   /** get current items filter by expression and action */
@@ -352,24 +346,32 @@ export class Character extends Container {
     }
   }
 
-  getInstructionsByBody(action: CharacterAction) {
-    const bodyItem = Array.from(this.idItems.values()).find(
-      (item) => item.isBody,
-    );
-    if (!bodyItem) {
-      return [];
-    }
-    const bodyActionItem = bodyItem.actionPieces.get(
+  getInstructionsByBodyAndWeapon(
+    action: CharacterAction,
+    bodyItem?: CharacterItem,
+    weaponItem?: CharacterItem,
+  ) {
+    const bodyActionItem = bodyItem?.actionPieces.get(
       action,
     ) as CharacterActionItem;
+    const weaponActionItem = weaponItem?.actionPieces.get(
+      action,
+    ) as CharacterActionItem;
+    if (!(bodyActionItem && weaponActionItem)) {
+      return [];
+    }
 
-    const maxFrame = bodyActionItem.frameCount;
+    /* some weapon only have few frame */
+    const minFrame = Math.min(
+      bodyActionItem.frameCount,
+      weaponActionItem.frameCount,
+    );
     const needBounce =
       this.action === CharacterAction.Alert || this.action.startsWith('stand');
 
     const instructions: WzActionInstruction[] = [];
 
-    for (let frame = 0; frame < maxFrame; frame++) {
+    for (let frame = 0; frame < minFrame; frame++) {
       const delay = bodyActionItem.wz[frame]?.delay || 100;
       instructions.push({
         action,
@@ -378,7 +380,7 @@ export class Character extends Container {
       });
     }
     if (needBounce) {
-      for (let frame = maxFrame - 2; frame > 0; frame--) {
+      for (let frame = minFrame - 2; frame > 0; frame--) {
         const delay = bodyActionItem.wz[frame]?.delay || 100;
         instructions.push({
           action,
@@ -404,7 +406,6 @@ export class Character extends Container {
         } else {
           this.instructionFrame += 1;
         }
-        this.action = this.currentInstruction.action;
         this.playBodyFrame();
       }
     };
@@ -413,6 +414,9 @@ export class Character extends Container {
 
   playBodyFrame() {
     const instruction = this.currentInstruction;
+    if (!instruction) {
+      return;
+    }
     const key = `${instruction.action}-${instruction.frame}` as const;
     const bodyFrame = this.bodyFrameMap.get(key);
     bodyFrame?.renderPieces();
@@ -424,13 +428,13 @@ export class Character extends Container {
   }
 
   get currentAction() {
-    if (this.instruction && this.currentInstruction.action) {
+    if (this.instruction && this.currentInstruction?.action) {
       return this.currentInstruction.action;
     }
     return this.action;
   }
 
-  get currentInstruction() {
+  get currentInstruction(): WzActionInstruction | undefined {
     return this.currentInstructions[this.instructionFrame];
   }
   get bodyFrames() {
@@ -440,17 +444,6 @@ export class Character extends Container {
     }) as CharacterBodyFrame[];
   }
 
-  // get effectLayers() {
-  //   const zMapLayers = this.zmapLayers;
-  //   return function* effectGenerator() {
-  //     for (const [layerName, layer] of zMapLayers.entries()) {
-  //       if (!layerName.includes('effect')) {
-  //         continue;
-  //       }
-  //       yield layer;
-  //     }
-  //   };
-  // }
   get weaponItem() {
     return Array.from(this.idItems.values()).find((item) => item.isWeapon);
   }
@@ -481,9 +474,19 @@ export class Character extends Container {
     if (bodyItem) {
       await bodyItem.load().catch((_) => undefined);
     }
+
+    const weaponItem = this.weaponItem;
+    if (weaponItem) {
+      try {
+        await weaponItem.load();
+        this.updateActionByWeapon();
+      } catch (_) {
+        // errorItems.push(weaponItem.info);
+      }
+    }
     // generate animation instruction by body
     if (!this.instruction) {
-      this.currentInstructions = this.getInstructionsByBody(this.action);
+      this.currentInstructions = this.getInstructionsByBodyAndWeapon(this.action, bodyItem, weaponItem);
     }
 
     if (!this.isAnimating) {
@@ -508,16 +511,6 @@ export class Character extends Container {
       }
       if (this.isAnimating || usedBodyFrame.length === 0) {
         usedBodyFrame.push(bodyFrame);
-      }
-    }
-
-    const weaponItem = this.weaponItem;
-    if (weaponItem) {
-      try {
-        await weaponItem.load();
-        this.updateActionByWeapon();
-      } catch (_) {
-        // errorItems.push(weaponItem.info);
       }
     }
 
@@ -623,6 +616,12 @@ export class Character extends Container {
         this.#_action = CharacterAction.Walk2;
       } else if (this.action === CharacterAction.Stand1) {
         this.#_action = CharacterAction.Stand2;
+      }
+    } else if (this.#_handType === CharacterHandType.Gun) {
+      if (this.action === CharacterAction.Walk2) {
+        this.#_action = CharacterAction.Walk1;
+      } else if (this.action === CharacterAction.Stand2) {
+        this.#_action = CharacterAction.Stand1;
       }
     }
   }
