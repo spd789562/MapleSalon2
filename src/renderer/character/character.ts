@@ -71,7 +71,7 @@ export class Character extends Container {
   _instructionFrame = 0;
   currentInstructions: WzActionInstruction[] = [];
   bodyFrameMap = new Map<`${CharacterAction}-${number}`, CharacterBodyFrame>();
-  /** is character playing bounced action */
+
   isPlaying = false;
   isAnimating = false;
 
@@ -454,22 +454,7 @@ export class Character extends Container {
     return Array.from(this.idItems.values()).find((item) => item.isBody);
   }
 
-  async loadItems() {
-    const renderId = createUniqueId();
-    this.#_renderId = renderId;
-
-    if (this.isLoading) {
-      clearTimeout(this.loadFlashTimer);
-      this.loadEvent.emit('loading');
-    }
-
-    this.isLoading = true;
-    // only show loading after 100ms
-    this.loadFlashTimer = setTimeout(() => {
-      if (this.isLoading) {
-        this.loadEvent.emit('loading');
-      }
-    }, 50);
+  async loadInstruction() {
     const bodyItem = this.bodyItem;
     if (bodyItem) {
       await bodyItem.load().catch((_) => undefined);
@@ -486,12 +471,36 @@ export class Character extends Container {
     }
     // generate animation instruction by body
     if (!this.instruction) {
-      this.currentInstructions = this.getInstructionsByBodyAndWeapon(this.action, bodyItem, weaponItem);
+      this.currentInstructions = this.getInstructionsByBodyAndWeapon(
+        this.action,
+        bodyItem,
+        weaponItem,
+      );
     }
 
     if (!this.isAnimating) {
       this.currentInstructions = this.currentInstructions.slice(0, 1);
     }
+  }
+
+  async loadItems() {
+    const renderId = createUniqueId();
+    this.#_renderId = renderId;
+
+    if (this.isLoading) {
+      clearTimeout(this.loadFlashTimer);
+      this.loadEvent.emit('loading');
+    }
+
+    this.isLoading = true;
+    // only show loading after 100ms
+    this.loadFlashTimer = setTimeout(() => {
+      if (this.isLoading) {
+        this.loadEvent.emit('loading');
+      }
+    }, 50);
+
+    await this.loadInstruction();
 
     const usedBodyFrame: CharacterBodyFrame[] = [];
     const frameAndActionNeedToLoad: Set<`${CharacterAction}-${number}`> =
@@ -594,14 +603,10 @@ export class Character extends Container {
     }
   }
 
-  toggleEffectVisibility(isHide?: boolean, includeNormal = false) {
+  toggleEffectVisibility(isHide?: boolean) {
     this.isHideAllEffect = isHide ?? !this.isHideAllEffect;
     for (const layer of this.effectLayers.values()) {
-      if (layer.name === 'effect' && !includeNormal) {
-        layer.visible = true;
-      } else {
-        layer.visible = !this.isHideAllEffect;
-      }
+      layer.visible = !this.isHideAllEffect;
     }
   }
   private updateActionByHandType() {
@@ -652,11 +657,11 @@ export class Character extends Container {
     this.loadEvent.removeAllListeners();
     this.zmapLayers.clear();
     this.locks.clear();
-    this.bodyContainer = undefined as unknown as any;
     for (const item of this.idItems.values()) {
       item.destroy();
     }
     this.idItems.clear();
     this.bodyFrameMap.clear();
+    this.currentInstructions = [];
   }
 }

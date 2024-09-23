@@ -5,8 +5,6 @@ import type { Character } from './character';
 import { extractCanvas } from '@/utils/extract';
 import { nextTick } from '@/utils/eventLoop';
 
-import { CharacterAction } from '@/const/actions';
-
 interface UnprocessedFrame {
   width: number;
   height: number;
@@ -31,7 +29,7 @@ export async function characterToCanvasFrames(
   character.stop();
   /* hide effect except weapons effect */
   character.renderCharacter();
-  character.toggleEffectVisibility(true, false);
+  character.toggleEffectVisibility(true);
   await nextTick();
 
   if (!character.currentInstructions) {
@@ -57,7 +55,7 @@ export async function characterToCanvasFrames(
     const frameBound = character.getLocalBounds();
     const frameData: UnprocessedFrame = {
       canvas,
-      delay: character.currentInstruction.delay || 100,
+      delay: character.currentInstruction?.delay || 100,
       width: canvas.width,
       height: canvas.height,
       left: frameBound.left,
@@ -99,7 +97,7 @@ export async function characterToCanvasFrames(
     character.play();
   }
 
-  character.toggleEffectVisibility(false, false);
+  character.toggleEffectVisibility(false);
   await nextTick();
 
   return {
