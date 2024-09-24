@@ -13,8 +13,17 @@ import { prepareAndFetchEquipStrings } from '@/store/string';
 import { initialGlobalRenderer } from '@/store/renderer';
 
 import { toaster } from '@/components/GlobalToast';
+import { nextTick } from '@/utils/eventLoop';
+
+export enum InitLoadProgress {
+  SaveFile = 'save_file',
+  InitWz = 'init_wz',
+  InitString = 'init_string',
+  Done = 'done',
+}
 
 export const $isWzLoading = atom(false);
+export const $initLoadProgress = atom<InitLoadProgress | undefined>();
 
 export function initialWzBase(path: string) {
   return invoke<void>('init', { path });
@@ -26,6 +35,8 @@ export function getServerInfo() {
 
 export async function initApp() {
   $isWzLoading.set(true);
+  $initLoadProgress.set(InitLoadProgress.SaveFile);
+  await nextTick();
   try {
     await initializeSavedCharacter();
     await initializeSavedFileSelectHistory();
@@ -50,12 +61,15 @@ export async function initApp() {
     $isInitialized.set(is_initialized);
   }
 
+  $initLoadProgress.set(undefined);
   $isWzLoading.set(false);
   console.info('API host:', url);
 }
 
 export async function initByWzBase(path: string) {
   $isWzLoading.set(true);
+  $initLoadProgress.set(InitLoadProgress.InitWz);
+  await nextTick();
   try {
     await initialWzBase(path);
   } catch (e) {
@@ -96,6 +110,10 @@ export async function initStringAndRenderer() {
     });
     return false;
   }
+
+  $initLoadProgress.set(InitLoadProgress.Done);
+  await nextTick();
+
   try {
     await initialGlobalRenderer();
   } catch (_) {
