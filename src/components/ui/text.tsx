@@ -7,9 +7,9 @@ import { type TextVariantProps, text } from 'styled-system/recipes/text';
 import type { JsxStyleProps } from 'styled-system/types';
 
 export interface TextProps
-  extends Assign<JsxStyleProps, HTMLArkProps<'p'> & HTMLArkProps<'label'>>,
+  extends Assign<JsxStyleProps, HTMLArkProps<'p'> & HTMLArkProps<'label'> & HTMLArkProps<'a'>>,
     TextVariantProps {
-  as?: 'p' | 'label' | 'div' | 'span';
+  as?: 'p' | 'label' | 'div' | 'span' | 'a';
 }
 
 export const Text = (props: TextProps) => {
