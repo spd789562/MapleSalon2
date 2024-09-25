@@ -1,9 +1,8 @@
-import { computed } from 'nanostores';
+import { computed, atom } from 'nanostores';
 
 import {
   $currentItem,
-  $currentItemChanges,
-  $currentCharacterItems,
+  $currentItemChanges
 } from './character/store';
 import { $totalItems } from './character/selector';
 import { $equpimentDrawerOpen } from './trigger';
@@ -14,6 +13,13 @@ import {
 } from './equipDrawer';
 
 import type { EquipSubCategory } from '@/const/equipments';
+
+
+export enum CurrentEquipDrawerTab {
+  Equip = 'equip',
+  Setting = 'setting',
+}
+export const $currentEquipDrawerTab = atom<CurrentEquipDrawerTab>(CurrentEquipDrawerTab.Equip);
 
 /* computed */
 export const $currentItemKeys = computed($totalItems, (items) => {
