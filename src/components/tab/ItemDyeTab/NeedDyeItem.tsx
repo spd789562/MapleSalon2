@@ -13,7 +13,7 @@ import {
   EquipItemIcon,
   EquipItemName,
   EquipItemInfo,
-} from '@/components/drawer/CurrentEquipmentDrawer/EquipItem';
+} from '@/components/drawer/CurrentEquipmentDrawer/CurrentEquipList/EquipItem';
 
 import type { EquipSubCategory } from '@/const/equipments';
 
