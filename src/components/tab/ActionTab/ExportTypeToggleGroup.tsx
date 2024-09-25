@@ -28,7 +28,7 @@ export const ExportTypeToggleGroup = () => {
   const exportType = useStore($actionExportType);
 
   function handleExportTypeChange(details: ValueChangeDetails) {
-    const firstItem = details.value?.[0];
+    const firstItem = details.value;
     firstItem && $actionExportType.set(firstItem as ActionExportType);
   }
 
@@ -36,7 +36,7 @@ export const ExportTypeToggleGroup = () => {
     <SimpleToggleGroup
       size="sm"
       options={options}
-      value={[exportType()]}
+      value={exportType()}
       onValueChange={handleExportTypeChange}
     />
   );

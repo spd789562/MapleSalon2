@@ -39,7 +39,7 @@ export const ColorModeToggleGroup = () => {
   const colorMode = useStore($colorMode);
 
   function handleChange(details: ValueChangeDetails) {
-    const changedColorMode = details.value?.[0] as ColorMode;
+    const changedColorMode = details.value as ColorMode;
     if (changedColorMode) {
       syncColorMode(changedColorMode);
       setColorMode(changedColorMode);
@@ -50,7 +50,7 @@ export const ColorModeToggleGroup = () => {
     <SimpleToggleGroup
       size="sm"
       options={options}
-      value={[colorMode()]}
+      value={colorMode()}
       onValueChange={handleChange}
     />
   );

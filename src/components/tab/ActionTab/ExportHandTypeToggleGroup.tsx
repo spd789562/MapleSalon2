@@ -24,7 +24,7 @@ export const ExportHandTypeToggleGroup = () => {
   const handType = useStore($actionExportHandType);
 
   function handleExportTypeChange(details: ValueChangeDetails) {
-    const firstItem = details.value?.[0];
+    const firstItem = details.value;
     firstItem && $actionExportHandType.set(firstItem as CharacterHandType);
   }
 
@@ -32,7 +32,7 @@ export const ExportHandTypeToggleGroup = () => {
     <SimpleToggleGroup
       size="sm"
       options={options}
-      value={[handType()]}
+      value={handType()}
       onValueChange={handleExportTypeChange}
     />
   );

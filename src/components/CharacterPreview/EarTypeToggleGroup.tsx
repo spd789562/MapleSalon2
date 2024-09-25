@@ -32,7 +32,7 @@ const options = [
 export const EarTypeToggleGroup = () => {
   const earType = useStore($currentEarType);
   function handleEarTypeChange(details: ValueChangeDetails) {
-    const firstItem = details.value?.[0];
+    const firstItem = details.value;
     firstItem && setCharacterEarType(firstItem as CharacterEarType);
   }
 
@@ -40,7 +40,7 @@ export const EarTypeToggleGroup = () => {
     <SimpleToggleGroup
       size="sm"
       options={options}
-      value={[earType()]}
+      value={earType()}
       onValueChange={handleEarTypeChange}
     />
   );
