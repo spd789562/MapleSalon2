@@ -1,3 +1,4 @@
+import { type JSX, Index, splitProps } from 'solid-js';
 import { type Assign, SegmentGroup } from '@ark-ui/solid';
 import {
   type SegmentGroupVariantProps,
@@ -41,3 +42,36 @@ export {
   type SegmentGroupContextProps as ContextProps,
   type SegmentGroupValueChangeDetails as ValueChangeDetails,
 } from '@ark-ui/solid';
+
+export interface SimpleSegmentGroupProps<T extends string> extends RootProps {
+  options: {
+    label: JSX.Element;
+    value: T;
+    disabled?: boolean;
+    title?: string;
+  }[];
+}
+export const SimpleSegmentGroup = <T extends string>(
+  props: SimpleSegmentGroupProps<T>,
+) => {
+  const [localProps, toggleGroupProps] = splitProps(props, ['options']);
+
+  return (
+    <Root {...toggleGroupProps}>
+      <Index each={localProps.options}>
+        {(option) => (
+          <Item
+            value={option().value}
+            disabled={option().disabled}
+            title={option().title}
+          >
+            <ItemText>{option().label}</ItemText>
+            <ItemControl />
+            <ItemHiddenInput />
+          </Item>
+        )}
+      </Index>
+      <Indicator />
+    </Root>
+  );
+};

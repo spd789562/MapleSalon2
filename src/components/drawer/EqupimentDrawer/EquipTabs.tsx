@@ -1,42 +1,27 @@
-import { Index } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 
 import { $equipmentDrawerEquipTab, EquipTab } from '@/store/equipDrawer';
 
 import {
-  Root,
-  Indicator,
-  Item,
-  ItemText,
-  ItemControl,
-  ItemHiddenInput,
+  SimpleSegmentGroup,
   type ValueChangeDetails,
 } from '@/components/ui/segmentGroup';
 
-const SegmentGroup = {
-  Root,
-  Indicator,
-  Item,
-  ItemText,
-  ItemControl,
-  ItemHiddenInput,
-};
-
 const options = [
   {
-    id: EquipTab.Equip,
+    value: EquipTab.Equip,
     label: '裝備',
   },
   {
-    id: EquipTab.Hair,
+    value: EquipTab.Hair,
     label: '髮型',
   },
   {
-    id: EquipTab.Face,
+    value: EquipTab.Face,
     label: '臉型',
   },
   {
-    id: EquipTab.History,
+    value: EquipTab.History,
     label: '近期使用',
   },
 ];
@@ -49,21 +34,11 @@ export const EquipTabs = () => {
   }
 
   return (
-    <SegmentGroup.Root
+    <SimpleSegmentGroup
+      options={options}
       value={equipTab()}
       onValueChange={handleChange}
       orientation="horizontal"
-    >
-      <Index each={options}>
-        {(option) => (
-          <SegmentGroup.Item value={option().id}>
-            <SegmentGroup.ItemText>{option().label}</SegmentGroup.ItemText>
-            <SegmentGroup.ItemControl />
-            <SegmentGroup.ItemHiddenInput />
-          </SegmentGroup.Item>
-        )}
-      </Index>
-      <SegmentGroup.Indicator />
-    </SegmentGroup.Root>
+    />
   );
 };
