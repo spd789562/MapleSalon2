@@ -1,5 +1,10 @@
 import { atom, deepMap, batched, onSet } from 'nanostores';
 
+import {
+  $currentEquipDrawerTab,
+  CurrentEquipDrawerTab,
+} from './currentEquipDrawer';
+
 import type { EquipSubCategory } from '@/const/equipments';
 import { ToolTab, ActionExportType, DyeOrder, DyeType } from '@/const/toolTab';
 import { CharacterAction } from '@/const/actions';
@@ -8,7 +13,9 @@ import { CharacterHandType } from '@/const/hand';
 export const $toolTab = atom<ToolTab | undefined>(ToolTab.Character);
 
 export const $actionExportType = atom<ActionExportType>(ActionExportType.Gif);
-export const $actionExportHandType = atom<CharacterHandType>(CharacterHandType.SingleHand);
+export const $actionExportHandType = atom<CharacterHandType>(
+  CharacterHandType.SingleHand,
+);
 
 /* item dye tab */
 export const $onlyShowDyeable = atom<boolean>(true);
@@ -50,6 +57,13 @@ onSet($toolTab, ({ newValue }) => {
   /* clean render id prevent render table againg when return */
   if (newValue !== ToolTab.ItemDye) {
     $dyeRenderId.set(undefined);
+  }
+  const currentEquipDrawerTab = $currentEquipDrawerTab.get();
+  if (
+    currentEquipDrawerTab === CurrentEquipDrawerTab.Setting &&
+    newValue === ToolTab.Character
+  ) {
+    $currentEquipDrawerTab.set(CurrentEquipDrawerTab.Equip);
   }
 });
 

@@ -24,6 +24,7 @@ interface EquipDrawerProps {
   header?: JSX.Element;
   children?: JSX.Element;
   footer?: JSX.Element;
+  bodyBg?: 'subtle' | 'light';
   variant?: 'left' | 'right';
 }
 export const CurrentEquipDrawer = (props: EquipDrawerProps) => {
@@ -74,7 +75,12 @@ export const CurrentEquipDrawer = (props: EquipDrawerProps) => {
                 </IconButton>
               </HStack>
             </Header>
-            <Body p={2} backgroundColor="bg.subtle">
+            <Body
+              p={2}
+              backgroundColor={
+                props.bodyBg === 'subtle' ? 'bg.subtle' : 'bg.default'
+              }
+            >
               {props.children}
             </Body>
             <Footer>{props.footer}</Footer>

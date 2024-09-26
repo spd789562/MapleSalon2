@@ -31,6 +31,9 @@ export const slotRecipes: Record<string, Partial<SlotRecipeConfig>> = {
   select: {
     jsx: ['Select', /.*Select$/],
   },
+  segmentGroup: {
+    jsx: ['SegmentGroup', /.*SegmentGroup$/],
+  },
   toggleGroup: {
     jsx: ['ToggleGroup', /.*ToggleGroup$/],
     variants: {
