@@ -396,6 +396,7 @@ export class Character extends Container {
   playByInstructions(instructions: WzActionInstruction[]) {
     this.currentInstructions = instructions;
     const maxFrame = instructions.length;
+    this.playBodyFrame();
     this.currentTicker = (delta) => {
       const currentDuration = instructions[this.instructionFrame]?.delay || 100;
       this.currentDelta += delta.deltaMS;
