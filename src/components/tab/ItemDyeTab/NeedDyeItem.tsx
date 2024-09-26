@@ -6,7 +6,7 @@ import { createEquipItemByCategory } from '@/store/character/selector';
 import { getEquipById } from '@/store/string';
 
 import CheckIcon from 'lucide-solid/icons/check';
-import type { ItemProps } from '@/components/ui/toggleGroup';
+import type { ItemProps } from '@/components/ui/cancelableToggleGroup';
 import { LoadableEquipIcon } from '@/components/elements/LoadableEquipIcon';
 import { EllipsisText } from '@/components/ui/ellipsisText';
 import {
