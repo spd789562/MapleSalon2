@@ -310,12 +310,12 @@ export class Character extends Container {
       bodyFrame.updatePieces();
     }
     if (this.isAnimating) {
+      this.isPlaying = true;
       this.nameTag.play();
       this.playByInstructions(this.currentInstructions);
     } else {
       this.playBodyFrame();
     }
-
     this.isLoading = false;
     this.loadEvent.emit('loaded');
   }

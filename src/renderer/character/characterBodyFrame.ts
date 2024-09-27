@@ -106,7 +106,7 @@ export class CharacterBodyFrame {
       const container = this.character.getOrCreatZmapLayer(zmap, layer);
 
       for (const piece of pieces) {
-        if (piece.isEmpty) {
+        if (piece.isEmpty || piece.destroyed) {
           continue;
         }
 

@@ -14,6 +14,7 @@ export class ZoomContainer extends Viewport {
     const worldWidth = app.screen.width * worldScale;
     const worldHeight = app.screen.height * worldScale;
     super({
+      allowPreserveDragOutside: true,
       screenWidth: options.width,
       screenHeight: options.height,
       worldWidth,

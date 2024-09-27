@@ -1,11 +1,14 @@
-import { onMount, onCleanup, createEffect, createSignal, from } from 'solid-js';
+import { onCleanup, createEffect, createSignal, from, on } from 'solid-js';
 import type { ReadableAtom } from 'nanostores';
 
 import {
   $isGlobalRendererInitialized,
   $globalRenderer,
 } from '@/store/renderer';
-import type { CharacterData, CharacterItemInfo } from '@/store/character/store';
+import type {
+  CharacterData,
+  CharacterItemInfo,
+} from '@/store/character/store';
 import {
   MAX_ZOOM,
   MIN_ZOOM,
@@ -32,7 +35,6 @@ export interface CharacterPreviewViewProps {
   onLoaded: () => void;
   store: ReadableAtom<CharacterData>;
   target: string;
-  isLockInteraction: boolean;
 }
 export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   const zoomInfo = usePureStore($previewZoomInfo);
@@ -66,7 +68,6 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
       height: 340,
       worldScale: 2,
       maxScale: MAX_ZOOM,
-      defaultInteraction: false,
     });
     const defaultInfo = zoomInfo();
     viewport.scaled = defaultInfo.zoom;
@@ -76,7 +77,8 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
       if (
         viewport &&
         viewport.scaled <= MAX_ZOOM &&
-        viewport.scaled >= MIN_ZOOM
+        viewport.scaled >= MIN_ZOOM &&
+        !viewport?.destroyed
       ) {
         const clampedScaled = (viewport.scaled * 100) / 100;
         viewport.scaled = clampedScaled;
@@ -91,38 +93,29 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     });
     container.appendChild(app.canvas);
     viewport.addChild(ch);
-
     app.stage.addChild(viewport);
 
     setIsInit(true);
   }
 
-  createEffect(() => {
-    if (isRendererInitialized()) {
-      initScene();
-    }
-  });
+  createEffect(
+    on(isRendererInitialized, (initialized) => {
+      if (initialized) {
+        initScene();
+      }
+    }),
+  );
 
   onCleanup(() => {
     const app = $globalRenderer.get();
     if (viewport) {
       app.stage.removeChild(viewport);
+      viewport.removeAllListeners();
       viewport.destroy({
         children: true,
       });
     }
     container.children.length && container.removeChild(app.canvas);
-  });
-
-  createEffect(() => {
-    const isLock = props.isLockInteraction;
-    if (viewport) {
-      if (isLock) {
-        viewport.disable();
-      } else {
-        viewport.enable();
-      }
-    }
   });
 
   createEffect(async () => {

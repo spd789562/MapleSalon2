@@ -20,7 +20,6 @@ export async function initialGlobalRenderer() {
     width: 300,
     height: 340,
     backgroundAlpha: 0,
-    useBackBuffer: true,
     preference: $preferRenderer.get(),
   });
   $isGlobalRendererInitialized.set(true);

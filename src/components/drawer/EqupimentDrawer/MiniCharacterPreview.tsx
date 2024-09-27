@@ -85,6 +85,7 @@ export const MiniCharacterPreview = (props: MiniCharacterPreviewProps) => {
     const app = $globalRenderer.get();
     if (viewport) {
       app.stage.removeChild(viewport);
+      viewport.removeAllListeners();
       viewport.destroy({
         children: true,
       });
