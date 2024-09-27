@@ -357,14 +357,14 @@ export class Character extends Container {
     const weaponActionItem = weaponItem?.actionPieces.get(
       action,
     ) as CharacterActionItem;
-    if (!(bodyActionItem && weaponActionItem)) {
+    if (!bodyActionItem) {
       return [];
     }
 
     /* some weapon only have few frame */
     const minFrame = Math.min(
       bodyActionItem.frameCount,
-      weaponActionItem.frameCount,
+      weaponActionItem?.frameCount ?? bodyActionItem.frameCount,
     );
     const needBounce =
       this.action === CharacterAction.Alert || this.action.startsWith('stand');

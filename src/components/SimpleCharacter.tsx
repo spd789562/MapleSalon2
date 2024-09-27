@@ -4,6 +4,7 @@ import {
   createSignal,
   Show,
   untrack,
+  onCleanup,
 } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 
@@ -33,6 +34,7 @@ import { CharacterAction } from '@/const/actions';
 import { CharacterExpressions } from '@/const/emotions';
 import { CharacterHandType } from '@/const/hand';
 import { CharacterEarType } from '@/const/ears';
+import { nextTick } from '@/utils/eventLoop';
 
 export interface SimpleCharacterProps extends Partial<CharacterInfo> {
   title: string;
@@ -47,6 +49,7 @@ export interface SimpleCharacterProps extends Partial<CharacterInfo> {
   itemContext?: Omit<ItemContextMenuTargetInfo, 'icon'>;
 }
 export const SimpleCharacter = (props: SimpleCharacterProps) => {
+  let abortController: AbortController | undefined;
   const isInit = useStore($isGlobalRendererInitialized);
   const [url, setUrl] = createSignal<string>('');
   /* [x, y] */
@@ -96,9 +99,19 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
         setUrl('');
         const character = new Character();
         if (app.renderer?.extract) {
-          await simpleCharacterLoadingQueue.add(() =>
-            character.update(characterData),
-          );
+          abortController = new AbortController();
+          try {
+            await simpleCharacterLoadingQueue.add(
+              () => character.update(characterData),
+              { signal: abortController.signal },
+            );
+          } catch (e) {
+            if (e instanceof DOMException && e.name === 'AbortError') {
+              return;
+            }
+            console.error('simple character render error', e);
+          }
+          await nextTick();
           const offsetBounds = character.getLocalBounds();
           const imageCenter = {
             x: offsetBounds.width / 2,
@@ -142,6 +155,10 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
         }
       }
     }
+  });
+
+  onCleanup(() => {
+    abortController?.abort();
   });
 
   const contextTriggerProps = useItemContextTrigger();
