@@ -6,6 +6,7 @@ import {
   untrack,
   onCleanup,
 } from 'solid-js';
+import type { Renderer } from 'pixi.js';
 import { useStore } from '@nanostores/solid';
 
 import {
@@ -13,7 +14,11 @@ import {
   $globalRenderer,
   $simpleCharacterCache,
 } from '@/store/renderer';
-import type { CharacterItems, CharacterInfo } from '@/store/character/store';
+import type {
+  CharacterItems,
+  CharacterInfo,
+  CharacterData,
+} from '@/store/character/store';
 import { getUpdateItems } from '@/store/character/utils';
 import {
   setItemContextMenuTargetInfo,
@@ -62,6 +67,60 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
       ? getUpdateItems(props.items, props.itemsOverride || {})
       : props.items,
   );
+
+  async function makeCharacterImage(
+    renderer: Renderer,
+    hash: string,
+    characterData: CharacterData,
+  ) {
+    const character = new Character();
+    if (renderer?.extract) {
+      await character.update(characterData);
+      await nextTick();
+      const offsetBounds = character.getLocalBounds();
+      const imageCenter = {
+        x: offsetBounds.width / 2,
+        y: offsetBounds.height / 2,
+      };
+      const bellyPos = {
+        x: -offsetBounds.x,
+        y: -offsetBounds.y,
+      };
+      const calcOffset = {
+        x: Math.floor(imageCenter.x - bellyPos.x) + 4,
+        y: Math.floor(imageCenter.y - bellyPos.y) + 30,
+      };
+      /* prevent pixi's error */
+      character.effects = [];
+
+      const canvas = extractCanvas(character, renderer);
+
+      const url = await new Promise<string>((resolve) => {
+        canvas.toBlob?.((blob) => {
+          if (blob) {
+            return resolve(URL.createObjectURL(blob));
+          }
+          return resolve('');
+        }, 'image/png');
+      });
+
+      if (url) {
+        if (props.useOffset) {
+          setOffset([calcOffset.x, calcOffset.y]);
+        }
+        $simpleCharacterCache.setKey(
+          hash,
+          `${url}?x=${calcOffset.x}&y=${calcOffset.y}`,
+        );
+        setUrl(url);
+      }
+      await nextTick();
+      character.reset();
+      character.loadEvent.removeAllListeners();
+      character.destroy();
+    }
+  }
+
   createEffect(() => {
     if (!props.useOffset) {
       setOffset([0, 0]);
@@ -97,61 +156,20 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
         }
       } else {
         setUrl('');
-        const character = new Character();
-        if (app.renderer?.extract) {
-          abortController = new AbortController();
-          try {
-            await simpleCharacterLoadingQueue.add(
-              () => character.update(characterData),
-              { signal: abortController.signal },
-            );
-          } catch (e) {
-            if (e instanceof DOMException && e.name === 'AbortError') {
-              return;
-            }
-            console.error('simple character render error', e);
+        if (!app.renderer?.extract) {
+          return;
+        }
+        abortController = new AbortController();
+        try {
+          await simpleCharacterLoadingQueue.add(
+            () => makeCharacterImage(app.renderer, hash, characterData),
+            { signal: abortController.signal },
+          );
+        } catch (e) {
+          if (e instanceof DOMException && e.name === 'AbortError') {
+            return;
           }
-          await nextTick();
-          const offsetBounds = character.getLocalBounds();
-          const imageCenter = {
-            x: offsetBounds.width / 2,
-            y: offsetBounds.height / 2,
-          };
-          const bellyPos = {
-            x: -offsetBounds.x,
-            y: -offsetBounds.y,
-          };
-          const calcOffset = {
-            x: Math.floor(imageCenter.x - bellyPos.x) + 4,
-            y: Math.floor(imageCenter.y - bellyPos.y) + 30,
-          };
-          /* prevent pixi's error */
-          character.effects = [];
-
-          const canvas = extractCanvas(character, app.renderer);
-
-          const url = await new Promise<string>((resolve) => {
-            canvas.toBlob?.((blob) => {
-              if (blob) {
-                return resolve(URL.createObjectURL(blob));
-              }
-              return resolve('');
-            }, 'image/png');
-          });
-
-          if (url) {
-            if (props.useOffset) {
-              setOffset([calcOffset.x, calcOffset.y]);
-            }
-            $simpleCharacterCache.setKey(
-              hash,
-              `${url}?x=${calcOffset.x}&y=${calcOffset.y}`,
-            );
-            setUrl(url);
-          }
-          character.reset();
-          character.loadEvent.removeAllListeners();
-          character.destroy();
+          console.error('simple character render error', e);
         }
       }
     }
