@@ -11,10 +11,6 @@ import {
   updateCenter,
   updateZoom,
 } from '@/store/previewZoom';
-import {
-  resetUpscaleSource,
-  setUpscaleSource,
-} from '@/store/expirement/upscale';
 import { $showUpscaledCharacter } from '@/store/trigger';
 import { usePureStore } from '@/store';
 
@@ -27,14 +23,11 @@ import {
   type PipelineOption,
 } from '@/renderer/filter/anime4k/const';
 
-import { toaster } from '@/components/GlobalToast';
-
 export interface CharacterViewProps {
   onLoad: () => void;
   onLoaded: () => void;
   store: ReadableAtom<CharacterData>;
   target: string;
-  isLockInteraction: boolean;
 }
 export const CharacterView = (props: CharacterViewProps) => {
   const zoomInfo = usePureStore($previewZoomInfo);
@@ -64,7 +57,6 @@ export const CharacterView = (props: CharacterViewProps) => {
       height: 340,
       worldScale: 2,
       maxScale: MAX_ZOOM,
-      defaultInteraction: false,
     });
     const defaultInfo = zoomInfo();
     viewport.scaled = defaultInfo.zoom;
@@ -103,17 +95,6 @@ export const CharacterView = (props: CharacterViewProps) => {
     app.destroy(undefined, {
       children: true,
     });
-  });
-
-  createEffect(() => {
-    const isLock = props.isLockInteraction;
-    if (viewport) {
-      if (isLock) {
-        viewport.disable();
-      } else {
-        viewport.enable();
-      }
-    }
   });
 
   createEffect(async () => {

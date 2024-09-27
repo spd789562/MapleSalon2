@@ -1,4 +1,4 @@
-import { Show, createSignal, onCleanup, onMount } from 'solid-js';
+import { Show, createSignal } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 import { styled } from 'styled-system/jsx/factory';
 
@@ -24,7 +24,6 @@ import { PreviewSceneBackground } from '@/const/scene';
 export const CharacterScene = () => {
   let containerRef!: HTMLDivElement;
   const [isLoading, setIsLoading] = createSignal(false);
-  const [isLockInteraction, setIsLockInteraction] = createSignal(true);
   const scene = useStore($currentScene);
   const customColorStyle = useStore($sceneCustomColorStyle);
   const isShowComparison = useStore($showPreviousCharacter);
@@ -35,36 +34,12 @@ export const CharacterScene = () => {
   function handleLoaded() {
     setIsLoading(false);
   }
-  function handleFocusContainer() {
-    setIsLockInteraction(false);
-  }
-  function handleBlurContainer() {
-    setIsLockInteraction(true);
-  }
-
-  onMount(() => {
-    function preventScrollWhenNotLock(e: Event) {
-      if (!isLockInteraction()) {
-        e.preventDefault();
-      }
-    }
-    containerRef.addEventListener('wheel', preventScrollWhenNotLock, {
-      passive: false,
-    });
-    onCleanup(() => {
-      containerRef.removeEventListener('wheel', preventScrollWhenNotLock);
-    });
-  });
 
   return (
     <CharacterSceneContainer
       ref={containerRef}
       bgType={scene()}
       style={customColorStyle()}
-      role="button"
-      tabIndex="0"
-      onFocus={handleFocusContainer}
-      onBlur={handleBlurContainer}
     >
       <Show when={isShowComparison()}>
         <CharacterView
@@ -72,7 +47,6 @@ export const CharacterScene = () => {
           onLoaded={handleLoaded}
           store={$currentCharacter}
           target="original"
-          isLockInteraction={isLockInteraction()}
         />
         <CompareSeparator>
           <ChevronRightIcon size={32} />
@@ -83,7 +57,6 @@ export const CharacterScene = () => {
         onLoaded={handleLoaded}
         store={$previewCharacter}
         target="preview"
-        isLockInteraction={isLockInteraction()}
       />
       <TopTool>
         <ShowPreviousSwitch />
@@ -109,11 +82,6 @@ const CharacterSceneContainer = styled('div', {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    _focus: {
-      outline: '2px solid',
-      outlineColor: 'accent.a6',
-      boxShadow: '0 0 5px 2px {colors.accent.a6}',
-    },
   },
   variants: {
     bgType: {
