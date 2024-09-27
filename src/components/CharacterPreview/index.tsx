@@ -28,7 +28,7 @@ export const CharacterPreview = () => {
         <AnimatingSwitch />
       </HStack>
       <CharacterScene />
-      <HStack mt="2">
+      <HStack mt="2" pl="2">
         <NameInput />
         <NameTagSwitch />
         <HStack marginLeft="auto">

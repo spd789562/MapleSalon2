@@ -10,7 +10,6 @@ import { GlobalConfirmDialog } from './components/GlobalConfirmDialog';
 import { GlobalItemContextMenu } from './components/GlobalItemContextMenu';
 
 import { InitialScreen } from './components/InitialScreen';
-import { CharacterPreview } from './components/CharacterPreview';
 import { ToolTabsRadioGroup } from './components/ToolTabsRadioGroup';
 import { ToolTabPage } from './components/ToolTabPage';
 
@@ -44,7 +43,6 @@ function App() {
       </Show>
       <Show when={ready()}>
         <AppContainer>
-          <CharacterPreview />
           <ToolTabsRadioGroup />
           <ToolTabPage />
         </AppContainer>

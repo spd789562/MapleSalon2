@@ -1,4 +1,4 @@
-import { type Accessor, Show } from 'solid-js';
+import { type Accessor, Switch, Match } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
 
 import { HStack } from 'styled-system/jsx/hstack';
@@ -8,10 +8,10 @@ import type { ActionCharacterRef } from './ActionCharacter';
 import { ExportAnimateButton } from './ExportAnimateButton';
 import { ExportFrameButton } from './ExportFrameButton';
 
-import { CharacterActionNames, type CharacterAction } from '@/const/actions';
+import { CharacterActionNames, CharacterSpecialActionNames, type CharacterSpecialAction, type CharacterAction } from '@/const/actions';
 
 export interface ActionCardProps {
-  action: CharacterAction;
+  action: CharacterAction | CharacterSpecialAction;
   ref: Accessor<ActionCharacterRef>;
 }
 export const ActionCard = (props: ActionCardProps) => {
@@ -19,12 +19,14 @@ export const ActionCard = (props: ActionCardProps) => {
     <CardContainer>
       <CardTitle w="full">
         <Heading size="lg">
-          <Show
-            when={CharacterActionNames[props.action]}
-            fallback={props.action}
-          >
-            {(name) => name()}
-          </Show>
+          <Switch fallback={props.action}>
+            <Match when={CharacterActionNames[props.action as CharacterAction]}>
+              {(name) => name()}
+            </Match>
+            <Match when={CharacterSpecialActionNames[props.action]}>
+              {(name) => name()}
+            </Match>
+          </Switch>
         </Heading>
         <HStack marginLeft="auto">
           <ExportAnimateButton

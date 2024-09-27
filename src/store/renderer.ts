@@ -6,8 +6,10 @@ import { CharacterLoader } from '@/renderer/character/loader';
 export const $preferRenderer = atom<'webgl' | 'webgpu'>('webgpu');
 
 export const $globalRenderer = atom<Application>(new Application());
+export const $actionRenderer = atom<Application>(new Application());
 
 export const $isGlobalRendererInitialized = atom<boolean>(false);
+export const $isActionRendererInitialized = atom<boolean>(false);
 
 export const $simpleCharacterCache = map<Record<string, string>>({});
 
@@ -16,7 +18,7 @@ export async function initialGlobalRenderer() {
   await CharacterLoader.init();
   await app.init({
     width: 300,
-    height: 300,
+    height: 340,
     backgroundAlpha: 0,
     useBackBuffer: true,
     preference: $preferRenderer.get(),

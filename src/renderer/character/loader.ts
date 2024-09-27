@@ -2,7 +2,7 @@ import { Assets, Sprite, type Texture } from 'pixi.js';
 import { $apiHost } from '@/store/const';
 
 import type { Zmap, Smap } from './const/data';
-import type { WzItem, WzEffectItem } from './const/wz';
+import type { WzItem, WzEffectItem, WzActionInstruction } from './const/wz';
 import type { WzNameTag } from '../nameTag/wz';
 
 import { getItemFolderFromId } from '@/utils/itemFolder';
@@ -13,6 +13,7 @@ class Loader {
   wzImageFolder: string[] = [];
   loadingMap = new Map<string, Promise<unknown>>();
   pathExistCache = new Map<number, string>();
+  instructionMap = new Map<string, WzActionInstruction[]>();
 
   init() {
     return Promise.all([
@@ -20,8 +21,9 @@ class Loader {
       this.loadSmap(),
       this.loadWzImageFolder(),
       this.loadEffect(),
-      this.loadNameTag(),
-    ]);
+    ])
+      .then(() => Promise.all([this.loadNameTag(), this.loadInstructionMap()]))
+      .catch((e) => console.log(e));
   }
   async loadEffect() {
     return await fetch(`${this.apiHost}/node/parse/Effect/ItemEff.img`);
@@ -49,6 +51,34 @@ class Loader {
       .then((data: string[]) =>
         data.filter((path) => path.startsWith('Character')),
       );
+  }
+  async loadInstructionMap() {
+    const data = await this.getPieceWzByPath<
+      Record<string, Record<string, WzActionInstruction>>
+    >('Character/00002000.img');
+    if (!data) {
+      return;
+    }
+    for (const action in data) {
+      const instructions = data[action];
+      /* at lease has two frame */
+      if (!instructions || !instructions[0]?.action) {
+        continue;
+      }
+      const frames: WzActionInstruction[] = [];
+      for (const frame in instructions) {
+        const numberdFrame = Number(frame);
+        if (Number.isNaN(numberdFrame)) {
+          continue;
+        }
+        const instruction = instructions[frame];
+        frames[numberdFrame] = {
+          ...instruction,
+          delay: Math.abs(instruction.delay || 100),
+        };
+      }
+      this.instructionMap.set(action, frames);
+    }
   }
   get apiHost() {
     return $apiHost.get();

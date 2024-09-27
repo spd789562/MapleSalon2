@@ -8,10 +8,10 @@ import {
   EquipItemIcon,
   EquipItemName,
   EquipItemInfo,
-} from '@/components/drawer/CurrentEquipmentDrawer/EquipItem';
-import { EquipItemHSVInfo } from '@/components/drawer/CurrentEquipmentDrawer/EquipItemHSVInfo';
-import { EquipItemMixDyeInfo } from '@/components/drawer/CurrentEquipmentDrawer/EquipItemMixDyeInfo';
-import { ItemNotExistMask } from '@/components/drawer/CurrentEquipmentDrawer/ItemNotExistMask';
+} from '@/components/drawer/CurrentEquipmentDrawer/CurrentEquipList/EquipItem';
+import { EquipItemHSVInfo } from '@/components/drawer/CurrentEquipmentDrawer/CurrentEquipList/EquipItemHSVInfo';
+import { EquipItemMixDyeInfo } from '@/components/drawer/CurrentEquipmentDrawer/CurrentEquipList/EquipItemMixDyeInfo';
+import { ItemNotExistMask } from '@/components/drawer/CurrentEquipmentDrawer/CurrentEquipList/ItemNotExistMask';
 import { CategoryIcon } from '@/components/elements/CategoryIcon';
 
 import { isDyeableId, isMixDyeableId } from '@/utils/itemId';

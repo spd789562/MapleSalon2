@@ -4,14 +4,18 @@ import { styled } from 'styled-system/jsx/factory';
 
 import { $toolTab } from '@/store/toolTab';
 
-import CloseIcon from 'lucide-solid/icons/x';
+// import CloseIcon from 'lucide-solid/icons/x';
 import { Grid } from 'styled-system/jsx/grid';
 import * as RadioButtonGroup from '@/components/ui/radioButtonGroup';
-import { IconButton } from '@/components/ui/icon-button';
+// import { IconButton } from '@/components/ui/icon-button';
 
 import { ToolTab, ToolTabNames } from '@/const/toolTab';
 
 const options = [
+  {
+    value: ToolTab.Character,
+    label: ToolTabNames[ToolTab.Character],
+  },
   {
     value: ToolTab.AllAction,
     label: ToolTabNames[ToolTab.AllAction],
@@ -37,9 +41,9 @@ export const ToolTabsRadioGroup = () => {
     $toolTab.set(detail.value as ToolTab);
   }
 
-  function handleClear() {
-    $toolTab.set(undefined);
-  }
+  // function handleClear() {
+  //   $toolTab.set(undefined);
+  // }
 
   return (
     <ToolTabsContainer>
@@ -49,12 +53,12 @@ export const ToolTabsRadioGroup = () => {
         onValueChange={handleChange}
       >
         <Grid
-          gridTemplateColumns="2.5rem repeat(8, 1fr)"
+          gridTemplateColumns="repeat(8, 1fr)"
           gridRow={1}
           alignItems="center"
           gap={2}
         >
-          <RadioButtonGroup.Context>
+          {/* <RadioButtonGroup.Context>
             {(api) => (
               <IconButton
                 variant="ghost"
@@ -68,7 +72,7 @@ export const ToolTabsRadioGroup = () => {
                 <CloseIcon />
               </IconButton>
             )}
-          </RadioButtonGroup.Context>
+          </RadioButtonGroup.Context> */}
           <Index each={options}>
             {(option) => (
               <RadioButtonGroup.Item value={option().value} minWidth="0">

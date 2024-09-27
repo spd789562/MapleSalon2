@@ -37,6 +37,9 @@ import { CharacterAction } from '@/const/actions';
 import { CharacterExpressions } from '@/const/emotions';
 import { CharacterHandType } from '@/const/hand';
 
+const BaseWeaponId = 30;
+const GunWeaponId = 49;
+
 export class CharacterItem implements RenderItemInfo {
   info: ItemInfo;
   islot: PieceIslot[];
@@ -100,17 +103,12 @@ export class CharacterItem implements RenderItemInfo {
     return isWeaponId(this.info.id) || isCashWeaponId(this.info.id);
   }
 
-  get isAllAncherBuilt() {
-    return Array.from(this.actionPieces.values()).every(
-      (actionItem) => actionItem.isAllAncherBuilt,
-    );
-  }
-  isActionAncherBuilt(action: CharacterAction) {
+  isAncherAncherBuiltByFrame(action: CharacterAction, frame: number) {
     const actionItem = this.actionPieces.get(action);
     if (!actionItem) {
       return true;
     }
-    return actionItem.isAllAncherBuilt;
+    return actionItem.isAllAncherBuiltByFrame(frame);
   }
 
   private loadFace(wz: WzItem) {
@@ -178,12 +176,21 @@ export class CharacterItem implements RenderItemInfo {
   private loadWeapon(wz: WzItem) {
     const isSingleHand =
       this.character.handType === CharacterHandType.SingleHand;
+    const isGunHand = this.character.handType === CharacterHandType.Gun;
+    const baseWz = wz[BaseWeaponId] as unknown as WzItem;
+    const GunWz = wz[GunWeaponId] as unknown as WzItem;
+
+    /* gun's use 49 code */
+    if (isGunHand && GunWz?.[this.character.action]) {
+      return this.loadAction(GunWz);
+    }
+
+    /* if has 30, just use 30 */
+    if (baseWz?.[this.character.action]) {
+      return this.loadAction(baseWz);
+    }
     const idIncurrment = isSingleHand ? -1 : 1;
     const [start, end] = isSingleHand ? [69, 29] : [30, 70];
-    /* if has 30, just use 30 */
-    if ((wz[30] as unknown as WzItem)?.[this.character.action]) {
-      return this.loadAction(wz[30] as unknown as WzItem);
-    }
 
     /* single hand weapon usually has higher id */
     for (let id = start; id !== end; id += idIncurrment) {
@@ -240,22 +247,37 @@ export class CharacterItem implements RenderItemInfo {
     }
   }
 
+  async prepareActionAnimatableResource(
+    name: CharacterAction | CharacterExpressions,
+  ) {
+    const actionItem = this.actionPieces.get(name);
+    if (!actionItem) {
+      return;
+    }
+    await actionItem.loadAnimatableResource();
+    actionItem.prepareAnimatableResourece();
+  }
   async prepareActionResource(name: CharacterAction | CharacterExpressions) {
     const actionItem = this.actionPieces.get(name);
     if (!actionItem) {
       return;
     }
-    await actionItem.prepareResourece();
+    await actionItem.loadResource();
+    actionItem.prepareResourece();
+    actionItem.prepareAnimatableResourece();
   }
   async prepareActionResourceByFrame(
     name: CharacterAction | CharacterExpressions,
     frame: number,
   ) {
     const actionItem = this.actionPieces.get(name);
+
     if (!actionItem) {
       return;
     }
-    await actionItem.prepareResoureceByFrame(frame);
+    await actionItem.loadResourceByFrame(frame);
+    actionItem.prepareResoureceByFrame(frame);
+    actionItem.prepareAnimatableResoureceByFrame(frame);
   }
 
   tryBuildAncher(
@@ -272,6 +294,23 @@ export class CharacterItem implements RenderItemInfo {
       return currentAnchers;
     }
     return item.tryBuildAncher(currentAnchers);
+  }
+
+  tryBuildAncherByFrame(
+    action: CharacterAction,
+    currentAnchers: Map<AncherName, Vec2>,
+    frame: number,
+  ): Map<AncherName, Vec2> {
+    let item: CharacterActionItem | CharacterFaceItem | undefined;
+    if (this.isUseExpressionItem) {
+      item = this.actionPieces.get(this.character.expression);
+    } else {
+      item = this.actionPieces.get(action);
+    }
+    if (!item) {
+      return currentAnchers;
+    }
+    return item.tryBuildAncherByFrame(currentAnchers, frame);
   }
 
   updateFilter() {

@@ -3,9 +3,8 @@ import { Index } from 'solid-js';
 import { usePureStore } from '@/store';
 import { $onlyShowDyeable, $selectedEquipSubCategory } from '@/store/toolTab';
 
-import { Grid } from 'styled-system/jsx/grid';
 import { Stack } from 'styled-system/jsx/stack';
-import * as ToggleGroup from '@/components/ui/toggleGroup';
+import * as ToggleGroup from '@/components/ui/cancelableToggleGroup';
 
 import { NeedDyeItem } from './NeedDyeItem';
 import type { EquipSubCategory } from '@/const/equipments';

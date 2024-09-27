@@ -19,20 +19,23 @@ const options = [
     label: '雙手',
     value: CharacterHandType.DoubleHand,
   },
+  {
+    label: '火槍',
+    value: CharacterHandType.Gun,
+  },
 ];
 
 export const HandTypeToggleGroup = () => {
   const earType = useStore($currentHandType);
   function handleHandTypeChange(details: ValueChangeDetails) {
-    const firstItem = details.value?.[0];
-    firstItem && setCharacterHandType(firstItem as CharacterHandType);
+    setCharacterHandType(details.value as CharacterHandType);
   }
 
   return (
     <SimpleToggleGroup
       size="sm"
       options={options}
-      value={[earType()]}
+      value={earType()}
       onValueChange={handleHandTypeChange}
     />
   );

@@ -67,6 +67,9 @@ export class CharacterItemPiece implements AnimatableFrame {
       CharacterLoader.zmap?.findIndex((z) => z === this.slotName) ||
       0;
     this.isIndepened = Object.keys(this.map).length === 1 || noAncher;
+    if (noAncher) {
+      this.isAncherBuilt = true;
+    }
   }
 
   get slotName() {
@@ -126,6 +129,7 @@ export class CharacterItemPiece implements AnimatableFrame {
       frameAncherMap.get(ancher),
     );
     const baseAncher = baseAncherName && frameAncherMap.get(baseAncherName);
+
     // if baseAncher doesn't contain any related ancher of this pieces, skip for now
     if (!(baseAncherName && baseAncher) || this.noAncher) {
       return;

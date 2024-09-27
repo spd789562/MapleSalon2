@@ -10,9 +10,10 @@ import {
 } from '@/store/character/selector';
 import { $showPreviousCharacter } from '@/store/trigger';
 
-import LoaderCircle from 'lucide-solid/icons/loader-circle';
 import ChevronRightIcon from 'lucide-solid/icons/chevron-right';
+import { LoadingWithBackdrop } from '@/components/elements/LoadingWithBackdrop';
 import { CharacterView } from './Character';
+import { CharacterPreviewView } from './CharacterPreview';
 import { CharacterSceneSelection } from './CharacterSceneSelection';
 import { ShowPreviousSwitch } from './ShowPreviousSwitch';
 import { ShowUpscaleSwitch } from './ShowUpscaleSwitch';
@@ -77,7 +78,7 @@ export const CharacterScene = () => {
           <ChevronRightIcon size={32} />
         </CompareSeparator>
       </Show>
-      <CharacterView
+      <CharacterPreviewView
         onLoad={handleLoad}
         onLoaded={handleLoaded}
         store={$previewCharacter}
@@ -93,11 +94,7 @@ export const CharacterScene = () => {
       </BottomLeftTool>
       <CharacterSceneSelection />
       <Show when={isLoading()}>
-        <LoadingBackdrop>
-          <Loading>
-            <LoaderCircle size={48} />
-          </Loading>
-        </LoadingBackdrop>
+        <LoadingWithBackdrop />
       </Show>
     </CharacterSceneContainer>
   );
@@ -182,27 +179,5 @@ const CompareSeparator = styled('div', {
     mx: 2,
     backgroundColor: 'bg.default',
     color: 'fg.default',
-  },
-});
-
-const LoadingBackdrop = styled('div', {
-  base: {
-    position: 'absolute',
-    top: '0',
-    left: '0',
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'bg.muted',
-    opacity: 0.75,
-  },
-});
-
-const Loading = styled('div', {
-  base: {
-    animation: 'rotate infinite 1s linear',
-    color: 'fg.muted',
   },
 });

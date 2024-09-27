@@ -1,9 +1,11 @@
 import { atom } from 'nanostores';
 
 import { $apiHost } from './const';
+import { $initLoadProgress, InitLoadProgress } from './initialize';
 
 import type { EquipCategory } from '@/const/equipments';
 import type { Gender } from '@/utils/itemId';
+import { nextTick } from '@/utils/eventLoop';
 
 const MAX_HISTORY_SIZE = 200;
 
@@ -53,6 +55,8 @@ export function appendHistory(item: EquipItem) {
   }
 }
 export async function prepareAndFetchEquipStrings() {
+  $initLoadProgress.set(InitLoadProgress.InitString);
+  await nextTick();
   await fetch(`${$apiHost.get()}/string/equip/prepare?extra=true`);
   const strings = await fetch(`${$apiHost.get()}/string/equip?cache=14400`)
     .then((res) => res.json())

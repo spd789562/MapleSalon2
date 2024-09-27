@@ -1,6 +1,8 @@
 import { createSignal, createEffect, onMount, onCleanup, from } from 'solid-js';
+import { useStore } from '@nanostores/solid';
 
 import { $previewCharacter } from '@/store/character/selector';
+import { $actionExportHandType } from '@/store/toolTab';
 
 import type { Application } from 'pixi.js';
 import { Character } from '@/renderer/character/character';
@@ -11,7 +13,12 @@ import {
 } from '@/renderer/character/characterToCanvasFrames';
 import { characterLoadingQueue } from '@/utils/characterLoadingQueue';
 
-import { isDoubleHandAction, type CharacterAction } from '@/const/actions';
+import {
+  isValidAction,
+  isDoubleHandAction,
+  type CharacterSpecialAction,
+  type CharacterAction,
+} from '@/const/actions';
 import { CharacterHandType } from '@/const/hand';
 
 export interface ActionCharacterRef {
@@ -19,13 +26,14 @@ export interface ActionCharacterRef {
   makeCharacterFrames: () => Promise<CanvasFramesData>;
 }
 export interface ActionCharacterProps {
-  action: CharacterAction;
+  action: CharacterAction | CharacterSpecialAction;
   ref: (element: ActionCharacterRef) => void;
   mainApp: Application;
   position: { x: number; y: number };
 }
 export const ActionCharacter = (props: ActionCharacterProps) => {
   const characterData = from($previewCharacter);
+  const exportHandType = useStore($actionExportHandType);
   const [isInit, setIsInit] = createSignal(false);
 
   let abortController: AbortController | undefined = undefined;
@@ -50,16 +58,20 @@ export const ActionCharacter = (props: ActionCharacterProps) => {
   createEffect(async () => {
     canvasFrameCache.current = undefined;
     const data = characterData();
-    const action = props.action;
-    const handType = isDoubleHandAction(props.action)
-      ? CharacterHandType.DoubleHand
-      : CharacterHandType.SingleHand;
+    const action = props.action as CharacterAction;
+    const instruction = isValidAction(action) ? undefined : props.action;
+    const handType =
+      exportHandType() === CharacterHandType.Gun
+        ? CharacterHandType.Gun
+        : isDoubleHandAction(action)
+          ? CharacterHandType.DoubleHand
+          : CharacterHandType.SingleHand;
     if (isInit() && data) {
       abortController?.abort();
       abortController = new AbortController();
       try {
         await characterLoadingQueue.add(
-          () => character.update({ ...data, action, handType }),
+          () => character.update({ ...data, action, instruction, handType }),
           { signal: abortController.signal },
         );
       } catch (e) {
@@ -76,7 +88,8 @@ export const ActionCharacter = (props: ActionCharacterProps) => {
   });
 
   onCleanup(() => {
-    character.reset();
+    props.mainApp.stage.removeChild(character);
+    character.destroy({ children: true });
   });
 
   return null;

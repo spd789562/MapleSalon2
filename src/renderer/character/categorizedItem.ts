@@ -12,6 +12,7 @@ import {
 } from './itemPiece';
 import { CharacterLoader } from './loader';
 import { CharacterAnimatablePart } from './characterAnimatablePart';
+import { CharacterStaticPart } from './characterStaticPart';
 
 import type { CharacterEarType } from '@/const/ears';
 import { CharacterAction } from '@/const/actions';
@@ -24,7 +25,9 @@ export abstract class CategorizedItem<Name extends string> {
 
   unresolvedItems: Map<PieceName, CharacterItemPiece[][]>;
 
-  items: Map<PieceName, CharacterAnimatablePart[]>;
+  /* usually only effect will be here */
+  animatableItems: Map<PieceName, CharacterAnimatablePart[]>;
+  items: Map<PieceName, CharacterStaticPart[][]>;
 
   wz: Record<number, WzPieceFrame>;
   effectWz: WzEffectActionItem | undefined = undefined;
@@ -43,6 +46,7 @@ export abstract class CategorizedItem<Name extends string> {
     this.effectWz = effectWz;
     this.mainItem = mainItem;
     this.items = new Map();
+    this.animatableItems = new Map();
     this.unresolvedItems = new Map();
     const keys = Object.keys(wz).map((key) => Number.parseInt(key, 10) || 0);
     if (this.name === 'default' && keys.length === 0) {
@@ -56,12 +60,23 @@ export abstract class CategorizedItem<Name extends string> {
     this.resolveEffectFrames();
   }
 
-  get allPieces() {
-    return Array.from(this.items.values()).flat();
+  getPiecesByFrame(frame: number) {
+    return (
+      Array.from(this.items.values())
+        .flatMap((item) => item.map((i) => i[frame]))
+        ?.filter((i) => i) || []
+    );
   }
 
-  get isAllAncherBuilt() {
-    return !this.allPieces.some((piece) => !piece.isAllAncherBuilt);
+  isAllAncherBuiltByFrame(frame: number) {
+    return this.getPiecesByFrame(frame).every((piece) => piece.isAncherBuilt);
+  }
+
+  get allPieces() {
+    return Array.from(this.items.values()).flat().flat();
+  }
+  get allAnimatablePieces() {
+    return Array.from(this.animatableItems.values()).flat();
   }
 
   get effectBasePos() {
@@ -96,16 +111,20 @@ export abstract class CategorizedItem<Name extends string> {
         ancherMapByFrame[frame] || new Map([['navel', defaultAncher.navel]]);
       const currentFrameAnchers = ancherMapByFrame[frame];
 
-      this.ancherSetup(currentFrameAnchers, frame);
-
-      for (const item of this.allPieces) {
-        const piece = item.frames[frame];
-        if (piece && !piece.isAncherBuilt) {
-          item.frames[frame].buildAncher?.(currentFrameAnchers);
-        }
-      }
+      this.tryBuildAncherByFrame(currentFrameAnchers, frame);
     }
     return ancherMapByFrame;
+  }
+
+  tryBuildAncherByFrame(currentAncher: Map<AncherName, Vec2>, frame: number) {
+    this.ancherSetup(currentAncher, frame);
+    for (const item of this.getPiecesByFrame(frame)) {
+      const piece = item.frameData;
+      if (piece && !piece.isAncherBuilt) {
+        piece.buildAncher?.(currentAncher);
+      }
+    }
+    return currentAncher;
   }
 
   /** get piece name that validate in Zmap.img */
@@ -262,33 +281,37 @@ export abstract class CategorizedItem<Name extends string> {
     }
   }
 
-  async prepareResoureceByFrame(index: number) {
+  async loadResourceByFrame(index: number) {
     if (this.unresolvedItems.size === 0) {
       return;
     }
     const assets = new Set<UnresolvedAsset>();
     for (const items of this.unresolvedItems.values()) {
       const itemResources = items.flatMap(
-        (item) => item[index]?.getResource?.() || [],
+        (item) => item[index % item.length]?.getResource?.() || [],
       );
       for (const asset of itemResources) {
         assets.add(asset);
       }
     }
     await Assets.load(Array.from(assets));
-
+  }
+  prepareAnimatableResoureceByFrame(index: number) {
     for (const [pieceName, pieces] of this.unresolvedItems) {
-      let existItems = this.items.get(pieceName as PieceName);
+      if (!(pieceName === 'effect' && this.effectWz !== undefined)) {
+        continue;
+      }
+      let existItems = this.animatableItems.get(pieceName as PieceName);
       if (!existItems) {
         const item = [] as CharacterAnimatablePart[];
-        this.items.set(pieceName as PieceName, item);
+        this.animatableItems.set(pieceName as PieceName, item);
         existItems = item;
       }
       for (let pieceIndex = 0; pieceIndex < pieces.length; pieceIndex += 1) {
         const itemPieces = pieces[pieceIndex];
         const existItem = existItems[pieceIndex];
         if (existItem) {
-          /* update certain frame */
+          /* update certain frame of CharacterAnimatablePart */
           existItem.frames = existItem.frames.map((frame, i) => {
             if (i === index) {
               return itemPieces[index];
@@ -296,8 +319,6 @@ export abstract class CategorizedItem<Name extends string> {
             return frame;
           });
         } else {
-          const isEffect =
-            pieceName === 'effect' && this.effectWz !== undefined;
           const frames = itemPieces.map((frame, i) => {
             if (i === index) {
               return frame;
@@ -307,14 +328,73 @@ export abstract class CategorizedItem<Name extends string> {
           existItems[pieceIndex] = new CharacterAnimatablePart(
             this.mainItem,
             frames,
-            isEffect ? this.effectWz?.z : undefined,
+            this.effectWz?.z,
           );
         }
       }
     }
   }
+  prepareResoureceByFrame(index: number) {
+    for (const [pieceName, pieces] of this.unresolvedItems) {
+      if (pieceName === 'effect' && this.effectWz !== undefined) {
+        continue;
+      }
 
-  async prepareResourece() {
+      let existItems = this.items.get(pieceName as PieceName);
+
+      if (!existItems) {
+        const item = [] as CharacterStaticPart[][];
+        this.items.set(pieceName as PieceName, item);
+        existItems = item;
+      }
+      for (let pieceIndex = 0; pieceIndex < pieces.length; pieceIndex += 1) {
+        const itemPieces = pieces[pieceIndex];
+        const existItem = existItems[pieceIndex];
+        const modIndex = index % itemPieces.length;
+        if (existItem) {
+          /* update certain frame */
+          existItem[modIndex]?.updateFrameData(itemPieces[modIndex]);
+        } else {
+          const frames = itemPieces.map((frame, i) => {
+            if (i === modIndex) {
+              return new CharacterStaticPart(this.mainItem, frame, modIndex);
+            }
+            return new CharacterStaticPart(
+              this.mainItem,
+              EMPTY as unknown as CharacterItemPiece,
+              i,
+            );
+          }) as CharacterStaticPart[];
+          existItems[pieceIndex] = frames;
+        }
+      }
+    }
+  }
+
+  async loadAnimatableResource() {
+    // if unresolvedItems is empty, it means the item is already loaded
+    if (this.unresolvedItems.size === 0) {
+      return;
+    }
+    const assets = new Set<UnresolvedAsset>();
+    for (const [pieceName, items] of this.unresolvedItems) {
+      const isEffect = pieceName === 'effect' && this.effectWz !== undefined;
+      if (!isEffect) {
+        continue;
+      }
+      for (const itemPieces of items) {
+        const itemResources = itemPieces.flatMap(
+          (item) => item.getResource?.() || [],
+        );
+        for (const asset of itemResources) {
+          assets.add(asset);
+        }
+      }
+    }
+
+    await Assets.load(Array.from(assets));
+  }
+  async loadResource() {
     // if unresolvedItems is empty, it means the item is already loaded
     if (this.unresolvedItems.size === 0) {
       return;
@@ -333,25 +413,54 @@ export abstract class CategorizedItem<Name extends string> {
     }
 
     await Assets.load(Array.from(assets));
-
+  }
+  prepareResourece() {
+    this.items.clear();
     for (const [pieceName, pieces] of this.unresolvedItems) {
       const isEffect = pieceName === 'effect' && this.effectWz !== undefined;
-      for (const itemPieces of pieces) {
-        appendItems(this, pieceName, [
-          new CharacterAnimatablePart(
-            this.mainItem,
-            itemPieces,
-            isEffect ? this.effectWz?.z : undefined,
-          ),
-        ]);
+      if (isEffect) {
+        continue;
       }
+      const staticParts = pieces.map((itemPieces) =>
+        itemPieces.map(
+          (pieceData, index) =>
+            new CharacterStaticPart(this.mainItem, pieceData, index),
+        ),
+      );
+      appendItems(this, pieceName, staticParts);
     }
 
     this.unresolvedItems.clear();
   }
+  prepareAnimatableResourece() {
+    for (const [pieceName, pieces] of this.unresolvedItems) {
+      const isEffect = pieceName === 'effect' && this.effectWz !== undefined;
+      if (!isEffect) {
+        continue;
+      }
+      for (const itemPieces of pieces) {
+        appendItems(
+          this,
+          pieceName,
+          [
+            new CharacterAnimatablePart(
+              this.mainItem,
+              itemPieces,
+              this.effectWz?.z,
+            ),
+          ],
+          'animatableItems',
+        );
+      }
+    }
+  }
 
   destroy() {
     for (const item of this.allPieces) {
+      item.removeFromParent();
+      item.destroy();
+    }
+    for (const item of this.allAnimatablePieces) {
       item.removeFromParent();
       item.destroy();
     }
@@ -413,12 +522,15 @@ function appendUnresolvedItems<T extends string>(
 function appendItems<T extends string>(
   item: CategorizedItem<T>,
   name: string,
-  items: CharacterAnimatablePart[],
+  items: CharacterAnimatablePart[] | CharacterStaticPart[][],
+  fields: 'items' | 'animatableItems' = 'items',
 ) {
-  const existItem = item.items.get(name as PieceName);
+  const existItem = item[fields].get(name as PieceName);
   if (existItem) {
+    /* @ts-ignore */
     existItem.push(...items);
   } else {
-    item.items.set(name as PieceName, items);
+    /* @ts-ignore */
+    item[fields].set(name as PieceName, items);
   }
 }

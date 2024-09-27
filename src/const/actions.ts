@@ -34,6 +34,8 @@ export enum CharacterAction {
   SwingTF = 'swingTF',
 }
 
+export type CharacterSpecialAction = string;
+
 export const CharacterActionNames: Partial<Record<CharacterAction, string>> = {
   [CharacterAction.Stand1]: '站立',
   [CharacterAction.Stand2]: '站立(雙手)',
@@ -49,6 +51,36 @@ export const CharacterActionNames: Partial<Record<CharacterAction, string>> = {
   [CharacterAction.Prone]: '趴下',
   [CharacterAction.ProneStab]: '趴下攻擊',
 };
+
+export const CharacterSpecialActionNames: Record<
+  CharacterSpecialAction,
+  string
+> = {
+  stand1_floating: '漂浮(單手)',
+  stand2_floating: '漂浮(雙手)',
+};
+
+export const GunActions: CharacterAction[] = [
+  CharacterAction.Stand1,
+  CharacterAction.Walk1,
+  CharacterAction.Alert,
+  CharacterAction.Fly,
+  CharacterAction.Jump,
+  CharacterAction.Prone,
+  CharacterAction.ProneStab,
+  CharacterAction.Shoot2,
+  CharacterAction.StabO1,
+  CharacterAction.StabO2,
+  CharacterAction.StabT2,
+  CharacterAction.SwingO3,
+  CharacterAction.SwingOF,
+  CharacterAction.SwingP1,
+  CharacterAction.SwingP2,
+  CharacterAction.SwingPF,
+  CharacterAction.SwingT1,
+  CharacterAction.SwingT2,
+  CharacterAction.SwingT3,
+];
 
 export function isDoubleHandAction(action: CharacterAction) {
   return action === CharacterAction.Walk2 || action === CharacterAction.Stand2;

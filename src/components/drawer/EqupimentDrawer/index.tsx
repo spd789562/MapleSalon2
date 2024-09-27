@@ -1,3 +1,8 @@
+import { Match, Switch } from 'solid-js';
+import { useStore } from '@nanostores/solid';
+
+import { $toolTab } from '@/store/toolTab';
+
 import { Grid } from 'styled-system/jsx/grid';
 import { EquipDrawer } from './EquipDrawer';
 import { EquipEdit } from '@/components/EquipEdit';
@@ -11,11 +16,20 @@ import {
 } from './CategorySelection';
 import { CharacterRenderingSwitch } from './CharacterRenderingSwitch';
 import { HideOnHistoryTab } from './HideOnHistoryTab';
+import { MiniCharacterWindow } from './MiniCharacterWindow';
 
 export const EqupimentDrawer = () => {
+  const tab = useStore($toolTab);
+
   return (
     <EquipDrawer
-      header={<EquipEdit />}
+      header={
+        <Switch fallback={<EquipEdit />}>
+          <Match when={tab() !== 'character'}>
+            <MiniCharacterWindow />
+          </Match>
+        </Switch>
+      }
       body={
         <Grid gridTemplateRows="auto 1fr" height="[100%]">
           <EquipTabs />

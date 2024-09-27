@@ -22,8 +22,9 @@ import { PinIconButton } from '@/components/elements/PinIconButton';
 
 interface EquipDrawerProps {
   header?: JSX.Element;
-  body: JSX.Element;
+  children?: JSX.Element;
   footer?: JSX.Element;
+  bodyBg?: 'subtle' | 'light';
   variant?: 'left' | 'right';
 }
 export const CurrentEquipDrawer = (props: EquipDrawerProps) => {
@@ -58,7 +59,6 @@ export const CurrentEquipDrawer = (props: EquipDrawerProps) => {
           >
             <Header>
               {props.header}
-
               <HStack position="absolute" top="1" right="1">
                 <PinIconButton
                   store={$currentEquipmentDrawerPin}
@@ -75,8 +75,13 @@ export const CurrentEquipDrawer = (props: EquipDrawerProps) => {
                 </IconButton>
               </HStack>
             </Header>
-            <Body p={2} backgroundColor="bg.subtle">
-              {props.body}
+            <Body
+              p={2}
+              backgroundColor={
+                props.bodyBg === 'subtle' ? 'bg.subtle' : 'bg.default'
+              }
+            >
+              {props.children}
             </Body>
             <Footer>{props.footer}</Footer>
           </Content>

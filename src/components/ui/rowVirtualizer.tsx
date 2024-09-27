@@ -31,7 +31,7 @@ export function RowVirtualizer<Item>(props: RowVirtualizerProps<Item>) {
     },
     getScrollElement: () => parentRef,
     estimateSize: () => defaultItemHeight(),
-    overscan: 3,
+    overscan: 2,
   });
 
   createEffect(() => {

@@ -13,7 +13,7 @@ import {
   EquipItemIcon,
   EquipItemName,
   EquipItemInfo,
-} from '@/components/drawer/CurrentEquipmentDrawer/EquipItem';
+} from './EquipItem';
 import { EqipItemActions } from './EquipItemActions';
 import { ItemNotExistMask } from './ItemNotExistMask';
 

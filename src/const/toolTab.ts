@@ -1,4 +1,5 @@
 export enum ToolTab {
+  Character = 'character',
   AllAction = 'allAction',
   HairDye = 'hairDye',
   FaceDye = 'faceDye',
@@ -6,6 +7,7 @@ export enum ToolTab {
 }
 
 export const ToolTabNames: Record<ToolTab, string> = {
+  [ToolTab.Character]: '角色預覽',
   [ToolTab.AllAction]: '全部動作',
   [ToolTab.HairDye]: '髮型顏色',
   [ToolTab.FaceDye]: '臉型顏色',
