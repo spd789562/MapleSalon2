@@ -45,19 +45,6 @@
 <details open>
 <summary>
 
-#### 為什麼有時候角色預覽可以用滑鼠變動大小及拖曳，有時候不行
-</summary>
-
-只有在聚焦在預覽視窗時才可以使用滑鼠拖曳，或用滾輪變動大小，這是為了避免需要頁面捲動時誤觸角色縮放。
-
-聚焦示意圖↓
-![](https://imgur.com/trE3gKp.png)
-
-</details>
-
-<details open>
-<summary>
-
 #### 可以在其他平台使用這個軟體嗎
 </summary>
 
