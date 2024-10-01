@@ -401,7 +401,7 @@ export class Character extends Container {
       const currentDuration = instructions[this.instructionFrame]?.delay || 100;
       this.currentDelta += delta.deltaMS;
       if (this.currentDelta > currentDuration) {
-        this.currentDelta = 0;
+        this.currentDelta %= currentDuration;
         if (this.instructionFrame + 1 >= maxFrame) {
           this.instructionFrame = 0;
         } else {

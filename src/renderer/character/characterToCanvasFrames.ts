@@ -1,4 +1,4 @@
-import type { Renderer } from 'pixi.js';
+import { type Renderer, Ticker } from 'pixi.js';
 
 import type { Character } from './character';
 
@@ -38,6 +38,107 @@ export async function characterToCanvasFrames(
 
   const totalFrameCount = character.currentInstructions.length;
 
+  const resultData = await makeFrames(
+    character,
+    renderer,
+    totalFrameCount,
+    (i) => character.currentInstruction?.delay || 100,
+    (index) => {
+      character.instructionFrame = index;
+      character.playBodyFrame();
+    },
+  );
+
+  if (!isOriginalAnimating) {
+    character.play();
+  }
+
+  character.toggleEffectVisibility(false);
+  await nextTick();
+
+  return resultData;
+}
+
+export async function characterToCanvasFramesWithEffects(
+  character: Character,
+  renderer: Renderer,
+  options?: {
+    frameRate?: number;
+    duractionMs?: number;
+  },
+) {
+  const frameRate = options?.frameRate || 30;
+  const frameMs = 1000 / frameRate;
+  let duractionMs = options?.duractionMs || 0;
+  const needCalculateMaxDuration = !duractionMs;
+
+  const isOriginalAnimating = character.isAnimating;
+
+  Ticker.shared.stop();
+  let current = performance.now();
+  Ticker.shared.update(current);
+
+  character.instructionFrame = 0;
+  character.currentDelta = 0;
+  character.playBodyFrame();
+  for (const effect of character.allEffectPieces) {
+    effect.currentFrame = 0;
+    /* @ts-ignore */
+    effect._currentTime = 0;
+    if (needCalculateMaxDuration && effect.totalDuration > duractionMs) {
+      duractionMs = effect.totalDuration;
+    }
+  }
+  Ticker.shared.update(current);
+
+  await nextTick();
+
+  if (!character.currentInstructions) {
+    throw new Error('Character body not found');
+  }
+
+  const characterDuraction = character.currentInstructions.reduce(
+    (acc, frame) => acc + (frame.delay || 100),
+    0,
+  );
+
+  if (needCalculateMaxDuration && characterDuraction > duractionMs) {
+    duractionMs = characterDuraction;
+  }
+
+  const totalFrameCount = Math.ceil(duractionMs / frameMs);
+
+  const resultData = await makeFrames(
+    character,
+    renderer,
+    totalFrameCount,
+    (_) => frameMs,
+    undefined,
+    (_) => {
+      current += frameMs;
+      Ticker.shared.update(current);
+    },
+  );
+
+  console.log('totalFrameCount', totalFrameCount, resultData);
+
+  if (!isOriginalAnimating) {
+    character.play();
+  }
+
+  Ticker.shared.start();
+
+  return resultData;
+}
+
+async function makeFrames(
+  character: Character,
+  renderer: Renderer,
+  count: number,
+  getFrameDelay?: (index: number) => void,
+  beforeMakeFrame?: (index: number) => void,
+  afterMakeFrame?: (index: number) => void,
+): Promise<CanvasFramesData> {
   const unprocessedFrames: UnprocessedFrame[] = [];
 
   const bound = {
@@ -47,15 +148,14 @@ export async function characterToCanvasFrames(
     bottom: 0,
   };
 
-  for (let i = 0; i < totalFrameCount; i++) {
-    const frame = i;
-    character.instructionFrame = frame;
-    character.playBodyFrame();
+  for (let i = 0; i < count; i++) {
+    beforeMakeFrame?.(i);
+
     const canvas = extractCanvas(character, renderer) as HTMLCanvasElement;
     const frameBound = character.getLocalBounds();
     const frameData: UnprocessedFrame = {
       canvas,
-      delay: character.currentInstruction?.delay || 100,
+      delay: getFrameDelay?.(i) || 100,
       width: canvas.width,
       height: canvas.height,
       left: frameBound.left,
@@ -67,6 +167,8 @@ export async function characterToCanvasFrames(
     bound.top = Math.min(bound.top, frameBound.top);
     bound.right = Math.max(bound.right, frameBound.right);
     bound.bottom = Math.max(bound.bottom, frameBound.bottom);
+
+    afterMakeFrame?.(i);
 
     await nextTick();
   }
@@ -85,6 +187,7 @@ export async function characterToCanvasFrames(
     canvas.width = maxWidth;
     canvas.height = maxHeight;
     ctx.drawImage(frame.canvas, basePos.x + frame.left, basePos.y + frame.top);
+    frame.canvas.remove();
     return {
       canvas,
       delay: frame.delay,
@@ -92,13 +195,6 @@ export async function characterToCanvasFrames(
       height: canvas.height,
     };
   });
-
-  if (!isOriginalAnimating) {
-    character.play();
-  }
-
-  character.toggleEffectVisibility(false);
-  await nextTick();
 
   return {
     frames: exportFrames,
