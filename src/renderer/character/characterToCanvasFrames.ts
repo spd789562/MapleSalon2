@@ -78,9 +78,11 @@ export async function characterToCanvasFramesWithEffects(
   let current = performance.now();
   Ticker.shared.update(current);
 
+  /* reset character frame */
   character.instructionFrame = 0;
   character.currentDelta = 0;
   character.playBodyFrame();
+  /* reset effects frame */
   for (const effect of character.allEffectPieces) {
     effect.currentFrame = 0;
     /* @ts-ignore */
@@ -89,6 +91,18 @@ export async function characterToCanvasFramesWithEffects(
       duractionMs = effect.totalDuration;
     }
   }
+  /* reset name tag frame */
+  if (
+    character.nameTag.visible &&
+    character.nameTag.isAnimatedBackground(character.nameTag.background)
+  ) {
+    character.nameTag.background.resetFrame();
+    const nameTagDuration = character.nameTag.background.totalDuration;
+    if (needCalculateMaxDuration && nameTagDuration > duractionMs) {
+      duractionMs = nameTagDuration;
+    }
+  }
+
   Ticker.shared.update(current);
 
   await nextTick();
@@ -119,8 +133,6 @@ export async function characterToCanvasFramesWithEffects(
       Ticker.shared.update(current);
     },
   );
-
-  console.log('totalFrameCount', totalFrameCount, resultData);
 
   if (!isOriginalAnimating) {
     character.play();

@@ -47,15 +47,23 @@ export class BaseNameTag extends Container {
   get isAnimated() {
     return !!this.tagWz && 'wz2_aniNameTag' in this.tagWz;
   }
+  isAnimatedBackground(
+    background?:
+      | NameTagStaticBackground
+      | NameTagAnimatedBackground
+      | NameTagColorBackground,
+  ): background is NameTagAnimatedBackground {
+    return this.isAnimated && background?.type === 'animated';
+  }
 
   play() {
-    if (this.isAnimated && this.background?.type === 'animated') {
-      (this.background as NameTagAnimatedBackground).play();
+    if (this.isAnimatedBackground(this.background)) {
+      this.background.play();
     }
   }
   stop() {
-    if (this.isAnimated && this.background?.type === 'animated') {
-      (this.background as NameTagAnimatedBackground).stop();
+    if (this.isAnimatedBackground(this.background)) {
+      this.background.stop();
     }
   }
 
