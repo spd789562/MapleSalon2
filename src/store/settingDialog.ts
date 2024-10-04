@@ -3,6 +3,7 @@ import { deepMap, computed } from 'nanostores';
 import { Store } from '@tauri-apps/plugin-store';
 
 import { $equipmentDrawerExperimentCharacterRender } from './equipDrawer';
+import { $preferRenderer } from './renderer';
 
 import {
   simpleCharacterLoadingQueue,
@@ -40,6 +41,7 @@ export interface AppSetting extends Record<string, unknown> {
   showItemGender: boolean;
   showItemDyeable: boolean;
   enableExperimentalUpscale: boolean;
+  preferRenderer: 'webgl' | 'webgpu';
 }
 
 const DEFAULT_SETTING: AppSetting = {
@@ -52,6 +54,7 @@ const DEFAULT_SETTING: AppSetting = {
   showItemGender: true,
   showItemDyeable: true,
   enableExperimentalUpscale: false,
+  preferRenderer: 'webgpu',
 };
 
 export const $appSetting = deepMap<AppSetting>(DEFAULT_SETTING);
@@ -104,6 +107,13 @@ export async function initializeSavedSetting() {
       if (defaultCharacterRendering) {
         $appSetting.setKey('defaultCharacterRendering', true);
         $equipmentDrawerExperimentCharacterRender.set(true);
+      }
+      if (
+        setting.preferRenderer === 'webgl' ||
+        setting.preferRenderer === 'webgpu'
+      ) {
+        $appSetting.setKey('preferRenderer', setting.preferRenderer);
+        $preferRenderer.set(setting.preferRenderer);
       }
       if (isValidResolution(setting.windowResolution)) {
         $appSetting.setKey('windowResolution', setting.windowResolution);
@@ -164,4 +174,7 @@ export function setShowItemDyeable(value: boolean) {
 }
 export function setEnableExperimentalUpscale(value: boolean) {
   $appSetting.setKey('enableExperimentalUpscale', value);
+}
+export function setPreferRenderer(value: 'webgl' | 'webgpu') {
+  $appSetting.setKey('preferRenderer', value);
 }
