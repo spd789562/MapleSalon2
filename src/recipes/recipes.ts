@@ -19,6 +19,10 @@ export const recipes: Record<string, Partial<RecipeConfig>> = {
 };
 
 export const slotRecipes: Record<string, Partial<SlotRecipeConfig>> = {
+  progress: {
+    jsx: ['Progress', /.*Progress$/],
+    staticCss: ['*'],
+  },
   colorPicker: {
     jsx: ['ColorPicker', /.*ColorPicker$/],
   },

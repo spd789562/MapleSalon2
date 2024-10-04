@@ -90,7 +90,6 @@ export const CircleProgress = (props: CircleProgressProps) => {
       <Circle>
         <CircleTrack />
         <CircleRange />
-        <ValueText />
       </Circle>
       <ValueText />
     </Root>
