@@ -66,6 +66,7 @@ export async function characterToCanvasFramesWithEffects(
     frameRate?: number;
     duractionMs?: number;
     maxDurationMs?: number;
+    onProgress?: (progress: number, total: number) => void;
   },
 ) {
   const frameRate = options?.frameRate || 30;
@@ -126,6 +127,8 @@ export async function characterToCanvasFramesWithEffects(
   }
 
   const totalFrameCount = Math.ceil(duractionMs / frameMs);
+  options?.onProgress?.(0, totalFrameCount);
+  await nextTick();
 
   const resultData = await makeFrames(
     character,
@@ -133,7 +136,8 @@ export async function characterToCanvasFramesWithEffects(
     totalFrameCount,
     (_) => frameMs,
     undefined,
-    (_) => {
+    (i) => {
+      options?.onProgress?.(i + 1, totalFrameCount);
       current += frameMs;
       Ticker.shared.update(current);
     },

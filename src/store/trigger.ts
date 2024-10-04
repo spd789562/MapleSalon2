@@ -19,3 +19,6 @@ export const $confirmDialogOpen = atom<boolean>(false);
 export const $settingDialogOpen = atom<boolean>(false);
 
 export const $characterInfoDialogOpen = atom<boolean>(false);
+
+/* a interaction lock use to prevent particular action */
+export const $interactionLock = atom<boolean>(false);
