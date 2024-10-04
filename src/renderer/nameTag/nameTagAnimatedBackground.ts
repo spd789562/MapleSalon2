@@ -145,10 +145,8 @@ class SizedAnimatedBackground extends AnimatedSprite {
     this.origins = pieces.map((piece) => piece.origin);
   }
   get totalDuration() {
-    return this.textures.reduce(
-      (acc, curr) => acc + (curr as FrameObject).time,
-      0,
-    );
+    /* @ts-ignore */
+    return (this._durations as number[]).reduce((acc, curr) => acc + curr, 0);
   }
   onFrameChange = (currentFrame: number) => {
     const origin = this.origins[currentFrame];
