@@ -3,7 +3,7 @@ import { deepMap, computed } from 'nanostores';
 import { Store } from '@tauri-apps/plugin-store';
 
 import { $equipmentDrawerExperimentCharacterRender } from './equipDrawer';
-import { $preferRenderer } from './renderer';
+import { $preferRenderer as $rendererPreference } from './renderer';
 
 import {
   simpleCharacterLoadingQueue,
@@ -90,6 +90,10 @@ export const $enableExperimentalUpscale = computed(
   $appSetting,
   (setting) => setting.enableExperimentalUpscale,
 );
+export const $preferRenderer = computed(
+  $appSetting,
+  (setting) => setting.preferRenderer,
+);
 
 /* action */
 export async function initializeSavedSetting() {
@@ -113,7 +117,7 @@ export async function initializeSavedSetting() {
         setting.preferRenderer === 'webgpu'
       ) {
         $appSetting.setKey('preferRenderer', setting.preferRenderer);
-        $preferRenderer.set(setting.preferRenderer);
+        $rendererPreference.set(setting.preferRenderer);
       }
       if (isValidResolution(setting.windowResolution)) {
         $appSetting.setKey('windowResolution', setting.windowResolution);
