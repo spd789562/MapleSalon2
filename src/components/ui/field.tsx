@@ -6,7 +6,7 @@ import {
   field,
   input,
   textarea,
-} from 'styled-system/recipes';
+} from 'styled-system/recipes/field';
 import type { HTMLStyledProps } from 'styled-system/types';
 import { createStyleContext } from '@/utils/create-style-context';
 

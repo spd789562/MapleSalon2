@@ -1,6 +1,9 @@
 import { type Assign, RadioGroup } from '@ark-ui/solid';
 import type { ComponentProps } from 'solid-js';
-import { type RadioGroupVariantProps, radioGroup } from 'styled-system/recipes';
+import {
+  type RadioGroupVariantProps,
+  radioGroup,
+} from 'styled-system/recipes/radio-group';
 import type { HTMLStyledProps } from 'styled-system/types';
 import { createStyleContext } from '@/utils/create-style-context';
 
