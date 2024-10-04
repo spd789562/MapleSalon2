@@ -65,6 +65,7 @@ export async function characterToCanvasFramesWithEffects(
   options?: {
     frameRate?: number;
     duractionMs?: number;
+    maxDurationMs?: number;
   },
 ) {
   const frameRate = options?.frameRate || 30;
@@ -101,6 +102,10 @@ export async function characterToCanvasFramesWithEffects(
     if (needCalculateMaxDuration && nameTagDuration > duractionMs) {
       duractionMs = nameTagDuration;
     }
+  }
+
+  if (options?.maxDurationMs) {
+    duractionMs = Math.min(options.maxDurationMs, duractionMs);
   }
 
   Ticker.shared.update(current);
