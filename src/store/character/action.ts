@@ -14,7 +14,11 @@ import {
 import { removeItems } from '@/store/currentEquipDrawer';
 import { getEquipById } from '@/store/string';
 import { appendHistory } from '@/store/equipHistory';
-import { getCharacterSubCategory, deepCloneCharacterItems } from './utils';
+import {
+  getCharacterSubCategory,
+  deepCloneCharacterItems,
+  copyHsvInfo,
+} from './utils';
 
 import {
   getHairColorId,
@@ -214,6 +218,8 @@ export function addDyeableToChanges(
   const originItem = $totalItems.get()[category];
   /* if not set isDeleteDye, set isDeleteDye when not have any dye data */
   const isDeleteDye = originItem?.isDeleteDye ?? !originItem?.dye;
+  const hsvInfo = originItem ? copyHsvInfo(originItem) : {};
+
   $currentItem.set(item);
   $currentItemChanges.setKey(category, {
     id: item.id,
@@ -221,6 +227,7 @@ export function addDyeableToChanges(
     dye: originItem?.dye ? Object.assign({}, originItem?.dye) : undefined,
     isDeleted: false,
     isDeleteDye,
+    ...hsvInfo,
   });
 }
 

@@ -25,6 +25,25 @@ export function getCharacterSubCategory(category: EquipSubCategory) {
   return category;
 }
 
+export function copyHsvInfo(info: ItemInfo) {
+  const copyInfo = {} as Partial<ItemInfo>;
+
+  if (info.colorRange) {
+    copyInfo.colorRange = info.colorRange;
+  }
+  if (info.hue) {
+    copyInfo.hue = info.hue;
+  }
+  if (info.saturation) {
+    copyInfo.saturation = info.saturation;
+  }
+  if (info.brightness) {
+    copyInfo.brightness = info.brightness;
+  }
+
+  return copyInfo;
+}
+
 export function getUpdateItems(
   before: Partial<CharacterItems>,
   changes: Partial<CharacterItems>,
