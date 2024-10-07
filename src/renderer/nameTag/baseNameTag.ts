@@ -136,7 +136,9 @@ export class BaseNameTag extends Container {
       this.addChild(this.background);
       this.textColor = 0xffffff;
     }
-    this.renderNameTag();
+    if (!this.destroyed) {
+      this.renderNameTag();
+    }
   }
   renderNameTag() {
     if (this.background) {

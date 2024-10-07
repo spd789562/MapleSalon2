@@ -415,7 +415,7 @@ export class Character extends Container {
 
   playBodyFrame() {
     const instruction = this.currentInstruction;
-    if (!instruction) {
+    if (!instruction || this.destroyed) {
       return;
     }
     const key = `${instruction.action}-${instruction.frame}` as const;
