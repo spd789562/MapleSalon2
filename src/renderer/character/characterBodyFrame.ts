@@ -1,15 +1,19 @@
 import type { PieceSlot } from './const/data';
 import { defaultAncher } from './const/ancher';
+import { FrontFaceLayers } from './const/zmap';
 import type { CharacterStaticPart } from './characterStaticPart';
 import type { DyeableCharacterItemPiece } from './itemPiece';
 import type { Character } from './character';
 import type { CharacterActionItem, CategorizedItem } from './categorizedItem';
+import type { CharacterZmapContainer } from './characterZmapContainer';
 
 import { CharacterLoader } from './loader';
 
 import { CharacterAction } from '@/const/actions';
 
 type AnyCategorizedItem = CategorizedItem<string>;
+
+const faceLayerReg = /face/i;
 
 /**
  * A CharacterBodyFrame is represent a character frame and action
@@ -188,15 +192,17 @@ export class CharacterBodyFrame {
       container.removeChildren();
     }
   }
-  /** update face when character turn to back */
+  /** update face related when character turn to back */
   updateCharacterFaceVisibility() {
-    const faceLayer = this.character.zmapLayers.get('face');
-    if (faceLayer) {
-      if (this.isBackAction) {
-        faceLayer.visible = false;
-      } else {
-        faceLayer.visible = true;
+    const faceLayers = FrontFaceLayers.reduce((layers, layerName) => {
+      const zmapLayer = this.character.zmapLayers.get(layerName);
+      if (zmapLayer) {
+        layers.push(zmapLayer);
       }
+      return layers;
+    }, [] as CharacterZmapContainer[]);
+    for (const layer of faceLayers) {
+      layer.visible = !this.isBackAction;
     }
   }
   updateCharacterPivotByBodyPiece() {
