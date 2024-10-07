@@ -34,6 +34,7 @@ import type { CharacterHandType } from '@/const/hand';
 
 export function changeCurrentCharacter(character: Partial<CharacterData>) {
   if (character.items) {
+    $currentCharacterItems.set({});
     $currentCharacterItems.set(deepCloneCharacterItems(character.items));
     const updateInfo = { ...$currentCharacterInfo.get() };
     if (character.id) {
@@ -117,8 +118,14 @@ const getColorItemUseSameColor =
       const avaiableColorIds = getAvailableColorIds(item.id);
 
       /* if color is not available, use the first one */
-      if (!avaiableColorIds.includes(itemInfo.id)) {
+      if (
+        avaiableColorIds.length > 0 &&
+        !avaiableColorIds.includes(itemInfo.id)
+      ) {
         itemInfo.id = avaiableColorIds[0];
+      } else {
+        /* if not, just use original one */
+        itemInfo.id = item.id;
       }
 
       const newEquipInfo = getEquipById(itemInfo.id);
