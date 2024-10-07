@@ -1,6 +1,6 @@
 import { useStore } from '@nanostores/solid';
 
-import { $actionExportType } from '@/store/toolTab';
+import { $exportType, setExportType } from '@/store/settingDialog';
 
 import {
   SimpleToggleGroup,
@@ -25,11 +25,11 @@ const options = [
 ];
 
 export const ExportTypeToggleGroup = () => {
-  const exportType = useStore($actionExportType);
+  const exportType = useStore($exportType);
 
   function handleExportTypeChange(details: ValueChangeDetails) {
     const firstItem = details.value;
-    firstItem && $actionExportType.set(firstItem as ActionExportType);
+    firstItem && setExportType(firstItem as ActionExportType);
   }
 
   return (

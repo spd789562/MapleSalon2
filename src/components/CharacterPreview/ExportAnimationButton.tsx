@@ -1,4 +1,5 @@
 import { $globalRenderer } from '@/store/renderer';
+import { $exportType } from '@/store/settingDialog';
 import { $interactionLock } from '@/store/trigger';
 
 import { useCharacterPreview } from './CharacterPreviewContext';
@@ -11,7 +12,7 @@ import { characterToCanvasFramesWithEffects } from '@/renderer/character/charact
 import { downloadBlob } from '@/utils/download';
 import { nextTick } from '@/utils/eventLoop';
 
-import { ActionExportType } from '@/const/toolTab';
+import { ActionExportType, ActionExportTypeExtensions } from '@/const/toolTab';
 
 export const ExportAnimationButton = () => {
   const [state, { startExport, finishExport, updateExportProgress }] =
@@ -35,11 +36,10 @@ export const ExportAnimationButton = () => {
           onProgress: updateExportProgress,
         },
       );
-      const blob = await getAnimatedCharacterBlob(
-        frames,
-        ActionExportType.Webp,
-      );
-      downloadBlob(blob, 'character.webp');
+
+      const exportType = $exportType.get() || ActionExportType.Webp;
+      const blob = await getAnimatedCharacterBlob(frames, exportType);
+      downloadBlob(blob, `character${ActionExportTypeExtensions[exportType]}`);
 
       toaster.success({
         title: '匯出成功',
