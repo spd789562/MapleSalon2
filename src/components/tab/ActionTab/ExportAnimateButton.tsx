@@ -28,7 +28,7 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
     const isAllLoaded =
       props.characterRefs.every(
         (characterRef) => !characterRef.character.isLoading,
-      ) && props.characterRefs.length !== 0;
+      ) && props.characterRefs.length >= 0;
     if (!isAllLoaded) {
       toaster.error({
         title: '動作尚未全部載入完畢',

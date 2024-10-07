@@ -60,6 +60,7 @@ export const ExportAnimationButton = () => {
       onClick={handleExport}
       variant="outline"
       disabled={state.isExporting}
+      title="匯出含特效的完整動畫"
     >
       匯出完整動畫
     </Button>

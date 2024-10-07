@@ -4,6 +4,7 @@ import { SettingDialog as Dialog } from './SettingDialog';
 import { WindowSetting } from './WindowSetting';
 import { ThemeSetting } from './ThemeSetting';
 import { RenderSetting } from './RenderSetting';
+import { ExportSetting } from './ExportSetting';
 import { OtherSetting } from './OtherSetting';
 import { SettingFooter } from './SettingFooter';
 
@@ -14,6 +15,7 @@ export const SettingDialog = () => {
         <Title fontSize="xl">設定</Title>
         <WindowSetting />
         <ThemeSetting />
+        <ExportSetting />
         <RenderSetting />
         <OtherSetting />
         <SettingFooter />
