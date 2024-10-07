@@ -54,6 +54,7 @@ const ColorOtions = [
 
 export interface EquipHsvAdjustProps {
   id: number;
+  hasRandom?: boolean;
 }
 export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
   const getItemChangeById = createMemo(() => createGetItemChangeById(props.id));
@@ -120,15 +121,17 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
               handleColorRangeChange(Number(detail.value[0]));
             }}
           />
-          <IconButton
-            marginLeft="auto"
-            variant="outline"
-            size="sm"
-            onClick={handleRandomAll}
-            title="隨機染色"
-          >
-            <RandomLineIcon />
-          </IconButton>
+          <Show when={props.hasRandom}>
+            <IconButton
+              marginLeft="auto"
+              variant="outline"
+              size="sm"
+              onClick={handleRandomAll}
+              title="隨機染色"
+            >
+              <RandomLineIcon />
+            </IconButton>
+          </Show>
         </HStack>
         <EquipHsvSlider
           title="色相"
