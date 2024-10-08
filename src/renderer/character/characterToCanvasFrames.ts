@@ -14,7 +14,7 @@ interface UnprocessedFrame {
   canvas: HTMLCanvasElement;
 }
 
-export type UniversalFrame = Omit<UnprocessedFrame, 'left' | 'top'>;
+export type UniversalFrame = UnprocessedFrame;
 export interface CanvasFramesData {
   frames: UniversalFrame[];
   width: number;
@@ -24,6 +24,9 @@ export interface CanvasFramesData {
 export async function characterToCanvasFrames(
   character: Character,
   renderer: Renderer,
+  options?: {
+    padWhiteSpace?: boolean;
+  },
 ) {
   const isOriginalAnimating = character.isAnimating;
   character.stop();
@@ -38,16 +41,14 @@ export async function characterToCanvasFrames(
 
   const totalFrameCount = character.currentInstructions.length;
 
-  const resultData = await makeFrames(
-    character,
-    renderer,
-    totalFrameCount,
-    (i) => character.currentInstruction?.delay || 100,
-    (index) => {
+  const resultData = await makeFrames(character, renderer, totalFrameCount, {
+    padWhiteSpace: options?.padWhiteSpace,
+    getFrameDelay: (_) => character.currentInstruction?.delay || 100,
+    beforeMakeFrame: (index) => {
       character.instructionFrame = index;
       character.playBodyFrame();
     },
-  );
+  });
 
   if (!isOriginalAnimating) {
     character.play();
@@ -63,6 +64,7 @@ export async function characterToCanvasFramesWithEffects(
   character: Character,
   renderer: Renderer,
   options?: {
+    padWhiteSpace?: boolean;
     frameRate?: number;
     duractionMs?: number;
     maxDurationMs?: number;
@@ -130,18 +132,15 @@ export async function characterToCanvasFramesWithEffects(
   options?.onProgress?.(0, totalFrameCount);
   await nextTick();
 
-  const resultData = await makeFrames(
-    character,
-    renderer,
-    totalFrameCount,
-    (_) => frameMs,
-    undefined,
-    (i) => {
+  const resultData = await makeFrames(character, renderer, totalFrameCount, {
+    padWhiteSpace: options?.padWhiteSpace,
+    getFrameDelay: (_) => frameMs,
+    afterMakeFrame: (i) => {
       options?.onProgress?.(i + 1, totalFrameCount);
       current += frameMs;
       Ticker.shared.update(current);
     },
-  );
+  });
 
   if (!isOriginalAnimating) {
     character.play();
@@ -156,9 +155,12 @@ async function makeFrames(
   character: Character,
   renderer: Renderer,
   count: number,
-  getFrameDelay?: (index: number) => void,
-  beforeMakeFrame?: (index: number) => void,
-  afterMakeFrame?: (index: number) => void,
+  options: {
+    padWhiteSpace?: boolean;
+    getFrameDelay?: (index: number) => void;
+    beforeMakeFrame?: (index: number) => void;
+    afterMakeFrame?: (index: number) => void;
+  },
 ): Promise<CanvasFramesData> {
   const unprocessedFrames: UnprocessedFrame[] = [];
 
@@ -170,13 +172,13 @@ async function makeFrames(
   };
 
   for (let i = 0; i < count; i++) {
-    beforeMakeFrame?.(i);
+    options.beforeMakeFrame?.(i);
 
     const canvas = extractCanvas(character, renderer) as HTMLCanvasElement;
     const frameBound = character.getLocalBounds();
     const frameData: UnprocessedFrame = {
       canvas,
-      delay: getFrameDelay?.(i) || 100,
+      delay: options.getFrameDelay?.(i) || 100,
       width: canvas.width,
       height: canvas.height,
       left: frameBound.left,
@@ -189,7 +191,7 @@ async function makeFrames(
     bound.right = Math.max(bound.right, frameBound.right);
     bound.bottom = Math.max(bound.bottom, frameBound.bottom);
 
-    afterMakeFrame?.(i);
+    options.afterMakeFrame?.(i);
 
     await nextTick();
   }
@@ -203,17 +205,31 @@ async function makeFrames(
     y: -bound.top,
   };
   const exportFrames = unprocessedFrames.map((frame) => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-    canvas.width = maxWidth;
-    canvas.height = maxHeight;
-    ctx.drawImage(frame.canvas, basePos.x + frame.left, basePos.y + frame.top);
-    frame.canvas.remove();
+    let resultCanvas = frame.canvas;
+
+    const top = basePos.y + frame.top;
+    const left = basePos.x + frame.left;
+
+    if (options.padWhiteSpace || options.padWhiteSpace === undefined) {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+      canvas.width = maxWidth;
+      canvas.height = maxHeight;
+      ctx.drawImage(frame.canvas, left, top);
+
+      // replace the original canvas
+      resultCanvas = canvas;
+
+      frame.canvas.remove();
+    }
+
     return {
-      canvas,
+      canvas: resultCanvas,
+      top,
+      left,
       delay: frame.delay,
-      width: canvas.width,
-      height: canvas.height,
+      width: resultCanvas.width,
+      height: resultCanvas.height,
     };
   });
 

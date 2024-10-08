@@ -1,4 +1,7 @@
 import { createSignal } from 'solid-js';
+
+import { $padWhiteSpaceWhenExportFrame } from '@/store/settingDialog';
+
 import { Button, type ButtonProps } from '@/components/ui/button';
 import type { ActionCharacterRef } from './ActionCharacter';
 
@@ -32,13 +35,16 @@ export const ExportFrameButton = (props: ExportAnimateButtonProps) => {
     }
     setIsExporting(true);
     await nextTick();
+    const padWhiteSpace = $padWhiteSpaceWhenExportFrame.get();
 
     try {
       const files: [Blob, string][] = [];
       for await (const characterRef of props.characterRefs) {
-        const frameData = await characterRef.makeCharacterFrames();
+        const frameData = await characterRef.makeCharacterFrames(padWhiteSpace);
         files.push(
-          ...(await getCharacterFrameBlobs(frameData, characterRef.character)),
+          ...(await getCharacterFrameBlobs(frameData, characterRef.character, {
+            includeMoveJson: padWhiteSpace === false,
+          })),
         );
       }
       if (files.length === 1) {

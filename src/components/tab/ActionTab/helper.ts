@@ -16,6 +16,7 @@ export function getCharacterFilenameSuffix(character: Character) {
 export async function getCharacterFrameBlobs(
   data: CanvasFramesData,
   character: Character,
+  options?: { includeMoveJson?: boolean },
 ) {
   const files: [Blob, string][] = [];
   const fileNameSuffix = getCharacterFilenameSuffix(character);
@@ -27,6 +28,17 @@ export async function getCharacterFrameBlobs(
     });
     files.push([blob, `${fileNameSuffix}-${index}.png`]);
   }
+  if (options?.includeMoveJson) {
+    const moveJson = data.frames.map((frame) => ({
+      x: frame.left,
+      y: frame.top,
+      delay: frame.delay,
+    }));
+    const blob = new Blob([JSON.stringify(moveJson)], {
+      type: 'application/json',
+    });
+    files.push([blob, `${fileNameSuffix}.json`]);
+  }
   return files;
 }
 
@@ -34,7 +46,7 @@ export async function getAnimatedCharacterBlob(
   data: CanvasFramesData,
   type: ActionExportType,
 ) {
-  let blob: Blob | undefined = undefined;
+  let blob: Blob | undefined;
 
   if (type === ActionExportType.Gif) {
     const buffer = await characterFramesToGif(data.frames, {
