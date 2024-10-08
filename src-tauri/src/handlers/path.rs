@@ -3,3 +3,14 @@ pub const SMAP_PATH: &'static str = "smap.img";
 pub const CHARACTER_ITEM_PATH: &'static str = "Character";
 pub const EQUIP_STRING_PATH: &'static str = "String/Eqp.img";
 pub const EQUIP_EFFECT_PATH: &'static str = "Effect/ItemEff.img";
+
+// don't know why it nameing TamingMob
+pub const MOUNT_PATH: &'static str = "Character/TamingMob";
+pub const MOUNT_STRING_PATH: &'static str = "String/Eqp.img/Taming";
+
+pub const CHAIR_PATH: &'static str = "Item/Install";
+pub const CASH_CHAIR_PATH: &'static str = "Item/Cash/0520.img"; // should also start with 05204
+pub const CHAIR_STRING_PATH: &'static str = "String/Ins.img";
+
+pub const SKILL_PATH: &'static str = "Skill";
+pub const SKILL_STRING_PATH: &'static str = "String/Skill.img";
