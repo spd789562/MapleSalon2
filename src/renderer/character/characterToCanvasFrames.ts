@@ -25,6 +25,7 @@ export async function characterToCanvasFrames(
   character: Character,
   renderer: Renderer,
   options?: {
+    backgroundColor?: string;
     padWhiteSpace?: boolean;
   },
 ) {
@@ -42,6 +43,7 @@ export async function characterToCanvasFrames(
   const totalFrameCount = character.currentInstructions.length;
 
   const resultData = await makeFrames(character, renderer, totalFrameCount, {
+    backgroundColor: options?.backgroundColor,
     padWhiteSpace: options?.padWhiteSpace,
     getFrameDelay: (_) => character.currentInstruction?.delay || 100,
     beforeMakeFrame: (index) => {
@@ -64,6 +66,7 @@ export async function characterToCanvasFramesWithEffects(
   character: Character,
   renderer: Renderer,
   options?: {
+    backgroundColor?: string;
     padWhiteSpace?: boolean;
     frameRate?: number;
     duractionMs?: number;
@@ -133,6 +136,7 @@ export async function characterToCanvasFramesWithEffects(
   await nextTick();
 
   const resultData = await makeFrames(character, renderer, totalFrameCount, {
+    backgroundColor: options?.backgroundColor,
     padWhiteSpace: options?.padWhiteSpace,
     getFrameDelay: (_) => frameMs,
     afterMakeFrame: (i) => {
@@ -156,6 +160,7 @@ async function makeFrames(
   renderer: Renderer,
   count: number,
   options: {
+    backgroundColor?: string;
     padWhiteSpace?: boolean;
     getFrameDelay?: (index: number) => void;
     beforeMakeFrame?: (index: number) => void;
@@ -205,31 +210,42 @@ async function makeFrames(
     y: -bound.top,
   };
   const exportFrames = unprocessedFrames.map((frame) => {
-    let resultCanvas = frame.canvas;
-
     const top = basePos.y + frame.top;
     const left = basePos.x + frame.left;
 
-    if (options.padWhiteSpace || options.padWhiteSpace === undefined) {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    const needPad =
+      options.padWhiteSpace || options.padWhiteSpace === undefined;
+
+    if (needPad) {
       canvas.width = maxWidth;
       canvas.height = maxHeight;
-      ctx.drawImage(frame.canvas, left, top);
-
-      // replace the original canvas
-      resultCanvas = canvas;
-
-      frame.canvas.remove();
+    } else {
+      canvas.width = frame.width;
+      canvas.height = frame.height;
     }
 
+    if (options.backgroundColor) {
+      ctx.fillStyle = options.backgroundColor;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    if (needPad) {
+      ctx.drawImage(frame.canvas, left, top);
+    } else {
+      ctx.drawImage(frame.canvas, 0, 0);
+    }
+
+    frame.canvas.remove();
+
     return {
-      canvas: resultCanvas,
+      canvas,
       top,
       left,
       delay: frame.delay,
-      width: resultCanvas.width,
-      height: resultCanvas.height,
+      width: canvas.width,
+      height: canvas.height,
     };
   });
 
