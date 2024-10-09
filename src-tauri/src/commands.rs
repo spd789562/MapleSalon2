@@ -162,38 +162,38 @@ pub(crate) async fn get_childs_info<R: Runtime>(
         .collect())
 }
 
-#[command]
-pub(crate) async fn search_by_equip_name<R: Runtime>(
-    _app: AppHandle<R>,
-    _window: Window<R>,
-    state: State<'_, AppStore>,
-    name: String,
-    _category: Option<String>,
-) -> Result<Vec<(String, String)>> {
-    let equip_node = handlers::get_equip_string(&state.node)?;
+// #[command]
+// pub(crate) async fn search_by_equip_name<R: Runtime>(
+//     _app: AppHandle<R>,
+//     _window: Window<R>,
+//     state: State<'_, AppStore>,
+//     name: String,
+//     _category: Option<String>,
+// ) -> Result<Vec<(String, String)>> {
+//     let equip_node = handlers::get_equip_string(&state.node)?;
 
-    let node = equip_node
-        .read()
-        .unwrap()
-        .at("Eqp")
-        .ok_or(Error::NodeNotFound)?;
+//     let node = equip_node
+//         .read()
+//         .unwrap()
+//         .at("Eqp")
+//         .ok_or(Error::NodeNotFound)?;
 
-    if let Ok(ref mut string_read) = state.string.write() {
-        if string_read.len() == 0 {
-            string_read.extend(handlers::resolve_equip_string(&state.node, &node, false)?);
-        }
-    }
+//     if let Ok(ref mut string_read) = state.string.write() {
+//         if string_read.len() == 0 {
+//             string_read.extend(handlers::resolve_equip_string(&state.node, &node, false)?);
+//         }
+//     }
 
-    let string_dict = state.string.read().unwrap();
+//     let string_dict = state.string.read().unwrap();
 
-    Ok(string_dict
-        .iter()
-        .filter_map(|(_, id, text, _, _, _, _)| {
-            if text.contains(&name) {
-                Some((id.clone(), text.clone()))
-            } else {
-                None
-            }
-        })
-        .collect())
-}
+//     Ok(string_dict
+//         .iter()
+//         .filter_map(|(_, id, text, _, _, _, _)| {
+//             if text.contains(&name) {
+//                 Some((id.clone(), text.clone()))
+//             } else {
+//                 None
+//             }
+//         })
+//         .collect())
+// }

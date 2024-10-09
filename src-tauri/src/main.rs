@@ -59,8 +59,7 @@ fn main() {
             commands::parse_node,
             commands::unparse_node,
             commands::get_node_info,
-            commands::get_childs_info,
-            commands::search_by_equip_name
+            commands::get_childs_info
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

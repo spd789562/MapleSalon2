@@ -1,5 +1,5 @@
 use rayon::prelude::*;
-use wz_reader::{WzNodeArc, WzNodeCast};
+use wz_reader::{property::WzString, WzNodeArc, WzNodeCast};
 
 use super::item::{
     get_is_cash_item, get_is_colorvar, get_is_name_tag, get_item_info_node,
@@ -129,21 +129,37 @@ pub fn get_equip_string(root: &WzNodeArc) -> Result<WzNodeArc> {
     Ok(node)
 }
 
+pub fn get_equip_node(root: &WzNodeArc) -> Result<WzNodeArc> {
+    let node = root.read().unwrap();
+
+    let node = node
+        .at(CHARACTER_ITEM_PATH)
+        .ok_or(crate::Error::NodeNotFound)?;
+
+    Ok(node)
+}
+
 pub fn resolve_equip_string(
     root: &WzNodeArc,
+    equip_node: &WzNodeArc,
     string_node: &WzNodeArc,
     extra_info: bool,
 ) -> Result<StringDictInner> {
-    let node = string_node.read().unwrap();
+    let string_node = string_node.read().unwrap();
+    let equip_node = equip_node.read().unwrap();
 
     let mut result = Vec::new();
 
-    for category_node in EQUIP_CATEGORY_NEEDS.iter().filter_map(|x| node.at(x)) {
-        let category_node_read = category_node.read().unwrap();
+    for (category_string_node, category_equip_node) in EQUIP_CATEGORY_NEEDS
+        .iter()
+        .filter_map(|x| string_node.at(x).zip(equip_node.at(x)))
+    {
+        let category_node_read = category_string_node.read().unwrap();
 
         let category_name = category_node_read.name.as_str();
         let category = get_equip_category_from_str(category_name);
 
+        /* collect string nodes equipments */
         let mut category_result = category_node_read
             .children
             .values()
@@ -154,18 +170,18 @@ pub fn resolve_equip_string(
                     let child_read = child.read().unwrap();
                     let name = child_read.name.to_string();
 
-                    let text_node = if let Some(text_node) = child_read.at("name") {
-                        text_node
-                    } else {
+                    let text_node = child_read.at("name");
+
+                    if text_node.is_none() {
                         return result;
-                    };
+                    }
+
+                    let text_node = text_node.unwrap();
 
                     let text_node_read = text_node.read().unwrap();
-
-                    if let Some(string) = text_node_read.try_as_string() {
-                        if let Ok(text) = string.get_string() {
-                            result.push((category.clone(), name, text, false, false, false, false));
-                        }
+                    let name_text = text_node_read.try_as_string().map(WzString::get_string);
+                    if let Some(Ok(text)) = name_text {
+                        result.push((category.clone(), name, text, false, false, false, false));
                     }
 
                     result
@@ -178,38 +194,55 @@ pub fn resolve_equip_string(
                     r
                 },
             );
+        /* collect the thing not in string node but in equipment node */
+        let category_equip_node_read = category_equip_node.read().unwrap();
+        let empty_node_name = String::from("null");
+
+        let extra_nodes = category_equip_node_read
+            .children
+            .keys()
+            .par_bridge()
+            .filter_map(|node_name| {
+                if !node_name.contains(".img") {
+                    return None;
+                }
+                let id = node_name.trim_end_matches(".img").trim_start_matches('0');
+                if category_node_read.children.contains_key(id) {
+                    return None;
+                }
+                Some((
+                    category.clone(),
+                    id.to_string(),
+                    empty_node_name.clone(),
+                    false, // is cash
+                    false, // has colorvar
+                    false, // has effect
+                    false, // is name tag
+                ))
+            })
+            .collect::<Vec<_>>();
+
+        category_result.extend(extra_nodes);
 
         if extra_info {
-            'extra: {
-                let character_category_node = root
-                    .read()
-                    .unwrap()
-                    .at_path(&format!("{}/{}", CHARACTER_ITEM_PATH, category_name));
-                if character_category_node.is_none() {
-                    break 'extra;
-                }
-                let character_category_node = character_category_node.unwrap();
-                let effect_node = root
-                    .read()
-                    .unwrap()
-                    .at_path(EQUIP_EFFECT_PATH)
-                    .ok_or(Error::NodeNotFound)?;
+            let effect_node = root
+                .read()
+                .unwrap()
+                .at_path(EQUIP_EFFECT_PATH)
+                .ok_or(Error::NodeNotFound)?;
 
-                category_result.par_iter_mut().for_each(|item| {
-                    let item_node = get_item_node_from_category(&character_category_node, &item.1);
-                    if let Some(item_node) = item_node {
-                        let info_node = get_item_info_node(&item_node);
-                        if let Some(info_node) = info_node {
-                            item.3 = get_is_cash_item(&info_node);
-                            item.4 = get_is_colorvar(&info_node);
-                            item.6 = get_is_name_tag(&info_node);
-                        }
-                    }
-                    if effect_node.read().unwrap().at(&item.1).is_some() {
-                        item.5 = true;
-                    }
-                });
-            }
+            category_result.par_iter_mut().for_each(|item| {
+                let item_node = get_item_node_from_category(&category_equip_node, &item.1);
+                if let Some(info_node) = item_node.and_then(|n| get_item_info_node(&n)) {
+                    item.3 = get_is_cash_item(&info_node);
+                    item.4 = get_is_colorvar(&info_node);
+                    item.6 = get_is_name_tag(&info_node);
+                }
+                // item has effect
+                if effect_node.read().unwrap().at(&item.1).is_some() {
+                    item.5 = true;
+                }
+            });
         }
 
         category_result.sort_by(|a, b| a.1.cmp(&b.1));
