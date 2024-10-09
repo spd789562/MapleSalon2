@@ -1,6 +1,7 @@
 import { createSignal } from 'solid-js';
 
 import { $actionExportType } from '@/store/toolTab';
+import { $addBlackBgWhenExportGif } from '@/store/settingDialog';
 
 import { Button, type ButtonProps } from '@/components/ui/button';
 import type { ActionCharacterRef } from './ActionCharacter';
@@ -42,9 +43,14 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
 
     try {
       const files: [Blob, string][] = [];
+      const backgroundColor = $addBlackBgWhenExportGif.get()
+        ? '#000000'
+        : undefined;
       if (props.characterRefs.length === 1) {
         const characterRef = props.characterRefs[0];
-        const frameData = await characterRef.makeCharacterFrames();
+        const frameData = await characterRef.makeCharacterFrames({
+          backgroundColor,
+        });
         const blob = await getAnimatedCharacterBlob(frameData, exportType);
         const fileNameSuffix = getCharacterFilenameSuffix(
           characterRef.character,
@@ -52,7 +58,9 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
         downloadBlob(blob, `${fileNameSuffix}${exportExt}`);
       } else {
         for await (const characterRef of props.characterRefs) {
-          const frameData = await characterRef.makeCharacterFrames();
+          const frameData = await characterRef.makeCharacterFrames({
+            backgroundColor,
+          });
           const blob = await getAnimatedCharacterBlob(frameData, exportType);
           const fileNameSuffix = getCharacterFilenameSuffix(
             characterRef.character,

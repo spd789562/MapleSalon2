@@ -1,5 +1,5 @@
 import { $globalRenderer } from '@/store/renderer';
-import { $exportType } from '@/store/settingDialog';
+import { $exportType, $addBlackBgWhenExportGif } from '@/store/settingDialog';
 import { $interactionLock } from '@/store/trigger';
 
 import { useCharacterPreview } from './CharacterPreviewContext';
@@ -29,10 +29,14 @@ export const ExportAnimationButton = () => {
       startExport();
       $interactionLock.set(true);
       await nextTick();
+      const backgroundColor = $addBlackBgWhenExportGif.get()
+        ? '#000000'
+        : undefined;
       const frames = await characterToCanvasFramesWithEffects(
         state.characterRef,
         app.renderer,
         {
+          backgroundColor,
           onProgress: updateExportProgress,
         },
       );
