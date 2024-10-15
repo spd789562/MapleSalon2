@@ -64,6 +64,8 @@ export function changeCurrentCharacter(character: Partial<CharacterData>) {
     }
     if (character.nameTagId) {
       updateInfo.nameTagId = character.nameTagId;
+    } else {
+      updateInfo.nameTagId = undefined;
     }
     $currentCharacterInfo.set(updateInfo);
 
