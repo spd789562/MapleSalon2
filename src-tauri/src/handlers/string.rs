@@ -150,6 +150,51 @@ pub fn resolve_equip_string(
 
     let mut result = Vec::new();
 
+    if let Some(skin_string_node) = string_node.at("Skin") {
+        let category_node_read = skin_string_node.read().unwrap();
+        let category_name = "Skin";
+        let category = get_equip_category_from_str(category_name);
+
+        let mut category_result = category_node_read
+            .children
+            .values()
+            .par_bridge()
+            .fold_with(
+                Vec::with_capacity(category_node_read.children.len()),
+                |mut result, child| {
+                    let child_read = child.read().unwrap();
+                    let name = child_read.name.to_string();
+
+                    let text_node = child_read.at("name");
+
+                    if text_node.is_none() {
+                        return result;
+                    }
+
+                    let text_node = text_node.unwrap();
+
+                    let text_node_read = text_node.read().unwrap();
+                    let name_text = text_node_read.try_as_string().map(WzString::get_string);
+                    if let Some(Ok(text)) = name_text {
+                        result.push((category.clone(), name, text, false, false, false, false));
+                    }
+
+                    result
+                },
+            )
+            .reduce(
+                || Vec::<StringDictItem>::new(),
+                |mut r, next| {
+                    r.extend(next);
+                    r
+                },
+            );
+
+        category_result.sort_by(|a, b| a.1.cmp(&b.1));
+
+        result.extend(category_result);
+    }
+
     for (category_string_node, category_equip_node) in EQUIP_CATEGORY_NEEDS
         .iter()
         .filter_map(|x| string_node.at(x).zip(equip_node.at(x)))
