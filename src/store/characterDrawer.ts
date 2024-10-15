@@ -187,7 +187,7 @@ export function saveCurrentCharacter(newId?: boolean) {
     handType: currentCharacter.handType,
     showNameTag: currentCharacter.showNameTag,
     nameTagId: currentCharacter.nameTagId,
-    items: currentCharacter.items,
+    items: deepCloneCharacterItems(currentCharacter.items),
   };
   return saveCharacter(data);
 }
