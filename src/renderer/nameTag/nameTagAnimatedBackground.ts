@@ -1,4 +1,10 @@
-import { Assets, Container, AnimatedSprite, type PointData } from 'pixi.js';
+import {
+  Assets,
+  Container,
+  AnimatedSprite,
+  type PointData,
+  type FrameObject,
+} from 'pixi.js';
 
 import type { WzAnimatedNameTagData } from './wz';
 
@@ -37,6 +43,20 @@ export class NameTagAnimatedBackground extends Container {
     this.pieces.clear();
     for (const sprite of this.preparedSprite.values()) {
       sprite.destroy();
+    }
+  }
+  get totalDuration() {
+    const currentSprite = this.preparedSprite.get(
+      this.size,
+    ) as SizedAnimatedBackground;
+    return currentSprite?.totalDuration || 0;
+  }
+  resetFrame() {
+    const currentSprite = this.preparedSprite.get(this.size);
+    if (currentSprite) {
+      currentSprite.currentFrame = 0;
+      /* @ts-ignore */
+      currentSprite._currentTime = 0;
     }
   }
   updatePiece(wz: WzAnimatedNameTagData) {
@@ -123,6 +143,10 @@ class SizedAnimatedBackground extends AnimatedSprite {
     super(textures);
     this.loop = true;
     this.origins = pieces.map((piece) => piece.origin);
+  }
+  get totalDuration() {
+    /* @ts-ignore */
+    return (this._durations as number[]).reduce((acc, curr) => acc + curr, 0);
   }
   onFrameChange = (currentFrame: number) => {
     const origin = this.origins[currentFrame];

@@ -14,7 +14,11 @@ import {
 import { removeItems } from '@/store/currentEquipDrawer';
 import { getEquipById } from '@/store/string';
 import { appendHistory } from '@/store/equipHistory';
-import { getCharacterSubCategory, deepCloneCharacterItems } from './utils';
+import {
+  getCharacterSubCategory,
+  deepCloneCharacterItems,
+  copyHsvInfo,
+} from './utils';
 
 import {
   getHairColorId,
@@ -34,6 +38,7 @@ import type { CharacterHandType } from '@/const/hand';
 
 export function changeCurrentCharacter(character: Partial<CharacterData>) {
   if (character.items) {
+    $currentCharacterItems.set({});
     $currentCharacterItems.set(deepCloneCharacterItems(character.items));
     const updateInfo = { ...$currentCharacterInfo.get() };
     if (character.id) {
@@ -117,8 +122,14 @@ const getColorItemUseSameColor =
       const avaiableColorIds = getAvailableColorIds(item.id);
 
       /* if color is not available, use the first one */
-      if (!avaiableColorIds.includes(itemInfo.id)) {
+      if (
+        avaiableColorIds.length > 0 &&
+        !avaiableColorIds.includes(itemInfo.id)
+      ) {
         itemInfo.id = avaiableColorIds[0];
+      } else {
+        /* if not, just use original one */
+        itemInfo.id = item.id;
       }
 
       const newEquipInfo = getEquipById(itemInfo.id);
@@ -207,6 +218,8 @@ export function addDyeableToChanges(
   const originItem = $totalItems.get()[category];
   /* if not set isDeleteDye, set isDeleteDye when not have any dye data */
   const isDeleteDye = originItem?.isDeleteDye ?? !originItem?.dye;
+  const hsvInfo = originItem ? copyHsvInfo(originItem) : {};
+
   $currentItem.set(item);
   $currentItemChanges.setKey(category, {
     id: item.id,
@@ -214,6 +227,7 @@ export function addDyeableToChanges(
     dye: originItem?.dye ? Object.assign({}, originItem?.dye) : undefined,
     isDeleted: false,
     isDeleteDye,
+    ...hsvInfo,
   });
 }
 

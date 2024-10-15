@@ -15,10 +15,11 @@ pub async fn prepare_equip(
     State((root, string_dict)): State<AppState>,
     Query(GetEquipListParam { extra }): Query<GetEquipListParam>,
 ) -> Result<impl IntoResponse> {
-    let equip_node = handlers::get_equip_string(&root)?;
+    let equip_string_node = handlers::get_equip_string(&root)?;
+    let equip_node = handlers::get_equip_node(&root)?;
     let fetch_extra_info = extra.is_some();
 
-    node_util::parse_node(&equip_node)?;
+    node_util::parse_node(&equip_string_node)?;
 
     if fetch_extra_info {
         let effect_node = root
@@ -30,7 +31,7 @@ pub async fn prepare_equip(
         }
     }
 
-    let node = equip_node
+    let string_node = equip_string_node
         .read()
         .unwrap()
         .at("Eqp")
@@ -40,7 +41,8 @@ pub async fn prepare_equip(
         if string_read.len() == 0 {
             string_read.extend(handlers::resolve_equip_string(
                 &root,
-                &node,
+                &equip_node,
+                &string_node,
                 fetch_extra_info,
             )?);
         }

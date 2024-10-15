@@ -23,7 +23,10 @@ import { CharacterHandType } from '@/const/hand';
 
 export interface ActionCharacterRef {
   character: Character;
-  makeCharacterFrames: () => Promise<CanvasFramesData>;
+  makeCharacterFrames: (options?: {
+    padWhiteSpace?: boolean;
+    backgroundColor?: string;
+  }) => Promise<CanvasFramesData>;
 }
 export interface ActionCharacterProps {
   action: CharacterAction | CharacterSpecialAction;
@@ -36,15 +39,21 @@ export const ActionCharacter = (props: ActionCharacterProps) => {
   const exportHandType = useStore($actionExportHandType);
   const [isInit, setIsInit] = createSignal(false);
 
-  let abortController: AbortController | undefined = undefined;
+  let abortController: AbortController | undefined;
   const canvasFrameCache: { current?: CanvasFramesData } = {};
   const character = new Character();
 
-  function makeCharacterFrames() {
+  function makeCharacterFrames(options?: {
+    padWhiteSpace?: boolean;
+    backgroundColor?: string;
+  }) {
     if (canvasFrameCache.current) {
       return Promise.resolve(canvasFrameCache.current);
     }
-    return characterToCanvasFrames(character, props.mainApp.renderer);
+    return characterToCanvasFrames(character, props.mainApp.renderer, {
+      backgroundColor: options?.backgroundColor,
+      padWhiteSpace: options?.padWhiteSpace,
+    });
   }
 
   props.ref({ character, makeCharacterFrames });

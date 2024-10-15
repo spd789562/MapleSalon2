@@ -3,6 +3,8 @@ import { deepMap, computed } from 'nanostores';
 import { Store } from '@tauri-apps/plugin-store';
 
 import { $equipmentDrawerExperimentCharacterRender } from './equipDrawer';
+import { $preferRenderer as $rendererPreference } from './renderer';
+import { $actionExportType } from './toolTab';
 
 import {
   simpleCharacterLoadingQueue,
@@ -22,6 +24,7 @@ import {
   isValidColorMode,
   syncColorMode,
 } from '@/const/setting/colorMode';
+import { ActionExportType, isValidExportType } from '@/const/toolTab';
 
 const SAVE_FILENAME = 'setting.bin';
 
@@ -31,15 +34,24 @@ const SAVE_KEY = 'setting';
 export const fileStore = new Store(SAVE_FILENAME);
 
 export interface AppSetting extends Record<string, unknown> {
+  /* window */
   windowResizable: boolean;
   windowResolution: Resolution;
+  /* theme */
   theme: Theme;
   colorMode: ColorMode;
+  /* render */
+  preferRenderer: 'webgl' | 'webgpu';
   simpleCharacterConcurrency: number;
+  enableExperimentalUpscale: boolean;
+  /* list */
   defaultCharacterRendering: boolean;
   showItemGender: boolean;
   showItemDyeable: boolean;
-  enableExperimentalUpscale: boolean;
+  /* export */
+  exportType: ActionExportType;
+  padWhiteSpaceWhenExportFrame: boolean;
+  addBlackBgWhenExportGif: boolean;
 }
 
 const DEFAULT_SETTING: AppSetting = {
@@ -52,6 +64,10 @@ const DEFAULT_SETTING: AppSetting = {
   showItemGender: true,
   showItemDyeable: true,
   enableExperimentalUpscale: false,
+  preferRenderer: 'webgpu',
+  exportType: ActionExportType.Webp,
+  padWhiteSpaceWhenExportFrame: true,
+  addBlackBgWhenExportGif: false,
 };
 
 export const $appSetting = deepMap<AppSetting>(DEFAULT_SETTING);
@@ -87,6 +103,22 @@ export const $enableExperimentalUpscale = computed(
   $appSetting,
   (setting) => setting.enableExperimentalUpscale,
 );
+export const $preferRenderer = computed(
+  $appSetting,
+  (setting) => setting.preferRenderer,
+);
+export const $exportType = computed(
+  $appSetting,
+  (setting) => setting.exportType,
+);
+export const $padWhiteSpaceWhenExportFrame = computed(
+  $appSetting,
+  (setting) => setting.padWhiteSpaceWhenExportFrame,
+);
+export const $addBlackBgWhenExportGif = computed(
+  $appSetting,
+  (setting) => setting.addBlackBgWhenExportGif,
+);
 
 /* action */
 export async function initializeSavedSetting() {
@@ -104,6 +136,13 @@ export async function initializeSavedSetting() {
       if (defaultCharacterRendering) {
         $appSetting.setKey('defaultCharacterRendering', true);
         $equipmentDrawerExperimentCharacterRender.set(true);
+      }
+      if (
+        setting.preferRenderer === 'webgl' ||
+        setting.preferRenderer === 'webgpu'
+      ) {
+        $appSetting.setKey('preferRenderer', setting.preferRenderer);
+        $rendererPreference.set(setting.preferRenderer);
       }
       if (isValidResolution(setting.windowResolution)) {
         $appSetting.setKey('windowResolution', setting.windowResolution);
@@ -126,6 +165,19 @@ export async function initializeSavedSetting() {
         $appSetting.setKey('simpleCharacterConcurrency', concurrency);
         simpleCharacterLoadingQueue.concurrency = concurrency;
       }
+      /* export */
+      if (isValidExportType(setting.exportType)) {
+        $appSetting.setKey('exportType', setting.exportType);
+        $actionExportType.set(setting.exportType);
+      }
+      $appSetting.setKey(
+        'padWhiteSpaceWhenExportFrame',
+        setting.padWhiteSpaceWhenExportFrame ?? true,
+      );
+      $appSetting.setKey(
+        'addBlackBgWhenExportGif',
+        !!setting.addBlackBgWhenExportGif,
+      );
     }
   } catch (e) {
     console.error(e);
@@ -164,4 +216,16 @@ export function setShowItemDyeable(value: boolean) {
 }
 export function setEnableExperimentalUpscale(value: boolean) {
   $appSetting.setKey('enableExperimentalUpscale', value);
+}
+export function setPreferRenderer(value: 'webgl' | 'webgpu') {
+  $appSetting.setKey('preferRenderer', value);
+}
+export function setExportType(value: ActionExportType) {
+  $appSetting.setKey('exportType', value);
+}
+export function setPadWhiteSpaceWhenExportFrame(value: boolean) {
+  $appSetting.setKey('padWhiteSpaceWhenExportFrame', value);
+}
+export function setAddBlackBgWhenExportGif(value: boolean) {
+  $appSetting.setKey('addBlackBgWhenExportGif', value);
 }

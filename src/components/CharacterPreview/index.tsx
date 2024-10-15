@@ -12,31 +12,38 @@ import { NameInput } from './NameInput';
 import { NameTagSwitch } from './NameTagSwitch';
 import { ResetButton } from './ResetButton';
 import { SaveButton } from './SaveButton';
+import { ExportAnimationButton } from './ExportAnimationButton';
+import { ExportProgress } from './ExportProgress';
+import { CharacterPreviewProvider } from './CharacterPreviewContext';
 
 export const CharacterPreview = () => {
   return (
-    <CharacterPreviewCard>
-      <HStack justify="center" mb="2">
-        <HandTypeToggleGroup />
-        <EarTypeToggleGroup />
-        <Box width="32">
-          <ExpressionSelect />
-        </Box>
-        <Box width="32">
-          <ActionSelect />
-        </Box>
-        <AnimatingSwitch />
-      </HStack>
-      <CharacterScene />
-      <HStack mt="2" pl="2">
-        <NameInput />
-        <NameTagSwitch />
-        <HStack marginLeft="auto">
-          <ResetButton />
-          <SaveButton />
+    <CharacterPreviewProvider>
+      <CharacterPreviewCard>
+        <HStack justify="center" mb="2">
+          <HandTypeToggleGroup />
+          <EarTypeToggleGroup />
+          <Box width="32">
+            <ExpressionSelect />
+          </Box>
+          <Box width="32">
+            <ActionSelect />
+          </Box>
+          <AnimatingSwitch />
         </HStack>
-      </HStack>
-    </CharacterPreviewCard>
+        <CharacterScene />
+        <HStack mt="2" pl="2">
+          <NameInput />
+          <NameTagSwitch />
+          <ExportAnimationButton />
+          <HStack marginLeft="auto">
+            <ResetButton />
+            <SaveButton />
+          </HStack>
+        </HStack>
+        <ExportProgress />
+      </CharacterPreviewCard>
+    </CharacterPreviewProvider>
   );
 };
 
@@ -46,5 +53,7 @@ const CharacterPreviewCard = styled('div', {
     borderRadius: 'lg',
     boxShadow: 'lg',
     bg: 'bg.default',
+    position: 'relative',
+    overflow: 'hidden',
   },
 });

@@ -5,10 +5,7 @@ import {
   $isGlobalRendererInitialized,
   $globalRenderer,
 } from '@/store/renderer';
-import type {
-  CharacterData,
-  CharacterItemInfo,
-} from '@/store/character/store';
+import type { CharacterData, CharacterItemInfo } from '@/store/character/store';
 import {
   MAX_ZOOM,
   MIN_ZOOM,
@@ -33,6 +30,7 @@ import { toaster } from '@/components/GlobalToast';
 export interface CharacterPreviewViewProps {
   onLoad: () => void;
   onLoaded: () => void;
+  ref?: (element: Character) => void;
   store: ReadableAtom<CharacterData>;
   target: string;
 }
@@ -43,10 +41,12 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   const [isInit, setIsInit] = createSignal<boolean>(false);
   const isShowUpscale = usePureStore($showUpscaledCharacter);
   let container!: HTMLDivElement;
-  let viewport: ZoomContainer | undefined = undefined;
-  let upscaleFilter: Anime4kFilter | undefined = undefined;
+  let viewport: ZoomContainer | undefined;
+  let upscaleFilter: Anime4kFilter | undefined;
   // const app = new Application();
   const ch = new Character();
+
+  props.ref?.(ch);
 
   ch.loadEvent.addListener('loading', props.onLoad);
   ch.loadEvent.addListener('loaded', props.onLoaded);
@@ -137,6 +137,10 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
 
         if (!upscaleFilter) {
           const app = $globalRenderer.get();
+          if (!app.renderer.anime4k) {
+            // currently only support WebGPU
+            return;
+          }
           await app.renderer.anime4k.preparePipeline(
             upscalePipelines.map((p) => p.pipeline),
           );

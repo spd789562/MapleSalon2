@@ -41,3 +41,7 @@ export enum DyeType {
   Saturation = 'saturation',
   Birghtness = 'brightness',
 }
+
+export function isValidExportType(type: string): type is ActionExportType {
+  return type in ActionExportType;
+}

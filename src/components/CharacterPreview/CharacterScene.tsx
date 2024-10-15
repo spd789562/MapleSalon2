@@ -1,4 +1,4 @@
-import { Show, createSignal } from 'solid-js';
+import { Show } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 import { styled } from 'styled-system/jsx/factory';
 
@@ -9,6 +9,8 @@ import {
   $sceneCustomColorStyle,
 } from '@/store/character/selector';
 import { $showPreviousCharacter } from '@/store/trigger';
+
+import { useCharacterPreview } from './CharacterPreviewContext';
 
 import ChevronRightIcon from 'lucide-solid/icons/chevron-right';
 import { LoadingWithBackdrop } from '@/components/elements/LoadingWithBackdrop';
@@ -22,17 +24,17 @@ import { ZoomControl } from './ZoomControl';
 import { PreviewSceneBackground } from '@/const/scene';
 
 export const CharacterScene = () => {
+  const [state, actions] = useCharacterPreview();
   let containerRef!: HTMLDivElement;
-  const [isLoading, setIsLoading] = createSignal(false);
   const scene = useStore($currentScene);
   const customColorStyle = useStore($sceneCustomColorStyle);
   const isShowComparison = useStore($showPreviousCharacter);
 
   function handleLoad() {
-    setIsLoading(true);
+    actions.setIsLoading(true);
   }
   function handleLoaded() {
-    setIsLoading(false);
+    actions.setIsLoading(false);
   }
 
   return (
@@ -57,6 +59,7 @@ export const CharacterScene = () => {
         onLoaded={handleLoaded}
         store={$previewCharacter}
         target="preview"
+        ref={actions.setCharacterRef}
       />
       <TopTool>
         <ShowPreviousSwitch />
@@ -66,7 +69,7 @@ export const CharacterScene = () => {
         <ZoomControl />
       </BottomLeftTool>
       <CharacterSceneSelection />
-      <Show when={isLoading()}>
+      <Show when={state.isLoading}>
         <LoadingWithBackdrop />
       </Show>
     </CharacterSceneContainer>

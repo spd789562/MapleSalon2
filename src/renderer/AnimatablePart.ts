@@ -187,6 +187,10 @@ export abstract class BaseAnimatablePart<
     return this.frames[this.currentFrame].delay;
   }
 
+  get totalDuration() {
+    return this.frames.reduce((acc, frame) => acc + frame.delay, 0);
+  }
+
   get frames() {
     return this._frames;
   }

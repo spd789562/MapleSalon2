@@ -1,13 +1,16 @@
+import type { JSX } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
 
 import LoaderCircle from 'lucide-solid/icons/loader-circle';
 
 interface LoadingWithBackdropProps {
   size?: number;
+  children?: JSX.Element;
 }
 export const LoadingWithBackdrop = (props: LoadingWithBackdropProps) => {
   return (
     <LoadingBackdrop>
+      {props.children}
       <Loading>
         <LoaderCircle size={props.size ?? 48} />
       </Loading>
@@ -23,6 +26,7 @@ const LoadingBackdrop = styled('div', {
     width: '100%',
     height: '100%',
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'bg.muted',

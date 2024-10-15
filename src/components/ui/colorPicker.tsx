@@ -3,7 +3,7 @@ import type { ComponentProps } from 'solid-js';
 import {
   type ColorPickerVariantProps,
   colorPicker,
-} from 'styled-system/recipes';
+} from 'styled-system/recipes/color-picker';
 import type { HTMLStyledProps } from 'styled-system/types';
 import { createStyleContext } from '@/utils/create-style-context';
 

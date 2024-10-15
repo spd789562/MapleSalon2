@@ -114,6 +114,93 @@ pub fn resolve_root_wz_file_dir<'a>(
     .boxed()
 }
 
+pub async fn load_wz_by_base(
+    base_node: WzNodeArc,
+    folders: &[&str],
+    version: Option<WzMapleVersion>,
+    path: Option<&str>,
+) -> Result<()> {
+    let (patch_version, keys, path) = {
+        let node_read = base_node.read().unwrap();
+        let file = node_read.try_as_file().unwrap();
+        let root_path = if let Some(p) = path {
+            p.to_string()
+        } else {
+            file.wz_file_meta.path.clone()
+        };
+        // reusing the keys from Base.wz
+        (
+            file.wz_file_meta.patch_version,
+            file.reader.keys.clone(),
+            root_path,
+        )
+    };
+
+    let first_parent = Path::new(&path).parent().unwrap();
+
+    // if wz in /Base/Base.wz then it newer structure
+    let wz_root_path = if first_parent.file_stem().unwrap() == "Base" {
+        first_parent.parent().unwrap()
+    // assume it older structure, which is something like Maplestory/Base.wz
+    } else {
+        first_parent
+    };
+
+    let mut entries = fs::read_dir(wz_root_path).await?;
+
+    let mut set = tokio::task::JoinSet::new();
+
+    while let Some(item) = entries.next_entry().await? {
+        let path = item.path();
+        let file_name = path.file_stem().unwrap();
+        let is_wz_file = path
+            .extension()
+            .and_then(|ext| if ext == "wz" { Some(ext) } else { None })
+            .is_some();
+        let is_valid = path.is_dir() || is_wz_file;
+
+        // let file_name = item.file_name();
+
+        let has_dir = base_node
+            .read()
+            .unwrap()
+            .at(file_name.to_str().unwrap())
+            .is_some();
+
+        let is_need_load = folders.contains(&file_name.to_str().unwrap());
+
+        if has_dir && is_valid && is_need_load {
+            // let wz_path = get_root_wz_file_path(&item).await;
+            let wz_path = if item.file_type().await?.is_dir() {
+                get_root_wz_file_path(&item).await
+            } else {
+                Some(path.to_str().unwrap().to_string())
+            };
+
+            if let Some(file_path) = wz_path {
+                set.spawn(resolve_root_wz_file_dir(
+                    file_path,
+                    version,
+                    Some(patch_version),
+                    Some(Arc::clone(&base_node)),
+                    Some(Arc::clone(&keys)),
+                ));
+            }
+        }
+    }
+
+    while let Some(result) = set.join_next().await {
+        let node = result.unwrap()?;
+        let name = {
+            let node_read = node.read().unwrap();
+            node_read.name.clone()
+        };
+        base_node.write().unwrap().children.insert(name, node);
+    }
+
+    Ok(())
+}
+
 pub async fn resolve_base(path: &str, version: Option<WzMapleVersion>) -> Result<WzNodeArc> {
     if !path.ends_with("Base.wz") {
         return Err(Error::Io(std::io::Error::new(
@@ -124,77 +211,13 @@ pub async fn resolve_base(path: &str, version: Option<WzMapleVersion>) -> Result
 
     let base_node = resolve_root_wz_file_dir(path.to_string(), version, None, None, None).await?;
 
-    let (patch_version, keys) = {
-        let node_read = base_node.read().unwrap();
-        let file = node_read.try_as_file().unwrap();
-
-        // reusing the keys from Base.wz
-        (file.wz_file_meta.patch_version, file.reader.keys.clone())
-    };
-
-    {
-        // let wz_root_path = Path::new(path).parent().unwrap().parent().unwrap();
-
-        let first_parent = Path::new(path).parent().unwrap();
-
-        let wz_root_path = if first_parent.file_stem().unwrap() == "Base" {
-            first_parent.parent().unwrap()
-        } else {
-            first_parent
-        };
-
-        let mut entries = fs::read_dir(wz_root_path).await?;
-
-        let mut set = tokio::task::JoinSet::new();
-
-        while let Some(item) = entries.next_entry().await? {
-            let path = item.path();
-            let file_name = path.file_stem().unwrap();
-            let is_wz_file = path
-                .extension()
-                .and_then(|ext| if ext == "wz" { Some(ext) } else { None })
-                .is_some();
-            let is_valid = path.is_dir() || is_wz_file;
-
-            // let file_name = item.file_name();
-
-            let has_dir = base_node
-                .read()
-                .unwrap()
-                .at(file_name.to_str().unwrap())
-                .is_some();
-
-            let is_need_load = WZ_ROOT_FOLDER_NEED_LOAD.contains(&file_name.to_str().unwrap());
-
-            if has_dir && is_valid && is_need_load {
-                // let wz_path = get_root_wz_file_path(&item).await;
-                let wz_path = if item.file_type().await?.is_dir() {
-                    get_root_wz_file_path(&item).await
-                } else {
-                    Some(path.to_str().unwrap().to_string())
-                };
-
-                if let Some(file_path) = wz_path {
-                    set.spawn(resolve_root_wz_file_dir(
-                        file_path,
-                        version,
-                        Some(patch_version),
-                        Some(Arc::clone(&base_node)),
-                        Some(Arc::clone(&keys)),
-                    ));
-                }
-            }
-        }
-
-        while let Some(result) = set.join_next().await {
-            let node = result.unwrap()?;
-            let name = {
-                let node_read = node.read().unwrap();
-                node_read.name.clone()
-            };
-            base_node.write().unwrap().children.insert(name, node);
-        }
-    }
+    load_wz_by_base(
+        base_node.clone(),
+        &WZ_ROOT_FOLDER_NEED_LOAD,
+        version,
+        Some(path),
+    )
+    .await?;
 
     Ok(base_node)
 }
