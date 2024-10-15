@@ -40,7 +40,9 @@ export const ExportFrameButton = (props: ExportAnimateButtonProps) => {
     try {
       const files: [Blob, string][] = [];
       for await (const characterRef of props.characterRefs) {
-        const frameData = await characterRef.makeCharacterFrames(padWhiteSpace);
+        const frameData = await characterRef.makeCharacterFrames({
+          padWhiteSpace,
+        });
         files.push(
           ...(await getCharacterFrameBlobs(frameData, characterRef.character, {
             includeMoveJson: padWhiteSpace === false,

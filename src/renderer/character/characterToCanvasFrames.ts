@@ -210,13 +210,13 @@ async function makeFrames(
     y: -bound.top,
   };
   const exportFrames = unprocessedFrames.map((frame) => {
-    const top = basePos.y + frame.top;
-    const left = basePos.x + frame.left;
-
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     const needPad =
       options.padWhiteSpace || options.padWhiteSpace === undefined;
+
+    const top = needPad ? basePos.y + frame.top : -frame.top;
+    const left = needPad ? basePos.x + frame.left : -frame.left;
 
     if (needPad) {
       canvas.width = maxWidth;
