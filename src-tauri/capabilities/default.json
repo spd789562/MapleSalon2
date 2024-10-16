@@ -23,6 +23,7 @@
     "shell:allow-open",
     "dialog:allow-open",
     "window-state:allow-save-window-state",
+    "store:allow-create-store",
     "store:allow-set",
     "store:allow-get",
     "store:allow-save",

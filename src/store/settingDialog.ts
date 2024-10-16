@@ -1,6 +1,6 @@
 import { deepMap, computed } from 'nanostores';
 
-import { Store } from '@tauri-apps/plugin-store';
+import { createStore } from '@tauri-apps/plugin-store';
 
 import { $equipmentDrawerExperimentCharacterRender } from './equipDrawer';
 import { $preferRenderer as $rendererPreference } from './renderer';
@@ -31,7 +31,7 @@ const SAVE_FILENAME = 'setting.bin';
 const SAVE_KEY = 'setting';
 
 /** file selection save, a presistence store on file */
-export const fileStore = new Store(SAVE_FILENAME);
+export const fileStore = await createStore(SAVE_FILENAME);
 
 export interface AppSetting extends Record<string, unknown> {
   /* window */

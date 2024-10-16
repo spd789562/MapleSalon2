@@ -131,6 +131,7 @@ export class BaseNameTag extends Container {
       this.id = id;
       await this.load();
     } else if (!id) {
+      this.id = undefined;
       this.background && this.removeChild(this.background);
       this.background = new NameTagColorBackground();
       this.addChild(this.background);

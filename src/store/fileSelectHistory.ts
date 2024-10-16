@@ -1,13 +1,16 @@
 import { map } from 'nanostores';
 
-import { Store } from '@tauri-apps/plugin-store';
+import { createStore } from '@tauri-apps/plugin-store';
 
 const SAVE_FILENAME = 'path.bin';
 
 const SAVE_KEY = 'filepaths';
 
 /** file selection save, a presistence store on file */
-export const fileStore = new Store(SAVE_FILENAME);
+export const fileStore = await createStore(SAVE_FILENAME, {
+  /* @ts-ignore */
+  autoSave: 60000 * 5, // 5 minutes
+});
 
 export const $savedFileSelectHistory = map<string[]>([]);
 
@@ -30,7 +33,6 @@ export async function appendPathToHistory(filePath: string) {
   const newHistory = [...history, filePath];
   $savedFileSelectHistory.set(newHistory);
   await fileStore.set(SAVE_KEY, newHistory);
-  await fileStore.save();
 }
 
 export async function removePathFromHistory(filePath: string) {
@@ -38,11 +40,9 @@ export async function removePathFromHistory(filePath: string) {
   const newHistory = history.filter((path) => path !== filePath);
   $savedFileSelectHistory.set(newHistory);
   await fileStore.set(SAVE_KEY, newHistory);
-  await fileStore.save();
 }
 
 export async function clearFileSelectHistory() {
   $savedFileSelectHistory.set([]);
   await fileStore.set(SAVE_KEY, []);
-  await fileStore.save();
 }
