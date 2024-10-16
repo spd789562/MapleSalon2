@@ -21,9 +21,16 @@ export enum EquipTab {
   History = 'history',
 }
 
+export enum EquipListType {
+  Icon = 'icon',
+  Row = 'row',
+  Character = 'character',
+}
+
 export type EquipCategorySelections = EquipSubCategory | typeof AllCategory;
 
 export const $equipmentDrawerEquipTab = atom<EquipTab>(EquipTab.Equip);
+export const $equipmentDrawerEquipListType = atom<EquipListType>(EquipListType.Icon);
 export const $equipmentDrawerEquipCategory =
   atom<EquipCategorySelections>(AllCategory);
 export const $equipmentDrawerOnlyShowDyeable = atom(false);
