@@ -39,7 +39,7 @@ const ColumnCountMap = {
 };
 
 const DefaultHeightMap = {
-  [EquipListType.Row]: 45,
+  [EquipListType.Row]: 36,
   [EquipListType.Icon]: 45,
   [EquipListType.Character]: 90,
 };

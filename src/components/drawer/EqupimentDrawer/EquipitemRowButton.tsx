@@ -5,6 +5,7 @@ import { selectNewItem } from '@/store/character/action';
 
 import { LoadableEquipIcon } from '@/components/elements/LoadableEquipIcon';
 import { Text } from '@/components/ui/text';
+import { PureTextClipboard } from '@/components/ui/clipboard';
 
 export interface EquipItemRowButtonProps {
   item: EquipItem;
@@ -19,6 +20,10 @@ export const EquipItemRowButton = (props: EquipItemRowButtonProps) => {
       isNameTag: props.item.isNameTag,
     });
   }
+  function preventDefault(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
 
   return (
     <EquipItemButtonContainer type="button" onClick={handleClick}>
@@ -27,8 +32,12 @@ export const EquipItemRowButton = (props: EquipItemRowButtonProps) => {
         name={props.item.name}
         isDyeable={props.item.isDyeable}
       />
-      <EquipItemId>{props.item.id}</EquipItemId>
-      <EquipItemName>{props.item.name}</EquipItemName>
+      <EquipItemId onClick={preventDefault}>
+        <PureTextClipboard value={props.item.id.toString()} />
+      </EquipItemId>
+      <EquipItemName onClick={preventDefault}>
+        <PureTextClipboard value={props.item.name} />
+      </EquipItemName>
     </EquipItemButtonContainer>
   );
 };
@@ -40,17 +49,29 @@ const EquipItemButtonContainer = styled('button', {
     display: 'grid',
     gridTemplateColumns: 'auto auto 1fr',
     alignItems: 'center',
+    cursor: 'pointer',
+    '&:hover': {
+      bg: 'gray.3',
+    },
   },
 });
 
 const EquipItemId = styled(Text, {
   base: {
-    width: '6rem',
+    width: '7rem',
+    cursor: 'pointer',
+    '&:hover': {
+      color: 'accent.10',
+    },
   },
 });
 
 const EquipItemName = styled(Text, {
   base: {
     textAlign: 'left',
+    cursor: 'pointer',
+    '&:hover': {
+      color: 'accent.10',
+    },
   },
 });
