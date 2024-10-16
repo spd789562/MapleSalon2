@@ -366,6 +366,11 @@ export class CharacterItem implements RenderItemInfo {
           part.filters = this.filters;
         }
       }
+      for (const part of actionItem.allAnimatablePieces) {
+        if (part.filters !== this.filters) {
+          part.filters = this.filters;
+        }
+      }
     }
   }
 
