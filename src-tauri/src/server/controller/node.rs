@@ -1,6 +1,6 @@
 use crate::server::extractors::TargetNodeExtractor;
 use crate::server::models::GetJsonParam;
-use crate::{handlers, Error, Result};
+use crate::{handlers, utils, Error, Result};
 
 use std::io::{BufWriter, Cursor};
 
@@ -78,6 +78,25 @@ pub async fn get_json(
         ],
         json.to_string(),
     ))
+}
+
+pub async fn load_extra_paths(
+    State(root): State<AppState>,
+    Query(param): Query<std::collections::HashMap<String, String>>,
+) -> Result<impl IntoResponse> {
+    let empty_string = String::new();
+    let pathes = param.get("path").unwrap_or(&empty_string);
+    let pathes = {
+        let root = root.0.read().unwrap();
+        pathes
+            .split(',')
+            .filter(|path| root.children.contains_key(*path))
+            .collect::<Vec<&str>>()
+    };
+
+    utils::load_wz_by_base(root.0, &pathes, None, None).await?;
+
+    Ok(())
 }
 
 pub async fn parse(

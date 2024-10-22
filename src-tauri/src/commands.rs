@@ -10,20 +10,17 @@ pub(crate) async fn get_server_url<R: Runtime>(
     state: State<'_, AppStore>,
 ) -> Result<Value> {
     let mut map = Map::new();
+    let root = state.node.read().unwrap();
     map.insert(
         "url".to_string(),
         Value::String(format!("http://localhost:{}", state.port)),
     );
+    map.insert("is_initialized".to_string(), Value::Bool(!root.is_null()));
     map.insert(
-        "is_initialized".to_string(),
-        Value::Bool(!state.node.read().unwrap().is_null()),
+        "is_load_items".to_string(),
+        Value::Bool(root.children.contains_key("Item")),
     );
-    let patch_version = state
-        .node
-        .read()
-        .unwrap()
-        .try_as_file()
-        .map(|f| f.wz_file_meta.patch_version);
+    let patch_version = root.try_as_file().map(|f| f.wz_file_meta.patch_version);
     map.insert(
         "patch_version".to_string(),
         patch_version.map_or(Value::Null, |v| Value::Number(v.into())),

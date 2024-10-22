@@ -74,3 +74,22 @@ pub async fn get_equip(State((_, string_dict)): State<AppState>) -> Result<impl 
         string_list.to_string(),
     ))
 }
+
+pub async fn get_chairs(State((root, _)): State<AppState>) -> Result<impl IntoResponse> {
+    let result = handlers::resolve_chair_string(&root)?;
+
+    let result = result
+        .iter()
+        .map(|(id, name)| {
+            Value::Array(vec![
+                Value::String(id.to_string()),
+                Value::String(name.to_string()),
+            ])
+        })
+        .collect::<Value>();
+
+    Ok((
+        [(header::CONTENT_TYPE, "application/json")],
+        result.to_string(),
+    ))
+}

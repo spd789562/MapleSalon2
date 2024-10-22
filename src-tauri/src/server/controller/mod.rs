@@ -20,10 +20,12 @@ pub fn node_router() -> Router<AppState> {
         .route("/json/*path", get(node::get_json))
         .route("/parse/*path", get(node::parse))
         .route("/unparse/*path", get(node::unparse))
+        .route("/load_extra_paths", get(node::load_extra_paths))
 }
 
 pub fn string_router() -> Router<AppState> {
     Router::new()
         .route("/equip", get(string::get_equip))
         .route("/equip/prepare", get(string::prepare_equip))
+        .route("/chair", get(string::get_chairs))
 }

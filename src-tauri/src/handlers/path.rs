@@ -12,6 +12,7 @@ pub const CHAIR_PATH: &'static str = "Item/Install";
 pub const CASH_CHAIR_PATH: &'static str = "Item/Cash/0520.img"; // should also start with 05204
 pub const CHAIR_STRING_PATH: &'static str = "String/Ins.img";
 pub const CHAIR_STRING_OLD_PATH: &'static str = "String/Item.img/Ins";
+pub const CASH_CHAIR_STRING_PATH: &'static str = "String/Cash.img";
 
 pub const SKILL_PATH: &'static str = "Skill";
 pub const SKILL_STRING_PATH: &'static str = "String/Skill.img";
