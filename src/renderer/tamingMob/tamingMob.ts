@@ -32,7 +32,7 @@ export class TamingMob {
     }
     for (const action of Object.values(CharacterAction)) {
       const item = this.wz[action];
-      if (item) {
+      if (item && !this.actionItem.has(action)) {
         this.actionItem.set(action, new TamingMobItem(action, item, this));
       }
     }

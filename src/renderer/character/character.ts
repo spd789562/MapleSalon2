@@ -8,7 +8,7 @@ import {
 } from 'pixi.js';
 
 import type { CharacterData } from '@/store/character/store';
-import type { ItemInfo, PieceSlot, Zmap } from './const/data';
+import type { ItemInfo, PieceSlot, Vec2, Zmap } from './const/data';
 import type { PieceIslot } from './const/slot';
 import type { WzActionInstruction } from './const/wz';
 import type { CategorizedItem, CharacterActionItem } from './categorizedItem';
@@ -16,6 +16,7 @@ import { CharacterLoader } from './loader';
 import { CharacterItem } from './item';
 import { CharacterBodyFrame } from './characterBodyFrame';
 import { CharacterZmapContainer } from './characterZmapContainer';
+import { TamingMob } from '../tamingMob/tamingMob';
 
 import { isMixDyeableId } from '@/utils/itemId';
 
@@ -55,6 +56,8 @@ export class Character extends Container {
   idItems = new Map<number, CharacterItem>();
 
   #_action = CharacterAction.Jump;
+  /* action of actually display */
+  #_useAction = CharacterAction.Jump;
   #_instruction?: string;
   #_expression: CharacterExpressions = CharacterExpressions.Default;
   #_earType = CharacterEarType.HumanEar;
@@ -66,6 +69,7 @@ export class Character extends Container {
   bodyContainer = new Container();
   bodyFrame = new Container();
   locks = new Map<PieceSlot, number>();
+  tamingMob?: TamingMob;
 
   frame = 0;
   _instructionFrame = 0;
@@ -100,6 +104,9 @@ export class Character extends Container {
   get action() {
     return this.#_action;
   }
+  get useAction() {
+    return this.#_useAction;
+  }
   get expression() {
     return this.#_expression;
   }
@@ -109,8 +116,15 @@ export class Character extends Container {
   get handType() {
     return this.#_handType;
   }
+  get tamingMobId() {
+    return this.tamingMob?.id;
+  }
   set action(action: CharacterAction) {
     this.#_action = action;
+    this.#_useAction = action;
+  }
+  set useAction(action: CharacterAction) {
+    this.#_useAction = action;
   }
   set expression(expression: CharacterExpressions) {
     this.#_expression = expression;
@@ -122,6 +136,16 @@ export class Character extends Container {
     this.#_handType = handType;
 
     this.updateActionByHandType();
+  }
+  set tamingMobId(id: number | undefined) {
+    if (id === this.tamingMobId) {
+      return;
+    }
+    if (id) {
+      this.tamingMob = new TamingMob(id);
+    } else {
+      this.tamingMob = undefined;
+    }
   }
 
   get instructionFrame() {
@@ -138,7 +162,7 @@ export class Character extends Container {
     this.#_instruction = instruction;
     const ins = instruction && CharacterLoader.instructionMap.get(instruction);
     if (ins) {
-      this.action = ins[0].action;
+      this.useAction = ins[0].action;
       this.currentInstructions = ins;
     }
   }
@@ -252,7 +276,7 @@ export class Character extends Container {
       .map((item) => {
         return item.isUseExpressionItem
           ? item.actionPieces.get(this.expression)
-          : item.actionPieces.get(this.action);
+          : item.actionPieces.get(this.useAction);
       })
       .filter((item) => item) as AnyCategorizedItem[];
   }
@@ -367,7 +391,8 @@ export class Character extends Container {
       weaponActionItem?.frameCount ?? bodyActionItem.frameCount,
     );
     const needBounce =
-      this.action === CharacterAction.Alert || this.action.startsWith('stand');
+      this.useAction === CharacterAction.Alert ||
+      this.useAction.startsWith('stand');
 
     const instructions: WzActionInstruction[] = [];
 
@@ -408,6 +433,7 @@ export class Character extends Container {
           this.instructionFrame += 1;
         }
         this.playBodyFrame();
+        this.playTamingMobFrame();
       }
     };
     Ticker.shared.add(this.currentTicker);
@@ -427,12 +453,51 @@ export class Character extends Container {
       this.bodyFrame.position.set(0, 0);
     }
   }
+  playTamingMobFrame() {
+    const instruction = this.currentInstruction;
+    const item = this.tamingMob?.actionItem.get(this.action);
+    if (!instruction || this.destroyed) {
+      return;
+    }
+    if (!item) {
+      return;
+    }
+
+    item.removePreviousFrameParts(this.instructionFrame);
+    const pieces = item.getFrameParts(this.instructionFrame);
+    let navel: Vec2 | undefined;
+
+    for (const piece of pieces) {
+      if (piece.destroyed) {
+        continue;
+      }
+      const zmap = CharacterLoader?.zmap;
+      if (!zmap) {
+        return;
+      }
+      const z = piece.frameData.z;
+      let container: Container;
+      if (typeof z === 'string') {
+        container = this.getOrCreatZmapLayer(zmap, z as PieceSlot);
+      } else {
+        container = this.getOrCreatEffectLayer(z);
+      }
+      container.addChild(piece);
+      if (piece.navel) {
+        navel = piece.navel;
+      }
+    }
+    if (navel) {
+      this.bodyFrame.pivot.x -= navel.x;
+      this.bodyFrame.pivot.y -= navel.y;
+    }
+  }
 
   get currentAction() {
     if (this.instruction && this.currentInstruction?.action) {
       return this.currentInstruction.action;
     }
-    return this.action;
+    return this.useAction;
   }
 
   get currentInstruction(): WzActionInstruction | undefined {
@@ -454,7 +519,17 @@ export class Character extends Container {
   get bodyItem() {
     return Array.from(this.idItems.values()).find((item) => item.isBody);
   }
-
+  async loadTamimgMob() {
+    if (!this.tamingMob) {
+      return;
+    }
+    await this.tamingMob.load();
+    const item = this.tamingMob.actionItem.get(this.action);
+    if (!item) {
+      return;
+    }
+    await item.loadResource();
+  }
   async loadInstruction() {
     const bodyItem = this.bodyItem;
     if (bodyItem) {
@@ -470,6 +545,15 @@ export class Character extends Container {
         // errorItems.push(weaponItem.info);
       }
     }
+    const tamingMobItem = this.tamingMob?.actionItem.get(this.action);
+
+    // if taming mob item exist, use taming mob item instructions
+    // it for chair and mount
+    if (tamingMobItem) {
+      this.currentInstructions = tamingMobItem.instructions;
+      return;
+    }
+
     // generate animation instruction by body
     if (!this.instruction) {
       this.currentInstructions = this.getInstructionsByBodyAndWeapon(
@@ -501,6 +585,7 @@ export class Character extends Container {
       }
     }, 50);
 
+    await this.loadTamimgMob();
     await this.loadInstruction();
 
     const usedBodyFrame: CharacterBodyFrame[] = [];
@@ -529,7 +614,7 @@ export class Character extends Container {
         await item.load();
         if (this.isAnimating) {
           await item.prepareActionAnimatableResource(
-            item.isUseExpressionItem ? this.expression : this.action,
+            item.isUseExpressionItem ? this.expression : this.useAction,
           );
         }
       } catch (_) {

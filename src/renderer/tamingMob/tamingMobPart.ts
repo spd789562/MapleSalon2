@@ -11,10 +11,12 @@ import type { TamingMobItem } from './tamingMobItem';
 import { CharacterLoader } from '../character/loader';
 
 export class TamingMobPart extends Container {
-  item: TamingMobItem;
+  tamingMobItem: TamingMobItem;
   frameData: WzPngPieceInfo;
   frame: number;
   url?: string;
+  offset: { x: number; y: number } = { x: 0, y: 0 };
+  navel?: { x: number; y: number };
 
   _srpite: Container | null = null;
 
@@ -22,9 +24,18 @@ export class TamingMobPart extends Container {
     super();
     this.frame = frame;
     this.frameData = frameData;
-    this.item = item;
+    this.tamingMobItem = item;
     this.filters = item.filters;
     this.url = frameData._outlink || frameData.path;
+    this.offset = {
+      x: -frameData.origin.x,
+      y: -frameData.origin.y + 50,
+    };
+    if (frameData.map?.navel) {
+      this.navel = frameData.map.navel;
+    }
+
+    this.position.set(this.offset.x, this.offset.y);
   }
 
   get resources() {
@@ -56,7 +67,9 @@ export class TamingMobPart extends Container {
     if (this._srpite) {
       return this._srpite;
     }
-    this._srpite = new Sprite(this.getTexture());
+    const sprite = new Sprite(this.getTexture());
+    // sprite.anchor.set(1, 1); // not sure it right to do
+    this._srpite = sprite;
     return this._srpite;
   }
   refreshView() {

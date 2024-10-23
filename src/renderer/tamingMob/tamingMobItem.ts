@@ -35,7 +35,7 @@ export class TamingMobItem {
       const layerItems = [] as TamingMobPart[];
       const item = this.wz[frame];
       const instruction = {
-        action: item.forceCharacterAction || this.name,
+        action: item.forceCharacterAction || 'sit',
         frame: item.forceCharacterActionFrameIndex || 0,
         expression: item.forceCharacterFace,
         expressionFrame: item.forceCharacterFaceFrameIndex,
@@ -80,6 +80,16 @@ export class TamingMobItem {
         part.refreshView();
       }
     }
+  }
+  removePreviousFrameParts(frame: number) {
+    const previousFrame =
+      this.items[(frame + this.items.length - 1) % this.items.length];
+    for (const part of previousFrame) {
+      part.removeFromParent();
+    }
+  }
+  getFrameParts(frame: number) {
+    return this.items[frame % this.items.length];
   }
   destroy() {
     for (const frame of this.items) {
