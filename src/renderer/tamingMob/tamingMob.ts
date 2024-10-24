@@ -1,6 +1,10 @@
+import type { Container } from 'pixi.js';
+
 import { CharacterLoader } from '../character/loader';
 
 import type { WzTamingMobData } from './const/wz';
+import type { PieceZ } from '../character/const/data';
+import type { Character } from '../character/character';
 import { CharacterAction } from '@/const/actions';
 
 import { TamingMobItem } from './tamingMobItem';
@@ -36,5 +40,33 @@ export class TamingMob {
         this.actionItem.set(action, new TamingMobItem(action, item, this));
       }
     }
+  }
+  playFrameOnCharacter(character: Character, frame: number) {
+    const item = this.actionItem.get(character.action);
+    if (!item) {
+      return;
+    }
+    item.removePreviousFrameParts(frame);
+    const pieces = item.getFrameParts(frame);
+
+    for (const piece of pieces) {
+      if (piece.destroyed) {
+        continue;
+      }
+      const zmap = CharacterLoader?.zmap;
+      if (!zmap) {
+        return;
+      }
+      const z = piece.frameData.z;
+      let container: Container;
+      if (typeof z === 'string') {
+        container = character.getOrCreatZmapLayer(zmap, z as PieceZ);
+      } else {
+        container = character.getOrCreatEffectLayer(z);
+      }
+      container.addChild(piece);
+    }
+    character.bodyFrame.pivot.x -= item.navel.x;
+    character.bodyFrame.pivot.y -= item.navel.y;
   }
 }

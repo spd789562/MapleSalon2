@@ -1,7 +1,7 @@
 import { Assets, type UnresolvedAsset } from 'pixi.js';
 import type { CharacterAction } from '@/const/actions';
 import type { WzActionInstruction } from '../character/const/wz';
-import type { WzTamingMobFrameItem } from './const/wz';
+import type { WzPngPieceInfo, WzTamingMobFrameItem } from './const/wz';
 import type { TamingMob } from './tamingMob';
 import { TamingMobPart } from './tamingMobPart';
 
@@ -13,6 +13,7 @@ export class TamingMobItem {
   frameCount = 0;
   items: TamingMobPart[][] = [];
   instructions: WzActionInstruction[] = [];
+  navel = { x: 0, y: 0 };
 
   constructor(
     name: CharacterAction,
@@ -44,12 +45,23 @@ export class TamingMobItem {
       } as WzActionInstruction;
       instructions.push(instruction);
 
-      const layers = Object.keys(item)
-        .map((key) => Number.parseInt(key, 10))
-        .filter((key) => !Number.isNaN(key));
+      for (const layer of Object.keys(item)) {
+        if (Number.isNaN(Number(layer)) && layer !== 'tamingMobRear') {
+          continue;
+        }
+        const layerData = item[layer as keyof typeof item] as WzPngPieceInfo;
 
-      for (const layer of layers) {
-        layerItems.push(new TamingMobPart(this, item[layer], frame));
+        if (layerData.map?.navel) {
+          this.navel = {
+            x: layerData.map.navel.x,
+            y: layerData.map.navel.y,
+          };
+        }
+
+        layerItems.push(new TamingMobPart(this, layerData, frame));
+      }
+      for (const part of layerItems) {
+        part.updateAncher(this.navel);
       }
       items.push(layerItems);
     }

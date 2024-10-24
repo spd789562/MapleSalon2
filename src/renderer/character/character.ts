@@ -433,7 +433,6 @@ export class Character extends Container {
           this.instructionFrame += 1;
         }
         this.playBodyFrame();
-        this.playTamingMobFrame();
       }
     };
     Ticker.shared.add(this.currentTicker);
@@ -452,47 +451,8 @@ export class Character extends Container {
     } else {
       this.bodyFrame.position.set(0, 0);
     }
+    this.tamingMob?.playFrameOnCharacter(this, this.instructionFrame);
   }
-  playTamingMobFrame() {
-    const instruction = this.currentInstruction;
-    const item = this.tamingMob?.actionItem.get(this.action);
-    if (!instruction || this.destroyed) {
-      return;
-    }
-    if (!item) {
-      return;
-    }
-
-    item.removePreviousFrameParts(this.instructionFrame);
-    const pieces = item.getFrameParts(this.instructionFrame);
-    let navel: Vec2 | undefined;
-
-    for (const piece of pieces) {
-      if (piece.destroyed) {
-        continue;
-      }
-      const zmap = CharacterLoader?.zmap;
-      if (!zmap) {
-        return;
-      }
-      const z = piece.frameData.z;
-      let container: Container;
-      if (typeof z === 'string') {
-        container = this.getOrCreatZmapLayer(zmap, z as PieceSlot);
-      } else {
-        container = this.getOrCreatEffectLayer(z);
-      }
-      container.addChild(piece);
-      if (piece.navel) {
-        navel = piece.navel;
-      }
-    }
-    if (navel) {
-      this.bodyFrame.pivot.x -= navel.x;
-      this.bodyFrame.pivot.y -= navel.y;
-    }
-  }
-
   get currentAction() {
     if (this.instruction && this.currentInstruction?.action) {
       return this.currentInstruction.action;

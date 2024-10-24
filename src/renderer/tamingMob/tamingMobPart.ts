@@ -7,6 +7,7 @@ import {
 } from 'pixi.js';
 import type { WzPngPieceInfo } from './const/wz';
 import type { TamingMobItem } from './tamingMobItem';
+import type { Vec2 } from './const/data';
 
 import { CharacterLoader } from '../character/loader';
 
@@ -16,7 +17,6 @@ export class TamingMobPart extends Container {
   frame: number;
   url?: string;
   offset: { x: number; y: number } = { x: 0, y: 0 };
-  navel?: { x: number; y: number };
 
   _srpite: Container | null = null;
 
@@ -29,13 +29,8 @@ export class TamingMobPart extends Container {
     this.url = frameData._outlink || frameData.path;
     this.offset = {
       x: -frameData.origin.x,
-      y: -frameData.origin.y + 50,
+      y: -frameData.origin.y,
     };
-    if (frameData.map?.navel) {
-      this.navel = frameData.map.navel;
-    }
-
-    this.position.set(this.offset.x, this.offset.y);
   }
 
   get resources() {
@@ -76,10 +71,22 @@ export class TamingMobPart extends Container {
     this.removeChildren();
     this.addChild(this.getRenderAble());
   }
+  updateAncher(navel: Vec2) {
+    this.position.set(
+      this.offset.x,
+      /* not sure why the navel is affecting the offset */
+      this.offset.y - navel.y,
+    );
+  }
 
   async updateFrameData(frameData: WzPngPieceInfo) {
     this.frameData = frameData;
     this.url = frameData._outlink || frameData.path;
+    this.offset = {
+      x: -frameData.origin.x,
+      y: -frameData.origin.y,
+    };
+    this.updateAncher(this.tamingMobItem.navel);
     await this.prepareResource();
     this.refreshView();
   }
