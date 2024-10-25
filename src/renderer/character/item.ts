@@ -103,7 +103,10 @@ export class CharacterItem implements RenderItemInfo {
     return isWeaponId(this.info.id) || isCashWeaponId(this.info.id);
   }
 
-  isAncherAncherBuiltByFrame(action: CharacterAction, frame: number) {
+  isAncherAncherBuiltByFrame(
+    action: CharacterAction | CharacterExpressions,
+    frame: number,
+  ) {
     const actionItem = this.actionPieces.get(action);
     if (!actionItem) {
       return true;
@@ -297,16 +300,12 @@ export class CharacterItem implements RenderItemInfo {
   }
 
   tryBuildAncherByFrame(
-    action: CharacterAction,
+    action: CharacterAction | CharacterExpressions,
     currentAnchers: Map<AncherName, Vec2>,
     frame: number,
   ): Map<AncherName, Vec2> {
-    let item: CharacterActionItem | CharacterFaceItem | undefined;
-    if (this.isUseExpressionItem) {
-      item = this.actionPieces.get(this.character.expression);
-    } else {
-      item = this.actionPieces.get(action);
-    }
+    const item: CharacterActionItem | CharacterFaceItem | undefined =
+      this.actionPieces.get(action);
     if (!item) {
       return currentAnchers;
     }

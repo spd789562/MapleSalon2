@@ -70,6 +70,12 @@ export class CharacterItemPiece implements AnimatableFrame {
     if (noAncher) {
       this.isAncherBuilt = true;
     }
+    if (this.origin) {
+      this.position = {
+        x: -(this.origin?.x || 0),
+        y: -(this.origin?.y || 0),
+      };
+    }
   }
 
   get slotName() {
@@ -111,10 +117,6 @@ export class CharacterItemPiece implements AnimatableFrame {
     this.ancher = {
       x: baseAncher.x - this.map[ancherName].x,
       y: baseAncher.y - this.map[ancherName].y,
-    };
-    this.position = {
-      x: -this.map[ancherName].x - (this.origin?.x || 0),
-      y: -this.map[ancherName].y - (this.origin?.y || 0),
     };
 
     this.isAncherBuilt = true;

@@ -15,10 +15,11 @@ import type { CategorizedItem, CharacterActionItem } from './categorizedItem';
 import { CharacterLoader } from './loader';
 import { CharacterItem } from './item';
 import { CharacterBodyFrame } from './characterBodyFrame';
+import { CharacterFaceFrame } from './characterFaceFrame';
 import { CharacterZmapContainer } from './characterZmapContainer';
 import { TamingMob } from '../tamingMob/tamingMob';
 
-import { isMixDyeableId } from '@/utils/itemId';
+import { isMixDyeableId, isFaceId } from '@/utils/itemId';
 
 import { CharacterAction } from '@/const/actions';
 import { CharacterExpressions } from '@/const/emotions';
@@ -60,6 +61,8 @@ export class Character extends Container {
   #_useAction = CharacterAction.Jump;
   #_instruction?: string;
   #_expression: CharacterExpressions = CharacterExpressions.Default;
+  /* expression of actually display */
+  #_useExpression = CharacterExpressions.Default;
   #_earType = CharacterEarType.HumanEar;
   #_handType = CharacterHandType.DoubleHand;
   #_renderId = '';
@@ -75,6 +78,10 @@ export class Character extends Container {
   _instructionFrame = 0;
   currentInstructions: WzActionInstruction[] = [];
   bodyFrameMap = new Map<`${CharacterAction}-${number}`, CharacterBodyFrame>();
+  faceFrameMap = new Map<
+    `${CharacterExpressions}-${number}`,
+    CharacterFaceFrame
+  >();
 
   isPlaying = false;
   isAnimating = false;
@@ -110,6 +117,9 @@ export class Character extends Container {
   get expression() {
     return this.#_expression;
   }
+  get useExpression() {
+    return this.#_useExpression;
+  }
   get earType() {
     return this.#_earType;
   }
@@ -128,6 +138,9 @@ export class Character extends Container {
   }
   set expression(expression: CharacterExpressions) {
     this.#_expression = expression;
+  }
+  set useExpression(expression: CharacterExpressions) {
+    this.#_useExpression = expression;
   }
   set earType(earType: CharacterEarType) {
     this.#_earType = earType;
@@ -267,7 +280,15 @@ export class Character extends Container {
         : info.dye,
     });
     /* only update sprite already in render */
-    await Promise.all(this.bodyFrames.map((frame) => frame?.updateMixDye(id)));
+    if (isFaceId(id)) {
+      await Promise.all(
+        this.faceFrames.map((frame) => frame?.updateMixDye(id)),
+      );
+    } else {
+      await Promise.all(
+        this.bodyFrames.map((frame) => frame?.updateMixDye(id)),
+      );
+    }
   }
 
   /** get current items filter by expression and action */
@@ -275,7 +296,7 @@ export class Character extends Container {
     return Array.from(this.idItems.values())
       .map((item) => {
         return item.isUseExpressionItem
-          ? item.actionPieces.get(this.expression)
+          ? item.actionPieces.get(this.useExpression)
           : item.actionPieces.get(this.useAction);
       })
       .filter((item) => item) as AnyCategorizedItem[];
@@ -325,14 +346,6 @@ export class Character extends Container {
       }
     }
 
-    for (const instruction of this.currentInstructions) {
-      const frameKey = `${instruction.action}-${instruction.frame}` as const;
-      const bodyFrame = this.bodyFrameMap.get(frameKey);
-      if (!bodyFrame) {
-        continue;
-      }
-      bodyFrame.updatePieces();
-    }
     if (this.isAnimating) {
       this.isPlaying = true;
       this.nameTag.play();
@@ -371,15 +384,14 @@ export class Character extends Container {
   }
 
   getInstructionsByBodyAndWeapon(
-    action: CharacterAction,
     bodyItem?: CharacterItem,
     weaponItem?: CharacterItem,
   ) {
     const bodyActionItem = bodyItem?.actionPieces.get(
-      action,
+      this.action,
     ) as CharacterActionItem;
     const weaponActionItem = weaponItem?.actionPieces.get(
-      action,
+      this.action,
     ) as CharacterActionItem;
     if (!bodyActionItem) {
       return [];
@@ -391,15 +403,14 @@ export class Character extends Container {
       weaponActionItem?.frameCount ?? bodyActionItem.frameCount,
     );
     const needBounce =
-      this.useAction === CharacterAction.Alert ||
-      this.useAction.startsWith('stand');
+      this.action === CharacterAction.Alert || this.action.startsWith('stand');
 
     const instructions: WzActionInstruction[] = [];
 
     for (let frame = 0; frame < minFrame; frame++) {
       const delay = bodyActionItem.wz[frame]?.delay || 100;
       instructions.push({
-        action,
+        action: this.action,
         frame,
         delay,
       });
@@ -408,7 +419,7 @@ export class Character extends Container {
       for (let frame = minFrame - 2; frame > 0; frame--) {
         const delay = bodyActionItem.wz[frame]?.delay || 100;
         instructions.push({
-          action,
+          action: this.action,
           frame,
           delay,
         });
@@ -443,9 +454,10 @@ export class Character extends Container {
     if (!instruction || this.destroyed) {
       return;
     }
-    const key = `${instruction.action}-${instruction.frame}` as const;
-    const bodyFrame = this.bodyFrameMap.get(key);
+    const bodyFrame = this.getBodyFrameByInstruction(instruction);
+    const faceFrame = this.getFaceFrameByInstruction(instruction);
     bodyFrame?.renderPieces();
+    faceFrame?.renderPieces(bodyFrame);
     if (instruction.move) {
       this.bodyFrame.position.copyFrom(instruction.move);
     } else {
@@ -464,10 +476,14 @@ export class Character extends Container {
     return this.currentInstructions[this.instructionFrame];
   }
   get bodyFrames() {
-    return this.currentInstructions.map((instruction) => {
-      const frameKey = `${instruction.action}-${instruction.frame}` as const;
-      return this.bodyFrameMap.get(frameKey);
-    }) as CharacterBodyFrame[];
+    return this.currentInstructions.map((ins) =>
+      this.getBodyFrameByInstruction(ins),
+    ) as CharacterBodyFrame[];
+  }
+  get faceFrames() {
+    return this.currentInstructions.map((ins) =>
+      this.getFaceFrameByInstruction(ins),
+    ) as CharacterFaceFrame[];
   }
 
   get weaponItem() {
@@ -517,7 +533,6 @@ export class Character extends Container {
     // generate animation instruction by body
     if (!this.instruction) {
       this.currentInstructions = this.getInstructionsByBodyAndWeapon(
-        this.action,
         bodyItem,
         weaponItem,
       );
@@ -548,26 +563,8 @@ export class Character extends Container {
     await this.loadTamimgMob();
     await this.loadInstruction();
 
-    const usedBodyFrame: CharacterBodyFrame[] = [];
-    const frameAndActionNeedToLoad: Set<`${CharacterAction}-${number}`> =
-      new Set();
-
-    for (const instruction of this.currentInstructions) {
-      const frameKey = `${instruction.action}-${instruction.frame}` as const;
-      let bodyFrame = this.bodyFrameMap.get(frameKey);
-      if (!bodyFrame) {
-        bodyFrame = new CharacterBodyFrame(
-          this,
-          instruction.action,
-          instruction.frame,
-        );
-        frameAndActionNeedToLoad.add(frameKey);
-        this.bodyFrameMap.set(frameKey, bodyFrame);
-      }
-      if (this.isAnimating || usedBodyFrame.length === 0) {
-        usedBodyFrame.push(bodyFrame);
-      }
-    }
+    const usedBodyFrame = this.createBodyFramesWhenNotExist();
+    const usedFaceFrame = this.createFaceFramesWhenNotExist();
 
     const loadItems = Array.from(this.idItems.values()).map(async (item) => {
       try {
@@ -585,7 +582,11 @@ export class Character extends Container {
     const errorItems = await Promise.all(loadItems).then((items) =>
       items.filter((item) => item),
     );
-    await Promise.all(usedBodyFrame.map((frame) => frame.prepareResourece()));
+    await Promise.all(
+      ([] as Promise<void>[])
+        .concat(usedBodyFrame.map((frame) => frame.prepareResourece()))
+        .concat(usedFaceFrame.map((frame) => frame.prepareResourece())),
+    );
 
     if (this.#_renderId !== renderId) {
       return;
@@ -601,14 +602,24 @@ export class Character extends Container {
       bodyFrame.clearAncher();
       bodyFrame.updatePieces();
     }
+    for (const faceFrame of usedFaceFrame) {
+      faceFrame.clearAncher();
+      faceFrame.updatePieces();
+    }
 
     // try to build ancher but up to 2 times of item count
     for (let i = 0; i < itemCount * 4; i++) {
-      if (usedBodyFrame.every((frame) => frame.isAllAncherBuilt)) {
+      if (
+        usedBodyFrame.every((frame) => frame.isAllAncherBuilt) &&
+        usedFaceFrame.every((frame) => frame.isAllAncherBuilt)
+      ) {
         break;
       }
       for (const bodyFrame of usedBodyFrame) {
         bodyFrame.buildAncher();
+      }
+      for (const faceFrame of usedFaceFrame) {
+        faceFrame.buildAncher();
       }
     }
 
@@ -655,6 +666,54 @@ export class Character extends Container {
       layer.visible = !this.isHideAllEffect;
     }
   }
+
+  getBodyFrameByInstruction(instruction: WzActionInstruction) {
+    const key = `${instruction.action}-${instruction.frame}` as const;
+    return this.bodyFrameMap.get(key);
+  }
+  getFaceFrameByInstruction(instruction: WzActionInstruction) {
+    const expression = instruction.expression || this.expression;
+    const frame = instruction.expressionFrame || 0;
+    const key = `${expression}-${frame}` as const;
+    return this.faceFrameMap.get(key);
+  }
+  createBodyFramesWhenNotExist() {
+    const set = new Set<CharacterBodyFrame>();
+    for (const instruction of this.currentInstructions) {
+      const frameKey = `${instruction.action}-${instruction.frame}` as const;
+      let bodyFrame = this.bodyFrameMap.get(frameKey);
+      if (!bodyFrame) {
+        bodyFrame = new CharacterBodyFrame(
+          this,
+          instruction.action,
+          instruction.frame,
+        );
+        this.bodyFrameMap.set(frameKey, bodyFrame);
+      }
+      if (this.isAnimating || set.size === 0) {
+        set.add(bodyFrame);
+      }
+    }
+    return Array.from(set);
+  }
+  createFaceFramesWhenNotExist() {
+    const set = new Set<CharacterFaceFrame>();
+    for (const instruction of this.currentInstructions) {
+      const expression = instruction.expression || this.expression;
+      const frame = instruction.expressionFrame || 0;
+      const key = `${expression}-${frame}` as const;
+      let faceFrame = this.faceFrameMap.get(key);
+      if (!faceFrame) {
+        faceFrame = new CharacterFaceFrame(this, expression, frame);
+        this.faceFrameMap.set(key, faceFrame);
+      }
+      if (this.isAnimating || set.size === 0) {
+        set.add(faceFrame);
+      }
+    }
+    return Array.from(set);
+  }
+
   private updateActionByHandType() {
     if (this.#_handType === CharacterHandType.SingleHand) {
       if (this.action === CharacterAction.Walk2) {
