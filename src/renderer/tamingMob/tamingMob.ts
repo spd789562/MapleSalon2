@@ -84,7 +84,8 @@ export class TamingMob {
       }
       container.addChild(piece);
     }
-    character.bodyFrame.pivot.x -= item.navel.x;
-    character.bodyFrame.pivot.y -= item.navel.y;
+    const frameNavel = item.getFrameNavel(frame);
+    character.bodyFrame.pivot.x -= frameNavel.x;
+    character.bodyFrame.pivot.y -= frameNavel.y;
   }
 }

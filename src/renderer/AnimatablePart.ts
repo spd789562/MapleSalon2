@@ -131,7 +131,7 @@ export abstract class BaseAnimatablePart<
 
     this._previousFrame = currentFrame;
 
-    if (this.children.length) {
+    if (this.children.length > 0) {
       this.removeChildAt(0);
     }
     this.addChildAt(this.textures[currentFrame], 0);

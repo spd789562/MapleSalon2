@@ -83,7 +83,7 @@ export class TamingMobPart extends Container {
       x: -frameData.origin.x,
       y: -frameData.origin.y,
     };
-    this.updateAncher(this.tamingMobItem.navel);
+    this.updateAncher(this.tamingMobItem.navels[this.frame]);
     await this.prepareResource();
     this.refreshView();
   }

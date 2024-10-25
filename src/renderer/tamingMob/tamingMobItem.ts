@@ -1,6 +1,7 @@
 import { Assets, type UnresolvedAsset } from 'pixi.js';
 import { CharacterAction } from '@/const/actions';
 import type { WzActionInstruction } from '../character/const/wz';
+import type { Vec2 } from './const/data';
 import type { WzPngPieceInfo, WzTamingMobFrameItem } from './const/wz';
 import type { TamingMob } from './tamingMob';
 import { TamingMobPart } from './tamingMobPart';
@@ -13,7 +14,7 @@ export class TamingMobItem {
   frameCount = 0;
   items: TamingMobPart[][] = [];
   instructions: WzActionInstruction[] = [];
-  navel = { x: 0, y: 0 };
+  navels: Vec2[] = [];
   defaultAction = CharacterAction.Sit;
 
   constructor(
@@ -34,12 +35,14 @@ export class TamingMobItem {
     this.resolveFrames();
   }
   resolveFrames() {
+    const navels: Vec2[] = [];
     const items: TamingMobPart[][] = [];
     const instructions: WzActionInstruction[] = [];
 
     for (let frame = 0; frame < this.frameCount; frame++) {
       const layerItems = [] as TamingMobPart[];
       const item = this.wz[frame];
+      let navel = { x: 0, y: 0 };
       const instruction = {
         action: item.forceCharacterAction || this.defaultAction,
         frame: item.forceCharacterActionFrameIndex || 0,
@@ -57,7 +60,7 @@ export class TamingMobItem {
         const layerData = item[layer as keyof typeof item] as WzPngPieceInfo;
 
         if (layerData.map?.navel) {
-          this.navel = {
+          navel = {
             x: layerData.map.navel.x,
             y: layerData.map.navel.y,
           };
@@ -66,11 +69,13 @@ export class TamingMobItem {
         layerItems.push(new TamingMobPart(this, layerData, frame));
       }
       for (const part of layerItems) {
-        part.updateAncher(this.navel);
+        part.updateAncher(navel);
       }
+      navels.push(navel);
       items.push(layerItems);
     }
 
+    this.navels = navels;
     this.instructions = instructions;
     this.items = items;
   }
@@ -107,6 +112,9 @@ export class TamingMobItem {
   }
   getFrameParts(frame: number) {
     return this.items[frame % this.items.length];
+  }
+  getFrameNavel(frame: number) {
+    return this.navels[frame % this.navels.length];
   }
   destroy() {
     for (const frame of this.items) {
