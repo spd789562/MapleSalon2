@@ -21,6 +21,20 @@ export class TamingMob {
   get isChair() {
     return !!this.wz?.sit;
   }
+  get isHideWeapon() {
+    return !!this.wz?.info?.invisibleWeapon;
+  }
+  get isHideCape() {
+    return !!this.wz?.info?.invisibleCape;
+  }
+  get isHideEffect() {
+    const hide1 = !!this.wz?.info?.removeEffect;
+    const hide2 = !!this.wz?.info?.removeEffectAll;
+    return hide1 || hide2;
+  }
+  get isHideBody() {
+    return !!this.wz?.info?.removeBody;
+  }
   async load() {
     if (!this.wz) {
       const data = await CharacterLoader.getPieceWzByPath<WzTamingMobData>(

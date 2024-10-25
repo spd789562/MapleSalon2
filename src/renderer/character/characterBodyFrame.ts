@@ -107,6 +107,12 @@ export class CharacterBodyFrame {
         }
         piece.updateAncher();
         const ancherName = piece.frameData.baseAncherName;
+
+        /* body hiding check */
+        if (this.character.tamingMob?.isHideBody && ancherName === 'navel') {
+          continue;
+        }
+
         const pieceAncher = piece.frameData.map[ancherName];
         const ancher = this.anchers.get(ancherName);
         /* setting the ancher on each piece */
