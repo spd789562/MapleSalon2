@@ -72,11 +72,8 @@ export class TamingMobPart extends Container {
     this.addChild(this.getRenderAble());
   }
   updateAncher(navel: Vec2) {
-    this.position.set(
-      this.offset.x,
-      /* not sure why the navel is affecting the offset */
-      this.offset.y - navel.y,
-    );
+    /* not sure why the navel is affecting the offset */
+    this.position.set(this.offset.x - navel.x, this.offset.y - navel.y);
   }
 
   async updateFrameData(frameData: WzPngPieceInfo) {

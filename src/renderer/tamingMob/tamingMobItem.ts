@@ -1,5 +1,5 @@
 import { Assets, type UnresolvedAsset } from 'pixi.js';
-import type { CharacterAction } from '@/const/actions';
+import { CharacterAction } from '@/const/actions';
 import type { WzActionInstruction } from '../character/const/wz';
 import type { WzPngPieceInfo, WzTamingMobFrameItem } from './const/wz';
 import type { TamingMob } from './tamingMob';
@@ -14,17 +14,22 @@ export class TamingMobItem {
   items: TamingMobPart[][] = [];
   instructions: WzActionInstruction[] = [];
   navel = { x: 0, y: 0 };
+  defaultAction = CharacterAction.Sit;
 
   constructor(
     name: CharacterAction,
     wz: Record<number, WzTamingMobFrameItem>,
     tamimgMob: TamingMob,
+    defaultAction?: CharacterAction,
   ) {
     this.name = name;
     this.wz = wz;
     this.tamimgMob = tamimgMob;
     const keys = Object.keys(wz).map((key) => Number.parseInt(key, 10) || 0);
     this.frameCount = keys.reduce((a, b) => Math.max(a, b + 1), keys.length);
+    if (defaultAction) {
+      this.defaultAction = defaultAction;
+    }
 
     this.resolveFrames();
   }
@@ -36,7 +41,7 @@ export class TamingMobItem {
       const layerItems = [] as TamingMobPart[];
       const item = this.wz[frame];
       const instruction = {
-        action: item.forceCharacterAction || 'sit',
+        action: item.forceCharacterAction || this.defaultAction,
         frame: item.forceCharacterActionFrameIndex || 0,
         expression: item.forceCharacterFace,
         expressionFrame: item.forceCharacterFaceFrameIndex,

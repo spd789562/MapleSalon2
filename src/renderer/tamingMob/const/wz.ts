@@ -2,13 +2,44 @@ import type { Vec2 } from './data';
 import type { CharacterAction } from '@/const/actions';
 import type { CharacterExpressions } from '@/const/emotions';
 
-export type WzTamingMobData = { info: WzTamingMobInfo } & Record<
-  CharacterAction,
-  Record<number, WzTamingMobFrameItem>
->;
+export type WzTamingMobData = {
+  info: WzTamingMobInfo;
+  characterAction?: WzTamingMobActionMap;
+} & Record<CharacterAction, Record<number, WzTamingMobFrameItem>>;
+
+export type WzTamingMobActionMap = Record<CharacterAction, CharacterAction>;
 
 export interface WzTamingMobInfo {
-  tamingMob: number;
+  /* i'm not sure what this do */
+  tamingMob?: number;
+
+  passengerNum?: number;
+  slotMax?: number;
+  scale?: number;
+  forcingItem?: number;
+
+  /* booleans, 1 for true */
+  removeBody?: number;
+  removeEffect?: number;
+  removeEffectAll?: number;
+  removeJobWing?: number;
+  removeSoulEffect?: number;
+  flip?: number;
+  fixFlip?: number;
+  forceCharacterFlip?: number;
+  ActionEffect?: number;
+
+  invisibleWeapon?: number;
+  invisibleCape?: number;
+  invisibleTail?: number;
+
+  hideEar?: number;
+
+  pachinko?: number; // what even this do?
+
+  /* custom */
+  partsCount?: number;
+  customVehicle?: WzTamingMobCustom;
 }
 
 export type WzTamingMobFrameItem = {
@@ -34,4 +65,19 @@ export interface WzPngPieceInfo {
   _outlink?: string;
   _inlink?: string;
   path?: string;
+}
+
+export interface WzTamingMobCustom {
+  type: string;
+}
+
+export interface WzTamingMobCustomInfo {
+  avatarCount?: number;
+  avatarInfo: Record<number, WzTamingMobCustomMovingInfo>;
+}
+
+export interface WzTamingMobCustomMovingInfo {
+  left?: number;
+  pos: Vec2;
+  z?: number;
 }
