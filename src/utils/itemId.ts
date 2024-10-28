@@ -258,3 +258,7 @@ export function isMixDyeableId(id: number) {
 export function isDyeableId(id: number) {
   return !isMixDyeableId(id);
 }
+
+export function isCashChairId(id: number) {
+  return id >= 5204000;
+}

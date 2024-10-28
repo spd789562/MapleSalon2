@@ -73,6 +73,7 @@ export class Character extends Container {
   bodyFrame = new Container();
   locks = new Map<PieceSlot, number>();
   tamingMob?: TamingMob;
+  offset: Vec2 = { x: 0, y: 0 };
 
   frame = 0;
   _instructionFrame = 0;
@@ -86,6 +87,7 @@ export class Character extends Container {
   isPlaying = false;
   isAnimating = false;
 
+  isHideBody = false;
   isHideAllEffect = false;
 
   /* delta to calculate is need enter next frame */
@@ -157,6 +159,9 @@ export class Character extends Container {
     if (id) {
       this.tamingMob = new TamingMob(id);
     } else {
+      if (this.tamingMob) {
+        this.isHideBody = false;
+      }
       this.tamingMob = undefined;
     }
   }
@@ -459,9 +464,13 @@ export class Character extends Container {
     bodyFrame?.renderPieces();
     faceFrame?.renderPieces(bodyFrame);
     if (instruction.move) {
-      this.bodyFrame.position.copyFrom(instruction.move);
+      const move = {
+        x: instruction.move.x + this.offset.x,
+        y: instruction.move.y + this.offset.y,
+      };
+      this.bodyFrame.position.copyFrom(move);
     } else {
-      this.bodyFrame.position.set(0, 0);
+      this.bodyFrame.position.copyFrom(this.offset);
     }
     this.tamingMob?.playFrameOnCharacter(this, this.instructionFrame);
   }
@@ -504,6 +513,7 @@ export class Character extends Container {
     if (!item) {
       return;
     }
+    this.isHideBody = this.tamingMob.isHideBody;
     await item.loadResource();
   }
   async loadInstruction() {

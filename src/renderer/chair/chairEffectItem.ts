@@ -1,9 +1,6 @@
-import { Assets, type Container, type UnresolvedAsset } from 'pixi.js';
-import { CharacterAction } from '@/const/actions';
-import type { WzActionInstruction } from '../character/const/wz';
-import type { Vec2 } from './const/data';
-import type { WzChairEffectItem, WzPngPieceInfo } from './const/wz';
+import type { WzChairEffectItem } from './const/wz';
 import { ChairEffectPart } from './chairEffectPart';
+import { ChairAnimatablePart } from './chairAnimatablePart';
 
 export class ChairEffectItem {
   filters = [];
@@ -11,12 +8,13 @@ export class ChairEffectItem {
   wz: WzChairEffectItem;
   frameCount = 0;
   frames: ChairEffectPart[] = [];
+  animatablePart: ChairAnimatablePart | null = null;
 
   constructor(name: string, wz: WzChairEffectItem) {
     this.name = name;
     this.wz = wz;
     const keys = Object.keys(wz).map((key) => Number.parseInt(key, 10) || 0);
-    this.frameCount = keys.reduce((a, b) => Math.max(a, b + 1), keys.length);
+    this.frameCount = keys.reduce((a, b) => Math.max(a, b + 1), 0);
 
     this.resolveFrames();
   }
@@ -28,34 +26,12 @@ export class ChairEffectItem {
 
       frames.push(new ChairEffectPart(this, item, frame));
     }
-
     this.frames = frames;
   }
-  async loadResourceByFrame(index: number) {
-    const targetFrame = this.frames[index % this.frames.length];
-    if (!targetFrame) {
-      return;
-    }
-    const assets = targetFrame.resources?.filter(Boolean);
-    assets && (await Assets.load(assets));
-  }
-  async loadResource() {
-    const assets = this.frames
-      .flatMap((part) => part.resources)
-      .filter(Boolean) as UnresolvedAsset[];
-    await Assets.load(assets);
-  }
-  removePreviousFrameParts(frame: number) {
-    const previousFrame =
-      this.frames[(frame + this.frames.length - 1) % this.frames.length];
-    previousFrame.removeFromParent();
-  }
-  getFramePart(frame: number) {
-    return this.frames[frame % this.frames.length];
+  prepareResource() {
+    this.animatablePart = new ChairAnimatablePart(this, this.frames, this.wz.z);
   }
   destroy() {
-    for (const part of this.frames) {
-      part.destroy();
-    }
+    this.animatablePart?.destroy();
   }
 }

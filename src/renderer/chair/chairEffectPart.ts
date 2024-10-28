@@ -2,37 +2,37 @@ import {
   Assets,
   Sprite,
   Texture,
-  Container,
+  type Container,
   type UnresolvedAsset,
 } from 'pixi.js';
 import type { WzPngPieceInfo } from './const/wz';
 import type { ChairEffectItem } from './chairEffectItem';
-import type { Vec2 } from './const/data';
+import type { AnimatableFrame } from '../AnimatablePart';
 
 import { CharacterLoader } from '../character/loader';
 
-export class ChairEffectPart extends Container {
+export class ChairEffectPart implements AnimatableFrame {
   chairEffectItem: ChairEffectItem;
   frameData: WzPngPieceInfo;
   frame: number;
   url?: string;
-  z: number;
-  offset: { x: number; y: number } = { x: 0, y: 0 };
+  zIndex: number;
+  position: { x: number; y: number } = { x: 0, y: 0 };
+  delay = 100;
 
   _srpite: Container | null = null;
 
   constructor(item: ChairEffectItem, frameData: WzPngPieceInfo, frame: number) {
-    super();
     this.frame = frame;
     this.frameData = frameData;
     this.chairEffectItem = item;
-    this.filters = item.filters;
     this.url = frameData._outlink || frameData.path;
-    this.offset = {
+    this.position = {
       x: -frameData.origin.x,
       y: -frameData.origin.y,
     };
-    this.z = frameData.z || item.wz.z || 0;
+    this.zIndex = frameData.z || item.wz.z || 0;
+    this.delay = frameData.delay || 100;
   }
 
   get resources() {
@@ -69,23 +69,17 @@ export class ChairEffectPart extends Container {
     this._srpite = sprite;
     return this._srpite;
   }
-  refreshView() {
-    this.removeChildren();
-    this.addChild(this.getRenderAble());
-  }
-  updateAncher(navel: Vec2) {
-    /* not sure why the navel is affecting the offset */
-    this.position.set(this.offset.x - navel.x, this.offset.y - navel.y);
+  getResource() {
+    return this.resources;
   }
 
   async updateFrameData(frameData: WzPngPieceInfo) {
     this.frameData = frameData;
     this.url = frameData._outlink || frameData.path;
-    this.offset = {
+    this.position = {
       x: -frameData.origin.x,
       y: -frameData.origin.y,
     };
     await this.prepareResource();
-    this.refreshView();
   }
 }
