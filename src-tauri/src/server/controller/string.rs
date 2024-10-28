@@ -80,9 +80,10 @@ pub async fn get_chairs(State((root, _)): State<AppState>) -> Result<impl IntoRe
 
     let result = result
         .iter()
-        .map(|(id, name)| {
+        .map(|(id, parent_folder, name)| {
             Value::Array(vec![
                 Value::String(id.to_string()),
+                Value::String(parent_folder.to_string()),
                 Value::String(name.to_string()),
             ])
         })

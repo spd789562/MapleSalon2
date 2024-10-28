@@ -7,8 +7,11 @@ use super::path::{
 
 use crate::{Error, Result};
 
+// chair item is a tuple of (id, parentFolder, name)
+// type ChairStringItem = (String, String, String);
+
 // different from equip, the chair is too many node need to use, so just use the root and grab the node we need
-pub fn resolve_chair_string(root: &WzNodeArc) -> Result<Vec<(String, String)>> {
+pub fn resolve_chair_string(root: &WzNodeArc) -> Result<Vec<(String, String, String)>> {
     let root_read = root.read().unwrap();
     let mut result = vec![];
 
@@ -32,6 +35,7 @@ pub fn resolve_chair_string(root: &WzNodeArc) -> Result<Vec<(String, String)>> {
         if !(prefix_id.starts_with("0301") || prefix_id.starts_with("0302")) {
             continue;
         }
+        let parent_folder = folder_node.read().unwrap().name.clone();
         node_util::parse_node(&folder_node)?;
         for id in folder_node.read().unwrap().children.keys() {
             let mut name = empty_node_name.clone();
@@ -51,7 +55,7 @@ pub fn resolve_chair_string(root: &WzNodeArc) -> Result<Vec<(String, String)>> {
                 name = string;
             }
 
-            result.push((id.to_string(), name));
+            result.push((id.to_string(), parent_folder.to_string(), name));
         }
     }
 
@@ -65,6 +69,8 @@ pub fn resolve_chair_string(root: &WzNodeArc) -> Result<Vec<(String, String)>> {
 
     if let Some(cash_chair_folders_node) = cash_chair_folders_node {
         node_util::parse_node(&cash_chair_folders_node)?;
+
+        let parent_folder = "0520.img";
 
         for id in cash_chair_folders_node
             .read()
@@ -89,7 +95,7 @@ pub fn resolve_chair_string(root: &WzNodeArc) -> Result<Vec<(String, String)>> {
                 name = string;
             }
 
-            result.push((id.to_string(), name));
+            result.push((id.to_string(), parent_folder.to_string(), name));
         }
     }
 
