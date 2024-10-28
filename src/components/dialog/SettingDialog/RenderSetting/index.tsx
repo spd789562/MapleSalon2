@@ -9,6 +9,7 @@ import { ShowItemDyeableSwitch } from './ShowItemDyeableSwitch';
 import { ItemEffectPreview } from './ItemEffectPreview';
 import { UpscaleSwitch } from './UpscaleSwitch';
 import { PreferRendererToggleGroup } from './PreferRendererToggleGroup';
+import { PreferScaleModeToggleGroup } from './PreferScaleModeToggleGroup';
 import { SettingTooltip } from '@/components/dialog/SettingDialog/SettingTooltip';
 
 export const RenderSetting = () => {
@@ -22,6 +23,13 @@ export const RenderSetting = () => {
           <PreferRendererToggleGroup />
         </HStack>
         <UpscaleSwitch />
+      </HStack>
+      <HStack gap="7">
+        <HStack gap="2">
+          <Text>縮放模式</Text>
+          <SettingTooltip tooltip="預設為平滑，更改至點陣將於縮放時保留點陣效果。此設定變更後須重整頁面" />
+          <PreferScaleModeToggleGroup />
+        </HStack>
       </HStack>
       <HStack justify="space-between">
         <DefaultCharacterRenderingSwitch />

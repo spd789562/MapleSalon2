@@ -6,6 +6,8 @@ import { $equipmentDrawerExperimentCharacterRender } from './equipDrawer';
 import { $preferRenderer as $rendererPreference } from './renderer';
 import { $actionExportType } from './toolTab';
 
+import { TextureStyle } from 'pixi.js';
+
 import {
   simpleCharacterLoadingQueue,
   isValidConcurrency,
@@ -42,6 +44,7 @@ export interface AppSetting extends Record<string, unknown> {
   colorMode: ColorMode;
   /* render */
   preferRenderer: 'webgl' | 'webgpu';
+  preferScaleMode: 'linear' | 'nearest';
   simpleCharacterConcurrency: number;
   enableExperimentalUpscale: boolean;
   /* list */
@@ -65,6 +68,7 @@ const DEFAULT_SETTING: AppSetting = {
   showItemDyeable: true,
   enableExperimentalUpscale: false,
   preferRenderer: 'webgpu',
+  preferScaleMode: 'linear',
   exportType: ActionExportType.Webp,
   padWhiteSpaceWhenExportFrame: true,
   addBlackBgWhenExportGif: false,
@@ -107,6 +111,10 @@ export const $preferRenderer = computed(
   $appSetting,
   (setting) => setting.preferRenderer,
 );
+export const $preferScaleMode = computed(
+  $appSetting,
+  (setting) => setting.preferScaleMode,
+);
 export const $exportType = computed(
   $appSetting,
   (setting) => setting.exportType,
@@ -143,6 +151,16 @@ export async function initializeSavedSetting() {
       ) {
         $appSetting.setKey('preferRenderer', setting.preferRenderer);
         $rendererPreference.set(setting.preferRenderer);
+      }
+      if (
+        setting.preferScaleMode === 'linear' ||
+        setting.preferScaleMode === 'nearest'
+      ) {
+        $appSetting.setKey('preferScaleMode', setting.preferScaleMode);
+        // seens pixi's default is linear, if set to nearest, then change it when initialize
+        if (setting.preferScaleMode === 'nearest') {
+          TextureStyle.defaultOptions.scaleMode = 'nearest';
+        }
       }
       if (isValidResolution(setting.windowResolution)) {
         $appSetting.setKey('windowResolution', setting.windowResolution);
@@ -228,4 +246,8 @@ export function setPadWhiteSpaceWhenExportFrame(value: boolean) {
 }
 export function setAddBlackBgWhenExportGif(value: boolean) {
   $appSetting.setKey('addBlackBgWhenExportGif', value);
+}
+export function setPreferScaleMode(value: 'linear' | 'nearest') {
+  $appSetting.setKey('preferScaleMode', value);
+  TextureStyle.defaultOptions.scaleMode = value;
 }
