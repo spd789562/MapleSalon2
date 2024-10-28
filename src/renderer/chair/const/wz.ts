@@ -11,22 +11,6 @@ export type WzChairData = { info: WzChairInfo } & WzChairEffectSets &
     particle?: unknown;
   };
 
-export interface WzChairCustomInfo {
-  chatBalloonMove?: Vec2;
-  scaleAvatar?: number;
-  avatar?: Record<number, WzChairCustomMovingInfo>;
-  avatarCount?: number;
-  self?: WzChairCustomMovingInfo;
-  type?: string;
-}
-
-export interface WzChairCustomMovingInfo {
-  left?: number;
-  pos: Vec2;
-  tamingMob?: number;
-  z?: number;
-}
-
 export interface WzChairInfo {
   bodyRelMove?: Vec2;
   floatingBodyRelMove?: Vec2;
@@ -61,12 +45,17 @@ export interface WzChairInfo {
   invisibleTail?: number;
   invisibleMonkey?: number;
 
+  /* invite other player */
+  group?: WzChairGroupData;
+
+  /* lv chair contains character in same server of a account */
+  lvChairInfo?: WzChairLvData;
+
   /* some not checked properties */
   textInfo?: unknown;
   nameInfo?: unknown;
   bgmInfo?: unknown;
   weapon?: unknown;
-  group?: unknown;
   fixFrameIdx?: number;
 }
 
@@ -90,4 +79,82 @@ export interface WzPngPieceInfo {
   _outlink?: string;
   _inlink?: string;
   path?: string;
+  delay?: number;
+}
+
+export interface WzChairCustomInfo {
+  chatBalloonMove?: Vec2;
+  scaleAvatar?: number;
+  avatar?: Record<number, WzChairCustomMovingInfo>;
+  avatarCount?: number;
+  self?: WzChairCustomMovingInfo;
+  type?: string;
+}
+
+export interface WzChairCustomMovingInfo {
+  left?: number;
+  pos: Vec2;
+  tamingMob?: number;
+  z?: number;
+}
+
+export interface WzChairGroupData {
+  info: {
+    width: number;
+    height: number;
+  };
+  sit: Record<number, WzChairGroupCharacterData>;
+}
+
+export interface WzChairGroupCharacterData {
+  bodyRelMove?: Vec2;
+  dir?: number;
+  tamingMobF?: number;
+  tamingMobM?: number;
+}
+
+export interface WzChairLvData {
+  avatarCount: number;
+  avatarGap?: number;
+  startPos?: Vec2;
+  avatarStartPos?: Vec2;
+
+  avatarLeft?: Record<number, number>; // 0 | -1
+  avatarPos?: Record<number, Vec2>;
+  sitAction?: Record<number, CharacterAction>; // ex: 03018599, this somehow contains stand not stand1 or stand2
+
+  /* 
+    `forcedHideBody${avatarIndex}`: number;
+    `forcedAction${avatarIndex}`: number;
+    `forcedPos${avatarIndex}`: number
+    `forcedLeft${avatarIndex}`: number
+   */
+
+  forcedHideBody0?: number; //example: 03018810, 03018453
+  forcedHideBody1?: number;
+  forcedHideBody2?: number;
+  forcedHideBody3?: number;
+  forcedHideBody4?: number;
+  forcedAction0?: number;
+  forcedAction1?: number;
+  forcedAction2?: number;
+  forcedAction3?: number;
+  forcedAction4?: number;
+  forcedLeft0?: number; // example: 03018284
+  forcedLeft1?: number;
+  forcedLeft2?: number;
+  forcedLeft3?: number;
+  forcedLeft4?: number;
+  forcedPos0?: number;
+  forcedPos1?: number;
+  forcedPos2?: number;
+  forcedPos3?: number;
+  forcedPos4?: number;
+
+  /* boolean */
+  invisibleWeapon?: number;
+
+  /* ignored */
+  lvText?: unknown;
+  chairType?: string;
 }
