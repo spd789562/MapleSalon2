@@ -28,6 +28,33 @@ export enum CharacterExpressions {
   QBlue = 'qBlue',
 }
 
+export const CharacterExpressionsOrder = [
+  CharacterExpressions.Blink,
+  CharacterExpressions.Hit,
+  CharacterExpressions.Smile,
+  CharacterExpressions.Troubled,
+  CharacterExpressions.Cry,
+  CharacterExpressions.Angry,
+  CharacterExpressions.Bewildered,
+  CharacterExpressions.Stunned,
+  CharacterExpressions.Vomit,
+  CharacterExpressions.Oops,
+  CharacterExpressions.Cheers,
+  CharacterExpressions.Chu,
+  CharacterExpressions.Wink,
+  CharacterExpressions.Pain,
+  CharacterExpressions.Glitter,
+  CharacterExpressions.Despair,
+  CharacterExpressions.Love,
+  CharacterExpressions.Shine,
+  CharacterExpressions.Blaze,
+  CharacterExpressions.Hum,
+  CharacterExpressions.Bowing,
+  CharacterExpressions.Hot,
+  CharacterExpressions.Dam,
+  CharacterExpressions.Default,
+];
+
 export const ExpressionsHasEye = [
   CharacterExpressions.Default,
   CharacterExpressions.Hit,
