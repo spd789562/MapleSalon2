@@ -17,7 +17,7 @@ export interface WzChairInfo {
   chatballonRelMove?: Vec2;
   sitAction?: CharacterAction;
   sitEmotion?: CharacterExpressions;
-  customChair?: unknown;
+  customChair?: WzChairCustomInfo;
 
   tamingMob?: number;
 
@@ -33,6 +33,7 @@ export interface WzChairInfo {
   sitLeft?: number;
   sitRight?: number;
   removeBody?: number;
+  removeEffect?: number;
   removeEffectAll?: number;
   removeEffectBodyParts?: number;
   removeSoulEffect?: number;
@@ -89,6 +90,7 @@ export interface WzChairCustomInfo {
   avatarCount?: number;
   self?: WzChairCustomMovingInfo;
   type?: string;
+  androidChairInfo?: WzChairAndroidData;
 }
 
 export interface WzChairCustomMovingInfo {
@@ -135,11 +137,11 @@ export interface WzChairLvData {
   forcedHideBody2?: number;
   forcedHideBody3?: number;
   forcedHideBody4?: number;
-  forcedAction0?: number;
-  forcedAction1?: number;
-  forcedAction2?: number;
-  forcedAction3?: number;
-  forcedAction4?: number;
+  forcedAction0?: CharacterAction;
+  forcedAction1?: CharacterAction;
+  forcedAction2?: CharacterAction;
+  forcedAction3?: CharacterAction;
+  forcedAction4?: CharacterAction;
   forcedLeft0?: number; // example: 03018284
   forcedLeft1?: number;
   forcedLeft2?: number;
@@ -153,8 +155,17 @@ export interface WzChairLvData {
 
   /* boolean */
   invisibleWeapon?: number;
+  zeroAloneCheck?: number;
 
   /* ignored */
   lvText?: unknown;
   chairType?: string;
+}
+
+export interface WzChairAndroidData {
+  customEffect?: WzChairEffectItem;
+  forcedAction?: CharacterAction;
+  forcedHideBody?: number;
+  pos?: Vec2;
+  reverseFlip?: number;
 }
