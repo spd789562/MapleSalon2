@@ -27,12 +27,24 @@ export class ChairEffectPart implements AnimatableFrame {
     this.frameData = frameData;
     this.chairEffectItem = item;
     this.url = frameData._outlink || frameData.path;
+    if (this.url?.startsWith('Base')) {
+      this.url = this.url.replace('Base/', '');
+    }
     this.position = {
-      x: -frameData.origin.x,
-      y: -frameData.origin.y,
+      x: -frameData.origin?.x || 0,
+      y: -frameData.origin?.y || 0,
     };
     this.zIndex = frameData.z || item.wz.z || 0;
     this.delay = frameData.delay || 100;
+    if (
+      item.chair.wz?.info.bodyRelMove &&
+      !item.chair.forceAction &&
+      (item.wz.pos || 0) < 2
+    ) {
+      const offset = item.chair.wz.info.bodyRelMove;
+      this.position.x += offset.x;
+      this.position.y += offset.y;
+    }
   }
 
   get resources() {
@@ -65,7 +77,6 @@ export class ChairEffectPart implements AnimatableFrame {
       return this._srpite;
     }
     const sprite = new Sprite(this.getTexture());
-    // sprite.anchor.set(1, 1); // not sure it right to do
     this._srpite = sprite;
     return this._srpite;
   }

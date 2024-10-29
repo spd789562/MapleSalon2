@@ -1,4 +1,5 @@
 import type { WzChairEffectItem } from './const/wz';
+import type { Chair } from './chair';
 import { ChairEffectPart } from './chairEffectPart';
 import { ChairAnimatablePart } from './chairAnimatablePart';
 
@@ -9,12 +10,14 @@ export class ChairEffectItem {
   frameCount = 0;
   frames: ChairEffectPart[] = [];
   animatablePart: ChairAnimatablePart | null = null;
+  chair: Chair;
 
-  constructor(name: string, wz: WzChairEffectItem) {
+  constructor(name: string, wz: WzChairEffectItem, chair: Chair) {
     this.name = name;
     this.wz = wz;
     const keys = Object.keys(wz).map((key) => Number.parseInt(key, 10) || 0);
     this.frameCount = keys.reduce((a, b) => Math.max(a, b + 1), 0);
+    this.chair = chair;
 
     this.resolveFrames();
   }

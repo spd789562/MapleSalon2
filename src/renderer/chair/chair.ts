@@ -11,6 +11,7 @@ import type { PieceZ, Vec2 } from '../character/const/data';
 import type { Character } from '../character/character';
 import type { CharacterData } from '@/store/character/store';
 import { ChairEffectItem } from './chairEffectItem';
+import { generateChairGroupData, type ChairGroupData } from './chairGroupUtil';
 import { CharacterAction } from '@/const/actions';
 
 const effectReg = /effect[0-9]?/; // effect, effect1, ...
@@ -41,6 +42,7 @@ export class Chair extends Container {
   chairLayers = new Map<number, Container>();
   characters: [Character, CharacterData][] = [];
   offsets: Vec2[] = [];
+  groupData: ChairGroupData[] = [];
 
   isPlaying = false;
 
@@ -50,8 +52,8 @@ export class Chair extends Container {
     // cash chair should be id 5204xxx
     this.isCash = id >= 5204000;
     this.parentPath = parentPath !== '' ? `${parentPath}/` : parentPath;
-    this.sortableChildren = true;
     this.chairFrame = new Container();
+    this.chairFrame.sortableChildren = true;
     this.addChild(this.chairFrame);
   }
   get forceAction() {
@@ -70,9 +72,10 @@ export class Chair extends Container {
     return !!this.wz?.info?.invisibleCape;
   }
   get isHideEffect() {
-    const hide1 = !!this.wz?.info?.removeEffectAll;
-    const hide2 = !!this.wz?.info?.removeEffectBodyParts;
-    return hide1 || hide2;
+    const hide1 = !!this.wz?.info?.removeEffect;
+    const hide2 = !!this.wz?.info?.removeEffectAll;
+    const hide3 = !!this.wz?.info?.removeEffectBodyParts;
+    return hide1 || hide2 || hide3;
   }
   get isHideBody() {
     return !!this.wz?.info?.removeBody;
@@ -112,28 +115,25 @@ export class Chair extends Container {
         const effectData = root[
           key as keyof WzChairEffectSets
         ] as WzChairEffectItem;
-        const item = new ChairEffectItem(key, effectData);
+        const item = new ChairEffectItem(key, effectData, this);
         this.maxFrame = Math.max(this.maxFrame, item.frameCount);
         items.push(item);
       }
     }
+    if (this.wz.info?.customChair?.androidChairInfo?.customEffect) {
+      const item = new ChairEffectItem(
+        'customEffect',
+        this.wz.info.customChair.androidChairInfo.customEffect,
+        this,
+      );
+      items.push(item);
+    }
 
     this.items = items;
 
-    this.loadOffset();
+    this.groupData = generateChairGroupData(this.wz);
     await this.loadResource();
   }
-  loadOffset() {
-    if (!this.wz) {
-      return;
-    }
-
-    if (this.wz.info?.bodyRelMove) {
-      const bodyRelMove = this.wz.info.bodyRelMove;
-      this.offsets = [bodyRelMove];
-    }
-  }
-
   async loadResourceByFrame(index: number) {
     // unimplemented
   }
@@ -157,6 +157,16 @@ export class Chair extends Container {
     }
   }
 
+  /**
+   * @usage 
+    ```ts
+    await chair.load();
+    await chair.sitCharacter([
+      [ch, data],
+      [ch1, data],
+    ]);
+    ```
+  */
   async sitCharacter(characters: [Character, CharacterData][]) {
     if (this.characters.length > 0) {
       for (const character of this.characters) {
@@ -171,19 +181,38 @@ export class Chair extends Container {
     let index = 0;
 
     for await (const [character, data] of characters) {
-      const offset = this.offsets[index] || { x: 0, y: 0 };
-      container.addChild(character);
-      if (this.tamingMobId) {
-        character.tamingMobId = this.tamingMobId;
-      } else {
-        character.offset = offset;
+      const gd = this.groupData[index];
+      if (!gd) {
+        continue;
       }
+
+      container.addChild(character);
+      if (gd.tamingMobId) {
+        character.tamingMobId = gd.tamingMobId;
+      }
+      const offset = { ...gd.position };
+      // this still need to be tested
+      // example: [3015895, '030158.img'], [3015818, '030158.img'], [03018696, '03018.img']
+      if (gd.hideBody) {
+        character.isHideBody = true;
+        offset.y -= 30;
+      }
+      character.offset = {
+        x: offset.x,
+        y: offset.y,
+      };
 
       await character.update({
         ...data,
-        action: this.forceAction || CharacterAction.Sit,
-        expression: this.forceExpression || data.expression,
+        action: gd.action || CharacterAction.Sit,
+        expression: gd.expression || data.expression,
+        showNameTag: index === 0 ? data.showNameTag : false,
+        // isAnimating: false,
       });
+      character.bodyFrame.scale.x = gd.flip ? -1 : 1;
+      if (this.isHideEffect) {
+        character.toggleEffectVisibility(true);
+      }
 
       index += 1;
     }
