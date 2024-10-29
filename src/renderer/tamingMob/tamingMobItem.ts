@@ -59,7 +59,11 @@ export class TamingMobItem {
       instructions.push(instruction);
 
       for (const layer of Object.keys(item)) {
-        if (Number.isNaN(Number(layer)) && layer !== 'tamingMobRear') {
+        if (
+          Number.isNaN(Number(layer)) &&
+          layer !== 'tamingMobRear' &&
+          layer !== 'tamingMobFront'
+        ) {
           continue;
         }
         const layerData = item[layer as keyof typeof item] as WzPngPieceInfo;

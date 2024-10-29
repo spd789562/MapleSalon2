@@ -54,6 +54,7 @@ export interface WzTamingMobFrameItemExt {
   forceCharacterFaceFrameIndex: number;
   forceCharacterFlip: number;
   tamingMobRear: WzPngPieceInfo;
+  tamingMobFront: WzPngPieceInfo;
 }
 
 export interface WzPngPieceInfo {
