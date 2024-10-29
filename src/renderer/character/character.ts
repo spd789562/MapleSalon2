@@ -159,7 +159,7 @@ export class Character extends Container {
     if (id) {
       this.tamingMob = new TamingMob(id);
     } else {
-      if (this.tamingMob) {
+      if (this.tamingMob?.isHideBody) {
         this.isHideBody = false;
       }
       this.tamingMob = undefined;
@@ -472,6 +472,9 @@ export class Character extends Container {
     } else {
       this.bodyFrame.position.copyFrom(this.offset);
     }
+    if (instruction.flip) {
+      this.bodyFrame.scale.x = -1;
+    }
     this.tamingMob?.playFrameOnCharacter(this, this.instructionFrame);
   }
   get currentAction() {
@@ -513,7 +516,9 @@ export class Character extends Container {
     if (!item) {
       return;
     }
-    this.isHideBody = this.tamingMob.isHideBody;
+    if (this.tamingMob.isHideBody) {
+      this.isHideBody = true;
+    }
     await item.loadResource();
   }
   async loadInstruction() {

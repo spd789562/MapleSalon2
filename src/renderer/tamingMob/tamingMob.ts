@@ -13,6 +13,8 @@ export class TamingMob {
   id: number;
   wz?: WzTamingMobData;
 
+  _hideBody = false;
+
   actionItem: Map<CharacterAction, TamingMobItem> = new Map();
 
   constructor(id: number) {
@@ -33,7 +35,7 @@ export class TamingMob {
     return hide1 || hide2;
   }
   get isHideBody() {
-    return !!this.wz?.info?.removeBody;
+    return !!this.wz?.info?.removeBody || this._hideBody;
   }
   async load() {
     if (!this.wz) {
@@ -51,10 +53,21 @@ export class TamingMob {
     for (const action of Object.values(CharacterAction)) {
       const item = this.wz[action];
       const defaultAction = this.wz.characterAction?.[action];
+      const isHideBodyAction =
+        (defaultAction as unknown as string) === 'hideBody';
+      if (isHideBodyAction) {
+        this._hideBody = true;
+      }
+
       if (item && !this.actionItem.has(action)) {
         this.actionItem.set(
           action,
-          new TamingMobItem(action, item, this, defaultAction),
+          new TamingMobItem(
+            action,
+            item,
+            this,
+            isHideBodyAction ? CharacterAction.Sit : defaultAction,
+          ),
         );
       }
     }

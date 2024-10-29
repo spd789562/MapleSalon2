@@ -28,8 +28,8 @@ export class TamingMobPart extends Container {
     this.filters = item.filters;
     this.url = frameData._outlink || frameData.path;
     this.offset = {
-      x: -frameData.origin.x,
-      y: -frameData.origin.y,
+      x: -frameData.origin?.x,
+      y: -frameData.origin?.y,
     };
   }
 

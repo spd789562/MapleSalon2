@@ -51,6 +51,11 @@ export class TamingMobItem {
         flip: item.forceCharacterFlip,
         delay: item.delay || 100,
       } as WzActionInstruction;
+
+      if ((instruction.action as unknown as string) === 'stand') {
+        instruction.action = CharacterAction.Stand1;
+      }
+
       instructions.push(instruction);
 
       for (const layer of Object.keys(item)) {
