@@ -134,7 +134,7 @@ export class Chair extends Container {
     this.groupData = generateChairGroupData(this.wz);
     await this.loadResource();
   }
-  async loadResourceByFrame(index: number) {
+  async loadResourceByFrame(_: number) {
     // unimplemented
   }
   async loadResource() {
@@ -204,7 +204,8 @@ export class Chair extends Container {
 
       await character.update({
         ...data,
-        action: gd.action || CharacterAction.Sit,
+        // if chair has tamingMob, force set to sit, prevent TamingMob can't use right action
+        action: gd.tamingMobId ? CharacterAction.Sit : gd.action,
         expression: gd.expression || data.expression,
         showNameTag: index === 0 ? data.showNameTag : false,
         // isAnimating: false,

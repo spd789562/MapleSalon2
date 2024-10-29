@@ -89,7 +89,11 @@ export function getFirstCharacterGroupData(data: WzChairData) {
   if (data.info.tamingMob) {
     groupData.tamingMobId = data.info.tamingMob;
   }
-  if (data.info.bodyRelMove || data.info.floatingBodyRelMove) {
+  // when a chair have tamingMobId on it, don't use bodyRelMove
+  if (
+    !data.info.tamingMob &&
+    (data.info.bodyRelMove || data.info.floatingBodyRelMove)
+  ) {
     const pos = data.info.bodyRelMove ||
       data.info.floatingBodyRelMove || { x: 0, y: 0 };
     groupData.position = { ...pos };
@@ -122,9 +126,12 @@ export function getGroupDataFromGroup(data: WzChairGroupData) {
   while (data.sit[start]) {
     const sitData = data.sit[start];
     groupDataList.push({
-      action: CharacterAction.Sit,
+      action: sitData.sitAction || CharacterAction.Sit,
       flip: sitData.dir === 0,
-      position: { x: 0, y: 0 },
+      position: {
+        x: /* sitData.bodyRelMove?.x ||  */ 0,
+        y: /* sitData.bodyRelMove?.y ||  */ 0,
+      },
       hideBody: false,
       tamingMobId: sitData.tamingMobM || sitData.tamingMobF,
     });

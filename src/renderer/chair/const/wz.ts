@@ -106,9 +106,13 @@ export interface WzChairGroupData {
     height: number;
   };
   sit: Record<number, WzChairGroupCharacterData>;
+  random?: {
+    emotion: Record<number, number>;
+  };
 }
 
 export interface WzChairGroupCharacterData {
+  sitAction?: CharacterAction;
   bodyRelMove?: Vec2;
   dir?: number;
   tamingMobF?: number;
