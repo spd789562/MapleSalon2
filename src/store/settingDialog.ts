@@ -51,6 +51,8 @@ export interface AppSetting extends Record<string, unknown> {
   defaultCharacterRendering: boolean;
   showItemGender: boolean;
   showItemDyeable: boolean;
+
+  defaultLoadItem: boolean;
   /* export */
   exportType: ActionExportType;
   padWhiteSpaceWhenExportFrame: boolean;
@@ -66,6 +68,7 @@ const DEFAULT_SETTING: AppSetting = {
   defaultCharacterRendering: false,
   showItemGender: true,
   showItemDyeable: true,
+  defaultLoadItem: true,
   enableExperimentalUpscale: false,
   preferRenderer: 'webgpu',
   preferScaleMode: 'linear',
@@ -127,6 +130,10 @@ export const $addBlackBgWhenExportGif = computed(
   $appSetting,
   (setting) => setting.addBlackBgWhenExportGif,
 );
+export const $defaultLoadItem = computed(
+  $appSetting,
+  (setting) => setting.defaultLoadItem,
+);
 
 /* action */
 export async function initializeSavedSetting() {
@@ -140,6 +147,7 @@ export async function initializeSavedSetting() {
         'enableExperimentalUpscale',
         !!setting.enableExperimentalUpscale,
       );
+      $appSetting.setKey('defaultLoadItem', !!setting.defaultLoadItem);
       const defaultCharacterRendering = !!setting.defaultCharacterRendering;
       if (defaultCharacterRendering) {
         $appSetting.setKey('defaultCharacterRendering', true);

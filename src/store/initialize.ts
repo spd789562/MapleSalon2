@@ -7,9 +7,13 @@ import {
   initializeSavedFileSelectHistory,
   appendPathToHistory,
 } from '@/store/fileSelectHistory';
-import { initializeSavedSetting } from '@/store/settingDialog';
+import {
+  initializeSavedSetting,
+  $defaultLoadItem,
+} from '@/store/settingDialog';
 import { initializeSavedEquipmentHistory } from '@/store/equipHistory';
 import { prepareAndFetchEquipStrings } from '@/store/string';
+import { prepareAndFetchChairStrings } from '@/store/chair';
 import { initialGlobalRenderer } from '@/store/renderer';
 
 import { toaster } from '@/components/GlobalToast';
@@ -19,6 +23,7 @@ export enum InitLoadProgress {
   SaveFile = 'save_file',
   InitWz = 'init_wz',
   InitString = 'init_string',
+  InitItem = 'init_item',
   Done = 'done',
 }
 
@@ -30,7 +35,11 @@ export function initialWzBase(path: string) {
 }
 
 export function getServerInfo() {
-  return invoke<{ url: string; is_initialized: boolean }>('get_server_url');
+  return invoke<{
+    url: string;
+    is_initialized: boolean;
+    is_load_items: boolean;
+  }>('get_server_url');
 }
 
 export async function initApp() {
@@ -52,12 +61,12 @@ export async function initApp() {
     return;
   }
   /* this should infailable */
-  const { url, is_initialized } = await getServerInfo();
+  const { url, is_initialized, is_load_items } = await getServerInfo();
 
   $apiHost.set(url);
 
   if (is_initialized) {
-    await initStringAndRenderer();
+    await initStringAndRenderer(!is_load_items && $defaultLoadItem.get());
     $isInitialized.set(is_initialized);
   }
 
@@ -85,7 +94,7 @@ export async function initByWzBase(path: string) {
     return false;
   }
 
-  const isSuccess = await initStringAndRenderer();
+  const isSuccess = await initStringAndRenderer($defaultLoadItem.get());
 
   if (!isSuccess) {
     $isWzLoading.set(false);
@@ -100,7 +109,7 @@ export async function initByWzBase(path: string) {
   return true;
 }
 
-export async function initStringAndRenderer() {
+export async function initStringAndRenderer(loadItems: boolean) {
   try {
     await prepareAndFetchEquipStrings();
   } catch (_) {
@@ -109,6 +118,20 @@ export async function initStringAndRenderer() {
       description: '無法讀取裝備資訊，請檢察 Wz 完整度。',
     });
     return false;
+  }
+
+  if (loadItems) {
+    $initLoadProgress.set(InitLoadProgress.InitItem);
+    await nextTick();
+    try {
+      await prepareAndFetchChairStrings();
+    } catch (_) {
+      toaster.error({
+        title: '初始化錯誤',
+        description: '無法讀取椅子資訊，請檢察 Wz 完整度。',
+      });
+      return false;
+    }
   }
 
   $initLoadProgress.set(InitLoadProgress.Done);
