@@ -3,7 +3,7 @@ import { map, computed, atom, onSet } from 'nanostores';
 
 import { createStore } from '@tauri-apps/plugin-store';
 
-import type { CharacterItems } from './character/store';
+import type { CharacterData, CharacterItems } from './character/store';
 import { $previewCharacter } from './character/selector';
 import { changeCurrentCharacter } from './character/action';
 import { deepCloneCharacterItems } from './character/utils';

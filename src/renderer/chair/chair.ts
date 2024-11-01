@@ -217,6 +217,11 @@ export class Chair extends Container {
 
       index += 1;
     }
+    // sync the character frame so they all start at the same time
+    for await (const [character, _] of characters) {
+      character.currentDelta = 0;
+      character.instructionFrame = 0;
+    }
   }
 
   getOrCreatEffectLayer(zIndex: number) {

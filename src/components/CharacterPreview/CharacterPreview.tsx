@@ -43,9 +43,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   let container!: HTMLDivElement;
   let viewport: ZoomContainer | undefined;
   let upscaleFilter: Anime4kFilter | undefined;
-  // const app = new Application();
   const ch = new Character();
-
   props.ref?.(ch);
 
   ch.loadEvent.addListener('loading', props.onLoad);
@@ -63,6 +61,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
 
   function initScene() {
     const app = $globalRenderer.get();
+    app.renderer.resize(300, 340);
     viewport = new ZoomContainer(app, {
       width: 300,
       height: 340,
@@ -115,7 +114,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
         children: true,
       });
     }
-    container.children.length && container.removeChild(app.canvas);
+    container.children.length > 0 && container.removeChild(app.canvas);
   });
 
   createEffect(async () => {
@@ -126,31 +125,32 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   });
 
   createEffect(async () => {
-    if (isInit() && viewport) {
-      if (isShowUpscale()) {
-        /* to be configurable in the future */
-        const upscalePipelines = [
-          {
-            pipeline: PipelineType.ModeBB,
-          },
-        ] as PipelineOption[];
+    if (!(isInit() && viewport)) {
+      return;
+    }
+    if (isShowUpscale()) {
+      /* to be configurable in the future */
+      const upscalePipelines = [
+        {
+          pipeline: PipelineType.ModeBB,
+        },
+      ] as PipelineOption[];
 
-        if (!upscaleFilter) {
-          const app = $globalRenderer.get();
-          if (!app.renderer.anime4k) {
-            // currently only support WebGPU
-            return;
-          }
-          await app.renderer.anime4k.preparePipeline(
-            upscalePipelines.map((p) => p.pipeline),
-          );
-          upscaleFilter = new Anime4kFilter(upscalePipelines);
+      if (!upscaleFilter) {
+        const app = $globalRenderer.get();
+        if (!app.renderer.anime4k) {
+          // currently only support WebGPU
+          return;
         }
-        // upscaleFilter.updatePipeine(upscalePipelines);
-        viewport.filters = [upscaleFilter];
-      } else {
-        viewport.filters = [];
+        await app.renderer.anime4k.preparePipeline(
+          upscalePipelines.map((p) => p.pipeline),
+        );
+        upscaleFilter = new Anime4kFilter(upscalePipelines);
       }
+      // upscaleFilter.updatePipeine(upscalePipelines);
+      viewport.filters = [upscaleFilter];
+    } else {
+      viewport.filters = [];
     }
   });
 
