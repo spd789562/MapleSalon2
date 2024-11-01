@@ -1,8 +1,8 @@
 import { atom, computed } from 'nanostores';
 
 import { $apiHost } from './const';
-
-// import { nextTick } from '@/utils/eventLoop';
+import { $characterList } from './characterDrawer';
+import type { CharacterData } from './character/store';
 
 export interface ChairItem {
   id: number;
@@ -15,6 +15,9 @@ type ChairStringResponseItem = [string, string, string];
 
 export const $chairStrings = atom<ChairItem[]>([]);
 export const $chairSearch = atom<string>('');
+
+export const $currentChair = atom<ChairItem | null>(null);
+export const $otherCharacterIds = atom<string[]>([]);
 
 /* computed */
 export const $chairFilterdStrings = computed(
@@ -30,6 +33,14 @@ export const $chairFilterdStrings = computed(
       );
     }
     return strings.filter((item) => item.name.includes(search));
+  },
+);
+export const $otherCharacters = computed(
+  [$otherCharacterIds, $characterList],
+  (ids, characters) => {
+    return characters.filter((character) =>
+      ids.includes(character.id),
+    ) as Partial<CharacterData>[];
   },
 );
 
@@ -50,4 +61,22 @@ export async function prepareAndFetchChairStrings() {
     );
 
   $chairStrings.set(strings);
+}
+
+export function setCurrentChair(chair: ChairItem) {
+  $currentChair.set(chair);
+}
+export function removeCurrentChair() {
+  $currentChair.set(null);
+}
+
+export function addOtherCharacterId(id: string) {
+  const currentId = $otherCharacterIds.get();
+  if (!currentId.includes(id)) {
+    $otherCharacterIds.set([...currentId, id]);
+  }
+}
+export function removeOtherCharacterId(id: string) {
+  const currentId = $otherCharacterIds.get();
+  $otherCharacterIds.set(currentId.filter((cId) => cId !== id));
 }
