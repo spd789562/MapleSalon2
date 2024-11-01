@@ -232,6 +232,10 @@ export function replaceIdInPath(path: string, id: number): string {
 
 export function getIconPath(id: number, folder?: string) {
   let getfolder = folder;
+  if (isAnyChairId(id)) {
+    return getChairIconPath(id, folder as string);
+  }
+
   if (!folder) {
     getfolder = getItemFolderFromId(id);
   }
@@ -259,6 +263,17 @@ export function isDyeableId(id: number) {
   return !isMixDyeableId(id);
 }
 
+export function isChairId(id: number) {
+  return id >= 3010000 && id < 3021000;
+}
 export function isCashChairId(id: number) {
-  return id >= 5204000;
+  return id >= 5204000 && id < 5205000;
+}
+export function isAnyChairId(id: number) {
+  return isChairId(id) || isCashChairId(id);
+}
+export function getChairIconPath(id: number, parentPath: string) {
+  const padId = id.toString().padStart(8, '0');
+  const prefixPath = isCashChairId(id) ? 'Cash' : 'Install';
+  return `Item/${prefixPath}/${parentPath}${padId}`;
 }

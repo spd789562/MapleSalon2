@@ -22,6 +22,7 @@ export interface LoadableEquipIconProps {
   name?: string;
   width?: string;
   height?: string;
+  folder?: string;
 }
 export const LoadableEquipIcon = (props: LoadableEquipIconProps) => {
   const [isLoaded, setIsLoaded] = createSignal(false);
@@ -37,7 +38,7 @@ export const LoadableEquipIcon = (props: LoadableEquipIconProps) => {
     setIsError(true);
   }
 
-  const iconPath = createMemo(() => getIconPath(props.id));
+  const iconPath = createMemo(() => getIconPath(props.id, props.folder));
   const gender = createMemo(() =>
     showItemGender() ? getGender(props.id) : Gender.Share,
   );

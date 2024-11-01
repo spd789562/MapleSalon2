@@ -19,6 +19,8 @@ import { CharacterRenderingSwitch } from './CharacterRenderingSwitch';
 import { HideOnHistoryTab } from './HideOnHistoryTab';
 import { MiniCharacterWindow } from './MiniCharacterWindow';
 
+import { ToolTab } from '@/const/toolTab';
+
 export const EqupimentDrawer = () => {
   const tab = useStore($toolTab);
 
@@ -26,7 +28,7 @@ export const EqupimentDrawer = () => {
     <EquipDrawer
       header={
         <Switch fallback={<EquipEdit />}>
-          <Match when={tab() !== 'character'}>
+          <Match when={tab() !== ToolTab.Character && tab() !== ToolTab.Chair}>
             <MiniCharacterWindow />
           </Match>
         </Switch>

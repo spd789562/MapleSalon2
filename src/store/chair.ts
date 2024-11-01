@@ -63,7 +63,7 @@ export async function prepareAndFetchChairStrings() {
   $chairStrings.set(strings);
 }
 
-export function setCurrentChair(chair: ChairItem) {
+export function selectChair(chair: ChairItem) {
   $currentChair.set(chair);
 }
 export function removeCurrentChair() {
