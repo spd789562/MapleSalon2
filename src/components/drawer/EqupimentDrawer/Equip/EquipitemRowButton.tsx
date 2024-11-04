@@ -7,6 +7,13 @@ import { LoadableEquipIcon } from '@/components/elements/LoadableEquipIcon';
 import { Text } from '@/components/ui/text';
 import { PureTextClipboard } from '@/components/ui/clipboard';
 
+import { byteLength } from '@/utils/string';
+
+export const rowFontSize = (text: string) => {
+  const len = byteLength(text);
+  return len > 36 ? '0.875rem': '1rem';
+}
+
 export interface EquipItemRowButtonProps {
   item: EquipItem;
 }
@@ -35,7 +42,7 @@ export const EquipItemRowButton = (props: EquipItemRowButtonProps) => {
       <EquipItemId onClick={preventDefault}>
         <PureTextClipboard value={props.item.id.toString()} />
       </EquipItemId>
-      <EquipItemName onClick={preventDefault}>
+      <EquipItemName onClick={preventDefault} style={{'font-size': rowFontSize(props.item.name)}}>
         <PureTextClipboard value={props.item.name} />
       </EquipItemName>
     </EquipItemButtonContainer>
@@ -73,5 +80,6 @@ const EquipItemName = styled(Text, {
     '&:hover': {
       color: 'accent.10',
     },
+    lineHeight: '1',
   },
 });

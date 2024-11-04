@@ -6,6 +6,8 @@ import { LoadableEquipIcon } from '@/components/elements/LoadableEquipIcon';
 import { Text } from '@/components/ui/text';
 import { PureTextClipboard } from '@/components/ui/clipboard';
 
+import { rowFontSize } from '@/components/drawer/EqupimentDrawer/Equip/EquipitemRowButton';
+
 export interface ChairRowButtonProps {
   item: ChairItem;
 }
@@ -28,7 +30,7 @@ export const ChairRowButton = (props: ChairRowButtonProps) => {
       <ChairId onClick={preventDefault}>
         <PureTextClipboard value={props.item.id.toString()} />
       </ChairId>
-      <ChairName onClick={preventDefault}>
+      <ChairName onClick={preventDefault} style={{'font-size': rowFontSize(props.item.name)}}>
         <PureTextClipboard value={props.item.name} />
       </ChairName>
     </ChairButtonContainer>
@@ -66,5 +68,6 @@ const ChairName = styled(Text, {
     '&:hover': {
       color: 'accent.10',
     },
+    lineHeight: '1',
   },
 });
