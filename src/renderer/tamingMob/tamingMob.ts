@@ -2,9 +2,11 @@ import type { Container } from 'pixi.js';
 
 import { CharacterLoader } from '../character/loader';
 
+import type { Vec2 } from './const/data';
 import type { WzTamingMobData } from './const/wz';
 import type { PieceZ } from '../character/const/data';
 import type { Character } from '../character/character';
+import type { Chair } from '../chair/chair';
 import { CharacterAction } from '@/const/actions';
 
 import { TamingMobItem } from './tamingMobItem';
@@ -110,5 +112,11 @@ export class TamingMob {
     this.currentNavel.y = frameNavel.y;
     character.bodyFrame.pivot.x -= frameNavel.x;
     character.bodyFrame.pivot.y -= frameNavel.y;
+  }
+  fixChairAncherIfExist(character: Character, ancher: Vec2) {
+    const chairNode = character.parent?.parent?.parent as Chair;
+    if (chairNode?.type === 'chair') {
+      chairNode.updatePartAncher(ancher);
+    }
   }
 }

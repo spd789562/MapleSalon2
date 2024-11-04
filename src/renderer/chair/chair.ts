@@ -1,4 +1,4 @@
-import { Assets, Container, type UnresolvedAsset } from 'pixi.js';
+import { Assets, Container, EventEmitter, type UnresolvedAsset } from 'pixi.js';
 
 import { CharacterLoader } from '../character/loader';
 
@@ -32,6 +32,9 @@ export function getChairIconPath(
 }
 
 export class Chair extends Container {
+  /* identity */
+  type = 'chair';
+
   id: number;
   parentPath: string;
   isCash = false;
@@ -45,6 +48,10 @@ export class Chair extends Container {
   groupData: ChairGroupData[] = [];
 
   isPlaying = false;
+
+  isLoading = false;
+  loadFlashTimer = 0;
+  loadEvent = new EventEmitter<'loading' | 'loaded' | 'error'>();
 
   constructor(id: number, parentPath: string) {
     super();
@@ -85,7 +92,26 @@ export class Chair extends Container {
     const prefixPath = this.isCash ? 'Cash' : 'Install';
     return `Item/${prefixPath}/${this.parentPath}${padId}`;
   }
+  get nonCharacterLayers() {
+    return Array.from(this.chairLayers.entries())
+      .filter(([z]) => z !== 0)
+      .map(([_, v]) => v);
+  }
+
   async load() {
+    // a chair should only load once though, but just in case
+    if (this.isLoading) {
+      clearTimeout(this.loadFlashTimer);
+      this.loadEvent.emit('loading');
+    }
+    this.isLoading = true;
+    // only show loading after 100ms
+    this.loadFlashTimer = setTimeout(() => {
+      if (this.isLoading) {
+        this.loadEvent.emit('loading');
+      }
+    }, 50);
+
     if (!this.wz) {
       const data = await CharacterLoader.getPieceWzByPath<WzChairData>(
         this.chairPath,
@@ -136,6 +162,8 @@ export class Chair extends Container {
 
     this.groupData = generateChairGroupData(this.wz);
     await this.loadResource();
+    this.isLoading = false;
+    this.loadEvent.emit('loaded');
   }
   async loadResourceByFrame(_: number) {
     // unimplemented
@@ -152,8 +180,10 @@ export class Chair extends Container {
       if (!animatablePart) {
         continue;
       }
-      const effectIndex = animatablePart.effectZindex || -2;
-      const container = this.getOrCreatEffectLayer(effectIndex + 1);
+      const effectIndex = animatablePart.effectZindex || -1;
+      const container = this.getOrCreatEffectLayer(
+        effectIndex > -1 ? effectIndex + 1 : effectIndex,
+      );
 
       container.addChild(animatablePart);
     }
@@ -170,6 +200,10 @@ export class Chair extends Container {
     ```
   */
   async sitCharacter(characters: [Character, CharacterData][]) {
+    if (this.destroyed) {
+      return;
+    }
+
     if (this.characters.length > 0) {
       for (const character of this.characters) {
         character[0].removeFromParent();
@@ -189,7 +223,7 @@ export class Chair extends Container {
       }
       if (gd.tamingMobId) {
         character.tamingMobId = gd.tamingMobId;
-      } else if (character.tamingMobId) {
+      } else if (character.tamingMob) {
         character.tamingMobId = undefined;
       }
       const offset = { ...gd.position };
@@ -226,6 +260,12 @@ export class Chair extends Container {
     for await (const [character, _] of characters) {
       character.currentDelta = 0;
       character.instructionFrame = 0;
+    }
+  }
+
+  updatePartAncher(ancher: Vec2) {
+    for (const layer of this.nonCharacterLayers) {
+      layer.pivot.set(ancher.x, ancher.y);
     }
   }
 
@@ -272,5 +312,10 @@ export class Chair extends Container {
 
       part.play();
     }
+  }
+  destroy() {
+    super.destroy();
+    this.loadEvent.removeAllListeners();
+    clearTimeout(this.loadFlashTimer);
   }
 }

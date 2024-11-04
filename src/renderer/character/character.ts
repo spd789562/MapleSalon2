@@ -163,6 +163,7 @@ export class Character extends Container {
       if (this.tamingMob?.isHideBody) {
         this.isHideBody = false;
       }
+      this.currentInstructions = [];
       this.tamingMob = undefined;
     }
   }
@@ -792,6 +793,7 @@ export class Character extends Container {
     for (const item of this.idItems.values()) {
       item.destroy();
     }
+    clearTimeout(this.loadFlashTimer);
     this.idItems.clear();
     this.bodyFrameMap.clear();
     this.currentInstructions = [];

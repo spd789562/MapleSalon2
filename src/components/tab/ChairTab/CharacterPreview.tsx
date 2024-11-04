@@ -47,8 +47,6 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   // const chair = new Chair(3018528, '03018.img');
   // const chair = new Chair(3015895, '030158.img');
 
-  mainCharacter.loadEvent.addListener('loading', props.onLoad);
-  mainCharacter.loadEvent.addListener('loaded', props.onLoaded);
   mainCharacter.loadEvent.addListener(
     'error',
     function onEquipLoadError(payload: CharacterItemInfo[]) {
@@ -116,6 +114,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
         children: true,
       });
     }
+    mainCharacter.destroy();
     chair?.destroy();
     container.children.length > 0 && container.removeChild(app.canvas);
   });
@@ -138,6 +137,8 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     chair?.destroy();
     // setup or update chair
     chair = new Chair(data.id, data.folder);
+    chair.loadEvent.addListener('loading', props.onLoad);
+    chair.loadEvent.addListener('loaded', props.onLoaded);
     props.ref?.(chair);
     await chair.load();
     if (characters.length < others.length) {
