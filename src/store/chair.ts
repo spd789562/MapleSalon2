@@ -43,6 +43,10 @@ export const $otherCharacters = computed(
     ) as Partial<CharacterData>[];
   },
 );
+export const $isChairUninitialized = computed(
+  [$chairStrings],
+  (strings) => strings.length === 0,
+);
 
 /* actions */
 export async function prepareAndFetchChairStrings() {
@@ -51,7 +55,7 @@ export async function prepareAndFetchChairStrings() {
     .then((res) => res.json())
     .then((res: ChairStringResponseItem[]) =>
       res.map(
-        ([id, name, folder]) =>
+        ([id, folder, name]) =>
           ({
             id: Number.parseInt(id),
             name,
