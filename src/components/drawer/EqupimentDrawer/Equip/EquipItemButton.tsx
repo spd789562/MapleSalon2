@@ -6,7 +6,7 @@ import { selectNewItem } from '@/store/character/action';
 
 import { CssTooltip } from '@/components/ui/cssTooltip';
 import { LoadableEquipIcon } from '@/components/elements/LoadableEquipIcon';
-import { PreviewCharacter } from './PreviewCharacter';
+import { CharacterAvatar } from './CharacterAvatar';
 
 export interface EquipItemButtonProps {
   item: EquipItem;
@@ -41,7 +41,7 @@ export const EquipItemButton = (props: EquipItemButtonProps) => {
       >
         <Switch>
           <Match when={props.type === 'character'}>
-            <PreviewCharacter id={props.item.id} name={props.item.name} />
+            <CharacterAvatar id={props.item.id} name={props.item.name} />
           </Match>
           <Match when={props.type === 'icon'}>
             <LoadableEquipIcon

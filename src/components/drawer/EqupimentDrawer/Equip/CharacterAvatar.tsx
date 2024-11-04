@@ -11,11 +11,11 @@ import { getCharacterSubCategory } from '@/store/character/utils';
 import { getSubCategory, getBodyId, getGender } from '@/utils/itemId';
 import { Gender } from '@/utils/itemId';
 
-export interface PreviewCharacterProps {
+export interface CharacterAvatarProps {
   name: string;
   id: number;
 }
-export const PreviewCharacter = (props: PreviewCharacterProps) => {
+export const CharacterAvatar = (props: CharacterAvatarProps) => {
   const showItemGender = useStore($showItemGender);
   const gender = createMemo(() =>
     showItemGender() ? getGender(props.id) : Gender.Share,

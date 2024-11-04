@@ -24,7 +24,7 @@ const DefaultHeightMap = {
   [EquipListType.Character]: 90,
 };
 
-export const EquipList = () => {
+export const ChairList = () => {
   const equipRenderType = useStore($equipmentDrawerEquipListType);
   const chairStrings = usePureStore($chairFilterdStrings);
 

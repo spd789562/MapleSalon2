@@ -30,7 +30,7 @@ export const MiniCharacterPreview = (props: MiniCharacterPreviewProps) => {
   const isRendererInitialized = usePureStore($isGlobalRendererInitialized);
   const [isInit, setIsInit] = createSignal<boolean>(false);
   let container!: HTMLDivElement;
-  let viewport: ZoomContainer | undefined = undefined;
+  let viewport: ZoomContainer | undefined;
   const ch = new Character();
 
   ch.loadEvent.addListener('loading', props.onLoad);
@@ -48,6 +48,7 @@ export const MiniCharacterPreview = (props: MiniCharacterPreviewProps) => {
 
   function initScene() {
     const app = $globalRenderer.get();
+    app.renderer.resize(300, 340);
     viewport = new ZoomContainer(app, {
       width: 300,
       height: 340,
@@ -90,7 +91,7 @@ export const MiniCharacterPreview = (props: MiniCharacterPreviewProps) => {
         children: true,
       });
     }
-    container.children.length && container.removeChild(app.canvas);
+    container.children.length > 0 && container.removeChild(app.canvas);
   });
 
   createEffect(async () => {
