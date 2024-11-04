@@ -13,6 +13,7 @@ import type { CharacterData } from '@/store/character/store';
 import { ChairEffectItem } from './chairEffectItem';
 import { generateChairGroupData, type ChairGroupData } from './chairGroupUtil';
 import { CharacterAction } from '@/const/actions';
+import { nextTick } from '@/utils/eventLoop';
 
 const effectReg = /effect[0-9]?/; // effect, effect1, ...
 
@@ -48,6 +49,7 @@ export class Chair extends Container {
   groupData: ChairGroupData[] = [];
 
   isPlaying = false;
+  hasPos1 = false;
 
   isLoading = false;
   loadFlashTimer = 0;
@@ -143,6 +145,9 @@ export class Chair extends Container {
         ] as WzChairEffectItem;
         if (!effectData) {
           continue;
+        }
+        if (effectData.pos === 1) {
+          this.hasPos1 = true;
         }
         const item = new ChairEffectItem(key, effectData, this);
         this.maxFrame = Math.max(this.maxFrame, item.frameCount);
@@ -261,11 +266,16 @@ export class Chair extends Container {
       character.currentDelta = 0;
       character.instructionFrame = 0;
     }
+
+    await nextTick();
   }
 
   updatePartAncher(ancher: Vec2) {
+    if (!this.hasPos1) {
+      return;
+    }
     for (const layer of this.nonCharacterLayers) {
-      layer.pivot.set(ancher.x, ancher.y);
+      layer.pivot.set(-ancher.x, -ancher.y);
     }
   }
 

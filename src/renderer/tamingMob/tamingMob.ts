@@ -112,6 +112,7 @@ export class TamingMob {
     this.currentNavel.y = frameNavel.y;
     character.bodyFrame.pivot.x -= frameNavel.x;
     character.bodyFrame.pivot.y -= frameNavel.y;
+    this.fixChairAncherIfExist(character, frameNavel);
   }
   fixChairAncherIfExist(character: Character, ancher: Vec2) {
     const chairNode = character.parent?.parent?.parent as Chair;

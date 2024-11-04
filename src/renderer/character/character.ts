@@ -90,6 +90,7 @@ export class Character extends Container {
 
   isHideBody = false;
   isHideAllEffect = false;
+  isWaitToLoadTamingMob = false;
 
   /* delta to calculate is need enter next frame */
   currentDelta = 0;
@@ -157,13 +158,13 @@ export class Character extends Container {
     if (id === this.tamingMobId) {
       return;
     }
+    this.isWaitToLoadTamingMob = true;
     if (id) {
       this.tamingMob = new TamingMob(id);
     } else {
       if (this.tamingMob?.isHideBody) {
         this.isHideBody = false;
       }
-      this.currentInstructions = [];
       this.tamingMob = undefined;
     }
   }
@@ -214,7 +215,7 @@ export class Character extends Container {
       hasAttributeChanged ||
       hasAddAnyItem ||
       isStopToPlay ||
-      this.tamingMob
+      this.isWaitToLoadTamingMob
     ) {
       await this.loadItems();
     } else if (isPlayingChanged) {
@@ -513,9 +514,13 @@ export class Character extends Container {
     return Array.from(this.idItems.values()).find((item) => item.isBody);
   }
   async loadTamimgMob() {
+    if (!this.isWaitToLoadTamingMob) {
+      return;
+    }
     if (!this.tamingMob) {
       return;
     }
+    this.isWaitToLoadTamingMob = false;
     await this.tamingMob.load();
     const item = this.tamingMob.actionItem.get(this.action);
     if (!item) {
