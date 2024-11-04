@@ -233,7 +233,7 @@ export function replaceIdInPath(path: string, id: number): string {
 export function getIconPath(id: number, folder?: string) {
   let getfolder = folder;
   if (isAnyChairId(id)) {
-    return getChairIconPath(id, folder as string);
+    return `${$apiHost.get()}/node/image_unparsed/${getChairIconPath(id, folder as string)}/info/icon`;
   }
 
   if (!folder) {
@@ -275,5 +275,5 @@ export function isAnyChairId(id: number) {
 export function getChairIconPath(id: number, parentPath: string) {
   const padId = id.toString().padStart(8, '0');
   const prefixPath = isCashChairId(id) ? 'Cash' : 'Install';
-  return `Item/${prefixPath}/${parentPath}${padId}`;
+  return `Item/${prefixPath}/${parentPath}/${padId}`;
 }
