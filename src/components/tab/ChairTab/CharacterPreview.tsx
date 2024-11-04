@@ -67,7 +67,8 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     viewport = new ZoomContainer(app, {
       width: app.screen.width,
       height: app.screen.height,
-      worldScale: 2,
+      worldScale: 4,
+      minScale: MIN_ZOOM,
       maxScale: MAX_ZOOM,
     });
     const defaultInfo = zoomInfo();

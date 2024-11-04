@@ -62,7 +62,7 @@ export interface WzPngPieceInfo {
   map?: Record<string, Vec2>;
   lt?: Vec2;
   rb?: Vec2;
-  z: number;
+  z: number | string;
   _outlink?: string;
   _inlink?: string;
   path?: string;

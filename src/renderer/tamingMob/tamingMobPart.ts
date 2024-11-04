@@ -16,7 +16,8 @@ export class TamingMobPart extends Container {
   frameData: WzPngPieceInfo;
   frame: number;
   url?: string;
-  offset: { x: number; y: number } = { x: 0, y: 0 };
+  offset: Vec2 = { x: 0, y: 0 };
+  _ancher: Vec2 = { x: 0, y: 0 };
 
   _srpite: Container | null = null;
 
@@ -31,6 +32,10 @@ export class TamingMobPart extends Container {
       x: -frameData.origin?.x,
       y: -frameData.origin?.y,
     };
+    if (typeof this.frameData.z === 'number') {
+      this.frameData.z =
+        this.frameData.z === 0 ? 'tamingMobFront' : this.frameData.z;
+    }
   }
 
   get resources() {
@@ -72,8 +77,12 @@ export class TamingMobPart extends Container {
     this.addChild(this.getRenderAble());
   }
   updateAncher(navel: Vec2) {
+    this._ancher = {
+      x: this.offset.x - navel.x,
+      y: this.offset.y - navel.y,
+    };
     /* not sure why the navel is affecting the offset */
-    this.position.set(this.offset.x - navel.x, this.offset.y - navel.y);
+    this.position.set(this._ancher.x, this._ancher.y);
   }
 
   async updateFrameData(frameData: WzPngPieceInfo) {

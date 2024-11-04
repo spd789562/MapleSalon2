@@ -66,6 +66,7 @@ export class Character extends Container {
   #_earType = CharacterEarType.HumanEar;
   #_handType = CharacterHandType.DoubleHand;
   #_renderId = '';
+  flip = false;
 
   zmapLayers = new Map<PieceSlot, CharacterZmapContainer>();
   effectLayers = new Map<number, Container>();
@@ -208,7 +209,12 @@ export class Character extends Container {
       this.nameTag.visible = false;
     }
 
-    if (hasAttributeChanged || hasAddAnyItem || isStopToPlay) {
+    if (
+      hasAttributeChanged ||
+      hasAddAnyItem ||
+      isStopToPlay ||
+      this.tamingMob
+    ) {
       await this.loadItems();
     } else if (isPlayingChanged) {
       this.renderCharacter();
@@ -459,6 +465,7 @@ export class Character extends Container {
     if (!instruction || this.destroyed) {
       return;
     }
+    this.updateFlip(instruction.flip === 1);
     const bodyFrame = this.getBodyFrameByInstruction(instruction);
     const faceFrame = this.getFaceFrameByInstruction(instruction);
     bodyFrame?.renderPieces();
@@ -471,9 +478,6 @@ export class Character extends Container {
       this.bodyFrame.position.copyFrom(move);
     } else {
       this.bodyFrame.position.copyFrom(this.offset);
-    }
-    if (instruction.flip) {
-      this.bodyFrame.scale.x = -1;
     }
     this.tamingMob?.playFrameOnCharacter(this, this.instructionFrame);
   }
@@ -727,6 +731,14 @@ export class Character extends Container {
       }
     }
     return Array.from(set);
+  }
+
+  updateFlip(flip: boolean) {
+    if (this.flip === flip) {
+      return;
+    }
+    this.flip = flip;
+    this.bodyFrame.scale.x = flip ? -1 : 1;
   }
 
   private updateActionByHandType() {

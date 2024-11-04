@@ -16,6 +16,7 @@ export class TamingMob {
   _hideBody = false;
 
   actionItem: Map<CharacterAction, TamingMobItem> = new Map();
+  currentNavel = { x: 0, y: 0 };
 
   constructor(id: number) {
     this.id = id;
@@ -47,7 +48,7 @@ export class TamingMob {
       }
     }
 
-    if (!this.wz) {
+    if (!(this.wz && this.actionItem.size === 0)) {
       return;
     }
     for (const action of Object.values(CharacterAction)) {
@@ -95,9 +96,18 @@ export class TamingMob {
       } else {
         container = character.getOrCreatEffectLayer(z);
       }
+      if (character.flip) {
+        piece.scale.x = -1;
+        piece.position.x = -piece._ancher.x + piece.width;
+      } else {
+        piece.scale.x = 1;
+        piece.position.x = piece._ancher.x;
+      }
       container.addChild(piece);
     }
     const frameNavel = item.getFrameNavel(frame);
+    this.currentNavel.x = frameNavel.x;
+    this.currentNavel.y = frameNavel.y;
     character.bodyFrame.pivot.x -= frameNavel.x;
     character.bodyFrame.pivot.y -= frameNavel.y;
   }
