@@ -14,7 +14,7 @@ import { CharacterLoader } from '../character/loader';
 export class ChairEffectPart implements AnimatableFrame {
   chairEffectItem: ChairEffectItem;
   frameData: WzPngPieceInfo;
-  frame: number;
+  frame: number | string;
   url?: string;
   zIndex: number;
   position: { x: number; y: number } = { x: 0, y: 0 };
@@ -22,7 +22,11 @@ export class ChairEffectPart implements AnimatableFrame {
 
   _srpite: Container | null = null;
 
-  constructor(item: ChairEffectItem, frameData: WzPngPieceInfo, frame: number) {
+  constructor(
+    item: ChairEffectItem,
+    frameData: WzPngPieceInfo,
+    frame: number | string,
+  ) {
     this.frame = frame;
     this.frameData = frameData;
     this.chairEffectItem = item;
@@ -44,6 +48,9 @@ export class ChairEffectPart implements AnimatableFrame {
       const offset = item.chair.wz.info.bodyRelMove;
       this.position.x += offset.x;
       this.position.y += offset.y;
+    }
+    if (!item.chair.wz?.info.bodyRelMove && item.wz.pos === 1) {
+      this.position.y -= 50;
     }
   }
 

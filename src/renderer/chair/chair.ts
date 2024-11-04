@@ -115,6 +115,9 @@ export class Chair extends Container {
         const effectData = root[
           key as keyof WzChairEffectSets
         ] as WzChairEffectItem;
+        if (!effectData) {
+          continue;
+        }
         const item = new ChairEffectItem(key, effectData, this);
         this.maxFrame = Math.max(this.maxFrame, item.frameCount);
         items.push(item);
@@ -149,9 +152,8 @@ export class Chair extends Container {
       if (!animatablePart) {
         continue;
       }
-      const container = this.getOrCreatEffectLayer(
-        animatablePart.effectZindex || -1,
-      );
+      const effectIndex = animatablePart.effectZindex || -2;
+      const container = this.getOrCreatEffectLayer(effectIndex + 1);
 
       container.addChild(animatablePart);
     }
@@ -185,10 +187,10 @@ export class Chair extends Container {
       if (!gd) {
         continue;
       }
-
-      container.addChild(character);
       if (gd.tamingMobId) {
         character.tamingMobId = gd.tamingMobId;
+      } else if (character.tamingMobId) {
+        character.tamingMobId = undefined;
       }
       const offset = { ...gd.position };
       // this still need to be tested
@@ -196,6 +198,8 @@ export class Chair extends Container {
       if (gd.hideBody) {
         character.isHideBody = true;
         offset.y -= 30;
+      } else {
+        character.isHideBody = false;
       }
       character.offset = {
         x: offset.x,
@@ -215,6 +219,7 @@ export class Chair extends Container {
         character.toggleEffectVisibility(true);
       }
 
+      container.addChild(character);
       index += 1;
     }
     // sync the character frame so they all start at the same time
@@ -228,7 +233,7 @@ export class Chair extends Container {
     let container = this.chairLayers.get(zIndex);
     if (!container) {
       container = new Container();
-      container.zIndex = zIndex >= 2 ? zIndex + 200 : zIndex - 10;
+      container.zIndex = zIndex >= 1 ? zIndex + 200 : zIndex - 10;
       this.chairFrame.addChild(container);
       this.chairLayers.set(zIndex, container);
     }

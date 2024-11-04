@@ -134,6 +134,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
       await mainCharacter.update(mainCharacterData);
       return;
     }
+    chair?.destroy();
     // setup or update chair
     chair = new Chair(data.id, data.folder);
     props.ref?.(chair);
