@@ -19,7 +19,8 @@ export const SelectWzButton = () => {
       directory: false,
       filters: [{ name: 'Base', extensions: ['wz'] }],
     });
-    const path = file?.path;
+    const path =
+      typeof file === 'string' ? file : (file as null | { path: string })?.path;
     if (path) {
       setIsLoading(true);
       try {
