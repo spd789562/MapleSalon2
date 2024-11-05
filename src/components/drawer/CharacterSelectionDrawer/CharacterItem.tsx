@@ -2,16 +2,14 @@ import { createMemo, Show } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
 
 import { useDynamicPureStore } from '@/store';
-import { getHasAnyChanges } from '@/store/character/selector';
 import { $characterInfoDialogOpen } from '@/store/trigger';
 import { changeCurrentCharacterInfo } from '@/store/characterInfo';
-import { openDialog, DialogType } from '@/store/confirmDialog';
 
 import {
   createGetCharacterById,
-  selectCharacter,
   removeCharacter,
   cloneCharacter,
+  type SaveCharacterData,
 } from '@/store/characterDrawer';
 
 import EllipsisVerticalIcon from 'lucide-solid/icons/ellipsis-vertical';
@@ -24,6 +22,7 @@ import { downloadJson } from '@/utils/download';
 
 export interface CharacterItemProps {
   id: string;
+  onSelect: (data: SaveCharacterData) => void;
 }
 export const CharacterItem = (props: CharacterItemProps) => {
   const getCharacterById = createMemo(() => createGetCharacterById(props.id));
@@ -34,21 +33,7 @@ export const CharacterItem = (props: CharacterItemProps) => {
     if (!data) {
       return;
     }
-    const hasChanges = getHasAnyChanges();
-    if (hasChanges) {
-      /* do something like popup */
-      openDialog({
-        type: DialogType.Confirm,
-        title: '確認捨棄變更',
-        description: '當前變更尚未儲存，是否捨棄變更？',
-        confirmButton: {
-          text: '捨棄變更',
-          onClick: () => selectCharacter(data),
-        },
-      });
-    } else {
-      selectCharacter(data);
-    }
+    props.onSelect(data);
   };
 
   const handleClone = () => {

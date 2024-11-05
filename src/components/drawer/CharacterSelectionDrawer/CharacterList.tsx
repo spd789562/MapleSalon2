@@ -2,7 +2,13 @@ import { For } from 'solid-js';
 
 import { usePureStore } from '@/store';
 
-import { $getCharacterIds } from '@/store/characterDrawer';
+import {
+  $getCharacterIds,
+  selectCharacter,
+  type SaveCharacterData,
+} from '@/store/characterDrawer';
+import { getHasAnyChanges } from '@/store/character/selector';
+import { openDialog, DialogType } from '@/store/confirmDialog';
 
 import { HStack } from 'styled-system/jsx/hstack';
 import { CharacterItem } from './CharacterItem';
@@ -19,6 +25,24 @@ export const CharacterList = () => {
     scrollContainerRef.scrollLeft += e.deltaY;
   }
 
+  function handleSelect(data: SaveCharacterData) {
+    const hasChanges = getHasAnyChanges();
+    if (hasChanges) {
+      /* do something like popup */
+      openDialog({
+        type: DialogType.Confirm,
+        title: '確認捨棄變更',
+        description: '當前變更尚未儲存，是否捨棄變更？',
+        confirmButton: {
+          text: '捨棄變更',
+          onClick: () => selectCharacter(data),
+        },
+      });
+    } else {
+      selectCharacter(data);
+    }
+  }
+
   return (
     <HStack
       ref={scrollContainerRef}
@@ -29,7 +53,9 @@ export const CharacterList = () => {
       overflow="auto"
       onWheel={hanedleHorizontalScroll}
     >
-      <For each={characterIds()}>{(id) => <CharacterItem id={id} />}</For>
+      <For each={characterIds()}>
+        {(id) => <CharacterItem id={id} onSelect={handleSelect} />}
+      </For>
     </HStack>
   );
 };
