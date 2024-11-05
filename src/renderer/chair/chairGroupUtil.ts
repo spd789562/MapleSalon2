@@ -69,7 +69,7 @@ export function getFirstCharacterGroupData(data: WzChairData) {
   if (data.info.sitRight && data.info.sitRight === 1) {
     // groupData.flip = true;
   }
-  if (data.info.removeBody) {
+  if (data.info.removeBody && !data.info.customChair?.self) {
     groupData.hideBody = true;
   }
   if (data.info.sitAction) {
