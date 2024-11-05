@@ -30,6 +30,10 @@ export const $totalInfo = batched(
   }),
 );
 
+export const $currentCharacterId = computed(
+  $currentCharacterInfo,
+  (info) => info.id,
+);
 export const $currentAction = computed(
   $currentCharacterInfo,
   (info) => info.action,

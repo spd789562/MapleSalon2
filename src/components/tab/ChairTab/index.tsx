@@ -11,6 +11,7 @@ import { NameTagSwitch } from '@/components/CharacterPreview/NameTagSwitch';
 // import { ResetButton } from './ResetButton';
 // import { SaveButton } from './SaveButton';
 // import { ExportAnimationButton } from './ExportAnimationButton';
+import { OpenCharacterSelectionButton } from './OpenCharacterSelectionButton';
 import { ExportProgress } from './ExportProgress';
 import { ChairTabProvider } from './ChairTabContext';
 
@@ -22,6 +23,7 @@ export const ChairTab = () => {
           <Box width="32">
             <ExpressionSelect />
           </Box>
+          <OpenCharacterSelectionButton />
           {/* <AnimatingSwitch /> */}
         </HStack>
         <CharacterScene />
