@@ -7,9 +7,10 @@ import type {
   WzChairEffectSets,
   WzChairEffectItem,
 } from './const/wz';
+import type { CharacterData } from '@/store/character/store';
 import type { PieceZ, Vec2 } from '../character/const/data';
 import type { Character } from '../character/character';
-import type { CharacterData } from '@/store/character/store';
+import { TamingMob } from '../tamingMob/tamingMob';
 import { ChairEffectItem } from './chairEffectItem';
 import { generateChairGroupData, type ChairGroupData } from './chairGroupUtil';
 import { CharacterAction } from '@/const/actions';
@@ -45,6 +46,7 @@ export class Chair extends Container {
   chairFrame: Container;
   chairLayers = new Map<number, Container>();
   characters: [Character, CharacterData][] = [];
+  tamingMobs: (TamingMob | undefined)[] = [];
   offsets: Vec2[] = [];
   groupData: ChairGroupData[] = [];
 
@@ -127,46 +129,11 @@ export class Chair extends Container {
       return;
     }
 
-    let root: WzChairEffectSets = this.wz;
-    // if something looks like a id, use it as root
-    const idKey = Object.keys(this.wz).find(
-      (key) => !Number.isNaN(Number(key)),
-    );
-    if (idKey) {
-      root = this.wz[idKey];
-    }
-
-    const items: ChairEffectItem[] = [];
-
-    for (const key in this.wz) {
-      if (effectReg.test(key)) {
-        const effectData = root[
-          key as keyof WzChairEffectSets
-        ] as WzChairEffectItem;
-        if (!effectData) {
-          continue;
-        }
-        if (effectData.pos === 1) {
-          this.hasPos1 = true;
-        }
-        const item = new ChairEffectItem(key, effectData, this);
-        this.maxFrame = Math.max(this.maxFrame, item.frameCount);
-        items.push(item);
-      }
-    }
-    if (this.wz.info?.customChair?.androidChairInfo?.customEffect) {
-      const item = new ChairEffectItem(
-        'customEffect',
-        this.wz.info.customChair.androidChairInfo.customEffect,
-        this,
-      );
-      items.push(item);
-    }
-
-    this.items = items;
-
+    this.items = this.createItems(this.wz);
     this.groupData = generateChairGroupData(this.wz);
+    this.tamingMobs = this.createTamingMobs();
     await this.loadResource();
+    await Promise.all(this.tamingMobs.map((mob) => mob?.load()));
     this.isLoading = false;
     this.loadEvent.emit('loaded');
   }
@@ -192,6 +159,60 @@ export class Chair extends Container {
 
       container.addChild(animatablePart);
     }
+  }
+  createItems(wz: WzChairData) {
+    let root: WzChairEffectSets = wz;
+    // if something looks like a id, use it as root
+    const idKey = Object.keys(wz).find((key) => !Number.isNaN(Number(key)));
+    if (idKey) {
+      root = wz[idKey];
+    }
+
+    const items: ChairEffectItem[] = [];
+
+    for (const key in wz) {
+      if (effectReg.test(key)) {
+        const effectData = root[
+          key as keyof WzChairEffectSets
+        ] as WzChairEffectItem;
+        if (!effectData) {
+          continue;
+        }
+        if (effectData.pos === 1) {
+          this.hasPos1 = true;
+        }
+        const item = new ChairEffectItem(key, effectData, this);
+        if (item.frameCount <= 0) {
+          continue;
+        }
+        this.maxFrame = Math.max(this.maxFrame, item.frameCount);
+        items.push(item);
+      }
+    }
+    if (wz.info?.customChair?.androidChairInfo?.customEffect) {
+      const item = new ChairEffectItem(
+        'customEffect',
+        wz.info.customChair.androidChairInfo.customEffect,
+        this,
+      );
+      items.push(item);
+    }
+
+    return items;
+  }
+  createTamingMobs() {
+    const tamingMobs: (TamingMob | undefined)[] = [];
+
+    for (const groupData of this.groupData) {
+      if (groupData.tamingMobId) {
+        const tamingMob = new TamingMob(groupData.tamingMobId);
+        tamingMobs.push(tamingMob);
+      } else {
+        tamingMobs.push(undefined);
+      }
+    }
+
+    return tamingMobs;
   }
 
   /**
@@ -226,10 +247,20 @@ export class Chair extends Container {
       if (!gd) {
         continue;
       }
-      if (gd.tamingMobId) {
-        character.tamingMobId = gd.tamingMobId;
-      } else if (character.tamingMob) {
-        character.tamingMobId = undefined;
+
+      const hasTaming = !!gd.tamingMobId;
+      const characterData = {
+        ...data,
+        // if chair has tamingMob, force set to sit, prevent TamingMob can't use right action
+        action: gd.tamingMobId ? CharacterAction.Sit : gd.action,
+        expression: gd.expression || data.expression,
+        showNameTag: index === 0 ? data.showNameTag : false,
+        isAnimating: hasTaming ? false : characters[0][1].isAnimating,
+      };
+      if (hasTaming) {
+        await this.tamingMobs[index]?.sitCharacter([
+          [character, characterData],
+        ]);
       }
       const offset = { ...gd.position };
       // this still need to be tested
@@ -240,10 +271,7 @@ export class Chair extends Container {
       } else {
         character.isHideBody = false;
       }
-      character.offset = {
-        x: offset.x,
-        y: offset.y,
-      };
+      character.bodyContainer.position.set(offset.x, offset.y);
 
       await character.update({
         ...data,
@@ -251,20 +279,32 @@ export class Chair extends Container {
         action: gd.tamingMobId ? CharacterAction.Sit : gd.action,
         expression: gd.expression || data.expression,
         showNameTag: index === 0 ? data.showNameTag : false,
-        // isAnimating: false,
+        isAnimating: hasTaming ? false : characters[0][1].isAnimating,
       });
-      character.bodyFrame.scale.x = gd.flip ? -1 : 1;
+      character.updateFlip(gd.flip);
       if (this.isHideEffect) {
         character.toggleEffectVisibility(true);
       }
-
-      container.addChild(character);
+      const tamingMob = this.tamingMobs[index];
+      if (hasTaming && tamingMob) {
+        container.addChild(tamingMob);
+      } else {
+        container.addChild(character);
+      }
       index += 1;
     }
     // sync the character frame so they all start at the same time
-    for await (const [character, _] of characters) {
+    for (const [character, _] of characters) {
       character.currentDelta = 0;
       character.instructionFrame = 0;
+    }
+    for (const tam of this.tamingMobs) {
+      if (!tam) {
+        continue;
+      }
+      tam.currentDelta = 0;
+      tam.instructionFrame = 0;
+      tam.playByInstructions();
     }
 
     await nextTick();
@@ -299,33 +339,17 @@ export class Chair extends Container {
       item.animatablePart?.play();
     }
   }
-
-  // not sure is a good idea to bind this on character
-  playFrameOnCharacter(character: Character) {
-    const zmap = CharacterLoader?.zmap;
-    if (!zmap) {
-      return;
-    }
-    for (const item of this.items) {
-      const part = item.animatablePart;
-      if (!part) {
-        continue;
-      }
-      const z = part.effectZindex || 1;
-      let container: Container;
-      if (typeof z === 'string') {
-        container = character.getOrCreatZmapLayer(zmap, z as PieceZ);
-      } else {
-        container = character.getOrCreatEffectLayer(z);
-      }
-      container.addChild(part);
-
-      part.play();
-    }
-  }
   destroy() {
     super.destroy();
     this.loadEvent.removeAllListeners();
+    this.tamingMobs.forEach((tam, index) => {
+      tam?.removeChildren();
+      tam?.destroy();
+      const indexCharacter = this.characters[index];
+      if (indexCharacter) {
+        indexCharacter[0].customInstructions = [];
+      }
+    });
     clearTimeout(this.loadFlashTimer);
   }
 }

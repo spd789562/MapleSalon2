@@ -66,6 +66,11 @@ export function getFirstCharacterGroupData(data: WzChairData) {
     groupData.z = gd.z;
     groupData.tamingMobId = gd.tamingMobId;
   }
+  if (data.info.customChair?.female || data.info.customChair?.male) {
+    const d = data.info.customChair;
+    groupData.tamingMobId =
+      Math.random() > 0.5 ? d.female?.tamingMob : d.male?.tamingMob;
+  }
   if (data.info.sitRight && data.info.sitRight === 1) {
     // groupData.flip = true;
   }
@@ -77,8 +82,8 @@ export function getFirstCharacterGroupData(data: WzChairData) {
     groupData.action =
       (action as unknown as string) === 'hide' ? CharacterAction.Sit : action;
   }
-  if (data.info.sitEmotion) {
-    const emotion = data.info.sitEmotion;
+  if (data.info.sitEmotion || data.info.face) {
+    const emotion = data.info.sitEmotion || data.info.face;
     if (typeof emotion === 'number') {
       groupData.expression =
         CharacterExpressionsOrder[emotion as unknown as number];
@@ -133,7 +138,8 @@ export function getGroupDataFromGroup(data: WzChairGroupData) {
         y: /* sitData.bodyRelMove?.y ||  */ 0,
       },
       hideBody: false,
-      tamingMobId: sitData.tamingMobM || sitData.tamingMobF,
+      tamingMobId:
+        Math.random() > 0.5 ? sitData.tamingMobM : sitData.tamingMobF,
     });
     start += 1;
   }

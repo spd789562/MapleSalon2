@@ -66,6 +66,8 @@ export interface WzPngPieceInfo {
   _outlink?: string;
   _inlink?: string;
   path?: string;
+  width: number;
+  height: number;
 }
 
 export interface WzTamingMobCustom {

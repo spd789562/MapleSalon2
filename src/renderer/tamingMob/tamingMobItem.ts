@@ -34,6 +34,11 @@ export class TamingMobItem {
 
     this.resolveFrames();
   }
+  get isAncherForChair() {
+    const firstFrame = this.wz?.[0]?.[0];
+    return firstFrame?.width === 4;
+  }
+
   resolveFrames() {
     const navels: Vec2[] = [];
     const items: TamingMobPart[][] = [];
@@ -76,9 +81,6 @@ export class TamingMobItem {
         }
 
         layerItems.push(new TamingMobPart(this, layerData, frame));
-      }
-      for (const part of layerItems) {
-        part.updateAncher(navel);
       }
       navels.push(navel);
       items.push(layerItems);

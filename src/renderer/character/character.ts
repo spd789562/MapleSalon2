@@ -17,7 +17,6 @@ import { CharacterItem } from './item';
 import { CharacterBodyFrame } from './characterBodyFrame';
 import { CharacterFaceFrame } from './characterFaceFrame';
 import { CharacterZmapContainer } from './characterZmapContainer';
-import { TamingMob } from '../tamingMob/tamingMob';
 
 import { isMixDyeableId, isFaceId } from '@/utils/itemId';
 
@@ -73,12 +72,12 @@ export class Character extends Container {
   bodyContainer = new Container();
   bodyFrame = new Container();
   locks = new Map<PieceSlot, number>();
-  tamingMob?: TamingMob;
   offset: Vec2 = { x: 0, y: 0 };
 
   frame = 0;
   _instructionFrame = 0;
   currentInstructions: WzActionInstruction[] = [];
+  customInstructions: WzActionInstruction[] = [];
   bodyFrameMap = new Map<`${CharacterAction}-${number}`, CharacterBodyFrame>();
   faceFrameMap = new Map<
     `${CharacterExpressions}-${number}`,
@@ -103,7 +102,7 @@ export class Character extends Container {
   constructor() {
     super();
     // this.sortableChildren = true;
-    this.bodyContainer.sortableChildren = true;
+    this.bodyFrame.sortableChildren = true;
     this.nameTag = new BaseNameTag('');
     this.nameTag.visible = false;
     this.nameTag.position.set(0, 3);
@@ -130,9 +129,6 @@ export class Character extends Container {
   get handType() {
     return this.#_handType;
   }
-  get tamingMobId() {
-    return this.tamingMob?.id;
-  }
   set action(action: CharacterAction) {
     this.#_action = action;
     this.#_useAction = action;
@@ -153,20 +149,6 @@ export class Character extends Container {
     this.#_handType = handType;
 
     this.updateActionByHandType();
-  }
-  set tamingMobId(id: number | undefined) {
-    if (id === this.tamingMobId) {
-      return;
-    }
-    this.isWaitToLoadTamingMob = true;
-    if (id) {
-      this.tamingMob = new TamingMob(id);
-    } else {
-      if (this.tamingMob?.isHideBody) {
-        this.isHideBody = false;
-      }
-      this.tamingMob = undefined;
-    }
   }
 
   get instructionFrame() {
@@ -215,7 +197,7 @@ export class Character extends Container {
       hasAttributeChanged ||
       hasAddAnyItem ||
       isStopToPlay ||
-      this.isWaitToLoadTamingMob
+      this.customInstructions.length > 0
     ) {
       await this.loadItems();
     } else if (isPlayingChanged) {
@@ -481,7 +463,6 @@ export class Character extends Container {
     } else {
       this.bodyFrame.position.copyFrom(this.offset);
     }
-    this.tamingMob?.playFrameOnCharacter(this, this.instructionFrame);
   }
   get currentAction() {
     if (this.instruction && this.currentInstruction?.action) {
@@ -513,24 +494,6 @@ export class Character extends Container {
   get bodyItem() {
     return Array.from(this.idItems.values()).find((item) => item.isBody);
   }
-  async loadTamimgMob() {
-    if (!this.isWaitToLoadTamingMob) {
-      return;
-    }
-    if (!this.tamingMob) {
-      return;
-    }
-    this.isWaitToLoadTamingMob = false;
-    await this.tamingMob.load();
-    const item = this.tamingMob.actionItem.get(this.action);
-    if (!item) {
-      return;
-    }
-    if (this.tamingMob.isHideBody) {
-      this.isHideBody = true;
-    }
-    await item.loadResource();
-  }
   async loadInstruction() {
     const bodyItem = this.bodyItem;
     if (bodyItem) {
@@ -546,12 +509,8 @@ export class Character extends Container {
         // errorItems.push(weaponItem.info);
       }
     }
-    const tamingMobItem = this.tamingMob?.actionItem.get(this.action);
-
-    // if taming mob item exist, use taming mob item instructions
-    // it for chair and mount
-    if (tamingMobItem) {
-      this.currentInstructions = tamingMobItem.instructions;
+    if (this.customInstructions.length > 0) {
+      this.currentInstructions = this.customInstructions;
       return;
     }
 
@@ -585,7 +544,6 @@ export class Character extends Container {
       }
     }, 50);
 
-    await this.loadTamimgMob();
     await this.loadInstruction();
 
     const usedBodyFrame = this.createBodyFramesWhenNotExist();
@@ -715,7 +673,11 @@ export class Character extends Container {
         );
         this.bodyFrameMap.set(frameKey, bodyFrame);
       }
-      if (this.isAnimating || set.size === 0) {
+      if (
+        this.isAnimating ||
+        set.size === 0 ||
+        this.customInstructions.length > 0
+      ) {
         set.add(bodyFrame);
       }
     }
@@ -732,7 +694,11 @@ export class Character extends Container {
         faceFrame = new CharacterFaceFrame(this, expression, frame);
         this.faceFrameMap.set(key, faceFrame);
       }
-      if (this.isAnimating || set.size === 0) {
+      if (
+        this.isAnimating ||
+        set.size === 0 ||
+        this.customInstructions.length > 0
+      ) {
         set.add(faceFrame);
       }
     }
@@ -744,7 +710,7 @@ export class Character extends Container {
       return;
     }
     this.flip = flip;
-    this.bodyFrame.scale.x = flip ? -1 : 1;
+    this.bodyContainer.scale.x = flip ? -1 : 1;
   }
 
   private updateActionByHandType() {

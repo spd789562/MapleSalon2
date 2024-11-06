@@ -91,6 +91,8 @@ export interface WzChairCustomInfo {
   self?: WzChairCustomMovingInfo;
   type?: string;
   androidChairInfo?: WzChairAndroidData;
+  female?: { tamingMob: number };
+  male?: { tamingMob: number };
 }
 
 export interface WzChairCustomMovingInfo {
@@ -115,6 +117,7 @@ export interface WzChairGroupCharacterData {
   sitAction?: CharacterAction;
   bodyRelMove?: Vec2;
   dir?: number;
+  sitLeft?: number;
   tamingMobF?: number;
   tamingMobM?: number;
 }
@@ -172,4 +175,10 @@ export interface WzChairAndroidData {
   forcedHideBody?: number;
   pos?: Vec2;
   reverseFlip?: number;
+}
+
+export interface WzEventPointChairData {
+  femail: { tamingMob: number };
+  male: { tamingMob: number };
+  type: string;
 }
