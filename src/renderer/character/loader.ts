@@ -14,6 +14,7 @@ class Loader {
   loadingMap = new Map<string, Promise<unknown>>();
   pathExistCache = new Map<number, string>();
   instructionMap = new Map<string, WzActionInstruction[]>();
+  noEffectMap = new Set<number>();
 
   init() {
     return Promise.all([
@@ -143,14 +144,20 @@ class Loader {
 
     return data;
   }
-  async getPieceEffectWz(id: number): Promise<WzEffectItem | null> {
+  async getPieceEffectWz<T = WzEffectItem | null>(id: number, inEffect = true) {
+    if (this.noEffectMap.has(id)) {
+      return null;
+    }
+
     const alias = `Effect/ItemEff.img/${id}`;
 
-    const data = await Assets.load<WzEffectItem>({
+    const data = await Assets.load<T>({
       alias,
       loadParser: 'loadJson',
-      src: `${this.apiHost}/node/json/${alias}/effect?simple=true&cache=14400`,
-    }).catch(() => null);
+      src: `${this.apiHost}/node/json/${alias}${inEffect ? '/effect' : ''}?simple=true&cache=14400`,
+    }).catch(() => {
+      this.noEffectMap.add(id);
+    });
 
     return data;
   }
