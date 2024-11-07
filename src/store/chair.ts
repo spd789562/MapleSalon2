@@ -29,7 +29,10 @@ export const $chairFilterdStrings = computed(
     const idSearch = Number.parseInt(search);
     if (!Number.isNaN(idSearch)) {
       return strings.filter(
-        (item) => item.id === idSearch || item.name.includes(search),
+        (item) =>
+          item.id === idSearch ||
+          item.name.includes(search) ||
+          item.folder.includes(search),
       );
     }
     return strings.filter((item) => item.name.includes(search));
@@ -38,8 +41,9 @@ export const $chairFilterdStrings = computed(
 export const $otherCharacters = computed(
   [$otherCharacterIds, $characterList],
   (ids, characters) => {
-    return characters.filter((character) =>
-      ids.includes(character.id),
+    return ids.map(
+      (id) =>
+        characters.find((char) => char.id === id) as Partial<CharacterData>,
     ) as Partial<CharacterData>[];
   },
 );
