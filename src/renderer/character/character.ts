@@ -66,6 +66,7 @@ export class Character extends Container {
   #_handType = CharacterHandType.DoubleHand;
   #_renderId = '';
   flip = false;
+  forceFlip = false;
 
   zmapLayers = new Map<PieceSlot, CharacterZmapContainer>();
   effectLayers = new Map<number, Container>();
@@ -663,14 +664,14 @@ export class Character extends Container {
   createBodyFramesWhenNotExist() {
     const set = new Set<CharacterBodyFrame>();
     for (const instruction of this.currentInstructions) {
-      const frameKey = `${instruction.action}-${instruction.frame}` as const;
+      const action =
+        (instruction.action as unknown as string) === 'hideBody'
+          ? CharacterAction.Sit
+          : instruction.action;
+      const frameKey = `${action}-${instruction.frame}` as const;
       let bodyFrame = this.bodyFrameMap.get(frameKey);
       if (!bodyFrame) {
-        bodyFrame = new CharacterBodyFrame(
-          this,
-          instruction.action,
-          instruction.frame,
-        );
+        bodyFrame = new CharacterBodyFrame(this, action, instruction.frame);
         this.bodyFrameMap.set(frameKey, bodyFrame);
       }
       if (
@@ -706,11 +707,12 @@ export class Character extends Container {
   }
 
   updateFlip(flip: boolean) {
-    if (this.flip === flip) {
+    const actualFlip = this.forceFlip || flip;
+    if (this.flip === actualFlip) {
       return;
     }
-    this.flip = flip;
-    this.bodyContainer.scale.x = flip ? -1 : 1;
+    this.flip = actualFlip;
+    this.bodyContainer.scale.x = actualFlip ? -1 : 1;
   }
 
   private updateActionByHandType() {
