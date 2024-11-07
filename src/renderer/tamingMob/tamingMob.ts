@@ -185,7 +185,11 @@ export class TamingMob extends Container {
       const container = this.getOrCreatEffectLayer(z, zmap);
       container.addChild(piece);
     }
-    this.currentItem.isAncherForChair && this.fixChairAncherIfExist(frameNavel);
+    this.currentItem.isAncherForChair &&
+      this.fixChairAncherIfExist({
+        x: -frameNavel.x,
+        y: -frameNavel.y,
+      });
   }
   stop() {
     this.isPlaying = false;

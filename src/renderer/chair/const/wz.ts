@@ -11,6 +11,11 @@ export type WzChairData = { info: WzChairInfo } & WzChairEffectSets &
     particle?: unknown;
   };
 
+export type WzChairEffectData = Record<
+  number,
+  Record<number, WzChairEffectItem> | WzChairEffectItem
+>;
+
 export interface WzChairInfo {
   bodyRelMove?: Vec2;
   floatingBodyRelMove?: Vec2;

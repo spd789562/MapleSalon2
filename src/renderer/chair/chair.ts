@@ -6,6 +6,8 @@ import type {
   WzChairData,
   WzChairEffectSets,
   WzChairEffectItem,
+  WzChairEffectData,
+  WzPngPieceInfo,
 } from './const/wz';
 import type { CharacterData } from '@/store/character/store';
 import type { PieceZ, Vec2 } from '../character/const/data';
@@ -41,6 +43,7 @@ export class Chair extends Container {
   parentPath: string;
   isCash = false;
   wz?: WzChairData;
+  effectWz?: WzChairEffectData;
   items: ChairEffectItem[] = [];
   maxFrame = 0;
   chairFrame: Container;
@@ -116,26 +119,46 @@ export class Chair extends Container {
       }
     }, 50);
 
-    if (!this.wz) {
-      const data = await CharacterLoader.getPieceWzByPath<WzChairData>(
-        this.chairPath,
-      );
-      if (data) {
-        this.wz = data;
-      }
-    }
-
+    await this.loadChairWz();
     if (!this.wz) {
       return;
     }
+    await this.loadEffectWz();
 
-    this.items = this.createItems(this.wz);
+    const items = this.createItems(this.wz);
+    const effectItems = this.effectWz
+      ? this.createEffectItems(this.effectWz)
+      : [];
+    this.items = [...items, ...effectItems];
     this.groupData = generateChairGroupData(this.wz);
     this.tamingMobs = this.createTamingMobs();
     await this.loadResource();
     await Promise.all(this.tamingMobs.map((mob) => mob?.load()));
     this.isLoading = false;
     this.loadEvent.emit('loaded');
+  }
+  async loadChairWz() {
+    if (this.wz) {
+      return;
+    }
+    const data = await CharacterLoader.getPieceWzByPath<WzChairData>(
+      this.chairPath,
+    );
+    if (data) {
+      this.wz = data;
+    }
+  }
+  async loadEffectWz() {
+    if (this.effectWz) {
+      return;
+    }
+    const data = await CharacterLoader.getPieceEffectWz<WzChairEffectData>(
+      this.id,
+      false,
+    );
+    if (data) {
+      this.effectWz = data;
+    }
   }
   async loadResourceByFrame(_: number) {
     // unimplemented
@@ -198,6 +221,29 @@ export class Chair extends Container {
       items.push(item);
     }
 
+    return items;
+  }
+  createEffectItems(effectWz: WzChairEffectData) {
+    const items: ChairEffectItem[] = [];
+    for (const key in effectWz) {
+      if (Number.isNaN(Number(key)) || !effectWz[key]) {
+        continue;
+      }
+      const effectData = effectWz[key];
+      if ((effectData[1] as WzPngPieceInfo)?.origin) {
+        items.push(
+          new ChairEffectItem(key, effectData as WzChairEffectItem, this),
+        );
+        continue;
+      }
+      const effectDatas = effectData as Record<number, WzChairEffectItem>;
+      for (const key2 in effectDatas) {
+        if ((effectDatas[key2] as unknown as WzPngPieceInfo)?.origin) {
+          continue;
+        }
+        items.push(new ChairEffectItem(key2, effectDatas[key2], this));
+      }
+    }
     return items;
   }
   createTamingMobs() {
@@ -281,7 +327,11 @@ export class Chair extends Container {
         showNameTag: index === 0 ? data.showNameTag : false,
         isAnimating: hasTaming ? false : characters[0][1].isAnimating,
       });
-      character.updateFlip(gd.flip);
+      if (gd.flip) {
+        character.forceFlip = true;
+      } else {
+        character.forceFlip = false;
+      }
       if (this.isHideEffect) {
         character.toggleEffectVisibility(true);
       }
@@ -311,11 +361,8 @@ export class Chair extends Container {
   }
 
   updatePartAncher(ancher: Vec2) {
-    if (!this.hasPos1) {
-      return;
-    }
-    for (const layer of this.nonCharacterLayers) {
-      layer.pivot.set(-ancher.x, -ancher.y);
+    for (const item of this.items) {
+      item.updateAncher(ancher);
     }
   }
 

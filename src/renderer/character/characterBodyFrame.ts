@@ -182,7 +182,9 @@ export class CharacterBodyFrame {
     /* use the ancher to set actual character offset */
     const bodyPos = this.bodyFrame?.ancher ||
       this.anchers.get('neck') || { x: 0, y: 0 };
-    this.character.bodyFrame.pivot?.set(bodyPos.x, bodyPos.y);
+    /* weird, flip need some offset adjust */
+    const xFlipOffset = this.character.flip ? 2 : 0;
+    this.character.bodyFrame.pivot?.set(bodyPos.x + xFlipOffset, bodyPos.y);
   }
 
   get earPiece() {

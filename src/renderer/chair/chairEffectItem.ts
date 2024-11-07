@@ -1,3 +1,4 @@
+import type { Vec2 } from './const/data';
 import type { WzChairEffectItem, WzPngPieceInfo } from './const/wz';
 import type { Chair } from './chair';
 import { ChairEffectPart } from './chairEffectPart';
@@ -13,6 +14,8 @@ export class ChairEffectItem {
   chair: Chair;
   frameKeys: string[] = [];
 
+  needUseTamingMobAncher = false;
+
   constructor(name: string, wz: WzChairEffectItem, chair: Chair) {
     this.name = name;
     this.wz = wz;
@@ -24,6 +27,9 @@ export class ChairEffectItem {
       0,
     );
     this.chair = chair;
+    if (wz.pos === 1) {
+      this.needUseTamingMobAncher = true;
+    }
 
     this.resolveFrames();
   }
@@ -39,6 +45,11 @@ export class ChairEffectItem {
   }
   prepareResource() {
     this.animatablePart = new ChairAnimatablePart(this, this.frames, this.wz.z);
+  }
+  updateAncher(ancher: Vec2) {
+    if (this.needUseTamingMobAncher) {
+      this.animatablePart?.pivot.set(ancher.x, ancher.y);
+    }
   }
   destroy() {
     this.animatablePart?.destroy();
