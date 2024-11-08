@@ -109,7 +109,7 @@ export class CharacterBodyFrame {
         const ancherName = piece.frameData.baseAncherName;
 
         /* body hiding check */
-        if (this.character.isHideBody && ancherName === 'navel') {
+        if (this.character.isHideBody && (ancherName === 'navel' || layer === 'hairBelowBody')) {
           continue;
         }
 

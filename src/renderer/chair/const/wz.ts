@@ -77,6 +77,7 @@ export type WzChairEffectItem = Record<number, WzPngPieceInfo> & {
   bodyRelMove?: Vec2;
   pos?: number;
   z?: number;
+  delay?: number;
 };
 
 export interface WzPngPieceInfo {
@@ -90,7 +91,10 @@ export interface WzPngPieceInfo {
 
 export interface WzChairCustomInfo {
   chatBalloonMove?: Vec2;
-  scaleAvatar?: number;
+  scaleAvatar?: {
+    colorChange: { r: number; g: number; b: number };
+    scale: number; // 100 = 1
+  };
   avatar?: Record<number, WzChairCustomMovingInfo>;
   avatarCount?: number;
   self?: WzChairCustomMovingInfo;

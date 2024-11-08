@@ -39,7 +39,7 @@ export class ChairEffectPart implements AnimatableFrame {
       y: -frameData.origin?.y || 0,
     };
     this.zIndex = frameData.z || item.wz.z || 0;
-    this.delay = frameData.delay || 100;
+    this.delay = frameData.delay || item.wz.delay || 100;
     if (
       item.chair.wz?.info.bodyRelMove &&
       !item.chair.forceAction &&
@@ -55,6 +55,14 @@ export class ChairEffectPart implements AnimatableFrame {
       !item.chair.tamingMobId
     ) {
       this.position.y -= 50;
+    }
+    if (
+      !item.chair.wz?.info.bodyRelMove &&
+      item.wz.pos === 1 &&
+      item.chair.tamingMobId &&
+      item.chair.id / 10000 < 302
+    ) {
+      this.position.y -= 30;
     }
   }
 

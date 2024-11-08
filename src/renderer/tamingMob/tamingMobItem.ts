@@ -54,7 +54,8 @@ export class TamingMobItem {
         expression: item.forceCharacterFace,
         expressionFrame: item.forceCharacterFaceFrameIndex,
         flip: item.forceCharacterFlip,
-        delay: item.delay || 100,
+        delay:
+          item.delay || (this.wz as unknown as { delay?: number }).delay || 100,
       } as WzActionInstruction;
 
       if ((instruction.action as unknown as string) === 'stand') {

@@ -104,6 +104,9 @@ export class Chair extends Container {
       .filter(([z]) => z !== 0)
       .map(([_, v]) => v);
   }
+  get characterScale() {
+    return (this.wz?.info?.customChair?.scaleAvatar?.scale || 100) / 100;
+  }
 
   async load() {
     // a chair should only load once though, but just in case
@@ -317,6 +320,12 @@ export class Chair extends Container {
       } else {
         character.isHideBody = false;
       }
+      character.forceScale = this.characterScale;
+      if (character.forceScale !== 1 && gd.hideBody) {
+        offset.y -= 30 * (character.forceScale - 1);
+        offset.x -= 6 * (character.forceScale - 1);
+      }
+      
       character.bodyContainer.position.set(offset.x, offset.y);
 
       await character.update({

@@ -67,6 +67,7 @@ export class Character extends Container {
   #_renderId = '';
   flip = false;
   forceFlip = false;
+  forceScale = 1;
 
   zmapLayers = new Map<PieceSlot, CharacterZmapContainer>();
   effectLayers = new Map<number, Container>();
@@ -457,12 +458,14 @@ export class Character extends Container {
     faceFrame?.renderPieces(bodyFrame);
     if (instruction.move) {
       const move = {
-        x: instruction.move.x + this.offset.x,
-        y: instruction.move.y + this.offset.y,
+        x: instruction.move.x /*  + this.offset.x */,
+        y: instruction.move.y /*  + this.offset.y */,
       };
       this.bodyFrame.position.copyFrom(move);
-    } else {
-      this.bodyFrame.position.copyFrom(this.offset);
+    }
+    if (this.forceScale) {
+      this.bodyContainer.scale.x = this.forceScale * (this.flip ? -1 : 1);
+      this.bodyContainer.scale.y = this.forceScale;
     }
   }
   get currentAction() {
@@ -707,12 +710,11 @@ export class Character extends Container {
   }
 
   updateFlip(flip: boolean) {
-    const actualFlip = this.forceFlip || flip;
+    const actualFlip = this.forceFlip === true ? true : flip;
     if (this.flip === actualFlip) {
       return;
     }
     this.flip = actualFlip;
-    this.bodyContainer.scale.x = actualFlip ? -1 : 1;
   }
 
   private updateActionByHandType() {

@@ -92,7 +92,13 @@ export function getFirstCharacterGroupData(data: WzChairData) {
     }
   }
   if (data.info.tamingMob) {
-    groupData.tamingMobId = data.info.tamingMob;
+    if ((data.info.tamingMob as unknown as { 0: number })[0]) {
+      groupData.tamingMobId = (
+        data.info.tamingMob as unknown as { 0: number }
+      )[0];
+    } else {
+      groupData.tamingMobId = data.info.tamingMob;
+    }
   }
   // when a chair have tamingMobId on it, don't use bodyRelMove
   if (
@@ -102,9 +108,6 @@ export function getFirstCharacterGroupData(data: WzChairData) {
     const pos = data.info.bodyRelMove ||
       data.info.floatingBodyRelMove || { x: 0, y: 0 };
     groupData.position = { ...pos };
-  }
-  if (groupData.flip) {
-    // groupData.position.x *= -1;
   }
 
   return groupData;
