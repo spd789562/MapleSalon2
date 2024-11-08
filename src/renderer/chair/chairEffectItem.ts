@@ -13,10 +13,16 @@ export class ChairEffectItem {
   animatablePart: ChairAnimatablePart | null = null;
   chair: Chair;
   frameKeys: string[] = [];
+  bodyRelMove?: Vec2;
 
   needUseTamingMobAncher = false;
 
-  constructor(name: string, wz: WzChairEffectItem, chair: Chair) {
+  constructor(
+    name: string,
+    wz: WzChairEffectItem,
+    chair: Chair,
+    bodyRelMove?: Vec2,
+  ) {
     this.name = name;
     this.wz = wz;
     const keys = Object.keys(wz).filter((key) => Number.isInteger(Number(key)));
@@ -27,6 +33,7 @@ export class ChairEffectItem {
       0,
     );
     this.chair = chair;
+    this.bodyRelMove = bodyRelMove;
     if (wz.pos === 1) {
       this.needUseTamingMobAncher = true;
     }

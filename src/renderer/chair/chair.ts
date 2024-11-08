@@ -45,10 +45,13 @@ export class Chair extends Container {
   wz?: WzChairData;
   effectWz?: WzChairEffectData;
   items: ChairEffectItem[] = [];
+  variantItems: Map<number, ChairEffectItem[]> = new Map();
+  variant?: number;
   maxFrame = 0;
   chairFrame: Container;
   chairLayers = new Map<number, Container>();
   characters: [Character, CharacterData][] = [];
+  characterContainer: Container[] = [];
   tamingMobs: (TamingMob | undefined)[] = [];
   offsets: Vec2[] = [];
   groupData: ChairGroupData[] = [];
@@ -107,6 +110,10 @@ export class Chair extends Container {
   get characterScale() {
     return (this.wz?.info?.customChair?.scaleAvatar?.scale || 100) / 100;
   }
+  get currentItems() {
+    const variantItems = this.variant && this.variantItems.get(this.variant);
+    return variantItems || this.items;
+  }
 
   async load() {
     // a chair should only load once though, but just in case
@@ -127,15 +134,22 @@ export class Chair extends Container {
       return;
     }
     await this.loadEffectWz();
-
     const items = this.createItems(this.wz);
+    this.createVariants(this.wz);
     const effectItems = this.effectWz
       ? this.createEffectItems(this.effectWz)
       : [];
     this.items = [...items, ...effectItems];
     this.groupData = generateChairGroupData(this.wz);
     this.tamingMobs = this.createTamingMobs();
-    await this.loadResource();
+    if (this.variantItems.size > 0) {
+      const count = this.variantItems.size + 1;
+      const random = Math.floor(Math.random() * count) + 1;
+      this.variant = random;
+      await this.loadVariantResource(random);
+    } else {
+      await this.loadResource(this.items);
+    }
     await Promise.all(this.tamingMobs.map((mob) => mob?.load()));
     this.isLoading = false;
     this.loadEvent.emit('loaded');
@@ -166,13 +180,20 @@ export class Chair extends Container {
   async loadResourceByFrame(_: number) {
     // unimplemented
   }
-  async loadResource() {
-    const assets = this.items
+  loadVariantResource(variant: number) {
+    const variantItems = this.variantItems.get(variant);
+    if (!variantItems || variant === 0) {
+      return this.loadResource(this.items);
+    }
+    return this.loadResource(variantItems);
+  }
+  async loadResource(items: ChairEffectItem[]) {
+    const assets = items
       .flatMap((item) => item.frames)
       .flatMap((part) => part.resources)
       .filter(Boolean) as UnresolvedAsset[];
     await Assets.load(assets);
-    for (const item of this.items) {
+    for (const item of items) {
       item.prepareResource();
       const animatablePart = item.animatablePart;
       if (!animatablePart) {
@@ -207,7 +228,12 @@ export class Chair extends Container {
         if (effectData.pos === 1) {
           this.hasPos1 = true;
         }
-        const item = new ChairEffectItem(key, effectData, this);
+        const item = new ChairEffectItem(
+          key,
+          effectData,
+          this,
+          wz.info.bodyRelMove,
+        );
         if (item.frameCount <= 0) {
           continue;
         }
@@ -235,7 +261,12 @@ export class Chair extends Container {
       const effectData = effectWz[key];
       if ((effectData[1] as WzPngPieceInfo)?.origin) {
         items.push(
-          new ChairEffectItem(key, effectData as WzChairEffectItem, this),
+          new ChairEffectItem(
+            key,
+            effectData as WzChairEffectItem,
+            this,
+            this.wz?.info.bodyRelMove,
+          ),
         );
         continue;
       }
@@ -244,10 +275,51 @@ export class Chair extends Container {
         if ((effectDatas[key2] as unknown as WzPngPieceInfo)?.origin) {
           continue;
         }
-        items.push(new ChairEffectItem(key2, effectDatas[key2], this));
+        items.push(
+          new ChairEffectItem(
+            key2,
+            effectDatas[key2],
+            this,
+            this.wz?.info.bodyRelMove,
+          ),
+        );
       }
     }
     return items;
+  }
+  createVariants(wz: WzChairData) {
+    const randomEffectData = wz.info.randEffect;
+    if (!randomEffectData) {
+      return;
+    }
+    const randomEffectCount = Object.keys(randomEffectData).length;
+    for (let i = 1; i < randomEffectCount; i++) {
+      const key = `randEffect${i}`;
+      const effectSetData = wz[key];
+      if (!effectSetData) {
+        continue;
+      }
+      const items = [] as ChairEffectItem[];
+      for (const k in effectSetData) {
+        if (effectReg.test(k)) {
+          const effectData = effectSetData[k as keyof WzChairEffectSets];
+          if (!effectData) {
+            continue;
+          }
+          const item = new ChairEffectItem(
+            k,
+            effectData,
+            this,
+            randomEffectData[i]?.bodyRelMove || wz.info.bodyRelMove,
+          );
+          if (item.frameCount <= 0) {
+            continue;
+          }
+          items.push(item);
+        }
+      }
+      this.variantItems.set(i, items);
+    }
   }
   createTamingMobs() {
     const tamingMobs: (TamingMob | undefined)[] = [];
@@ -255,6 +327,9 @@ export class Chair extends Container {
     for (const groupData of this.groupData) {
       if (groupData.tamingMobId) {
         const tamingMob = new TamingMob(groupData.tamingMobId);
+        if (groupData.action) {
+          tamingMob.sitAction = groupData.action;
+        }
         tamingMobs.push(tamingMob);
       } else {
         tamingMobs.push(undefined);
@@ -296,6 +371,12 @@ export class Chair extends Container {
       if (!gd) {
         continue;
       }
+      let characterContainer = this.characterContainer[index];
+
+      if (!characterContainer) {
+        characterContainer = new Container();
+        container.addChild(characterContainer);
+      }
 
       const hasTaming = !!gd.tamingMobId;
       const characterData = {
@@ -325,8 +406,7 @@ export class Chair extends Container {
         offset.y -= 30 * (character.forceScale - 1);
         offset.x -= 6 * (character.forceScale - 1);
       }
-      
-      character.bodyContainer.position.set(offset.x, offset.y);
+      characterContainer.position.set(offset.x, offset.y);
 
       await character.update({
         ...data,
@@ -334,8 +414,9 @@ export class Chair extends Container {
         action: gd.tamingMobId ? CharacterAction.Sit : gd.action,
         expression: gd.expression || data.expression,
         showNameTag: index === 0 ? data.showNameTag : false,
-        isAnimating: hasTaming ? false : characters[0][1].isAnimating,
+        isAnimating: characters[0][1].isAnimating,
       });
+      await character.loadItems();
       if (gd.flip) {
         character.forceFlip = true;
       } else {
@@ -346,12 +427,13 @@ export class Chair extends Container {
       }
       const tamingMob = this.tamingMobs[index];
       if (hasTaming && tamingMob) {
-        container.addChild(tamingMob);
+        characterContainer.addChild(tamingMob);
       } else {
-        container.addChild(character);
+        characterContainer.addChild(character);
       }
       index += 1;
     }
+
     // sync the character frame so they all start at the same time
     for (const [character, _] of characters) {
       character.currentDelta = 0;
@@ -368,9 +450,20 @@ export class Chair extends Container {
 
     await nextTick();
   }
+  async changeVariant(variant: number) {
+    if (this.variant === variant) {
+      return;
+    }
+    for (const item of this.currentItems) {
+      item.animatablePart?.stop();
+      item.animatablePart?.removeFromParent();
+    }
+    this.variant = variant;
+    await this.loadVariantResource(variant);
+  }
 
   updatePartAncher(ancher: Vec2) {
-    for (const item of this.items) {
+    for (const item of this.currentItems) {
       item.updateAncher(ancher);
     }
   }
@@ -382,6 +475,9 @@ export class Chair extends Container {
       container.zIndex = zIndex >= 1 ? zIndex + 200 : zIndex - 10;
       this.chairFrame.addChild(container);
       this.chairLayers.set(zIndex, container);
+      if (zIndex === 0) {
+        container.sortableChildren = true;
+      }
     }
     return container;
   }
@@ -391,7 +487,7 @@ export class Chair extends Container {
       return;
     }
     this.isPlaying = true;
-    for (const item of this.items) {
+    for (const item of this.currentItems) {
       item.animatablePart?.play();
     }
   }
@@ -399,8 +495,8 @@ export class Chair extends Container {
     super.destroy();
     this.loadEvent.removeAllListeners();
     this.tamingMobs.forEach((tam, index) => {
-      tam?.removeChildren();
       tam?.destroy();
+      tam?.removeChildren();
       const indexCharacter = this.characters[index];
       if (indexCharacter) {
         indexCharacter[0].customInstructions = [];

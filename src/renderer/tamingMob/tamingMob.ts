@@ -21,6 +21,8 @@ export class TamingMob extends Container {
   action = CharacterAction.Stand1;
   actionItem: Map<CharacterAction, TamingMobItem> = new Map();
 
+  sitAction = CharacterAction.Sit;
+
   characters: [Character, CharacterData][] = [];
   tamingMobLayers = new Map<number, Container>();
   currentNavel = { x: 0, y: 0 };
@@ -84,7 +86,13 @@ export class TamingMob extends Container {
             action,
             item,
             this,
-            isHideBodyAction ? CharacterAction.Sit : defaultAction,
+            isHideBodyAction
+              ? CharacterAction.Sit
+              : defaultAction
+                ? defaultAction
+                : action === CharacterAction.Sit
+                  ? this.sitAction
+                  : undefined,
           ),
         );
       }
@@ -200,7 +208,7 @@ export class TamingMob extends Container {
     }
   }
   fixChairAncherIfExist(ancher: Vec2) {
-    const chairNode = this.parent?.parent?.parent as Chair;
+    const chairNode = this.parent?.parent?.parent?.parent as Chair;
     if (chairNode?.type === 'chair') {
       chairNode.updatePartAncher(ancher);
     }
@@ -219,6 +227,11 @@ export class TamingMob extends Container {
   }
   destroy() {
     this.stop();
+    const character = this.characters[0]?.[0];
+    if (character) {
+      character.customInstructions = [];
+      character.bodyContainer.position.set(0, 0);
+    }
     super.destroy();
     this.actionItem.clear();
     this.tamingMobLayers.clear();

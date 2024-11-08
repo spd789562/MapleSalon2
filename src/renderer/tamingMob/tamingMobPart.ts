@@ -32,6 +32,7 @@ export class TamingMobPart extends Container {
       x: -frameData.origin?.x,
       y: -frameData.origin?.y,
     };
+    console.log('offset', this.offset);
     this.position.set(this.offset.x, this.offset.y);
   }
 

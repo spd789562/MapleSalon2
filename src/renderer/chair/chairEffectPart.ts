@@ -41,23 +41,19 @@ export class ChairEffectPart implements AnimatableFrame {
     this.zIndex = frameData.z || item.wz.z || 0;
     this.delay = frameData.delay || item.wz.delay || 100;
     if (
-      item.chair.wz?.info.bodyRelMove &&
+      item.bodyRelMove &&
       !item.chair.forceAction &&
       (!item.wz.pos || item.wz.pos < 2)
     ) {
-      const offset = item.chair.wz.info.bodyRelMove;
+      const offset = item.bodyRelMove;
       this.position.x += offset.x;
       this.position.y += offset.y - (item.wz.pos === 1 ? 50 : 0);
     }
-    if (
-      !item.chair.wz?.info.bodyRelMove &&
-      item.wz.pos === 1 &&
-      !item.chair.tamingMobId
-    ) {
+    if (!item.bodyRelMove && item.wz.pos === 1 && !item.chair.tamingMobId) {
       this.position.y -= 50;
     }
     if (
-      !item.chair.wz?.info.bodyRelMove &&
+      !item.bodyRelMove &&
       item.wz.pos === 1 &&
       item.chair.tamingMobId &&
       item.chair.id / 10000 < 302

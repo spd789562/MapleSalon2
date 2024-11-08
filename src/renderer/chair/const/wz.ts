@@ -23,6 +23,7 @@ export interface WzChairInfo {
   sitAction?: CharacterAction;
   sitEmotion?: CharacterExpressions;
   customChair?: WzChairCustomInfo;
+  randEffect?: Record<number, WzChairRandomInfo>;
 
   tamingMob?: number;
 
@@ -34,7 +35,6 @@ export interface WzChairInfo {
   direction?: number;
   /* booleans, 1 for true */
   randomChair?: number;
-  randEffect?: number;
   sitLeft?: number;
   sitRight?: number;
   removeBody?: number;
@@ -64,6 +64,11 @@ export interface WzChairInfo {
   weapon?: unknown;
   fixFrameIdx?: number;
 }
+export interface WzChairRandomInfo {
+  bodyRelMove?: Vec2;
+  face?: CharacterExpressions;
+  prob: number;
+}
 
 export interface WzChairEffectSets {
   effect: WzChairEffectItem; // at lease have this one
@@ -71,7 +76,7 @@ export interface WzChairEffectSets {
   effect3?: WzChairEffectItem;
 }
 
-export type WzRandomEffect = WzChairEffectSets;
+export type WzChairRandomEffect = WzChairEffectSets;
 
 export type WzChairEffectItem = Record<number, WzPngPieceInfo> & {
   bodyRelMove?: Vec2;
