@@ -10,7 +10,7 @@ import { NameTagSwitch } from '@/components/CharacterPreview/NameTagSwitch';
 // import { AnimatingSwitch } from './AnimatingSwitch';
 // import { ResetButton } from './ResetButton';
 // import { SaveButton } from './SaveButton';
-// import { ExportAnimationButton } from './ExportAnimationButton';
+import { ExportAnimationButton } from './ExportAnimationButton';
 import { OpenCharacterSelectionButton } from './OpenCharacterSelectionButton';
 import { ExportProgress } from './ExportProgress';
 import { ChairTabProvider } from './ChairTabContext';
@@ -30,7 +30,7 @@ export const ChairTab = () => {
         <HStack mt="2" pl="2">
           <NameInput />
           <NameTagSwitch />
-          {/* <ExportAnimationButton /> */}
+          <ExportAnimationButton />
           {/* <HStack marginLeft="auto">
             <ResetButton />
             <SaveButton />
