@@ -26,6 +26,13 @@ export const $chairFilterdStrings = computed(
     if (!search) {
       return strings;
     }
+    if (search.includes(',')) {
+      const ids = search
+        .split(',')
+        .map((id) => Number.parseInt(id))
+        .filter((id) => !Number.isNaN(id));
+      return strings.filter((item) => ids.includes(item.id));
+    }
     const idSearch = Number.parseInt(search);
     if (!Number.isNaN(idSearch)) {
       return strings.filter(
@@ -35,6 +42,7 @@ export const $chairFilterdStrings = computed(
           item.folder.includes(search),
       );
     }
+
     return strings.filter((item) => item.name.includes(search));
   },
 );
@@ -53,8 +61,11 @@ export const $isChairUninitialized = computed(
 );
 
 /* actions */
-export async function prepareAndFetchChairStrings() {
-  await fetch(`${$apiHost.get()}/node/load_extra_paths?path=Item`);
+export async function prepareAndFetchChairStrings(loadItem = true) {
+  if (loadItem) {
+    await fetch(`${$apiHost.get()}/node/load_extra_paths?path=Item`);
+  }
+
   const strings = await fetch(`${$apiHost.get()}/string/chair?cache=14400`)
     .then((res) => res.json())
     .then((res: ChairStringResponseItem[]) =>
