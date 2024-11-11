@@ -18,7 +18,11 @@ pub(crate) async fn get_server_url<R: Runtime>(
     map.insert("is_initialized".to_string(), Value::Bool(!root.is_null()));
     map.insert(
         "is_load_items".to_string(),
-        Value::Bool(root.children.contains_key("Item")),
+        Value::Bool(
+            root.at("Item")
+                .and_then(|e| Some(e.read().unwrap().children.len() > 0))
+                == Some(true),
+        ),
     );
     let patch_version = root.try_as_file().map(|f| f.wz_file_meta.patch_version);
     map.insert(

@@ -66,7 +66,7 @@ export async function initApp() {
   $apiHost.set(url);
 
   if (is_initialized) {
-    await initStringAndRenderer(is_load_items, $defaultLoadItem.get());
+    await initStringAndRenderer(!is_load_items, $defaultLoadItem.get());
     $isInitialized.set(is_initialized);
   }
 
@@ -94,7 +94,7 @@ export async function initByWzBase(path: string) {
     return false;
   }
 
-  const isSuccess = await initStringAndRenderer(false, $defaultLoadItem.get());
+  const isSuccess = await initStringAndRenderer(true, $defaultLoadItem.get());
 
   if (!isSuccess) {
     $isWzLoading.set(false);
@@ -110,7 +110,7 @@ export async function initByWzBase(path: string) {
 }
 
 export async function initStringAndRenderer(
-  itemFolderLoaded: boolean,
+  needLoadItem: boolean,
   needLoadChair: boolean,
 ) {
   try {
@@ -127,7 +127,7 @@ export async function initStringAndRenderer(
     $initLoadProgress.set(InitLoadProgress.InitItem);
     await nextTick();
     try {
-      await prepareAndFetchChairStrings(itemFolderLoaded);
+      await prepareAndFetchChairStrings(needLoadItem);
     } catch (_) {
       toaster.error({
         title: '初始化錯誤',
