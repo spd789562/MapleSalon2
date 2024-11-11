@@ -2,11 +2,13 @@ import { styled } from 'styled-system/jsx/factory';
 
 import { VStack } from 'styled-system/jsx/vstack';
 import { ChairDataLoadButton } from './ChairDataLoadButton';
+import { DefaultLoadChairSwitch } from '@/components/dialog/SettingDialog/RenderSetting/DefaultLoadChairSwitch';
 
 export const ChairUninitializedModal = () => {
   return (
     <Modal gap={2}>
       <ChairDataLoadButton />
+      <DefaultLoadChairSwitch />
     </Modal>
   );
 };
@@ -20,6 +22,7 @@ const Modal = styled(VStack, {
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    background: 'rgba(0, 0, 0, 0.1)',
+    backgroundColor: 'white.a10',
+    backdropFilter: 'blur(4px)',
   },
 });

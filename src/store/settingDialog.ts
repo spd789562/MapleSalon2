@@ -240,6 +240,11 @@ export function setShowItemGender(value: boolean) {
 export function setShowItemDyeable(value: boolean) {
   $appSetting.setKey('showItemDyeable', value);
 }
+export function setDefaultLoadItem(value: boolean) {
+  $appSetting.setKey('defaultLoadItem', value);
+  // @TODO: when move the function to actuall setting remove the save line
+  saveSetting();
+}
 export function setEnableExperimentalUpscale(value: boolean) {
   $appSetting.setKey('enableExperimentalUpscale', value);
 }
