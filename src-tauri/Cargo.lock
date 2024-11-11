@@ -5363,9 +5363,9 @@ dependencies = [
 
 [[package]]
 name = "wz_reader"
-version = "0.0.10"
+version = "0.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d524d411c51ed19e63ffc08a129a6bd01d49512555731ebc240285f75d50ae7f"
+checksum = "b65ba2aa028b3aee652e0e4c3776a258ec6894f89938fb3469d2af13bffbd0b4"
 dependencies = [
  "aes",
  "ecb",
