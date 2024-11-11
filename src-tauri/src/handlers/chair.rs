@@ -14,14 +14,6 @@ use crate::{Error, Result};
 pub fn resolve_chair_string(root: &WzNodeArc) -> Result<Vec<(String, String, String)>> {
     let root_read = root.read().unwrap();
     let mut result = vec![];
-    println!(
-        "{:?}",
-        root_read
-            .children
-            .keys()
-            .map(|a| a.to_string())
-            .collect::<Vec<String>>()
-    );
     let chair_folders_node = root_read.at_path(CHAIR_PATH).ok_or(Error::NodeNotFound)?;
 
     let string_node = {
