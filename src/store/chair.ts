@@ -2,6 +2,7 @@ import { atom, computed } from 'nanostores';
 
 import { $apiHost } from './const';
 import { $characterList } from './characterDrawer';
+import { $currentCharacterId } from './character/selector';
 import type { CharacterData } from './character/store';
 
 export interface ChairItem {
@@ -47,11 +48,13 @@ export const $chairFilterdStrings = computed(
   },
 );
 export const $otherCharacters = computed(
-  [$otherCharacterIds, $characterList],
-  (ids, characters) => {
+  [$otherCharacterIds, $characterList, $currentCharacterId],
+  (ids, characters, currentId) => {
     return ids.map(
       (id) =>
-        characters.find((char) => char.id === id) as Partial<CharacterData>,
+        characters.find(
+          (char) => char.id === id && id !== currentId,
+        ) as Partial<CharacterData>,
     ) as Partial<CharacterData>[];
   },
 );
