@@ -29,9 +29,11 @@ export const ExportAnimationButton = () => {
       startExport();
       $interactionLock.set(true);
       await nextTick();
-      const backgroundColor = $addBlackBgWhenExportGif.get()
-        ? '#000000'
-        : undefined;
+      const exportType = $exportType.get() || ActionExportType.Webp;
+      const backgroundColor =
+        $addBlackBgWhenExportGif.get() && exportType === 'gif'
+          ? '#000000'
+          : undefined;
       const frames = await characterToCanvasFramesWithEffects(
         state.characterRef,
         app.renderer,
@@ -41,7 +43,6 @@ export const ExportAnimationButton = () => {
         },
       );
 
-      const exportType = $exportType.get() || ActionExportType.Webp;
       const blob = await getAnimatedCharacterBlob(frames, exportType);
       downloadBlob(blob, `character${ActionExportTypeExtensions[exportType]}`);
 

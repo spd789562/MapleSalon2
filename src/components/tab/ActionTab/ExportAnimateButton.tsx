@@ -43,9 +43,10 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
 
     try {
       const files: [Blob, string][] = [];
-      const backgroundColor = $addBlackBgWhenExportGif.get()
-        ? '#000000'
-        : undefined;
+      const backgroundColor =
+        $addBlackBgWhenExportGif.get() && exportType === 'gif'
+          ? '#000000'
+          : undefined;
       if (props.characterRefs.length === 1) {
         const characterRef = props.characterRefs[0];
         const frameData = await characterRef.makeCharacterFrames({
