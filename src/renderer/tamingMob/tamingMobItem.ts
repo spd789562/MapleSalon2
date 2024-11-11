@@ -91,6 +91,13 @@ export class TamingMobItem {
     this.instructions = instructions;
     this.items = items;
   }
+  get timeline() {
+    return this.instructions.reduce((acc, frame) => {
+      const prev = acc.length > 0 ? acc[acc.length - 1] : 0;
+      acc.push(prev + (frame.delay ?? 100));
+      return acc;
+    }, [] as number[]);
+  }
   async loadResourceByFrame(index: number) {
     const targetFrame = this.items[index % this.items.length];
     if (!targetFrame) {

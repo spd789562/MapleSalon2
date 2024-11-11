@@ -379,6 +379,16 @@ export class Character extends Container {
       effectContainer.removeChildren();
     }
   }
+  resetDelta() {
+    this.instructionFrame = 0;
+    this.currentDelta = 0;
+    /* reset effects frame */
+    for (const effect of this.allEffectPieces) {
+      effect.currentFrame = 0;
+      /* @ts-ignore */
+      effect._currentTime = 0;
+    }
+  }
 
   getInstructionsByBodyAndWeapon(
     bodyItem?: CharacterItem,

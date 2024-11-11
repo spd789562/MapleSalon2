@@ -40,6 +40,13 @@ export class ChairEffectItem {
 
     this.resolveFrames();
   }
+  get timeline() {
+    return this.frames.reduce((acc, frame) => {
+      const prev = acc.length > 0 ? acc[acc.length - 1] : 0;
+      acc.push(prev + frame.delay);
+      return acc;
+    }, [] as number[]);
+  }
   resolveFrames() {
     const frames: ChairEffectPart[] = [];
 

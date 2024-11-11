@@ -207,6 +207,14 @@ export class TamingMob extends Container {
       this.currentTicker = undefined;
     }
   }
+  resetDelta(resetCharacter = true) {
+    this.currentDelta = 0;
+    this.instructionFrame = 0;
+    if (resetCharacter) {
+      this.characters[0]?.[0].resetDelta();
+    }
+    this.playFrame();
+  }
   fixChairAncherIfExist(ancher: Vec2) {
     const chairNode = this.parent?.parent?.parent?.parent as Chair;
     if (chairNode?.type === 'chair') {

@@ -66,7 +66,7 @@ export async function prepareAndFetchChairStrings(loadItem = true) {
     await fetch(`${$apiHost.get()}/node/load_extra_paths?path=Item`);
   }
 
-  const strings = await fetch(`${$apiHost.get()}/string/chair?cache=14400`)
+  const strings = await fetch(`${$apiHost.get()}/string/chair`)
     .then((res) => res.json())
     .then((res: ChairStringResponseItem[]) =>
       res.map(

@@ -272,7 +272,10 @@ export class Chair extends Container {
       }
       const effectDatas = effectData as Record<number, WzChairEffectItem>;
       for (const key2 in effectDatas) {
-        if ((effectDatas[key2] as unknown as WzPngPieceInfo)?.origin) {
+        if (
+          (effectDatas[key2] as unknown as WzPngPieceInfo)?.origin ||
+          !effectDatas[key2][0]
+        ) {
           continue;
         }
         items.push(
@@ -491,6 +494,60 @@ export class Chair extends Container {
       item.animatablePart?.play();
     }
   }
+  resetDelta() {
+    for (const item of this.currentItems) {
+      if (item.animatablePart) {
+        item.animatablePart.currentFrame = 0;
+        /* @ts-ignore */
+        item.animatablePart._currentTime = 0;
+      }
+    }
+    let index = 0;
+    for (const [character, _] of this.characters) {
+      const gd = this.groupData[index];
+      if (!gd) {
+        continue;
+      }
+      if (gd.tamingMobId) {
+        this.tamingMobs[index]?.resetDelta();
+      } else {
+        character.resetDelta();
+        character.playBodyFrame();
+      }
+      index += 1;
+    }
+  }
+
+  getTimelines(): number[][] {
+    const timelines = [] as number[][];
+
+    for (const item of this.currentItems) {
+      const timeline = item.timeline;
+      if (timeline.length > 1) {
+        timelines.push(item.timeline);
+      }
+    }
+
+    let index = 0;
+    for (const _ of this.characters) {
+      const gd = this.groupData[index];
+      if (!gd?.tamingMobId) {
+        continue;
+      }
+      if (this.tamingMobs[index]) {
+        const timeline = this.tamingMobs[index]?.actionItem.get(
+          CharacterAction.Sit,
+        )?.timeline;
+        if (timeline && timeline.length > 1) {
+          timelines.push(timeline);
+        }
+      }
+      index += 1;
+    }
+
+    return timelines;
+  }
+
   destroy() {
     super.destroy();
     this.loadEvent.removeAllListeners();
