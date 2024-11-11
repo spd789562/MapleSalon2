@@ -2,6 +2,7 @@ import { Stack } from 'styled-system/jsx/stack';
 import { HStack } from 'styled-system/jsx/hstack';
 import { Heading } from '@/components/ui/heading';
 import { OpenFolderButton, PathType } from './OpenFolderButton';
+import { ClearCacheButton } from './ClearCacheButton';
 
 export const OtherSetting = () => {
   return (
@@ -14,6 +15,7 @@ export const OtherSetting = () => {
         <OpenFolderButton type={PathType.Cache} title="開啟暫存資料夾">
           暫存資料夾
         </OpenFolderButton>
+        <ClearCacheButton />
       </HStack>
     </Stack>
   );

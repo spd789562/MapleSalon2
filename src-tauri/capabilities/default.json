@@ -16,6 +16,7 @@
     "core:resources:default",
     "core:menu:default",
     "core:tray:default",
+    "core:webview:allow-clear-all-browsing-data",
     {
       "identifier": "fs:allow-exists",
       "allow": [{ "path": "**" }]
