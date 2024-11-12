@@ -1,8 +1,8 @@
 import { atom, batched } from 'nanostores';
 import type { PointData } from 'pixi.js';
 
-export const MIN_ZOOM = 0.2;
-export const MAX_ZOOM = 4;
+export const MIN_ZOOM = 0.5;
+export const MAX_ZOOM = 3;
 export const DEFAULT_ZOOM = 1;
 
 export const DEFAULT_CENTER: PointData = { x: 0, y: -53 };

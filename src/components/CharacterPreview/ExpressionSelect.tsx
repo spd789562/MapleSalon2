@@ -9,7 +9,7 @@ import { CharacterExpressions } from '@/const/emotions';
 
 const options = [
   {
-    label: '預設',
+    label: '預設表情',
     value: CharacterExpressions.Default,
   },
   {
