@@ -4,6 +4,7 @@ import {
   $currentEquipDrawerTab,
   CurrentEquipDrawerTab,
 } from './currentEquipDrawer';
+import { $equpimentDrawerOpen } from '@/store/trigger';
 
 import type { EquipSubCategory } from '@/const/equipments';
 import { ToolTab, ActionExportType, DyeOrder, DyeType } from '@/const/toolTab';
@@ -58,12 +59,13 @@ onSet($toolTab, ({ newValue }) => {
   if (newValue !== ToolTab.ItemDye) {
     $dyeRenderId.set(undefined);
   }
-  const currentEquipDrawerTab = $currentEquipDrawerTab.get();
-  if (
+  if (newValue === ToolTab.Chair && !$equpimentDrawerOpen.get()) {
+    $equpimentDrawerOpen.set(true);
+  }
+  if (newValue === ToolTab.Character) {
+    const currentEquipDrawerTab = $currentEquipDrawerTab.get();
     currentEquipDrawerTab === CurrentEquipDrawerTab.Setting &&
-    newValue === ToolTab.Character
-  ) {
-    $currentEquipDrawerTab.set(CurrentEquipDrawerTab.Equip);
+      $currentEquipDrawerTab.set(CurrentEquipDrawerTab.Equip);
   }
 });
 
