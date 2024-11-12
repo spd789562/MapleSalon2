@@ -246,6 +246,7 @@ export class Chair extends Container {
         'customEffect',
         wz.info.customChair.androidChairInfo.customEffect,
         this,
+        wz.info.bodyRelMove,
       );
       items.push(item);
     }
