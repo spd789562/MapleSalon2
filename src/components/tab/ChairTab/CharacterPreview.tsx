@@ -1,4 +1,11 @@
-import { onCleanup, createEffect, createSignal, from, on } from 'solid-js';
+import {
+  onCleanup,
+  createEffect,
+  createSignal,
+  from,
+  on,
+  onMount,
+} from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
 
 import {
@@ -37,6 +44,9 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   const otherCharacters = usePureStore($otherCharacters);
   const isRendererInitialized = usePureStore($isGlobalRendererInitialized);
   const [isInit, setIsInit] = createSignal<boolean>(false);
+
+  const canvasResizeObserver = new ResizeObserver(handleCanvasResize);
+
   let container!: HTMLDivElement;
   let chair: Chair | undefined;
   let viewport: ZoomContainer | undefined;
@@ -57,6 +67,12 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
       });
     },
   );
+
+  function handleCanvasResize() {
+    const app = $globalRenderer.get();
+    app.renderer.resize(container.clientWidth, container.clientHeight);
+    viewport?.resize(app.screen.width, app.screen.height);
+  }
 
   function initScene() {
     const app = $globalRenderer.get();
@@ -105,6 +121,10 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     }),
   );
 
+  onMount(() => {
+    canvasResizeObserver.observe(container);
+  });
+
   onCleanup(() => {
     const app = $globalRenderer.get();
     if (viewport) {
@@ -117,6 +137,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     mainCharacter.destroy();
     chair?.destroy();
     container.children.length > 0 && container.removeChild(app.canvas);
+    canvasResizeObserver.disconnect();
   });
 
   createEffect(async () => {
