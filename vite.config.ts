@@ -43,9 +43,19 @@ export default defineConfig(async () => ({
     },
   },
 
+  /* target es2022 to fix esbuild "top level await" feature */
+  build: {
+    target: "es2022"
+  },
+  esbuild: {
+    target: "es2022"
+  },
   /* fix wasm-webp's wasm not been include */
   optimizeDeps: {
     exclude: ['wasm-webp'],
+    esbuildOptions: {
+      target: "es2022",
+    }
   },
   assetsInclude: ['**/wasm-webp/**/*.wasm'],
 
