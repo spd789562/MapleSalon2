@@ -13,9 +13,9 @@ export const CharacterSelectionDialog = (
   return (
     <Dialog.Root {...props}>
       <Portal>
-        <Dialog.Backdrop zIndex="settingOverlay" />
-        <Dialog.Positioner zIndex="settingModal">
-          <Dialog.Content minWidth="2xl">
+        <Dialog.Backdrop zIndex="topDrawer" />
+        <Dialog.Positioner zIndex="topDrawer">
+          <Dialog.Content minWidth="2xl" height="75%">
             {props.children}
             <Dialog.CloseTrigger
               asChild={(closeTriggerProps) => (

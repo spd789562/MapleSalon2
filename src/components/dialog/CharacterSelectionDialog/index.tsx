@@ -1,12 +1,14 @@
-import { createSignal, splitProps, createEffect, on } from 'solid-js';
+import { createSignal, splitProps } from 'solid-js';
 import type { ReadableAtom } from 'nanostores';
 
 import { Grid } from 'styled-system/jsx/grid';
+import { HStack } from 'styled-system/jsx';
 import {
   Title,
   type RootProps as DialogRootProps,
   type OpenChangeDetails,
 } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 import { CharacterSelectionDialog as Dialog } from './CharacterSelectionDialog';
 import { CharacterGrid } from './CharacterGrid';
@@ -46,6 +48,10 @@ export const CharacterSelectionDialog = (
     setSelectIds([...currentIds]);
   }
 
+  function handleClear() {
+    setSelectIds([]);
+  }
+
   function handleExit() {
     props.onExit?.(selectedIds());
   }
@@ -58,8 +64,7 @@ export const CharacterSelectionDialog = (
     >
       <Grid
         position="relative"
-        overflow="auto"
-        gridTemplateRows="auto 1fr"
+        gridTemplateRows="auto 1fr auto"
         height="[100%]"
         padding="4"
       >
@@ -69,6 +74,11 @@ export const CharacterSelectionDialog = (
           selectedIds={selectedIds()}
           onSelect={handleSelect}
         />
+        <HStack justify="flex-end" py="1">
+          <Button variant="outline" onClick={handleClear}>
+            清除選取
+          </Button>
+        </HStack>
       </Grid>
     </Dialog>
   );
