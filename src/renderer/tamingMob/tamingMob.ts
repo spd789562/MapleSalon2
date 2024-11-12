@@ -213,6 +213,13 @@ export class TamingMob extends Container {
     if (resetCharacter) {
       this.characters[0]?.[0].resetDelta();
     }
+    // clear the effect, seens playFrame only remove the "previous" frame parts, need to make sure all parts are removed
+    for (const layer of this.tamingMobLayers.values()) {
+      if (layer.zIndex !== 40) {
+        layer.removeChildren();
+      }
+    }
+
     this.playFrame();
   }
   fixChairAncherIfExist(ancher: Vec2) {

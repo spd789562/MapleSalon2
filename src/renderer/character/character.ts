@@ -51,6 +51,8 @@ export interface CharacterAttributes {
 }
 
 export class Character extends Container {
+  type = 'character';
+
   name = '';
   nameTag: BaseNameTag;
   idItems = new Map<number, CharacterItem>();
