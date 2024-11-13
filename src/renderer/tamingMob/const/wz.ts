@@ -5,7 +5,7 @@ import type { CharacterExpressions } from '@/const/emotions';
 export type WzTamingMobData = {
   info: WzTamingMobInfo;
   characterAction?: WzTamingMobActionMap;
-} & Record<CharacterAction, Record<number, WzTamingMobFrameItem>>;
+} & Record<CharacterAction | string, Record<number, WzTamingMobFrameItem>>;
 
 export type WzTamingMobActionMap = Record<CharacterAction, CharacterAction>;
 

@@ -1,5 +1,6 @@
-import { Assets, type UnresolvedAsset } from 'pixi.js';
+import { Assets, type UnresolvedAsset, type Filter } from 'pixi.js';
 import { CharacterAction } from '@/const/actions';
+import { CharacterLoader } from '../character/loader';
 import type { WzActionInstruction } from '../character/const/wz';
 import type { Vec2 } from './const/data';
 import type { WzPngPieceInfo, WzTamingMobFrameItem } from './const/wz';
@@ -7,8 +8,8 @@ import type { TamingMob } from './tamingMob';
 import { TamingMobPart } from './tamingMobPart';
 
 export class TamingMobItem {
-  filters = [];
-  name: CharacterAction;
+  filters: Filter[] = [];
+  name: string;
   wz: Record<number, WzTamingMobFrameItem>;
   tamimgMob: TamingMob;
   frameCount = 0;
@@ -18,7 +19,7 @@ export class TamingMobItem {
   defaultAction = CharacterAction.Sit;
 
   constructor(
-    name: CharacterAction,
+    name: string,
     wz: Record<number, WzTamingMobFrameItem>,
     tamimgMob: TamingMob,
     defaultAction?: CharacterAction,
@@ -44,18 +45,29 @@ export class TamingMobItem {
     const items: TamingMobPart[][] = [];
     const instructions: WzActionInstruction[] = [];
 
+    const existInstructions =
+      CharacterLoader.instructionMap.get(this.name) || [];
+
     for (let frame = 0; frame < this.frameCount; frame++) {
       const layerItems = [] as TamingMobPart[];
       const item = this.wz[frame];
-      let navel = { x: 0, y: 0 };
+      if (!item) {
+        continue;
+      }
+
+      const existInstruction = existInstructions[frame];
       const instruction = {
-        action: item.forceCharacterAction || this.defaultAction,
-        frame: item.forceCharacterActionFrameIndex || 0,
+        action:
+          item.forceCharacterAction ||
+          existInstruction?.action ||
+          this.defaultAction,
+        frame:
+          item.forceCharacterActionFrameIndex || existInstruction?.frame || 0,
         expression: item.forceCharacterFace,
         expressionFrame: item.forceCharacterFaceFrameIndex,
-        flip: item.forceCharacterFlip,
-        delay:
-          item.delay || (this.wz as unknown as { delay?: number }).delay || 100,
+        flip: item.forceCharacterFlip || existInstruction?.flip,
+        delay: item.delay || existInstruction?.move || 100,
+        move: existInstruction?.move,
       } as WzActionInstruction;
 
       if ((instruction.action as unknown as string) === 'stand') {
@@ -63,6 +75,14 @@ export class TamingMobItem {
       }
 
       instructions.push(instruction);
+
+      const mainNavelLayer = Object.keys(item).find(
+        (key) => (item[key as keyof typeof item] as WzPngPieceInfo)?.map?.navel,
+      );
+      const mainNavelData = item[
+        mainNavelLayer as keyof typeof item
+      ] as WzPngPieceInfo;
+      const navel = mainNavelData?.map?.navel || { x: 0, y: 0 };
 
       for (const layer of Object.keys(item)) {
         if (
@@ -73,15 +93,11 @@ export class TamingMobItem {
           continue;
         }
         const layerData = item[layer as keyof typeof item] as WzPngPieceInfo;
-
-        if (layerData.map?.navel) {
-          navel = {
-            x: layerData.map.navel.x,
-            y: layerData.map.navel.y,
-          };
+        const part = new TamingMobPart(this, layerData, frame);
+        if (layer === mainNavelLayer) {
+          part.isMainNavel = true;
         }
-
-        layerItems.push(new TamingMobPart(this, layerData, frame));
+        layerItems.push(part);
       }
       navels.push(navel);
       items.push(layerItems);

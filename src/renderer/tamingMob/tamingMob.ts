@@ -18,8 +18,8 @@ export class TamingMob extends Container {
 
   _hideBody = false;
 
-  action = CharacterAction.Stand1;
-  actionItem: Map<CharacterAction, TamingMobItem> = new Map();
+  action: CharacterAction | string = CharacterAction.Stand1;
+  actionItem: Map<CharacterAction | string, TamingMobItem> = new Map();
 
   sitAction = CharacterAction.Sit;
 
@@ -57,6 +57,9 @@ export class TamingMob extends Container {
   get isHideBody() {
     return !!this.wz?.info?.removeBody || this._hideBody;
   }
+  get actions() {
+    return Array.from(this.actionItem.keys());
+  }
   async load() {
     if (!this.wz) {
       const data = await CharacterLoader.getPieceWzByPath<WzTamingMobData>(
@@ -70,9 +73,14 @@ export class TamingMob extends Container {
     if (!(this.wz && this.actionItem.size === 0)) {
       return;
     }
-    for (const action of Object.values(CharacterAction)) {
+    for (const action of Object.keys(this.wz)) {
+      if (action === 'info' || action === 'characterAction') {
+        continue;
+      }
+
       const item = this.wz[action];
-      const defaultAction = this.wz.characterAction?.[action];
+      const defaultAction =
+        this.wz.characterAction?.[action as CharacterAction];
       const isHideBodyAction =
         (defaultAction as unknown as string) === 'hideBody';
       if (isHideBodyAction) {
@@ -107,9 +115,12 @@ export class TamingMob extends Container {
     ]);
     ```
   */
-  async sitCharacter(characters: [Character, CharacterData][]) {
+  async sitCharacter(
+    characters: [Character, CharacterData][],
+    forceAction?: string,
+  ) {
     // only do one character currently
-    const characterAction = characters[0][1].action;
+    const characterAction = forceAction || characters[0][1].action;
     const tamingMobItem = this.actionItem.get(characterAction);
 
     if (!tamingMobItem) {

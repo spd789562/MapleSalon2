@@ -20,6 +20,7 @@ export class TamingMobPart extends Container {
   _ancher: Vec2 = { x: 0, y: 0 };
 
   _srpite: Container | null = null;
+  isMainNavel = false;
 
   constructor(item: TamingMobItem, frameData: WzPngPieceInfo, frame: number) {
     super();
