@@ -5,6 +5,7 @@ export enum ToolTab {
   FaceDye = 'faceDye',
   ItemDye = 'itemDye',
   Chair = 'chair',
+  Mount = 'mount',
 }
 
 export const ToolTabNames: Record<ToolTab, string> = {
@@ -14,6 +15,7 @@ export const ToolTabNames: Record<ToolTab, string> = {
   [ToolTab.FaceDye]: '臉型顏色',
   [ToolTab.ItemDye]: '裝備染色表',
   [ToolTab.Chair]: '椅子預覽',
+  [ToolTab.Mount]: '坐騎預覽',
 };
 
 export enum ActionExportType {

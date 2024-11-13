@@ -36,6 +36,10 @@ const options = [
     value: ToolTab.Chair,
     label: ToolTabNames[ToolTab.Chair],
   },
+  {
+    value: ToolTab.Mount,
+    label: ToolTabNames[ToolTab.Mount],
+  },
 ];
 
 export const ToolTabsRadioGroup = () => {

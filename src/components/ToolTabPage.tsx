@@ -9,6 +9,7 @@ import { HairDyeTab } from './tab/DyeTab/HairDyeTab';
 import { FaceDyeTab } from './tab/DyeTab/FaceDyeTab';
 import { ItemDyeTab } from './tab/ItemDyeTab';
 import { ChairTab } from './tab/ChairTab';
+import { MountTab } from './tab/MountTab';
 
 import { ToolTab } from '@/const/toolTab';
 
@@ -34,6 +35,9 @@ export const ToolTabPage = () => {
       </Match>
       <Match when={tab() === ToolTab.Chair}>
         <ChairTab />
+      </Match>
+      <Match when={tab() === ToolTab.Mount}>
+        <MountTab />
       </Match>
     </Switch>
   );

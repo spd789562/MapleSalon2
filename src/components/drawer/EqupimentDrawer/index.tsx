@@ -7,9 +7,16 @@ import { EquipEdit } from '@/components/EquipEdit';
 import { EquipDrawer } from './EquipDrawer';
 import { EquipPage } from './Equip/EquipPage';
 import { ChairPage } from './Chair/ChairPage';
+import { MountPage } from './Mount/MountPage';
 import { MiniCharacterWindow } from './MiniCharacter/MiniCharacterWindow';
 
 import { ToolTab } from '@/const/toolTab';
+
+const NONE_MINI_CHARACTER_TABS: (ToolTab | undefined)[] = [
+  ToolTab.Character,
+  ToolTab.Chair,
+  ToolTab.Mount,
+];
 
 export const EqupimentDrawer = () => {
   const tab = useStore($toolTab);
@@ -18,7 +25,7 @@ export const EqupimentDrawer = () => {
     <EquipDrawer
       header={
         <Switch fallback={<EquipEdit />}>
-          <Match when={tab() !== ToolTab.Character && tab() !== ToolTab.Chair}>
+          <Match when={!NONE_MINI_CHARACTER_TABS.includes(tab())}>
             <MiniCharacterWindow />
           </Match>
         </Switch>
@@ -27,6 +34,9 @@ export const EqupimentDrawer = () => {
         <Switch fallback={<EquipPage />}>
           <Match when={tab() === ToolTab.Chair}>
             <ChairPage />
+          </Match>
+          <Match when={tab() === ToolTab.Mount}>
+            <MountPage />
           </Match>
         </Switch>
       }
