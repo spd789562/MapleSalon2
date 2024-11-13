@@ -277,3 +277,6 @@ export function getChairIconPath(id: number, parentPath: string) {
   const prefixPath = isCashChairId(id) ? 'Cash' : 'Install';
   return `Item/${prefixPath}/${parentPath}/${padId}`;
 }
+export function isTamingMobId(id: number) {
+  return id >= 1900000 && id < 2000000;
+}
