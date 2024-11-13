@@ -94,3 +94,22 @@ pub async fn get_chairs(State((root, _)): State<AppState>) -> Result<impl IntoRe
         result.to_string(),
     ))
 }
+
+pub async fn get_mounts(State((root, _)): State<AppState>) -> Result<impl IntoResponse> {
+    let result = handlers::resolve_mount_string(&root)?;
+
+    let result = result
+        .iter()
+        .map(|(id, name)| {
+            Value::Array(vec![
+                Value::String(id.to_string()),
+                Value::String(name.to_string()),
+            ])
+        })
+        .collect::<Value>();
+
+    Ok((
+        [(header::CONTENT_TYPE, "application/json")],
+        result.to_string(),
+    ))
+}

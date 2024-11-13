@@ -28,4 +28,5 @@ pub fn string_router() -> Router<AppState> {
         .route("/equip", get(string::get_equip))
         .route("/equip/prepare", get(string::prepare_equip))
         .route("/chair", get(string::get_chairs))
+        .route("/mount", get(string::get_mounts))
 }
