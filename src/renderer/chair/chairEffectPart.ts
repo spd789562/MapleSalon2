@@ -56,7 +56,7 @@ export class ChairEffectPart implements AnimatableFrame {
       !item.bodyRelMove &&
       item.wz.pos === 1 &&
       item.chair.tamingMobId &&
-      item.chair.id / 10000 < 302
+      item.chair.id / 1000 < 3011
     ) {
       this.position.y -= 30;
     }
