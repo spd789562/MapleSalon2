@@ -33,11 +33,13 @@ export const ActionCard = (props: ActionCardProps) => {
             size="xs"
             variant="outline"
             characterRefs={[props.ref()]}
+            isIcon={true}
           />
           <ExportFrameButton
             size="xs"
             variant="outline"
             characterRefs={[props.ref()]}
+            isIcon={true}
           />
         </HStack>
       </CardTitle>

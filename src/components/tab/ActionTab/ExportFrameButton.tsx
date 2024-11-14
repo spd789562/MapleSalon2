@@ -1,10 +1,11 @@
-import { createSignal } from 'solid-js';
+import { createSignal, Show } from 'solid-js';
 
 import { $padWhiteSpaceWhenExportFrame } from '@/store/settingDialog';
 
 import { Button, type ButtonProps } from '@/components/ui/button';
 import type { ActionCharacterRef } from './ActionCharacter';
 
+import ImagesIcon from 'lucide-solid/icons/images';
 import { toaster } from '@/components/GlobalToast';
 import { getCharacterFrameBlobs } from './helper';
 import { makeBlobsZipBlob } from '@/utils/exportImage/exportBlobToZip';
@@ -15,6 +16,7 @@ export interface ExportAnimateButtonProps {
   characterRefs: ActionCharacterRef[];
   size?: ButtonProps['size'];
   variant?: ButtonProps['variant'];
+  isIcon?: boolean;
 }
 export const ExportFrameButton = (props: ExportAnimateButtonProps) => {
   const [isExporting, setIsExporting] = createSignal(false);
@@ -76,7 +78,9 @@ export const ExportFrameButton = (props: ExportAnimateButtonProps) => {
       title="匯出動圖分鏡"
       onClick={handleClick}
     >
-      匯出分鏡
+      <Show when={props.isIcon} fallback="匯出分鏡">
+        <ImagesIcon />
+      </Show>
     </Button>
   );
 };

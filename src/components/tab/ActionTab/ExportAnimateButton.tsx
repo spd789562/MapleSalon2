@@ -1,8 +1,9 @@
-import { createSignal } from 'solid-js';
+import { createSignal, Show } from 'solid-js';
 
 import { $actionExportType } from '@/store/toolTab';
 import { $addBlackBgWhenExportGif } from '@/store/settingDialog';
 
+import ImagePlay from 'lucide-solid/icons/image-play';
 import { Button, type ButtonProps } from '@/components/ui/button';
 import type { ActionCharacterRef } from './ActionCharacter';
 
@@ -18,6 +19,7 @@ export interface ExportAnimateButtonProps {
   characterRefs: ActionCharacterRef[];
   size?: ButtonProps['size'];
   variant?: ButtonProps['variant'];
+  isIcon?: boolean;
 }
 export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
   const [isExporting, setIsExporting] = createSignal(false);
@@ -90,8 +92,11 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
       variant={props.variant}
       onClick={handleClick}
       disabled={isExporting()}
+      title="匯出動圖"
     >
-      匯出動圖
+      <Show when={props.isIcon} fallback="匯出動圖">
+        <ImagePlay />
+      </Show>
     </Button>
   );
 };

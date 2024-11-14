@@ -17,7 +17,7 @@ export const ActionTabTitle = (props: ActionTabTitleProps) => {
   return (
     <TitleContainer>
       <VStack alignItems="flex-start">
-        <Heading size="2xl">動作預覽</Heading>
+        <Heading size="xl">動作預覽</Heading>
         <Text size="sm" color="fg.subtle">
           特效類因延遲幀數不同無法匯出
         </Text>
