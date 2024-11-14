@@ -157,6 +157,7 @@ class Loader {
       src: `${this.apiHost}/node/json/${alias}${inEffect ? '/effect' : ''}?simple=true&cache=14400`,
     }).catch(() => {
       this.noEffectMap.add(id);
+      return null;
     });
 
     return data;

@@ -184,12 +184,12 @@ export class CharacterItem implements RenderItemInfo {
     const GunWz = wz[GunWeaponId] as unknown as WzItem;
 
     /* gun's use 49 code */
-    if (isGunHand && GunWz?.[this.character.action]) {
+    if (isGunHand && GunWz?.[this.character.useAction]) {
       return this.loadAction(GunWz);
     }
 
     /* if has 30, just use 30 */
-    if (baseWz?.[this.character.action]) {
+    if (baseWz?.[this.character.useAction]) {
       return this.loadAction(baseWz);
     }
     const idIncurrment = isSingleHand ? -1 : 1;
@@ -199,7 +199,7 @@ export class CharacterItem implements RenderItemInfo {
     for (let id = start; id !== end; id += idIncurrment) {
       const weaponWz = wz[id] as unknown as WzItem;
       /* make sure the current weapon id has current action */
-      if (weaponWz?.[this.character.action]) {
+      if (weaponWz?.[this.character.useAction]) {
         this.loadAction(weaponWz as unknown as WzItem);
         return;
       }

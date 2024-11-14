@@ -16,8 +16,8 @@ import { characterLoadingQueue } from '@/utils/characterLoadingQueue';
 import {
   isValidAction,
   isDoubleHandAction,
+  CharacterAction,
   type CharacterSpecialAction,
-  type CharacterAction,
 } from '@/const/actions';
 import { CharacterHandType } from '@/const/hand';
 
@@ -67,8 +67,13 @@ export const ActionCharacter = (props: ActionCharacterProps) => {
   createEffect(async () => {
     canvasFrameCache.current = undefined;
     const data = characterData();
-    const action = props.action as CharacterAction;
-    const instruction = isValidAction(action) ? undefined : props.action;
+    let action = props.action as CharacterAction;
+    const instruction = isValidAction(props.action as CharacterAction)
+      ? undefined
+      : props.action;
+    if (instruction) {
+      action = CharacterAction.Stand1;
+    }
     const handType =
       exportHandType() === CharacterHandType.Gun
         ? CharacterHandType.Gun
