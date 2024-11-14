@@ -33,6 +33,8 @@ export class TamingMob extends Container {
   instructionFrame = 0;
   currentItem?: TamingMobItem;
 
+  extraAvatarCount = 0;
+
   isPlaying = false;
 
   constructor(id: number) {
@@ -73,8 +75,16 @@ export class TamingMob extends Container {
     if (!(this.wz && this.actionItem.size === 0)) {
       return;
     }
+
+    this.extraAvatarCount =
+      this.wz?.info?.customVehicle?.togetherVehicleInfo?.avatarCount || 0;
+
     for (const action of Object.keys(this.wz)) {
-      if (action === 'info' || action === 'characterAction') {
+      if (
+        action === 'info' ||
+        action === 'characterAction' ||
+        action === 'forcingItem'
+      ) {
         continue;
       }
 
@@ -128,28 +138,49 @@ export class TamingMob extends Container {
     }
     this.action = characterAction;
     this.currentItem = tamingMobItem;
+    this.characters = characters;
 
     await tamingMobItem.loadResource();
 
-    this.characters = characters;
-
-    const character = characters[0][0];
-    character.customInstructions = tamingMobItem.instructions;
-    if (this.isHideBody) {
-      character.isHideBody = true;
-    } else {
-      character.isHideBody = false;
-    }
-
-    await character.update({
-      ...characters[0][1],
-      isAnimating: false,
-    });
-
-    const characterContainer = this.getOrCreatEffectLayer(40);
-    characterContainer.addChild(character);
+    await this.putCharacters();
 
     this.playFrame();
+  }
+  async putCharacters() {
+    if (!this.currentItem) {
+      return;
+    }
+
+    const characterContainer = this.getOrCreatEffectLayer(40);
+    const avatarInfo =
+      this.wz?.info?.customVehicle?.togetherVehicleInfo?.avatarInfo || [];
+
+    for (let i = 0; i <= this.extraAvatarCount; i++) {
+      const [ch, data] = this.characters[i] || [];
+      if (!ch) {
+        continue;
+      }
+      const otherInfo = i > 0 ? avatarInfo[i - 1] : undefined;
+      ch.customInstructions = this.currentItem?.instructions;
+      if (this.isHideBody) {
+        ch.isHideBody = true;
+      } else {
+        ch.isHideBody = false;
+      }
+      await ch.update({
+        ...data,
+        isAnimating: true,
+        showNameTag: false,
+      });
+      if (i > 0) {
+        ch.toggleEffectVisibility(true);
+        const offset = otherInfo?.pos[this.action as 'ladder'] ||
+          otherInfo?.pos.default || { x: 0, y: 0 };
+        ch.offset = offset;
+      }
+
+      characterContainer.addChild(ch);
+    }
   }
   playByInstructions() {
     const character = this.characters[0]?.[0];
@@ -182,8 +213,6 @@ export class TamingMob extends Container {
     if (!(character && this.currentItem && zmap)) {
       return;
     }
-    character.instructionFrame = this.instructionFrame;
-    character.playBodyFrame();
 
     const frame = this.instructionFrame;
 
@@ -191,16 +220,34 @@ export class TamingMob extends Container {
     const pieces = this.currentItem.getFrameParts(frame);
     const frameNavel = this.currentItem.getFrameNavel(frame);
 
-    character.bodyContainer.position.set(
-      frameNavel.x + character.bodyFrame.pivot.x,
-      frameNavel.y + character.bodyFrame.pivot.y,
-    );
+    for (let i = 0; i <= this.extraAvatarCount; i++) {
+      const [ch] = this.characters[i] || [];
+      if (!ch) {
+        continue;
+      }
+      ch.instructionFrame = this.instructionFrame;
+      ch.playBodyFrame();
+      const offset = {
+        x: frameNavel.x + ch.offset.x,
+        y: frameNavel.y + ch.offset.y,
+      };
+      if (i === 0) {
+        offset.x += ch.bodyFrame.pivot.x;
+        offset.y += ch.bodyFrame.pivot.y;
+      }
+      ch.bodyContainer.position.set(offset.x, offset.y);
+    }
 
     for (const piece of pieces) {
       if (piece.destroyed) {
         continue;
       }
-      const z = piece.frameData.z || -1;
+      const z =
+        piece.frameData.z === undefined
+          ? -1
+          : Number.isInteger(piece.frameData.z)
+            ? (piece.frameData.z as number) + 40
+            : piece.frameData.z;
       const container = this.getOrCreatEffectLayer(z, zmap);
       container.addChild(piece);
     }
@@ -256,6 +303,7 @@ export class TamingMob extends Container {
     const character = this.characters[0]?.[0];
     if (character) {
       character.customInstructions = [];
+      character.offset = { x: 0, y: 0 };
       character.bodyContainer.position.set(0, 0);
     }
     super.destroy();

@@ -365,6 +365,14 @@ export class Character extends Container {
     this.nameTag.play();
     return this.loadItems();
   }
+  playEffect() {
+    for (const effectPieces of this.allEffectPieces) {
+      if (effectPieces.effectZindex === undefined) {
+        continue;
+      }
+      effectPieces.play();
+    }
+  }
   stop() {
     this.isLoading = false;
     this.isPlaying = false;
@@ -374,6 +382,14 @@ export class Character extends Container {
       this.currentTicker = undefined;
     }
     this.nameTag.stop();
+  }
+  stopEffect() {
+    for (const effectPieces of this.allEffectPieces) {
+      if (effectPieces.effectZindex === undefined) {
+        continue;
+      }
+      effectPieces.gotoAndStop(0);
+    }
   }
   reset() {
     this.stop();

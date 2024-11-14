@@ -5,6 +5,7 @@ import type { CharacterExpressions } from '@/const/emotions';
 export type WzTamingMobData = {
   info: WzTamingMobInfo;
   characterAction?: WzTamingMobActionMap;
+  forcingItem?: Record<number, number>;
 } & Record<CharacterAction | string, Record<number, WzTamingMobFrameItem>>;
 
 export type WzTamingMobActionMap = Record<CharacterAction, CharacterAction>;
@@ -72,6 +73,7 @@ export interface WzPngPieceInfo {
 
 export interface WzTamingMobCustom {
   type: string;
+  togetherVehicleInfo?: WzTamingMobCustomInfo;
 }
 
 export interface WzTamingMobCustomInfo {
@@ -81,6 +83,10 @@ export interface WzTamingMobCustomInfo {
 
 export interface WzTamingMobCustomMovingInfo {
   left?: number;
-  pos: Vec2;
+  pos: {
+    default: Vec2;
+    ladder?: Vec2;
+    rope?: Vec2;
+  };
   z?: number;
 }
