@@ -45,6 +45,13 @@ export class CharacterAnimatablePart extends BaseAnimatablePart<CharacterItemPie
     return this.frames[0].z;
   }
 
+  get timeline() {
+    return this.frames.reduce((acc, frame) => {
+      const prev = acc.length > 0 ? acc[acc.length - 1] : 0;
+      acc.push(prev + frame.delay);
+      return acc;
+    }, [] as number[]);
+  }
   async prepareResource() {
     await Assets.load(this.resources);
   }

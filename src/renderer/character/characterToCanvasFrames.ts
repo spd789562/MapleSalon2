@@ -1,8 +1,9 @@
 import { type Renderer, Ticker } from 'pixi.js';
 
 import type { Character } from './character';
+import { makeFrames } from '../makeCanvasFrame';
 
-import { extractCanvas } from '@/utils/extract';
+import { createMergedTimeline } from '@/utils/timline';
 import { nextTick } from '@/utils/eventLoop';
 
 interface UnprocessedFrame {
@@ -50,6 +51,7 @@ export async function characterToCanvasFrames(
       character.instructionFrame = index;
       character.playBodyFrame();
     },
+    nextFrame: nextTick,
   });
 
   if (!isOriginalAnimating) {
@@ -74,21 +76,22 @@ export async function characterToCanvasFramesWithEffects(
     onProgress?: (progress: number, total: number) => void;
   },
 ) {
-  const frameRate = options?.frameRate || 30;
-  const frameMs = 1000 / frameRate;
   let duractionMs = options?.duractionMs || 0;
   const needCalculateMaxDuration = !duractionMs;
 
   const isOriginalAnimating = character.isAnimating;
 
   Ticker.shared.stop();
-  let current = performance.now();
+  const current = performance.now();
   Ticker.shared.update(current);
 
   /* reset character frame */
   character.instructionFrame = 0;
   character.currentDelta = 0;
   character.playBodyFrame();
+
+  const timelines = [] as number[][];
+
   /* reset effects frame */
   for (const effect of character.allEffectPieces) {
     effect.currentFrame = 0;
@@ -97,6 +100,7 @@ export async function characterToCanvasFramesWithEffects(
     if (needCalculateMaxDuration && effect.totalDuration > duractionMs) {
       duractionMs = effect.totalDuration;
     }
+    timelines.push(effect.timeline);
   }
   /* reset name tag frame */
   if (
@@ -108,6 +112,7 @@ export async function characterToCanvasFramesWithEffects(
     if (needCalculateMaxDuration && nameTagDuration > duractionMs) {
       duractionMs = nameTagDuration;
     }
+    timelines.push(character.nameTag.background.timeline);
   }
 
   if (options?.maxDurationMs) {
@@ -122,27 +127,56 @@ export async function characterToCanvasFramesWithEffects(
     throw new Error('Character body not found');
   }
 
-  const characterDuraction = character.currentInstructions.reduce(
-    (acc, frame) => acc + (frame.delay || 100),
-    0,
+  let characterDuraction = 0;
+  const characterTimeline = character.currentInstructions.reduce(
+    (acc, frame) => {
+      characterDuraction += frame.delay || 100;
+      acc.push(characterDuraction);
+      return acc;
+    },
+    [] as number[],
   );
+  timelines.push(characterTimeline);
 
-  if (needCalculateMaxDuration && characterDuraction > duractionMs) {
-    duractionMs = characterDuraction;
+  const mergedTimeline = createMergedTimeline(timelines);
+
+  if (needCalculateMaxDuration) {
+    // binary search the portion
+    let start = 0;
+    let end = mergedTimeline.length - 1;
+    while (start !== end) {
+      const mid = start + Math.floor((end - start) / 2);
+      if (mergedTimeline[mid] >= duractionMs) {
+        end = mid;
+      } else {
+        start = mid + 1;
+      }
+    }
+    // remove the timeline after the end
+    mergedTimeline.splice(start);
   }
 
-  const totalFrameCount = Math.ceil(duractionMs / frameMs);
+  const totalFrameCount = mergedTimeline.length;
   options?.onProgress?.(0, totalFrameCount);
   await nextTick();
+
+  const time = performance.now();
+  let add = 0;
 
   const resultData = await makeFrames(character, renderer, totalFrameCount, {
     backgroundColor: options?.backgroundColor,
     padWhiteSpace: options?.padWhiteSpace,
-    getFrameDelay: (_) => frameMs,
+    getFrameDelay: (i) =>
+      mergedTimeline[i] - (i === 0 ? 0 : mergedTimeline[i - 1]),
     afterMakeFrame: (i) => {
       options?.onProgress?.(i + 1, totalFrameCount);
-      current += frameMs;
-      Ticker.shared.update(current);
+    },
+    nextFrame: async (index) => {
+      while (add < mergedTimeline[index]) {
+        add += 16.66667;
+        Ticker.shared.update(time + add);
+        await nextTick();
+      }
     },
   });
 
@@ -153,105 +187,4 @@ export async function characterToCanvasFramesWithEffects(
   Ticker.shared.start();
 
   return resultData;
-}
-
-async function makeFrames(
-  character: Character,
-  renderer: Renderer,
-  count: number,
-  options: {
-    backgroundColor?: string;
-    padWhiteSpace?: boolean;
-    getFrameDelay?: (index: number) => void;
-    beforeMakeFrame?: (index: number) => void;
-    afterMakeFrame?: (index: number) => void;
-  },
-): Promise<CanvasFramesData> {
-  const unprocessedFrames: UnprocessedFrame[] = [];
-
-  const bound = {
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  };
-
-  for (let i = 0; i < count; i++) {
-    options.beforeMakeFrame?.(i);
-
-    const canvas = extractCanvas(character, renderer) as HTMLCanvasElement;
-    const frameBound = character.getLocalBounds();
-    const frameData: UnprocessedFrame = {
-      canvas,
-      delay: options.getFrameDelay?.(i) || 100,
-      width: canvas.width,
-      height: canvas.height,
-      left: frameBound.left,
-      top: frameBound.top,
-    };
-    unprocessedFrames.push(frameData);
-
-    bound.left = Math.min(bound.left, frameBound.left);
-    bound.top = Math.min(bound.top, frameBound.top);
-    bound.right = Math.max(bound.right, frameBound.right);
-    bound.bottom = Math.max(bound.bottom, frameBound.bottom);
-
-    options.afterMakeFrame?.(i);
-
-    await nextTick();
-  }
-
-  const maxWidth = bound.right - bound.left;
-  const maxHeight = bound.bottom - bound.top;
-
-  /* add padding to canvas */
-  const basePos = {
-    x: -bound.left,
-    y: -bound.top,
-  };
-  const exportFrames = unprocessedFrames.map((frame) => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-    const needPad =
-      options.padWhiteSpace || options.padWhiteSpace === undefined;
-
-    const top = needPad ? basePos.y + frame.top : -frame.top;
-    const left = needPad ? basePos.x + frame.left : -frame.left;
-
-    if (needPad) {
-      canvas.width = maxWidth;
-      canvas.height = maxHeight;
-    } else {
-      canvas.width = frame.width;
-      canvas.height = frame.height;
-    }
-
-    if (options.backgroundColor) {
-      ctx.fillStyle = options.backgroundColor;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-
-    if (needPad) {
-      ctx.drawImage(frame.canvas, left, top);
-    } else {
-      ctx.drawImage(frame.canvas, 0, 0);
-    }
-
-    frame.canvas.remove();
-
-    return {
-      canvas,
-      top,
-      left,
-      delay: frame.delay,
-      width: canvas.width,
-      height: canvas.height,
-    };
-  });
-
-  return {
-    frames: exportFrames,
-    width: maxWidth,
-    height: maxHeight,
-  };
 }

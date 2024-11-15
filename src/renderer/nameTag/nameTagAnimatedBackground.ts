@@ -51,6 +51,12 @@ export class NameTagAnimatedBackground extends Container {
     ) as SizedAnimatedBackground;
     return currentSprite?.totalDuration || 0;
   }
+  get timeline() {
+    const currentSprite = this.preparedSprite.get(
+      this.size,
+    ) as SizedAnimatedBackground;
+    return currentSprite?.timeline || [];
+  }
   resetFrame() {
     const currentSprite = this.preparedSprite.get(this.size);
     if (currentSprite) {
@@ -143,6 +149,14 @@ class SizedAnimatedBackground extends AnimatedSprite {
     super(textures);
     this.loop = true;
     this.origins = pieces.map((piece) => piece.origin);
+  }
+  get timeline() {
+    /* @ts-ignore */
+    return (this._durations as number[]).reduce((acc, delay) => {
+      const prev = acc.length > 0 ? acc[acc.length - 1] : 0;
+      acc.push(prev + delay);
+      return acc;
+    }, [] as number[]);
   }
   get totalDuration() {
     /* @ts-ignore */
