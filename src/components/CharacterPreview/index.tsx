@@ -20,7 +20,7 @@ export const CharacterPreview = () => {
   return (
     <CharacterPreviewProvider>
       <CharacterPreviewCard>
-        <HStack justify="center" mb="2">
+        <HStack justify="center" mb="2" flexWrap="wrap">
           <HandTypeToggleGroup />
           <EarTypeToggleGroup />
           <Box width="32">
@@ -32,7 +32,7 @@ export const CharacterPreview = () => {
           <AnimatingSwitch />
         </HStack>
         <CharacterScene />
-        <HStack mt="2" pl="2">
+        <HStack mt="2" pl="2" flexWrap="wrap">
           <NameInput />
           <NameTagSwitch />
           <ExportAnimationButton />

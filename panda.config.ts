@@ -54,6 +54,14 @@ export default defineConfig({
 
   // Useful for theme customization
   theme: {
+    containerNames: ['actionHeader'],
+    containerSizes: {
+      actionHeaderXs: '200px',
+      actionHeaderSm: '300px',
+      xs: '40rem',
+      sm: '60rem',
+      md: '80rem',
+    },
     extend: {
       tokens,
       slotRecipes,

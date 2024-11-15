@@ -1,5 +1,6 @@
 import { type Accessor, Switch, Match } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
+import { cq } from 'styled-system/patterns';
 
 import { HStack } from 'styled-system/jsx/hstack';
 import { VStack } from 'styled-system/jsx/vstack';
@@ -8,7 +9,12 @@ import type { ActionCharacterRef } from './ActionCharacter';
 import { ExportAnimateButton } from './ExportAnimateButton';
 import { ExportFrameButton } from './ExportFrameButton';
 
-import { CharacterActionNames, CharacterSpecialActionNames, type CharacterSpecialAction, type CharacterAction } from '@/const/actions';
+import {
+  CharacterActionNames,
+  CharacterSpecialActionNames,
+  type CharacterSpecialAction,
+  type CharacterAction,
+} from '@/const/actions';
 
 export interface ActionCardProps {
   action: CharacterAction | CharacterSpecialAction;
@@ -17,8 +23,15 @@ export interface ActionCardProps {
 export const ActionCard = (props: ActionCardProps) => {
   return (
     <CardContainer>
-      <CardTitle w="full">
-        <Heading size="lg">
+      <CardTitle w="full" class={cq({ name: 'actionHeader' })}>
+        <Heading
+          size="lg"
+          fontSize={{
+            base: 'sm',
+            '@actionHeader/actionHeaderXs': 'md',
+            '@actionHeader/actionHeaderSm': 'lg',
+          }}
+        >
           <Switch fallback={props.action}>
             <Match when={CharacterActionNames[props.action as CharacterAction]}>
               {(name) => name()}
