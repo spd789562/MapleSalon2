@@ -10,7 +10,7 @@ import { characterFramesToWebp } from '@/utils/exportImage/framesToWebp';
 /** return name-action or action */
 export function getCharacterFilenameSuffix(character: Character) {
   const nameSuffix = character.name && `${character.name}-`;
-  return `${nameSuffix}${character.action}`;
+  return `${nameSuffix}${character.instruction || character.action}`;
 }
 
 export async function getCharacterFrameBlobs(

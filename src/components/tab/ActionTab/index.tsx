@@ -11,14 +11,12 @@ import { $actionExportHandType } from '@/store/toolTab';
 
 import { VStack } from 'styled-system/jsx/vstack';
 import { Grid } from 'styled-system/jsx/grid';
+import { ActionTabProvider } from './ActionTabContext';
 import { ActionTabTitle } from './ActionTabTitle';
 import { ActionCharacter, type ActionCharacterRef } from './ActionCharacter';
 import { ActionCard } from './ActionCard';
 
-import {
-  CharacterAction,
-  GunActions as BaseGunActions,
-} from '@/const/actions';
+import { CharacterAction, GunActions as BaseGunActions } from '@/const/actions';
 import { CharacterHandType } from '@/const/hand';
 
 const SpeicalActions = ['stand1_floating', 'stand2_floating'];
@@ -86,36 +84,40 @@ export const ActionTab = () => {
   });
 
   return (
-    <VStack>
-      <ActionTabTitle characterRefs={characterRefs} />
-      <ActionTableContainer>
-        <Grid columns={COLUMN_COUNT} position="relative" zIndex="1">
-          <Index each={actions()}>
-            {(action, i) => (
-              <ActionCard ref={() => characterRefs[i]} action={action()} />
-            )}
-          </Index>
-        </Grid>
-        {/* use single app here, separate app will cause serious performance issue */}
-        <ActionTableCanvas ref={appContainer} />
-      </ActionTableContainer>
-      <Index each={actions()}>
-        {(action, i) => (
-          <ActionCharacter
-            ref={handleRef(i)}
-            action={action()}
-            mainApp={app}
-            position={{
-              x: (i % COLUMN_COUNT) * itemGap().x + Math.floor(itemGap().x / 2),
-              y:
-                Math.floor(i / COLUMN_COUNT) * itemGap().y +
-                Math.floor(itemGap().y / 2) +
-                100,
-            }}
-          />
-        )}
-      </Index>
-    </VStack>
+    <ActionTabProvider>
+      <VStack>
+        <ActionTabTitle characterRefs={characterRefs} />
+        <ActionTableContainer>
+          <Grid columns={COLUMN_COUNT} position="relative" zIndex="1">
+            <Index each={actions()}>
+              {(action, i) => (
+                <ActionCard ref={() => characterRefs[i]} action={action()} />
+              )}
+            </Index>
+          </Grid>
+          {/* use single app here, separate app will cause serious performance issue */}
+          <ActionTableCanvas ref={appContainer} />
+        </ActionTableContainer>
+        <Index each={actions()}>
+          {(action, i) => (
+            <ActionCharacter
+              ref={handleRef(i)}
+              action={action()}
+              mainApp={app}
+              position={{
+                x:
+                  (i % COLUMN_COUNT) * itemGap().x +
+                  Math.floor(itemGap().x / 2),
+                y:
+                  Math.floor(i / COLUMN_COUNT) * itemGap().y +
+                  Math.floor(itemGap().y / 2) +
+                  100,
+              }}
+            />
+          )}
+        </Index>
+      </VStack>
+    </ActionTabProvider>
   );
 };
 

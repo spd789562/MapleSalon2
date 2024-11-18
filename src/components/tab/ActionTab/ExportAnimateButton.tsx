@@ -1,11 +1,14 @@
 import { createSignal, Show } from 'solid-js';
 
-import { $actionExportType } from '@/store/toolTab';
+import { $actionExportType, $forceExportEffect } from '@/store/toolTab';
 import { $addBlackBgWhenExportGif } from '@/store/settingDialog';
+
+import { useActionTab } from './ActionTabContext';
 
 import ImagePlay from 'lucide-solid/icons/image-play';
 import { Button, type ButtonProps } from '@/components/ui/button';
 import type { ActionCharacterRef } from './ActionCharacter';
+import { SpinLoading } from '@/components/elements/SpinLoading';
 
 import { ActionExportTypeExtensions } from '@/const/toolTab';
 
@@ -22,10 +25,22 @@ export interface ExportAnimateButtonProps {
   isIcon?: boolean;
 }
 export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
+  const [state, { startExport, finishExport }] = useActionTab();
   const [isExporting, setIsExporting] = createSignal(false);
 
+  function tooManyImageWarning() {
+    if (!$forceExportEffect.get()) {
+      return;
+    }
+    toaster.create({
+      title: '正在匯出',
+      description:
+        '因啟用特效匯出，需花費較長的時間，請勿離開此分頁，將導致匯出中斷',
+    });
+  }
+
   async function handleClick() {
-    if (isExporting()) {
+    if (isExporting() || state.isExporting) {
       return;
     }
     const isAllLoaded =
@@ -38,10 +53,15 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
       });
       return;
     }
+    startExport();
     setIsExporting(true);
     await nextTick();
     const exportType = $actionExportType.get();
     const exportExt = ActionExportTypeExtensions[exportType];
+
+    if (props.characterRefs.length > 5) {
+      tooManyImageWarning();
+    }
 
     try {
       const files: [Blob, string][] = [];
@@ -83,6 +103,7 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
       });
     } finally {
       setIsExporting(false);
+      finishExport();
     }
   }
 
@@ -91,11 +112,14 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
       size={props.size}
       variant={props.variant}
       onClick={handleClick}
-      disabled={isExporting()}
+      disabled={isExporting() || state.isExporting}
       title="匯出動圖"
     >
       <Show when={props.isIcon} fallback="匯出動圖">
         <ImagePlay />
+      </Show>
+      <Show when={isExporting()}>
+        <SpinLoading size={16} />
       </Show>
     </Button>
   );

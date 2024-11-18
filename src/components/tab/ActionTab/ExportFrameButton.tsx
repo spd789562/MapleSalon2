@@ -1,9 +1,13 @@
 import { createSignal, Show } from 'solid-js';
 
 import { $padWhiteSpaceWhenExportFrame } from '@/store/settingDialog';
+import { $forceExportEffect } from '@/store/toolTab';
+
+import { useActionTab } from './ActionTabContext';
 
 import { Button, type ButtonProps } from '@/components/ui/button';
 import type { ActionCharacterRef } from './ActionCharacter';
+import { SpinLoading } from '@/components/elements/SpinLoading';
 
 import ImagesIcon from 'lucide-solid/icons/images';
 import { toaster } from '@/components/GlobalToast';
@@ -19,10 +23,22 @@ export interface ExportAnimateButtonProps {
   isIcon?: boolean;
 }
 export const ExportFrameButton = (props: ExportAnimateButtonProps) => {
+  const [state, { startExport, finishExport }] = useActionTab();
   const [isExporting, setIsExporting] = createSignal(false);
 
+  function tooManyImageWarning() {
+    if (!$forceExportEffect.get()) {
+      return;
+    }
+    toaster.create({
+      title: '正在匯出',
+      description:
+        '因啟用特效匯出，需花費較長的時間，請勿離開此分頁，將導致匯出中斷',
+    });
+  }
+
   async function handleClick() {
-    if (isExporting()) {
+    if (isExporting() || state.isExporting) {
       return;
     }
     const isAllLoaded =
@@ -35,9 +51,14 @@ export const ExportFrameButton = (props: ExportAnimateButtonProps) => {
       });
       return;
     }
+    startExport();
     setIsExporting(true);
     await nextTick();
     const padWhiteSpace = $padWhiteSpaceWhenExportFrame.get();
+
+    if (props.characterRefs.length > 5) {
+      tooManyImageWarning();
+    }
 
     try {
       const files: [Blob, string][] = [];
@@ -68,6 +89,7 @@ export const ExportFrameButton = (props: ExportAnimateButtonProps) => {
       });
     } finally {
       setIsExporting(false);
+      finishExport();
     }
   }
 
@@ -77,9 +99,13 @@ export const ExportFrameButton = (props: ExportAnimateButtonProps) => {
       variant={props.variant}
       title="匯出動圖分鏡"
       onClick={handleClick}
+      disabled={isExporting() || state.isExporting}
     >
       <Show when={props.isIcon} fallback="匯出分鏡">
         <ImagesIcon />
+      </Show>
+      <Show when={isExporting()}>
+        <SpinLoading size={16} />
       </Show>
     </Button>
   );
