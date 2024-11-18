@@ -4,7 +4,10 @@ import { useStore } from '@nanostores/solid';
 
 import { $equpimentDrawerOpen, $equpimentDrawerPin } from '@/store/trigger';
 
+import { useMediaQuery } from '@/hook/mediaQuery';
+
 import CloseIcon from 'lucide-solid/icons/x';
+import { Box } from 'styled-system/jsx/box';
 import { HStack } from 'styled-system/jsx/hstack';
 import { IconButton } from '@/components/ui/icon-button';
 import {
@@ -23,6 +26,7 @@ interface EquipDrawerProps {
 export const EquipDrawer = (props: EquipDrawerProps) => {
   const isOpen = useStore($equpimentDrawerOpen);
   const isPinned = useStore($equpimentDrawerPin);
+  const isMatch = useMediaQuery('(min-width: 64rem)');
 
   function handleClose(_: unknown) {
     if (isPinned()) {
@@ -47,11 +51,13 @@ export const EquipDrawer = (props: EquipDrawerProps) => {
             <Header>
               {props.header}
               <HStack position="absolute" top="1" right="1">
-                <PinIconButton store={$equpimentDrawerPin} variant="ghost" />
+                <Box visibility={{ base: 'hidden', lg: 'visible' }}>
+                  <PinIconButton store={$equpimentDrawerPin} variant="ghost" />
+                </Box>
                 <IconButton
                   variant="ghost"
                   onClick={handleClose}
-                  disabled={isPinned()}
+                  disabled={isPinned() && isMatch()}
                 >
                   <CloseIcon />
                 </IconButton>

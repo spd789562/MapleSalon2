@@ -7,7 +7,10 @@ import {
   $currentEquipmentDrawerPin,
 } from '@/store/trigger';
 
+import { useMediaQuery } from '@/hook/mediaQuery';
+
 import CloseIcon from 'lucide-solid/icons/x';
+import { Box } from 'styled-system/jsx/box';
 import { HStack } from 'styled-system/jsx/hstack';
 import { IconButton } from '@/components/ui/icon-button';
 import {
@@ -30,6 +33,7 @@ interface EquipDrawerProps {
 export const CurrentEquipDrawer = (props: EquipDrawerProps) => {
   const isOpen = useStore($currentEquipmentDrawerOpen);
   const isPinned = useStore($currentEquipmentDrawerPin);
+  const isMatch = useMediaQuery('(min-width: 64rem)');
 
   function handleClose(_: unknown) {
     if (isPinned()) {
@@ -60,16 +64,18 @@ export const CurrentEquipDrawer = (props: EquipDrawerProps) => {
             <Header>
               {props.header}
               <HStack position="absolute" top="1" right="1">
-                <PinIconButton
-                  store={$currentEquipmentDrawerPin}
-                  size="xs"
-                  variant="ghost"
-                />
+                <Box visibility={{ base: 'hidden', lg: 'visible' }}>
+                  <PinIconButton
+                    store={$currentEquipmentDrawerPin}
+                    size="xs"
+                    variant="ghost"
+                  />
+                </Box>
                 <IconButton
                   size="xs"
                   variant="ghost"
                   onClick={handleClose}
-                  disabled={isPinned()}
+                  disabled={isPinned() && isMatch()}
                 >
                   <CloseIcon />
                 </IconButton>
