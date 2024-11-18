@@ -13,10 +13,12 @@ import { CharacterHandType } from '@/const/hand';
 
 export const $toolTab = atom<ToolTab | undefined>(ToolTab.Character);
 
+/* action tab */
 export const $actionExportType = atom<ActionExportType>(ActionExportType.Gif);
 export const $actionExportHandType = atom<CharacterHandType>(
   CharacterHandType.SingleHand,
 );
+export const $forceExportEffect = atom<boolean>(false);
 
 /* item dye tab */
 export const $onlyShowDyeable = atom<boolean>(true);

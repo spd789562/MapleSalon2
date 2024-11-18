@@ -2,13 +2,14 @@ import { createSignal, createEffect, onMount, onCleanup, from } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 
 import { $previewCharacter } from '@/store/character/selector';
-import { $actionExportHandType } from '@/store/toolTab';
+import { $actionExportHandType, $forceExportEffect } from '@/store/toolTab';
 
 import type { Application } from 'pixi.js';
 import { Character } from '@/renderer/character/character';
 
 import {
   characterToCanvasFrames,
+  characterToCanvasFramesWithEffects,
   type CanvasFramesData,
 } from '@/renderer/character/characterToCanvasFrames';
 import { characterLoadingQueue } from '@/utils/characterLoadingQueue';
@@ -50,10 +51,18 @@ export const ActionCharacter = (props: ActionCharacterProps) => {
     if (canvasFrameCache.current) {
       return Promise.resolve(canvasFrameCache.current);
     }
-    return characterToCanvasFrames(character, props.mainApp.renderer, {
-      backgroundColor: options?.backgroundColor,
-      padWhiteSpace: options?.padWhiteSpace,
-    });
+    const params = [
+      character,
+      props.mainApp.renderer,
+      {
+        backgroundColor: options?.backgroundColor,
+        padWhiteSpace: options?.padWhiteSpace,
+      },
+    ] as const;
+    if ($forceExportEffect.get()) {
+      return characterToCanvasFramesWithEffects(...params);
+    }
+    return characterToCanvasFrames(...params);
   }
 
   props.ref({ character, makeCharacterFrames });
