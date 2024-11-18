@@ -20,6 +20,8 @@ export const $chairSearch = atom<string>('');
 export const $currentChair = atom<ChairItem | null>(null);
 export const $otherCharacterIds = atom<string[]>([]);
 
+export const $enableCharacterEffect = atom<boolean>(true);
+
 /* computed */
 export const $chairFilterdStrings = computed(
   [$chairStrings, $chairSearch],

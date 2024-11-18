@@ -13,7 +13,7 @@ import {
   $globalRenderer,
 } from '@/store/renderer';
 import { $previewCharacter } from '@/store/character/selector';
-import { $otherCharacters } from '@/store/chair';
+import { $otherCharacters, $enableCharacterEffect } from '@/store/chair';
 import { $currentMount, $mountAction } from '@/store/mount';
 import type { CharacterData, CharacterItemInfo } from '@/store/character/store';
 import {
@@ -44,6 +44,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   const mountData = usePureStore($currentMount);
   const mountAction = usePureStore($mountAction);
   const otherCharacters = usePureStore($otherCharacters);
+  const enableCharacterEffect = usePureStore($enableCharacterEffect);
   const isRendererInitialized = usePureStore($isGlobalRendererInitialized);
   const [isInit, setIsInit] = createSignal<boolean>(false);
 
@@ -165,6 +166,13 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
         characters.push(new Character());
       }
     }
+    const needHideEffect = mount.isHideEffect || !$enableCharacterEffect.get();
+    if (mount.isHideEffect && $enableCharacterEffect.get()) {
+      for (const character of characters) {
+        character.toggleEffectVisibility(!needHideEffect);
+      }
+      mainCharacter.toggleEffectVisibility(!needHideEffect);
+    }
     type Tuple = [Character, CharacterData];
     const sitData = [[mainCharacter, mainCharacterData] as Tuple].concat(
       others.map((c, i) => [characters[i], c] as Tuple),
@@ -184,6 +192,16 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     if (viewport && $zoomTarget.get() !== props.target) {
       viewport.scaled = scaled;
       viewport.moveCenter(center);
+    }
+  });
+
+  createEffect(() => {
+    const enableEffect = enableCharacterEffect();
+    if (mount && !mount.isHideEffect) {
+      for (const character of characters) {
+        character.toggleEffectVisibility(!enableEffect);
+      }
+      mainCharacter.toggleEffectVisibility(!enableEffect);
     }
   });
 

@@ -6,8 +6,8 @@ import { ExpressionSelect } from '@/components/CharacterPreview/ExpressionSelect
 import { CharacterScene } from './CharacterScene';
 import { NameInput } from '@/components/CharacterPreview/NameInput';
 import { NameTagSwitch } from '@/components/CharacterPreview/NameTagSwitch';
+import { EffectSwitch } from './EffectSwitch';
 // import { ActionSelect } from './ActionSelect';
-// import { AnimatingSwitch } from './AnimatingSwitch';
 // import { ResetButton } from './ResetButton';
 // import { SaveButton } from './SaveButton';
 import { ExportAnimationButton } from './ExportAnimationButton';
@@ -24,7 +24,7 @@ export const ChairTab = () => {
             <ExpressionSelect />
           </Box>
           <OpenCharacterSelectionButton />
-          {/* <AnimatingSwitch /> */}
+          <EffectSwitch />
         </HStack>
         <CharacterScene />
         <HStack mt="2" pl="2">

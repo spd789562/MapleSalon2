@@ -426,9 +426,6 @@ export class Chair extends Container {
       } else {
         character.forceFlip = false;
       }
-      if (this.isHideEffect) {
-        character.toggleEffectVisibility(true);
-      }
       const tamingMob = this.tamingMobs[index];
       if (hasTaming && tamingMob) {
         characterContainer.addChild(tamingMob);

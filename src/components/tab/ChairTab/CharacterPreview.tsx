@@ -13,7 +13,11 @@ import {
   $globalRenderer,
 } from '@/store/renderer';
 import { $previewCharacter } from '@/store/character/selector';
-import { $currentChair, $otherCharacters } from '@/store/chair';
+import {
+  $currentChair,
+  $otherCharacters,
+  $enableCharacterEffect,
+} from '@/store/chair';
 import type { CharacterData, CharacterItemInfo } from '@/store/character/store';
 import {
   MAX_ZOOM,
@@ -42,6 +46,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   const characterData = from($previewCharacter);
   const chairData = usePureStore($currentChair);
   const otherCharacters = usePureStore($otherCharacters);
+  const enableCharacterEffect = usePureStore($enableCharacterEffect);
   const isRendererInitialized = usePureStore($isGlobalRendererInitialized);
   const [isInit, setIsInit] = createSignal<boolean>(false);
 
@@ -161,16 +166,36 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     chair.loadEvent.addListener('loading', props.onLoad);
     chair.loadEvent.addListener('loaded', props.onLoaded);
     props.ref?.(chair);
-    await chair.load();
+    try {
+      await chair.load();
+    } catch (_) {
+      toaster.error({
+        title: '椅子載入失敗',
+        description: '此椅子可能檔案不完全或尚未支援',
+      });
+      chair.destroy();
+      return;
+    }
     if (characters.length < others.length) {
       for (let i = characters.length; i < others.length; i++) {
         characters.push(new Character());
       }
     }
+    const needHideEffect = chair.isHideEffect || !$enableCharacterEffect.get();
+    if (chair.isHideEffect && $enableCharacterEffect.get()) {
+      for (const character of characters) {
+        character.toggleEffectVisibility(!needHideEffect);
+      }
+      mainCharacter.toggleEffectVisibility(!needHideEffect);
+    }
     type Tuple = [Character, CharacterData];
     const sitData = [[mainCharacter, mainCharacterData] as Tuple].concat(
       others.map((c, i) => [characters[i], c] as Tuple),
     ) as [Character, CharacterData][];
+    // double check the id
+    if (chairData()?.id !== data.id) {
+      return;
+    }
     await chair.sitCharacter(sitData);
     chair.play();
     viewport?.addChild(chair);
@@ -184,6 +209,16 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     if (viewport && $zoomTarget.get() !== props.target) {
       viewport.scaled = scaled;
       viewport.moveCenter(center);
+    }
+  });
+
+  createEffect(() => {
+    const enableEffect = enableCharacterEffect();
+    if (chair && !chair.isHideEffect) {
+      for (const character of characters) {
+        character.toggleEffectVisibility(!enableEffect);
+      }
+      mainCharacter.toggleEffectVisibility(!enableEffect);
     }
   });
 
