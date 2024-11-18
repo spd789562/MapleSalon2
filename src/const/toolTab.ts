@@ -47,5 +47,5 @@ export enum DyeType {
 }
 
 export function isValidExportType(type: string): type is ActionExportType {
-  return type in ActionExportType;
+  return type in ActionExportTypeExtensions;
 }
