@@ -1,4 +1,4 @@
-import { atom, deepMap, map } from 'nanostores';
+import { atom, deepMap } from 'nanostores';
 
 import type { EquipSubCategory } from '@/const/equipments';
 import type { ItemInfo } from '@/renderer/character/const/data';

@@ -1,5 +1,5 @@
 import { atom } from 'nanostores';
-import { createStore } from '@tauri-apps/plugin-store';
+import { load } from '@tauri-apps/plugin-store';
 
 import type { EquipItem } from './string';
 import { EquipCategory } from '@/const/equipments';
@@ -11,7 +11,7 @@ const SAVE_FILENAME = 'selectHistory.bin';
 const SAVE_KEY = 'history';
 
 /** file selection save, a presistence store on file */
-export const fileStore = await createStore(SAVE_FILENAME);
+export const fileStore = await load(SAVE_FILENAME);
 
 /** items recently select */
 export const $equipmentHistory = atom<EquipItem[]>([]);

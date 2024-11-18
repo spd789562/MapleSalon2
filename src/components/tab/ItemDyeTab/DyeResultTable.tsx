@@ -122,6 +122,7 @@ export function DyeResultTable(props: DyeResultTableProps) {
       const characterData = {
         frame: 0,
         isAnimating: false,
+        showNameTag: false,
         action: $dyeAction.get(),
         expression: CharacterExpressions.Default,
         earType: currentCharacterInfo.earType,

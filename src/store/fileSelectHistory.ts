@@ -1,13 +1,13 @@
 import { map } from 'nanostores';
 
-import { createStore } from '@tauri-apps/plugin-store';
+import { load } from '@tauri-apps/plugin-store';
 
 const SAVE_FILENAME = 'path.bin';
 
 const SAVE_KEY = 'filepaths';
 
 /** file selection save, a presistence store on file */
-export const fileStore = await createStore(SAVE_FILENAME, {
+export const fileStore = await load(SAVE_FILENAME, {
   /* @ts-ignore */
   autoSave: 60000 * 5, // 5 minutes
 });

@@ -1,7 +1,7 @@
 import { createUniqueId } from 'solid-js';
 import { map, computed, atom, onSet } from 'nanostores';
 
-import { createStore } from '@tauri-apps/plugin-store';
+import { load } from '@tauri-apps/plugin-store';
 
 import type { CharacterData, CharacterItems } from './character/store';
 import { $previewCharacter } from './character/selector';
@@ -52,7 +52,7 @@ export interface SaveCharacterData extends SaveCharacterInfo {
 }
 
 /** character's save, a presistence store on file */
-export const fileStore = await createStore(SAVE_FILENAME);
+export const fileStore = await load(SAVE_FILENAME);
 
 export const $savedCharacter = map<(SaveCharacterData | undefined)[]>([]);
 export const $lastSave = atom<number>(-1);

@@ -10,6 +10,8 @@ import { IconButton } from '@/components/ui/icon-button';
 
 import { toaster } from '@/components/GlobalToast';
 
+const FilePathReg = /\/[^/]+$/;
+
 export interface OpenPathButtonProps {
   path: string;
 }
@@ -20,20 +22,19 @@ export const OpenPathButton = (props: OpenPathButtonProps) => {
     if (isGlobalWzLoading()) {
       return;
     }
-    let path = props.path;
+    const path = props.path;
     try {
-      const isExist = await exists(props.path);
+      const isExist = await exists(path);
       if (!isExist) {
         throw new Error('檔案或路徑已不存在');
       }
-      path = await normalize(props.path);
     } catch (_) {
       toaster.error({
         title: '檔案或路徑已不存在',
       });
     }
     /* D:/what/ever/Data/Base/Base.wz to D:/what/ever/Data/Base */
-    const folder = props.path.replace(/\\/g, '/').replace(/\/[^/]+$/, '');
+    const folder = path.replace(/\\/g, '/').replace(FilePathReg, '');
     try {
       await open(folder);
     } catch (_) {
