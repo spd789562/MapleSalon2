@@ -17,6 +17,7 @@ export interface CharacterInfo {
   id?: string;
   name?: string;
   nameTagId?: number;
+  chatBalloonId?: number;
   showNameTag: boolean;
   frame: number;
   isAnimating: boolean;
@@ -110,7 +111,9 @@ export const $currentCharacterInfo = deepMap<
   name: 'default',
   frame: 0,
   nameTagId: undefined,
+  chatBalloonId: undefined,
   showNameTag: true,
+  showChatBalloon: false,
   isAnimating: true,
   action: CharacterAction.Stand1,
   expression: CharacterExpressions.Default,

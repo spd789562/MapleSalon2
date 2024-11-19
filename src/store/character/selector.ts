@@ -51,7 +51,15 @@ export const $currentEarType = computed($totalInfo, (info) => info.earType);
 export const $currentHandType = computed($totalInfo, (info) => info.handType);
 export const $currentName = computed($totalInfo, (info) => info.name);
 export const $currentNameTagId = computed($totalInfo, (info) => info.nameTagId);
-export const $showNameTag = computed($totalInfo, (info) => info.showNameTag);
+export const $currentChatBalloonId = computed(
+  $totalInfo,
+  (info) => info.chatBalloonId,
+);
+export const $showNameTag = computed($totalInfo, (info) => !!info.showNameTag);
+export const $showChatBalloon = computed(
+  $totalInfo,
+  (info) => !!info.chatBalloonId,
+);
 
 export const $currentCharacter = batched(
   [$currentCharacterItems, $currentCharacterInfo],

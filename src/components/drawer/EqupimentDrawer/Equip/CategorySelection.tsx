@@ -36,6 +36,7 @@ const options: {
   { id: 'Shield', label: '盾牌' },
   { id: 'Skin', label: '膚色' },
   { id: 'NameTag', label: '名牌' },
+  { id: 'ChatBalloon', label: '聊天戒指' },
 ];
 
 export const CategorySelection = () => {

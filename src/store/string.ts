@@ -13,6 +13,7 @@ export interface ItemExtraInfo {
   isDyeable: boolean;
   isCash: boolean;
   isNameTag: boolean;
+  isChatBalloon: boolean;
   hasEffect: boolean;
 }
 
@@ -25,11 +26,12 @@ export interface EquipItem extends Partial<ItemExtraInfo> {
   isFetchExtra?: boolean;
 }
 
-/* [category, id, name, isCash, isDyeable, hasEffect, isNameTag] */
+/* [category, id, name, isCash, isDyeable, hasEffect, isNameTag, isChatBalloon] */
 type EquipStringResponseItem = [
   EquipCategory,
   string,
   string,
+  boolean,
   boolean,
   boolean,
   boolean,
@@ -62,7 +64,16 @@ export async function prepareAndFetchEquipStrings() {
     .then((res) => res.json())
     .then((res: EquipStringResponseItem[]) =>
       res.map(
-        ([category, id, name, isCash, isDyeable, hasEffect, isNameTag]) =>
+        ([
+          category,
+          id,
+          name,
+          isCash,
+          isDyeable,
+          hasEffect,
+          isNameTag,
+          isChatBalloon,
+        ]) =>
           ({
             category,
             id: Number.parseInt(id),
@@ -71,6 +82,7 @@ export async function prepareAndFetchEquipStrings() {
             isDyeable,
             hasEffect,
             isNameTag,
+            isChatBalloon,
           }) as EquipItem,
       ),
     );

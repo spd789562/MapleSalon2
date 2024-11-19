@@ -67,6 +67,11 @@ export function changeCurrentCharacter(character: Partial<CharacterData>) {
     } else {
       updateInfo.nameTagId = undefined;
     }
+    if (character.chatBalloonId) {
+      updateInfo.chatBalloonId = character.chatBalloonId;
+    } else {
+      updateInfo.chatBalloonId = undefined;
+    }
     $currentCharacterInfo.set(updateInfo);
 
     $currentItem.set(undefined);
@@ -270,17 +275,21 @@ export function selectNewItem(
     hasEffect?: boolean;
     isDyeable?: boolean;
     isNameTag?: boolean;
+    isChatBalloon?: boolean;
   },
   addToHistory = true,
 ) {
-  if (item.isNameTag) {
+  if (item.isNameTag || item.isChatBalloon) {
     appendHistory({
       category: EquipCategory.Unknown,
       id: item.id,
       name: item.name,
-      isNameTag: true,
+      isNameTag: item.isNameTag,
+      isChatBalloon: item.isChatBalloon,
     });
-    return setCharacterNameTag(item.id);
+    return item.isNameTag
+      ? setCharacterNameTag(item.id)
+      : setCharacterChatBalloon(item.id);
   }
 
   let category = getSubCategory(item.id);
@@ -414,6 +423,9 @@ export function toggleShowNameTag(isShow: boolean) {
 }
 export function setCharacterNameTag(id: number | undefined) {
   $currentInfoChanges.setKey('nameTagId', id);
+}
+export function setCharacterChatBalloon(id: number | undefined) {
+  $currentInfoChanges.setKey('chatBalloonId', id);
 }
 export function setCharacterName(name: string) {
   $currentInfoChanges.setKey('name', name);

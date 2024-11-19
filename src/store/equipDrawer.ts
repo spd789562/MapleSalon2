@@ -30,7 +30,9 @@ export enum EquipListType {
 export type EquipCategorySelections = EquipSubCategory | typeof AllCategory;
 
 export const $equipmentDrawerEquipTab = atom<EquipTab>(EquipTab.Equip);
-export const $equipmentDrawerEquipListType = atom<EquipListType>(EquipListType.Icon);
+export const $equipmentDrawerEquipListType = atom<EquipListType>(
+  EquipListType.Icon,
+);
 export const $equipmentDrawerEquipCategory =
   atom<EquipCategorySelections>(AllCategory);
 export const $equipmentDrawerOnlyShowDyeable = atom(false);
@@ -126,6 +128,10 @@ export const $categoryFilteredString = computed(
 
     if (category === 'NameTag') {
       return strings.filter((item) => item.isNameTag);
+    }
+
+    if (category === 'ChatBalloon') {
+      return strings.filter((item) => item.isChatBalloon);
     }
 
     let filteredStrings = strings;

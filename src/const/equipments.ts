@@ -86,7 +86,8 @@ export type EquipSubCategory =
   | 'Face Accessory'
   | 'Eye Decoration'
   | 'Earrings'
-  | 'NameTag';
+  | 'NameTag'
+  | 'ChatBalloon';
 
 export type UnavailableEquipCategory =
   | EquipCategory.Dragon

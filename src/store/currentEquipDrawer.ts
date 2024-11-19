@@ -48,6 +48,10 @@ export function openSkinSelection() {
 export function openNameTagSelection() {
   openCertainCategory('NameTag');
 }
+export function openChatBalloonSelection() {
+  openCertainCategory('ChatBalloon');
+}
+
 export function editCurrentItem(data: {
   id: number;
   name: string;

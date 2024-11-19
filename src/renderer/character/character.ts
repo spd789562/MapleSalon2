@@ -169,6 +169,7 @@ export class Character extends Container {
     this.#_instruction = instruction;
     const ins = instruction && CharacterLoader.instructionMap.get(instruction);
     if (ins) {
+      console.log(ins);
       this.useAction = ins[0].action;
       this.currentInstructions = ins;
     }

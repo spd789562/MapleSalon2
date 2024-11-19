@@ -68,6 +68,9 @@ function validateEquipItem(item: EquipItem) {
   if (item.isNameTag) {
     returnItem.isNameTag = !!item.isNameTag;
   }
+  if (item.isChatBalloon) {
+    returnItem.isChatBalloon = !!item.isChatBalloon;
+  }
   returnItem.category = EquipCategory.Unknown;
 
   return returnItem;

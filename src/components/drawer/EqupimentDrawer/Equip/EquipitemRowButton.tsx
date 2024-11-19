@@ -11,8 +11,8 @@ import { byteLength } from '@/utils/string';
 
 export const rowFontSize = (text: string) => {
   const len = byteLength(text);
-  return len > 36 ? '0.875rem': '1rem';
-}
+  return len > 36 ? '0.875rem' : '1rem';
+};
 
 export interface EquipItemRowButtonProps {
   item: EquipItem;
@@ -25,6 +25,7 @@ export const EquipItemRowButton = (props: EquipItemRowButtonProps) => {
       hasEffect: props.item.hasEffect,
       isDyeable: props.item.isDyeable,
       isNameTag: props.item.isNameTag,
+      isChatBalloon: props.item.isChatBalloon,
     });
   }
   function preventDefault(event: Event) {
@@ -42,7 +43,10 @@ export const EquipItemRowButton = (props: EquipItemRowButtonProps) => {
       <EquipItemId onClick={preventDefault}>
         <PureTextClipboard value={props.item.id.toString()} />
       </EquipItemId>
-      <EquipItemName onClick={preventDefault} style={{'font-size': rowFontSize(props.item.name)}}>
+      <EquipItemName
+        onClick={preventDefault}
+        style={{ 'font-size': rowFontSize(props.item.name) }}
+      >
         <PureTextClipboard value={props.item.name} />
       </EquipItemName>
     </EquipItemButtonContainer>

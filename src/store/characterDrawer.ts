@@ -44,6 +44,7 @@ export interface SaveCharacterInfo {
   earType: CharacterEarType;
   handType: CharacterHandType;
   nameTagId?: number;
+  chatBalloonId?: number;
   showNameTag: boolean;
 }
 
@@ -187,6 +188,7 @@ export function saveCurrentCharacter(newId?: boolean) {
     handType: currentCharacter.handType,
     showNameTag: currentCharacter.showNameTag,
     nameTagId: currentCharacter.nameTagId,
+    chatBalloonId: currentCharacter.chatBalloonId,
     items: deepCloneCharacterItems(currentCharacter.items),
   };
   return saveCharacter(data);

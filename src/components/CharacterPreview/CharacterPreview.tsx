@@ -120,7 +120,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   createEffect(async () => {
     const data = characterData();
     if (isInit() && data) {
-      await ch.update(data);
+      await ch.update({...data, instruction: 'braveslash4'});
     }
   });
 

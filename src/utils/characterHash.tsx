@@ -11,6 +11,7 @@ export function makeCharacterHash(character: CharacterData) {
     character.name,
     character.showNameTag,
     character.nameTagId,
+    character.chatBalloonId,
   ].join(',');
 
   for (const key in character.items) {
