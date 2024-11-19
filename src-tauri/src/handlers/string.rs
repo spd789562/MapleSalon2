@@ -2,7 +2,7 @@ use rayon::prelude::*;
 use wz_reader::{property::WzString, WzNodeArc, WzNodeCast};
 
 use super::item::{
-    get_is_cash_item, get_is_colorvar, get_is_name_tag, get_item_info_node,
+    get_is_cash_item, get_is_chat_balloon, get_is_colorvar, get_is_name_tag, get_item_info_node,
     get_item_node_from_category,
 };
 use super::path::{CHARACTER_ITEM_PATH, EQUIP_EFFECT_PATH, EQUIP_STRING_PATH};
@@ -176,6 +176,7 @@ pub fn resolve_equip_string_by_category(category_string_node: &WzNodeArc) -> Str
                         false, // has colorvar
                         false, // has effect
                         false, // is name tag
+                        false, // is chat balloon
                     ));
                 }
 
@@ -239,6 +240,7 @@ pub fn resolve_equip_string(
                     false, // has colorvar
                     false, // has effect
                     false, // is name tag
+                    false, // is chat balloon
                 ))
             })
             .collect::<Vec<_>>();
@@ -255,9 +257,11 @@ pub fn resolve_equip_string(
             category_result.par_iter_mut().for_each(|item| {
                 let item_node = get_item_node_from_category(&category_equip_node, &item.1);
                 if let Some(info_node) = item_node.and_then(|n| get_item_info_node(&n)) {
+                    let info_node = info_node.read().unwrap();
                     item.3 = get_is_cash_item(&info_node);
                     item.4 = get_is_colorvar(&info_node);
                     item.6 = get_is_name_tag(&info_node);
+                    item.7 = get_is_chat_balloon(&info_node);
                 }
                 // item has effect
                 if effect_node.read().unwrap().at(&item.1).is_some() {

@@ -6,8 +6,8 @@ use wz_reader::{property::WzValue, WzNodeArc, WzObjectType};
 
 use crate::handlers::EquipCategory;
 
-/* Category, Id, Name, isCash, isColor, hasEffect  */
-pub type StringDictItem = (EquipCategory, String, String, bool, bool, bool, bool);
+/* Category, Id, Name, isCash, isColor, hasEffect, isNameTag, isChatBalloon  */
+pub type StringDictItem = (EquipCategory, String, String, bool, bool, bool, bool, bool);
 pub type StringDictInner = Vec<StringDictItem>;
 pub type StringDict = Arc<RwLock<StringDictInner>>;
 
