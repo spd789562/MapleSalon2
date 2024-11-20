@@ -25,6 +25,7 @@ import { CharacterExpressions } from '@/const/emotions';
 import { CharacterEarType } from '@/const/ears';
 import { CharacterHandType } from '@/const/hand';
 import { BaseNameTag } from '../nameTag/baseNameTag';
+import { ChatBalloon } from '../chatBalloon/chatBalloon';
 
 type AnyCategorizedItem = CategorizedItem<string>;
 
@@ -55,6 +56,7 @@ export class Character extends Container {
 
   name = '';
   nameTag: BaseNameTag;
+  chatBalloon: ChatBalloon;
   idItems = new Map<number, CharacterItem>();
 
   #_action = CharacterAction.Jump;
@@ -110,8 +112,11 @@ export class Character extends Container {
     this.nameTag = new BaseNameTag('');
     this.nameTag.visible = false;
     this.nameTag.position.set(0, 3);
+    this.chatBalloon = new ChatBalloon('default: Hello');
+    this.chatBalloon.position.set(-10, -60);
     this.addChild(this.bodyContainer);
     this.addChild(this.nameTag);
+    this.addChild(this.chatBalloon);
     this.bodyContainer.addChild(this.bodyFrame);
   }
 
@@ -169,7 +174,6 @@ export class Character extends Container {
     this.#_instruction = instruction;
     const ins = instruction && CharacterLoader.instructionMap.get(instruction);
     if (ins) {
-      console.log(ins);
       this.useAction = ins[0].action;
       this.currentInstructions = ins;
     }
@@ -196,6 +200,12 @@ export class Character extends Container {
       );
     } else {
       this.nameTag.visible = false;
+    }
+    if (characterData.showChatBalloon) {
+      this.chatBalloon.visible = true;
+      await this.chatBalloon.updateChatBalloonData(characterData.chatBalloonId);
+    } else {
+      this.chatBalloon.visible = false;
     }
 
     if (

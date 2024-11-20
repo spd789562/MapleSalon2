@@ -412,6 +412,9 @@ export function setCharacterAction(action: CharacterAction) {
 export function setCharacterExpression(expression: CharacterExpressions) {
   $currentCharacterInfo.setKey('expression', expression);
 }
+export function toggleShowChatBalloon(isShow: boolean) {
+  $currentCharacterInfo.setKey('showChatBalloon', isShow);
+}
 export function setCharacterEarType(earType: CharacterEarType) {
   $currentInfoChanges.setKey('earType', earType);
 }

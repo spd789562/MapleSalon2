@@ -12,6 +12,7 @@ export interface WzItemInfo {
   colorvar: boolean;
   royalSpecial: boolean;
   nameTag?: number;
+  chatBalloon?: number;
   invisibleFace?: number;
 }
 

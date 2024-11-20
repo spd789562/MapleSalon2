@@ -4,6 +4,7 @@ import { $apiHost } from '@/store/const';
 import type { Zmap, Smap } from './const/data';
 import type { WzItem, WzEffectItem, WzActionInstruction } from './const/wz';
 import type { WzNameTag } from '../nameTag/wz';
+import type { WzChatBalloon } from '../chatBalloon/wz';
 
 import { getItemFolderFromId } from '@/utils/itemFolder';
 
@@ -165,6 +166,10 @@ class Loader {
   async getNameTagWz(id: number): Promise<WzNameTag | null> {
     const path = `UI/NameTag.img/${id}`;
     return await this.getPieceWzByPath<WzNameTag>(path);
+  }
+  async getChatBalloonWz(id: number): Promise<WzChatBalloon | null> {
+    const path = `UI/ChatBalloon.img/${id}`;
+    return await this.getPieceWzByPath<WzChatBalloon>(path);
   }
 
   getPieceUrl(path: string) {
