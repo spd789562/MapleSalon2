@@ -6,6 +6,8 @@ import { ExpressionSelect } from '@/components/CharacterPreview/ExpressionSelect
 import { CharacterScene } from './CharacterScene';
 import { NameInput } from '@/components/CharacterPreview/NameInput';
 import { NameTagSwitch } from '@/components/CharacterPreview/NameTagSwitch';
+import { ChatBalloonInput } from '@/components/CharacterPreview/ChatBalloonInput';
+import { ChatBalloonSwitch } from '@/components/CharacterPreview/ChatBalloonSwitch';
 import { EffectSwitch } from './EffectSwitch';
 // import { ActionSelect } from './ActionSelect';
 // import { ResetButton } from './ResetButton';
@@ -30,11 +32,9 @@ export const ChairTab = () => {
         <HStack mt="2" pl="2">
           <NameInput />
           <NameTagSwitch />
+          <ChatBalloonInput />
+          <ChatBalloonSwitch />
           <ExportAnimationButton />
-          {/* <HStack marginLeft="auto">
-            <ResetButton />
-            <SaveButton />
-          </HStack> */}
         </HStack>
         <ExportProgress />
       </ChairTabCard>

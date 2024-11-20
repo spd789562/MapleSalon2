@@ -236,6 +236,7 @@ export class TamingMob extends Container {
         offset.y += ch.bodyFrame.pivot.y;
       }
       ch.bodyContainer.position.set(offset.x, offset.y);
+      ch.chatBalloon.position.set(offset.x - 10, offset.y - 60);
     }
 
     for (const piece of pieces) {
@@ -305,6 +306,7 @@ export class TamingMob extends Container {
       character.customInstructions = [];
       character.offset = { x: 0, y: 0 };
       character.bodyContainer.position.set(0, 0);
+      character.chatBalloon.position.set(-10, -60);
     }
     super.destroy();
     this.actionItem.clear();

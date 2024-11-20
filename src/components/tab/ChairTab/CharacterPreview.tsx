@@ -29,6 +29,8 @@ import {
 } from '@/store/previewChairZoom';
 import { usePureStore } from '@/store';
 
+import { useChatBalloonText } from '@/components/CharacterPreview/useChatBalloonText';
+
 import { Character } from '@/renderer/character/character';
 import { Chair } from '@/renderer/chair/chair';
 import { ZoomContainer } from '@/renderer/ZoomContainer';
@@ -61,6 +63,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   // const chair = new Chair(3018909, '03018.img');
   // const chair = new Chair(3018528, '03018.img');
   // const chair = new Chair(3015895, '030158.img');
+  useChatBalloonText(mainCharacter);
 
   mainCharacter.loadEvent.addListener(
     'error',

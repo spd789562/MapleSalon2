@@ -13,6 +13,7 @@ import {
 } from '@/store/previewZoom';
 import { $showUpscaledCharacter } from '@/store/trigger';
 import { usePureStore } from '@/store';
+import { useChatBalloonText } from './useChatBalloonText';
 
 import { Application } from 'pixi.js';
 import { Character } from '@/renderer/character/character';
@@ -35,10 +36,11 @@ export const CharacterView = (props: CharacterViewProps) => {
   const [isInit, setIsInit] = createSignal<boolean>(false);
   const isShowUpscale = usePureStore($showUpscaledCharacter);
   let container!: HTMLDivElement;
-  let viewport: ZoomContainer | undefined = undefined;
-  let upscaleFilter: Anime4kFilter | undefined = undefined;
+  let viewport: ZoomContainer | undefined;
+  let upscaleFilter: Anime4kFilter | undefined;
   const app = new Application();
   const ch = new Character();
+  useChatBalloonText(ch);
 
   ch.loadEvent.addListener('loading', props.onLoad);
   ch.loadEvent.addListener('loaded', props.onLoaded);

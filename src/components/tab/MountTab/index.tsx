@@ -6,6 +6,8 @@ import { ExpressionSelect } from '@/components/CharacterPreview/ExpressionSelect
 import { CharacterScene } from './CharacterScene';
 import { NameInput } from '@/components/CharacterPreview/NameInput';
 import { NameTagSwitch } from '@/components/CharacterPreview/NameTagSwitch';
+import { ChatBalloonInput } from '@/components/CharacterPreview/ChatBalloonInput';
+import { ChatBalloonSwitch } from '@/components/CharacterPreview/ChatBalloonSwitch';
 import { OpenCharacterSelectionButton } from '@/components/tab/ChairTab/OpenCharacterSelectionButton';
 import { EffectSwitch } from '@/components/tab/ChairTab/EffectSwitch';
 import { MountActionSelect } from './MountActionSelect';
@@ -28,14 +30,12 @@ export const MountTab = () => {
           <EffectSwitch />
         </HStack>
         <CharacterScene />
-        <HStack mt="2" pl="2">
+        <HStack mt="2" pl="2" flexWrap="wrap">
           <NameInput />
           <NameTagSwitch />
+          <ChatBalloonInput />
+          <ChatBalloonSwitch />
           <ExportAnimationButton />
-          {/* <HStack marginLeft="auto">
-            <ResetButton />
-            <SaveButton />
-          </HStack> */}
         </HStack>
         <ExportProgress />
       </MountTabCard>

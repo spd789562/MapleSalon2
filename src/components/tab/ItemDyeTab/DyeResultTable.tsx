@@ -123,6 +123,7 @@ export function DyeResultTable(props: DyeResultTableProps) {
         frame: 0,
         isAnimating: false,
         showNameTag: false,
+        showChatBalloon: false,
         action: $dyeAction.get(),
         expression: CharacterExpressions.Default,
         earType: currentCharacterInfo.earType,

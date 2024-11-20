@@ -26,6 +26,8 @@ import {
 } from '@/store/previewChairZoom';
 import { usePureStore } from '@/store';
 
+import { useChatBalloonText } from '@/components/CharacterPreview/useChatBalloonText';
+
 import { Character } from '@/renderer/character/character';
 import { TamingMob } from '@/renderer/tamingMob/tamingMob';
 import { ZoomContainer } from '@/renderer/ZoomContainer';
@@ -55,6 +57,8 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   let viewport: ZoomContainer | undefined;
   const mainCharacter = new Character();
   const characters: Character[] = [];
+
+  useChatBalloonText(mainCharacter);
 
   mainCharacter.loadEvent.addListener(
     'error',

@@ -10,6 +10,8 @@ import { AnimatingSwitch } from './AnimatingSwitch';
 import { CharacterScene } from './CharacterScene';
 import { NameInput } from './NameInput';
 import { NameTagSwitch } from './NameTagSwitch';
+import { ChatBalloonInput } from './ChatBalloonInput';
+import { ChatBalloonSwitch } from './ChatBalloonSwitch';
 import { ResetButton } from './ResetButton';
 import { SaveButton } from './SaveButton';
 import { ExportAnimationButton } from './ExportAnimationButton';
@@ -35,6 +37,10 @@ export const CharacterPreview = () => {
         <HStack mt="2" pl="2" flexWrap="wrap">
           <NameInput />
           <NameTagSwitch />
+          <ChatBalloonInput />
+          <ChatBalloonSwitch />
+        </HStack>
+        <HStack mt="2" pl="2" flexWrap="wrap">
           <ExportAnimationButton />
           <HStack marginLeft="auto">
             <ResetButton />

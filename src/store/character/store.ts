@@ -137,3 +137,5 @@ export const $currentItemChanges = deepMap<
 >({});
 
 export const $currentInfoChanges = deepMap<Partial<CharacterInfo>>({});
+
+export const $chatBalloonContent = atom<string>('');

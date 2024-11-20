@@ -113,6 +113,7 @@ export class Character extends Container {
     this.nameTag.visible = false;
     this.nameTag.position.set(0, 3);
     this.chatBalloon = new ChatBalloon('default: Hello');
+    this.chatBalloon.visible = false;
     this.chatBalloon.position.set(-10, -60);
     this.addChild(this.bodyContainer);
     this.addChild(this.nameTag);

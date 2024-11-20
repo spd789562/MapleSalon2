@@ -16,6 +16,7 @@ import {
 } from '@/store/previewZoom';
 import { $showUpscaledCharacter } from '@/store/trigger';
 import { usePureStore } from '@/store';
+import { useChatBalloonText } from './useChatBalloonText';
 
 import { Character } from '@/renderer/character/character';
 import { ZoomContainer } from '@/renderer/ZoomContainer';
@@ -45,6 +46,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   let upscaleFilter: Anime4kFilter | undefined;
   const ch = new Character();
   props.ref?.(ch);
+  useChatBalloonText(ch);
 
   ch.loadEvent.addListener('loading', props.onLoad);
   ch.loadEvent.addListener('loaded', props.onLoaded);
@@ -120,7 +122,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   createEffect(async () => {
     const data = characterData();
     if (isInit() && data) {
-      await ch.update({...data });
+      await ch.update({ ...data });
     }
   });
 

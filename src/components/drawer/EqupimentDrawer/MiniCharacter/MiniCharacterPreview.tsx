@@ -9,6 +9,8 @@ import type { CharacterData, CharacterItemInfo } from '@/store/character/store';
 import { MAX_ZOOM, MIN_ZOOM, DEFAULT_CENTER } from '@/store/previewZoom';
 import { usePureStore } from '@/store';
 
+import { useChatBalloonText } from '@/components/CharacterPreview/useChatBalloonText';
+
 import { Character } from '@/renderer/character/character';
 import { ZoomContainer } from '@/renderer/ZoomContainer';
 
@@ -32,6 +34,7 @@ export const MiniCharacterPreview = (props: MiniCharacterPreviewProps) => {
   let container!: HTMLDivElement;
   let viewport: ZoomContainer | undefined;
   const ch = new Character();
+  useChatBalloonText(ch);
 
   ch.loadEvent.addListener('loading', props.onLoad);
   ch.loadEvent.addListener('loaded', props.onLoaded);

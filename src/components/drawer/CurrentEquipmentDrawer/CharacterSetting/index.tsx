@@ -2,6 +2,8 @@ import { VStack } from 'styled-system/jsx/vstack';
 import { SimpleField } from '@/components/ui/field';
 import { NameInput } from '@/components/CharacterPreview/NameInput';
 import { NameTagSwitch } from '@/components/CharacterPreview/NameTagSwitch';
+import { ChatBalloonInput } from '@/components/CharacterPreview/ChatBalloonInput';
+import { ChatBalloonSwitch } from '@/components/CharacterPreview/ChatBalloonSwitch';
 import { HandTypeToggleGroup } from '@/components/CharacterPreview/HandTypeToggleGroup';
 import { EarTypeToggleGroup } from '@/components/CharacterPreview/EarTypeToggleGroup';
 import { ExpressionSelect } from '@/components/CharacterPreview/ExpressionSelect';
@@ -13,6 +15,8 @@ export const CharacterSetting = () => {
     <VStack px="2" py="4" gap={4} alignItems="flex-start">
       <NameInput id="setting-name" />
       <NameTagSwitch />
+      <ChatBalloonInput id="setting-chat" />
+      <ChatBalloonSwitch />
       <AnimatingSwitch />
       <SimpleField label="手勢">
         <HandTypeToggleGroup />

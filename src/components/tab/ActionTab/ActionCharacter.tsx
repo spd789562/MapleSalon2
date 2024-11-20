@@ -4,6 +4,8 @@ import { useStore } from '@nanostores/solid';
 import { $previewCharacter } from '@/store/character/selector';
 import { $actionExportHandType, $forceExportEffect } from '@/store/toolTab';
 
+import { useChatBalloonText } from '@/components/CharacterPreview/useChatBalloonText';
+
 import type { Application } from 'pixi.js';
 import { Character } from '@/renderer/character/character';
 
@@ -43,6 +45,7 @@ export const ActionCharacter = (props: ActionCharacterProps) => {
   let abortController: AbortController | undefined;
   const canvasFrameCache: { current?: CanvasFramesData } = {};
   const character = new Character();
+  useChatBalloonText(character);
 
   function makeCharacterFrames(options?: {
     padWhiteSpace?: boolean;
