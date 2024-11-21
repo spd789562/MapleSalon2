@@ -194,17 +194,17 @@ export class Character extends Container {
     );
 
     if (characterData.showNameTag) {
-      this.nameTag.visible = true;
       await this.nameTag.updateNameTagData(
         characterData.name || '',
         characterData.nameTagId,
       );
+      this.nameTag.visible = true;
     } else {
       this.nameTag.visible = false;
     }
     if (characterData.showChatBalloon) {
-      this.chatBalloon.visible = true;
       await this.chatBalloon.updateChatBalloonData(characterData.chatBalloonId);
+      this.chatBalloon.visible = true;
     } else {
       this.chatBalloon.visible = false;
     }
