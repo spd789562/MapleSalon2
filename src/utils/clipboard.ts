@@ -54,3 +54,22 @@ export async function copyImage(url: string) {
   }
   return copyText(url);
 }
+
+export async function copyCanvas(canvas: HTMLCanvasElement) {
+  if ('write' in navigator.clipboard) {
+    const imageBlob = new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          return reject(new Error('Failed to convert canvas to blob'));
+        }
+        resolve(blob);
+      });
+    });
+    return navigator.clipboard.write([
+      new ClipboardItem({
+        'image/png': imageBlob,
+      }),
+    ]);
+  }
+  throw new Error('Not supported');
+}

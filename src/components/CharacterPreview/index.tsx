@@ -15,6 +15,9 @@ import { ChatBalloonSwitch } from './ChatBalloonSwitch';
 import { ResetButton } from './ResetButton';
 import { SaveButton } from './SaveButton';
 import { ExportAnimationButton } from './ExportAnimationButton';
+import { ExportFrameButton } from './ExportFrameButton';
+import { ExportSnapshotButton } from './ExportSnapshotButton';
+import { ExportSnapshotToClipboardButton } from './ExportSnapshotToClipboardButton';
 import { ExportProgress } from './ExportProgress';
 import { CharacterPreviewProvider } from './CharacterPreviewContext';
 
@@ -41,7 +44,12 @@ export const CharacterPreview = () => {
           <ChatBalloonSwitch />
         </HStack>
         <HStack mt="2" pl="2" flexWrap="wrap">
-          <ExportAnimationButton />
+          <HStack>
+            <ExportAnimationButton />
+            <ExportFrameButton />
+            <ExportSnapshotButton />
+            <ExportSnapshotToClipboardButton />
+          </HStack>
           <HStack marginLeft="auto">
             <ResetButton />
             <SaveButton />

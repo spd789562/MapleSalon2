@@ -61,7 +61,6 @@ export class ChatBalloonBackground extends Container {
     } else {
       data = wz as WzChatBalloonData;
     }
-    console.log(data);
     this.pieces = PieceFields.map(
       (field) => data[field] && new ChatBalloonPiece(data[field]),
     );
@@ -85,16 +84,6 @@ export class ChatBalloonBackground extends Container {
     }
     this.removeChildren();
     const colCount = Math.ceil(this.minWidth / this.colWidth);
-    const headColCount = this.pieces[10]
-      ? Math.ceil((this.minWidth - this.assets[10].width) / this.colWidth)
-      : colCount;
-    console.log(
-      'headColCount',
-      headColCount,
-      colCount,
-      this.assets[10].width,
-      this.colWidth,
-    );
     const rowCount = Math.ceil(this.minHeight / this.colHeight);
     let x = 0;
     let y = 0;
@@ -102,7 +91,6 @@ export class ChatBalloonBackground extends Container {
       this.pieces[9] && this.assets[7].width > this.assets[9].width
         ? this.assets[7].width - this.assets[9].width
         : 0;
-    console.log(xOffsetByArrow);
     // top
     this.addSpriteWithPos(0, x, y);
     x += this.assets[0].width - (this.pieces[0]?.origin.x || 0);

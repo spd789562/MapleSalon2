@@ -198,6 +198,7 @@ export class Character extends Container {
         characterData.name || '',
         characterData.nameTagId,
       );
+      this.name = characterData.name || '';
       this.nameTag.visible = true;
     } else {
       this.nameTag.visible = false;

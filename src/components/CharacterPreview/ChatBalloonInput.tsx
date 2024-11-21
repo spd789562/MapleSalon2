@@ -38,6 +38,7 @@ export const ChatBalloonInput = (props: ChatBalloonInputProps) => {
         minWidth={7}
         flex={1}
         size="sm"
+        autocomplete="off"
       />
       <Show when={text()}>
         <IconButton

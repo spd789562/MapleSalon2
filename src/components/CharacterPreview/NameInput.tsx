@@ -21,15 +21,18 @@ export const NameInput = (props: NameInputProps) => {
 
   return (
     <HStack>
-      <Text as="label" for={props.id ?? "character-name"}>角色名稱</Text>
+      <Text as="label" for={props.id ?? 'character-name'}>
+        角色名稱
+      </Text>
       <Input
-        id={props.id ?? "character-name"}
+        id={props.id ?? 'character-name'}
         placeholder="輸入角色名稱"
         value={name()}
         onInput={(e) => handleNameChange(e.target.value)}
         minWidth={7}
         flex={1}
         size="sm"
+        autocomplete="off"
       />
     </HStack>
   );

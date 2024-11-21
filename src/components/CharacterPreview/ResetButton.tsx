@@ -17,7 +17,11 @@ export const ResetButton = () => {
   }
 
   return (
-    <Button variant="outline" onClick={handleReset}>
+    <Button
+      variant="outline"
+      title="取消任何角色變更至為儲存的樣子"
+      onClick={handleReset}
+    >
       取消變更
     </Button>
   );
