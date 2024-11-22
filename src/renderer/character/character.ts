@@ -233,6 +233,9 @@ export class Character extends Container {
       await this.loadItems(renderId);
     } else if (isPlayingChanged) {
       this.renderCharacter();
+    } else {
+      this.isLoading = false;
+      this.loadEvent.emit('loaded');
     }
   }
 
