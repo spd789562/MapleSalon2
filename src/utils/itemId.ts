@@ -280,3 +280,7 @@ export function getChairIconPath(id: number, parentPath: string) {
 export function isTamingMobId(id: number) {
   return id >= 1900000 && id < 2000000;
 }
+
+export function getSkillIconPath(id: number, parentPath?: string) {
+  return `${$apiHost.get()}/node/image_unparsed/Skill/${parentPath}/${id}/icon`;
+}

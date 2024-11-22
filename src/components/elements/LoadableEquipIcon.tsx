@@ -11,7 +11,7 @@ import { Flex } from 'styled-system/jsx/flex';
 
 import { useItemContextTrigger } from '@/context/itemContextMenu';
 
-import { getIconPath, getGender } from '@/utils/itemId';
+import { getIconPath, getSkillIconPath, getGender } from '@/utils/itemId';
 import { Gender } from '@/utils/itemId';
 
 import DyeableLabelIcon from '@/assets/color_label.png';
@@ -23,6 +23,7 @@ export interface LoadableEquipIconProps {
   width?: string;
   height?: string;
   folder?: string;
+  isSkill?: boolean;
 }
 export const LoadableEquipIcon = (props: LoadableEquipIconProps) => {
   const [isLoaded, setIsLoaded] = createSignal(false);
@@ -38,7 +39,11 @@ export const LoadableEquipIcon = (props: LoadableEquipIconProps) => {
     setIsError(true);
   }
 
-  const iconPath = createMemo(() => getIconPath(props.id, props.folder));
+  const iconPath = createMemo(() =>
+    props.isSkill
+      ? getSkillIconPath(props.id, props.folder)
+      : getIconPath(props.id, props.folder),
+  );
   const gender = createMemo(() =>
     showItemGender() ? getGender(props.id) : Gender.Share,
   );
