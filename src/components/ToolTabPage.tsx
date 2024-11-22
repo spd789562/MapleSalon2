@@ -11,6 +11,7 @@ import { FaceDyeTab } from './tab/DyeTab/FaceDyeTab';
 import { ItemDyeTab } from './tab/ItemDyeTab';
 import { ChairTab } from './tab/ChairTab';
 import { MountTab } from './tab/MountTab';
+import { SkillTab } from './tab/SkillTab';
 
 import { ToolTab } from '@/const/toolTab';
 
@@ -22,7 +23,7 @@ const tabMap = {
   [ToolTab.ItemDye]: ItemDyeTab,
   [ToolTab.Chair]: ChairTab,
   [ToolTab.Mount]: MountTab,
-  [ToolTab.Skill]: MountTab,
+  [ToolTab.Skill]: SkillTab,
 };
 
 export const ToolTabPage = () => {
