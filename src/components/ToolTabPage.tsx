@@ -1,4 +1,5 @@
-import { Switch, Match } from 'solid-js';
+import { Show } from 'solid-js';
+import { Dynamic } from 'solid-js/web';
 import { useStore } from '@nanostores/solid';
 
 import { $toolTab } from '@/store/toolTab';
@@ -13,32 +14,21 @@ import { MountTab } from './tab/MountTab';
 
 import { ToolTab } from '@/const/toolTab';
 
+const tabMap = {
+  [ToolTab.Character]: CharacterPreview,
+  [ToolTab.AllAction]: ActionTab,
+  [ToolTab.HairDye]: HairDyeTab,
+  [ToolTab.FaceDye]: FaceDyeTab,
+  [ToolTab.ItemDye]: ItemDyeTab,
+  [ToolTab.Chair]: ChairTab,
+  [ToolTab.Mount]: MountTab,
+  [ToolTab.Skill]: MountTab,
+};
+
 export const ToolTabPage = () => {
   const tab = useStore($toolTab);
 
   return (
-    <Switch>
-      <Match when={tab() === ToolTab.Character}>
-        <CharacterPreview />
-      </Match>
-      <Match when={tab() === ToolTab.AllAction}>
-        <ActionTab />
-      </Match>
-      <Match when={tab() === ToolTab.HairDye}>
-        <HairDyeTab />
-      </Match>
-      <Match when={tab() === ToolTab.FaceDye}>
-        <FaceDyeTab />
-      </Match>
-      <Match when={tab() === ToolTab.ItemDye}>
-        <ItemDyeTab />
-      </Match>
-      <Match when={tab() === ToolTab.Chair}>
-        <ChairTab />
-      </Match>
-      <Match when={tab() === ToolTab.Mount}>
-        <MountTab />
-      </Match>
-    </Switch>
+    <Show when={tab()}>{(tab) => <Dynamic component={tabMap[tab()]} />}</Show>
   );
 };

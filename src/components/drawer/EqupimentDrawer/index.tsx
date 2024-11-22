@@ -38,6 +38,9 @@ export const EqupimentDrawer = () => {
           <Match when={tab() === ToolTab.Mount}>
             <MountPage />
           </Match>
+          <Match when={tab() === ToolTab.Skill}>
+            <MountPage />
+          </Match>
         </Switch>
       }
     />

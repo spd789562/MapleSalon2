@@ -62,7 +62,9 @@ onSet($toolTab, ({ newValue }) => {
     $dyeRenderId.set(undefined);
   }
   if (
-    (newValue === ToolTab.Chair || newValue === ToolTab.Mount) &&
+    (newValue === ToolTab.Chair ||
+      newValue === ToolTab.Mount ||
+      newValue === ToolTab.Skill) &&
     !$equpimentDrawerOpen.get()
   ) {
     $equpimentDrawerOpen.set(true);

@@ -11,6 +11,8 @@ export enum JobStage {
   Th3 = '11',
   Th4 = '12',
   Th6 = '14',
+  Th7 = '15',
+  Th8 = '16',
 }
 
 export enum Job {
