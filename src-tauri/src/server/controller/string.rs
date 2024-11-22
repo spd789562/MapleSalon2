@@ -56,18 +56,20 @@ pub async fn get_equip(State((_, string_dict)): State<AppState>) -> Result<impl 
         .read()
         .unwrap()
         .iter()
-        .map(|(category, id, name, cash, colorvar, effect, name_tag, chat_balloon)| {
-            Value::Array(vec![
-                Value::String(category.to_string()),
-                Value::String(id.to_string()),
-                Value::String(name.to_string()),
-                Value::from(*cash),
-                Value::from(*colorvar),
-                Value::from(*effect),
-                Value::from(*name_tag),
-                Value::from(*chat_balloon),
-            ])
-        })
+        .map(
+            |(category, id, name, cash, colorvar, effect, name_tag, chat_balloon)| {
+                Value::Array(vec![
+                    Value::String(category.to_string()),
+                    Value::String(id.to_string()),
+                    Value::String(name.to_string()),
+                    Value::from(*cash),
+                    Value::from(*colorvar),
+                    Value::from(*effect),
+                    Value::from(*name_tag),
+                    Value::from(*chat_balloon),
+                ])
+            },
+        )
         .collect::<Value>();
 
     Ok((
@@ -104,6 +106,26 @@ pub async fn get_mounts(State((root, _)): State<AppState>) -> Result<impl IntoRe
         .map(|(id, name)| {
             Value::Array(vec![
                 Value::String(id.to_string()),
+                Value::String(name.to_string()),
+            ])
+        })
+        .collect::<Value>();
+
+    Ok((
+        [(header::CONTENT_TYPE, "application/json")],
+        result.to_string(),
+    ))
+}
+
+pub async fn get_skills(State((root, _)): State<AppState>) -> Result<impl IntoResponse> {
+    let result = handlers::resolve_skill_string(&root)?;
+
+    let result = result
+        .iter()
+        .map(|(id, parent_folder, name)| {
+            Value::Array(vec![
+                Value::String(id.to_string()),
+                Value::String(parent_folder.to_string()),
                 Value::String(name.to_string()),
             ])
         })
