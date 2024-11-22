@@ -19,9 +19,10 @@ export function getSkillParentPath(id: string) {
   return `${preifx}.img`;
 }
 
-const SkillEffectKeyReg = /^(effect|screen|keydown)/;
+const SkillEffectKeyReg = /^(effect|screen|keydown)[0-9]?$/;
 
 export class Skill {
+  destroyed = false;
   items = new Map<string, SkillItem[]>();
   id: string;
   parentPath: string;
@@ -97,7 +98,7 @@ export class Skill {
     }
   }
   play() {
-    if (!this.character) {
+    if (!this.character || this.destroyed) {
       return;
     }
     for (const layer of this.backLayers) {
@@ -122,7 +123,7 @@ export class Skill {
       if (!(SkillEffectKeyReg.test(key) && data)) {
         continue;
       }
-      if ((data as WzSkillPngSet)[0].delay !== undefined) {
+      if ((data as WzSkillPngSet)[0].width !== undefined) {
         items.push(new SkillItem(key, data as WzSkillPngSet, this));
       } else {
         items.push(...this.createFieldItems(key, data as WzSkillPngSets));
@@ -170,6 +171,8 @@ export class Skill {
   }
 
   destroy() {
+    this.destroyed = true;
+    this.character = undefined;
     for (const items of this.items.values()) {
       for (const item of items) {
         item.destroy();
