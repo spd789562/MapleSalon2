@@ -34,6 +34,42 @@ export enum CharacterAction {
   SwingTF = 'swingTF',
 }
 
+const validAction = {
+  [CharacterAction.Stand1]: 'Stand1',
+  [CharacterAction.Stand2]: 'Stand2',
+  [CharacterAction.Walk1]: 'Walk1',
+  [CharacterAction.Walk2]: 'Walk2',
+  [CharacterAction.Alert]: 'Alert',
+  [CharacterAction.Fly]: 'Fly',
+  [CharacterAction.Heal]: 'Heal',
+  [CharacterAction.Jump]: 'Jump',
+  [CharacterAction.Ladder]: 'Ladder',
+  [CharacterAction.Rope]: 'Rope',
+  [CharacterAction.Prone]: 'Prone',
+  [CharacterAction.ProneStab]: 'ProneStab',
+  [CharacterAction.Shoot1]: 'Shoot1',
+  [CharacterAction.Shoot2]: 'Shoot2',
+  [CharacterAction.ShootF]: 'ShootF',
+  [CharacterAction.Sit]: 'Sit',
+  [CharacterAction.StabO1]: 'StabO1',
+  [CharacterAction.StabO2]: 'StabO2',
+  [CharacterAction.StabOF]: 'StabOF',
+  [CharacterAction.StabT1]: 'StabT1',
+  [CharacterAction.StabT2]: 'StabT2',
+  [CharacterAction.StabTF]: 'StabTF',
+  [CharacterAction.SwingO1]: 'SwingO1',
+  [CharacterAction.SwingO2]: 'SwingO2',
+  [CharacterAction.SwingO3]: 'SwingO3',
+  [CharacterAction.SwingOF]: 'SwingOF',
+  [CharacterAction.SwingP1]: 'SwingP1',
+  [CharacterAction.SwingP2]: 'SwingP2',
+  [CharacterAction.SwingPF]: 'SwingPF',
+  [CharacterAction.SwingT1]: 'SwingT1',
+  [CharacterAction.SwingT2]: 'SwingT2',
+  [CharacterAction.SwingT3]: 'SwingT3',
+  [CharacterAction.SwingTF]: 'SwingTF',
+};
+
 export type CharacterSpecialAction = string;
 
 export const CharacterActionNames: Partial<Record<CharacterAction, string>> = {
@@ -93,8 +129,6 @@ export function isBackAction(action: CharacterAction) {
   return action === CharacterAction.Rope || action === CharacterAction.Ladder;
 }
 
-export function isValidAction(
-  action: CharacterAction,
-): action is CharacterAction {
-  return Object.values(CharacterAction).includes(action);
+export function isValidAction(action: string): action is CharacterAction {
+  return action in validAction;
 }

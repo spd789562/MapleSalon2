@@ -26,6 +26,7 @@ import { CharacterEarType } from '@/const/ears';
 import { CharacterHandType } from '@/const/hand';
 import { BaseNameTag } from '../nameTag/baseNameTag';
 import { ChatBalloon } from '../chatBalloon/chatBalloon';
+import { Skill } from '../skill/skill';
 
 type AnyCategorizedItem = CategorizedItem<string>;
 
@@ -57,6 +58,7 @@ export class Character extends Container {
   name = '';
   nameTag: BaseNameTag;
   chatBalloon: ChatBalloon;
+  skill?: Skill;
   idItems = new Map<number, CharacterItem>();
 
   #_action = CharacterAction.Jump;
@@ -77,6 +79,8 @@ export class Character extends Container {
   effectLayers = new Map<number, Container>();
   bodyContainer = new Container();
   bodyFrame = new Container();
+  backSkillContainer = new Container();
+  frontSkillContainer = new Container();
   locks = new Map<PieceSlot, number>();
   offset: Vec2 = { x: 0, y: 0 };
 
@@ -107,17 +111,24 @@ export class Character extends Container {
 
   constructor() {
     super();
-    // this.sortableChildren = true;
+    this.sortableChildren = true;
     this.bodyFrame.sortableChildren = true;
     this.nameTag = new BaseNameTag('');
     this.nameTag.visible = false;
     this.nameTag.position.set(0, 3);
+    this.nameTag.zIndex = 0;
+    this.bodyContainer.zIndex = 1;
     this.chatBalloon = new ChatBalloon('default: Hello');
     this.chatBalloon.visible = false;
     this.chatBalloon.position.set(-10, -60);
-    this.addChild(this.bodyContainer);
+    this.chatBalloon.zIndex = 2;
+    this.backSkillContainer.zIndex = -1;
+    this.frontSkillContainer.zIndex = 3;
+    this.addChild(this.frontSkillContainer);
     this.addChild(this.nameTag);
+    this.addChild(this.bodyContainer);
     this.addChild(this.chatBalloon);
+    this.addChild(this.backSkillContainer);
     this.bodyContainer.addChild(this.bodyFrame);
   }
 
@@ -188,6 +199,8 @@ export class Character extends Container {
       this.stop();
     }
     this.isAnimating = characterData.isAnimating;
+    const renderId = this.startLoad();
+    const hasSkillChanged = await this.updateSkill(characterData);
     const hasAttributeChanged = this.updateAttribute(characterData);
     const hasAddAnyItem = await this.updateItems(
       Object.values(characterData.items),
@@ -213,10 +226,11 @@ export class Character extends Container {
     if (
       hasAttributeChanged ||
       hasAddAnyItem ||
+      hasSkillChanged ||
       isStopToPlay ||
       this.customInstructions.length > 0
     ) {
-      await this.loadItems();
+      await this.loadItems(renderId);
     } else if (isPlayingChanged) {
       this.renderCharacter();
     }
@@ -246,6 +260,31 @@ export class Character extends Container {
     }
 
     return hasChange;
+  }
+  async updateSkill(characterData: CharacterData) {
+    const skillId = characterData.skillId;
+    if (this.skill && !skillId) {
+      this.skill.destroy();
+      this.skill = undefined;
+      return true;
+    }
+    if (!skillId) {
+      return false;
+    }
+    if (this.skill?.id === skillId) {
+      return false;
+    }
+    const skill = new Skill(skillId);
+    skill.character = this;
+    await skill.load();
+    const instruction = skill.isNormalAction ? undefined : skill.action;
+    const action = (
+      skill.isNormalAction ? skill.action : characterData.action
+    ) as CharacterAction;
+    characterData.action = action;
+    characterData.instruction = instruction;
+    this.skill = skill;
+    return true;
   }
 
   async updateItems(items: ItemInfo[]) {
@@ -471,13 +510,17 @@ export class Character extends Container {
     this.currentInstructions = instructions;
     const maxFrame = instructions.length;
     this.playBodyFrame();
+    this.skill?.play();
     this.currentTicker = (delta) => {
       const currentDuration = instructions[this.instructionFrame]?.delay || 100;
       this.currentDelta += delta.deltaMS;
       if (this.currentDelta > currentDuration) {
         this.currentDelta %= currentDuration;
         if (this.instructionFrame + 1 >= maxFrame) {
-          this.instructionFrame = 0;
+          if (!this.skill?.isPlaying) {
+            this.instructionFrame = 0;
+            this.skill?.play();
+          }
         } else {
           this.instructionFrame += 1;
         }
@@ -539,6 +582,25 @@ export class Character extends Container {
   get bodyItem() {
     return Array.from(this.idItems.values()).find((item) => item.isBody);
   }
+  startLoad() {
+    const renderId = createUniqueId();
+    this.#_renderId = renderId;
+
+    if (this.isLoading) {
+      clearTimeout(this.loadFlashTimer);
+      this.loadEvent.emit('loading');
+    }
+
+    this.isLoading = true;
+    // only show loading after 100ms
+    this.loadFlashTimer = setTimeout(() => {
+      if (this.isLoading) {
+        this.loadEvent.emit('loading');
+      }
+    }, 50);
+    return renderId;
+  }
+
   async loadInstruction() {
     const bodyItem = this.bodyItem;
     if (bodyItem) {
@@ -572,23 +634,7 @@ export class Character extends Container {
     }
   }
 
-  async loadItems() {
-    const renderId = createUniqueId();
-    this.#_renderId = renderId;
-
-    if (this.isLoading) {
-      clearTimeout(this.loadFlashTimer);
-      this.loadEvent.emit('loading');
-    }
-
-    this.isLoading = true;
-    // only show loading after 100ms
-    this.loadFlashTimer = setTimeout(() => {
-      if (this.isLoading) {
-        this.loadEvent.emit('loading');
-      }
-    }, 50);
-
+  async loadItems(renderId?: string) {
     await this.loadInstruction();
 
     const usedBodyFrame = this.createBodyFramesWhenNotExist();

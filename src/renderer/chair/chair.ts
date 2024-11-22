@@ -545,7 +545,6 @@ export class Chair extends Container {
 
     return timelines;
   }
-
   destroy() {
     super.destroy();
     this.loadEvent.removeAllListeners();

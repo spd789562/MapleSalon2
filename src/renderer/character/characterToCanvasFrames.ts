@@ -77,7 +77,7 @@ export async function characterToCanvasFramesWithEffects(
   },
 ) {
   let duractionMs = options?.duractionMs || 0;
-  const needCalculateMaxDuration = !duractionMs;
+  const needCalculateMaxDuration = !duractionMs || character.skill;
 
   const isOriginalAnimating = character.isAnimating;
 
@@ -117,6 +117,16 @@ export async function characterToCanvasFramesWithEffects(
       duractionMs = nameTagDuration;
     }
     timelines.push(character.nameTag.background.timeline);
+  }
+  if (character.skill) {
+    character.skill.resetDelta();
+    const skillTimelines = character.skill.getTimelines();
+    const maxLast = skillTimelines.reduce((acc, timeline) => {
+      return Math.max(acc, timeline[timeline.length - 1]);
+    }, 0);
+    // if has skill, force overrid the duration
+    duractionMs = maxLast;
+    timelines.push(...skillTimelines);
   }
 
   if (options?.maxDurationMs) {

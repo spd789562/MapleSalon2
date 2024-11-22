@@ -26,6 +26,7 @@ export interface CharacterInfo {
   expression: CharacterExpressions;
   earType: CharacterEarType;
   handType: CharacterHandType;
+  skillId?: string;
 }
 
 export interface CharacterData extends Record<string, unknown>, CharacterInfo {
