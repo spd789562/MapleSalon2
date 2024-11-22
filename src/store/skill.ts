@@ -3,7 +3,7 @@ import { atom, computed } from 'nanostores';
 import { $apiHost } from './const';
 
 export interface SkillItem {
-  id: number;
+  id: string;
   name: string;
   folder: string;
 }
@@ -26,15 +26,14 @@ export const $skillFilterdStrings = computed(
     if (search.includes(',')) {
       const ids = search
         .split(',')
-        .map((id) => Number.parseInt(id))
-        .filter((id) => !Number.isNaN(id));
+        .filter((id) => Number.isInteger(Number.parseInt(id)))
       return strings.filter((item) => ids.includes(item.id));
     }
     const idSearch = Number.parseInt(search);
     if (!Number.isNaN(idSearch)) {
       return strings.filter(
         (item) =>
-          item.id === idSearch ||
+          item.id === search ||
           item.name.includes(search) ||
           item.folder.includes(search),
       );
@@ -44,20 +43,20 @@ export const $skillFilterdStrings = computed(
   },
 );
 
-export const $isChairUninitialized = computed(
+export const $isSkillUninitialized = computed(
   [$skillStrings],
   (strings) => strings.length === 0,
 );
 
 /* actions */
-export async function prepareAndFetchChairStrings() {
+export async function prepareAndFetchSkillStrings() {
   const strings = await fetch(`${$apiHost.get()}/string/skill`)
     .then((res) => res.json())
     .then((res: SkillStringResponseItem[]) =>
       res.map(
         ([id, folder, name]) =>
           ({
-            id: Number.parseInt(id),
+            id,
             name,
             folder,
           }) as SkillItem,
@@ -65,4 +64,8 @@ export async function prepareAndFetchChairStrings() {
     );
 
   $skillStrings.set(strings);
+}
+
+export function selectSkill(skill: SkillItem) {
+  $currentSkill.set({ ...skill });
 }
