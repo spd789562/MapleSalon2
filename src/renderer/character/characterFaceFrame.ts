@@ -103,6 +103,9 @@ export class CharacterFaceFrame {
     }
 
     let isOverrideFace = false;
+    const isHideFace =
+      (bodyFrame.action as string) === 'blink' ||
+      (bodyFrame.action as string) === 'hide';
 
     for (const [layer, pieces] of this.pieces) {
       const container = this.character.getOrCreatZmapLayer(zmap, layer);
@@ -141,7 +144,7 @@ export class CharacterFaceFrame {
       facePiece.visible = !isOverrideFace;
     }
 
-    this.updateCharacterFaceVisibility();
+    this.updateCharacterFaceVisibility(isHideFace);
   }
 
   async updateMixDye(id: number) {
@@ -173,7 +176,7 @@ export class CharacterFaceFrame {
     }
   }
   /** update face related when character turn to back */
-  updateCharacterFaceVisibility() {
+  updateCharacterFaceVisibility(forceHide?: boolean) {
     const faceLayers = FrontFaceLayers.reduce((layers, layerName) => {
       const zmapLayer = this.character.zmapLayers.get(layerName);
       if (zmapLayer) {
@@ -182,7 +185,7 @@ export class CharacterFaceFrame {
       return layers;
     }, [] as CharacterZmapContainer[]);
     for (const layer of faceLayers) {
-      layer.visible = !this.isBackAction;
+      layer.visible = forceHide ? false : !this.isBackAction;
     }
   }
 

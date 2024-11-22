@@ -170,8 +170,10 @@ export class Skill {
   }
 
   destroy() {
-    for (const item of this.currentItems) {
-      item.destroy();
+    for (const items of this.items.values()) {
+      for (const item of items) {
+        item.destroy();
+      }
     }
   }
 }

@@ -269,6 +269,7 @@ export class Character extends Container {
     if (this.skill && !skillId) {
       this.skill.destroy();
       this.skill = undefined;
+      characterData.instruction = undefined;
       return true;
     }
     if (!skillId) {
@@ -277,6 +278,7 @@ export class Character extends Container {
     if (this.skill?.id === skillId) {
       return false;
     }
+    this.skill?.destroy();
     const skill = new Skill(skillId);
     skill.character = this;
     await skill.load();
