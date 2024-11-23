@@ -92,6 +92,22 @@ export async function characterToCanvasFramesWithEffects(
 
   const timelines = [] as number[][];
 
+  const instructionTimeline = character.currentInstructions.reduce(
+    (acc, frame) => {
+      acc.push(frame.delay || 100);
+      return acc;
+    },
+    [] as number[],
+  );
+
+  timelines.push(instructionTimeline);
+
+  const instructionDuration =
+    instructionTimeline[instructionTimeline.length - 1];
+  if (needCalculateMaxDuration && instructionDuration > duractionMs) {
+    duractionMs = instructionDuration;
+  }
+
   /* reset effects frame */
   for (const effect of character.allEffectPieces) {
     if (character.isHideAllEffect) {
