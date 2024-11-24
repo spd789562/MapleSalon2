@@ -30,7 +30,7 @@ export class BaseNameTag extends Container {
       style: {
         fill: this.textColor,
         fontSize: 12,
-        fontFamily: 'MingLiU, sans-serif',
+        fontFamily: 'SimSun, MingLiU, sans-serif',
         align: 'center',
       },
     });
