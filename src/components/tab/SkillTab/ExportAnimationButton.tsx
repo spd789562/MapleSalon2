@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 
 import { toaster } from '@/components/GlobalToast';
 import { getAnimatedCharacterBlob } from '@/components/tab/ActionTab/helper';
-import { downloadBlob, downloadCanvas } from '@/utils/download';
+import { characterToCanvasFramesWithEffects } from '@/renderer/character/characterToCanvasFrames';
+import { downloadBlob } from '@/utils/download';
 import { nextTick } from '@/utils/eventLoop';
 
 import { ActionExportType, ActionExportTypeExtensions } from '@/const/toolTab';
@@ -18,7 +19,7 @@ export const ExportAnimationButton = () => {
     useSkillTab();
   async function handleExport() {
     const app = $globalRenderer.get();
-    if (!(app && state.skillRef)) {
+    if (!(app && state.skillRef && state.characterRef)) {
       toaster.error({
         title: '尚未載入完畢',
       });
@@ -33,18 +34,17 @@ export const ExportAnimationButton = () => {
         $addBlackBgWhenExportGif.get() && exportType === 'gif'
           ? '#000000'
           : undefined;
-      // if (data.frames.length === 1) {
-      //   downloadCanvas(data.frames[0].canvas, 'chair.png');
-      //   toaster.success({
-      //     title: '匯出成功',
-      //   });
-      //   $interactionLock.set(false);
-      //   finishExport();
-      //   return;
-      // }
+      const frames = await characterToCanvasFramesWithEffects(
+        state.characterRef,
+        app.renderer,
+        {
+          backgroundColor,
+          onProgress: updateExportProgress,
+        },
+      );
 
-      // const blob = await getAnimatedCharacterBlob(data, exportType);
-      // downloadBlob(blob, `chair${ActionExportTypeExtensions[exportType]}`);
+      const blob = await getAnimatedCharacterBlob(frames, exportType);
+      downloadBlob(blob, `character${ActionExportTypeExtensions[exportType]}`);
 
       toaster.success({
         title: '匯出成功',
