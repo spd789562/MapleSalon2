@@ -15,6 +15,7 @@ import { initializeSavedEquipmentHistory } from '@/store/equipHistory';
 import { prepareAndFetchEquipStrings } from '@/store/string';
 import { prepareAndFetchChairStrings } from '@/store/chair';
 import { initialGlobalRenderer } from '@/store/renderer';
+import { initialUserUploadedSceneImages } from '@/store/scene';
 
 import { toaster } from '@/components/GlobalToast';
 import { nextTick } from '@/utils/eventLoop';
@@ -136,6 +137,7 @@ export async function initStringAndRenderer(
       return false;
     }
   }
+  initialUserUploadedSceneImages();
 
   $initLoadProgress.set(InitLoadProgress.Done);
   await nextTick();
