@@ -3,10 +3,12 @@ import { useStore } from '@nanostores/solid';
 
 import { css } from 'styled-system/css';
 
-import { $currentScene, $sceneCustomColor } from '@/store/character/store';
+import ImageIcon from 'lucide-solid/icons/image';
+import { $currentScene, $sceneCustomColor } from '@/store/scene';
 import { HStack } from 'styled-system/jsx/hstack';
 import * as RadioButtonGroup from '@/components/ui/radioButtonGroup';
 import { CharacterSceneColorPicker } from './CharacterSceneColorPicker';
+import { CharacterSceneBackgroundPopover } from './CharacterSceneBackgroundPopover';
 
 import {
   PreviewScene,
@@ -81,6 +83,24 @@ export const CharacterSceneRadioGroup = () => {
             <RadioButtonGroup.ItemHiddenInput />
           </RadioButtonGroup.Item>
         </CharacterSceneColorPicker>
+        <CharacterSceneBackgroundPopover>
+          <RadioButtonGroup.Item
+            value="custom"
+            width="6"
+            height="6"
+            padding="unset"
+            minWidth="0"
+            title={PreviewSceneNames.custom}
+            backgroundColor="bg.default"
+            borderWidth={2}
+            color="fg.subtle"
+            transition-property="border-color, color, box-shadow"
+          >
+            <ImageIcon size="12" />
+            <RadioButtonGroup.ItemControl />
+            <RadioButtonGroup.ItemHiddenInput />
+          </RadioButtonGroup.Item>
+        </CharacterSceneBackgroundPopover>
       </HStack>
     </RadioButtonGroup.Root>
   );

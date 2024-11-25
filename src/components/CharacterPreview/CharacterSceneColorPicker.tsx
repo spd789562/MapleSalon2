@@ -2,7 +2,7 @@ import { Index, type JSX, createSignal } from 'solid-js';
 import { Portal } from 'solid-js/web';
 import { useStore } from '@nanostores/solid';
 
-import { $sceneCustomColor } from '@/store/character/store';
+import { $sceneCustomColor } from '@/store/scene';
 
 import PipetteIcon from 'lucide-solid/icons/pipette';
 import { HStack, Stack } from 'styled-system/jsx';
@@ -59,7 +59,7 @@ export const CharacterSceneColorPicker = (
       defaultValue="#ffffff"
       positioning={{
         strategy: 'fixed',
-        placement: 'top-end'
+        placement: 'top-end',
       }}
       onInteractOutside={handleOutsideClick}
       onValueChange={handleColorChange}

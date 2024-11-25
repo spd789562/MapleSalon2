@@ -67,12 +67,12 @@ export const CharacterSceneBackgroundPopover = (
               {/* <Popover.Description>
               </Popover.Description> */}
               <UploadBackgroundButton />
-              <HStack gap="1">
+              <HStack gap="2">
                 <Text>X 位移</Text>
                 <SceneOffsetNumberInput target={$sceneOffsetX} />
                 <SceneOffsetResetButton title="X 位移" target={$sceneOffsetX} />
               </HStack>
-              <HStack gap="1">
+              <HStack gap="2">
                 <Text>Y 位移</Text>
                 <SceneOffsetNumberInput target={$sceneOffsetY} />
                 <SceneOffsetResetButton title="Y 位移" target={$sceneOffsetY} />

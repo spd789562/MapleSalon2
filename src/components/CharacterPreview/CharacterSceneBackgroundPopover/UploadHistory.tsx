@@ -1,10 +1,14 @@
 import { For, from } from 'solid-js';
-import { usePureStore } from '@/store';
 import { styled } from 'styled-system/jsx/factory';
 
-import { $userUploadedSceneImages, $currentSelectScene } from '@/store/scene';
+import {
+  $userUploadedSceneImages,
+  $currentCustomScene,
+  $currentScene,
+} from '@/store/scene';
 
 import { Grid } from 'styled-system/jsx/grid';
+import { PreviewScene } from '@/const/scene';
 
 const UPLOAD_HISTORY_COLUMNS = 8;
 
@@ -12,7 +16,10 @@ export const UploadHistory = () => {
   const uploadedSceneImages = from($userUploadedSceneImages);
 
   function handleSelectScene(scene: string[]) {
-    $currentSelectScene.set(scene[1]);
+    $currentCustomScene.set(scene[1]);
+    if ($currentScene.get() !== PreviewScene.Custom) {
+      $currentScene.set(PreviewScene.Custom);
+    }
   }
 
   return (
@@ -20,6 +27,7 @@ export const UploadHistory = () => {
       <For each={uploadedSceneImages()}>
         {(scene) => (
           <SceneButton
+            title="選擇此背景"
             onClick={() => handleSelectScene(scene)}
             style={{ 'background-image': `url(${scene[1]})` }}
           />
@@ -37,5 +45,6 @@ const SceneButton = styled('button', {
     overflow: 'hidden',
     width: '100%',
     paddingTop: '100%',
+    cursor: 'pointer',
   },
 });

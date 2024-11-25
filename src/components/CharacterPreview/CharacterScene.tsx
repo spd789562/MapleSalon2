@@ -2,11 +2,9 @@ import { Show } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 import { styled } from 'styled-system/jsx/factory';
 
-import { $currentScene } from '@/store/character/store';
 import {
   $currentCharacter,
   $previewCharacter,
-  $sceneCustomColorStyle,
 } from '@/store/character/selector';
 import { $showPreviousCharacter } from '@/store/trigger';
 
@@ -14,6 +12,7 @@ import { useCharacterPreview } from './CharacterPreviewContext';
 
 import ChevronRightIcon from 'lucide-solid/icons/chevron-right';
 import { LoadingWithBackdrop } from '@/components/elements/LoadingWithBackdrop';
+import { CharacterSceneContainer } from './CharacterSceneContainer';
 import { CharacterView } from './Character';
 import { CharacterPreviewView } from './CharacterPreview';
 import { CharacterSceneSelection } from './CharacterSceneSelection';
@@ -21,13 +20,8 @@ import { ShowPreviousSwitch } from './ShowPreviousSwitch';
 import { ShowUpscaleSwitch } from './ShowUpscaleSwitch';
 import { ZoomControl } from './ZoomControl';
 
-import { PreviewSceneBackground } from '@/const/scene';
-
 export const CharacterScene = () => {
   const [state, actions] = useCharacterPreview();
-  let containerRef!: HTMLDivElement;
-  const scene = useStore($currentScene);
-  const customColorStyle = useStore($sceneCustomColorStyle);
   const isShowComparison = useStore($showPreviousCharacter);
 
   function handleLoad() {
@@ -38,11 +32,7 @@ export const CharacterScene = () => {
   }
 
   return (
-    <CharacterSceneContainer
-      ref={containerRef}
-      bgType={scene()}
-      style={customColorStyle()}
-    >
+    <CharacterSceneContainer>
       <Show when={isShowComparison()}>
         <CharacterView
           onLoad={handleLoad}
@@ -75,34 +65,6 @@ export const CharacterScene = () => {
     </CharacterSceneContainer>
   );
 };
-
-const CharacterSceneContainer = styled('div', {
-  base: {
-    // py: 10,
-    overflow: 'hidden',
-    position: 'relative',
-    borderRadius: 'lg',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  variants: {
-    bgType: {
-      alpha: {
-        ...PreviewSceneBackground.alpha,
-      },
-      grid: {
-        ...PreviewSceneBackground.grid,
-      },
-      color: {},
-      henesys: {
-        ...PreviewSceneBackground.henesys,
-        backgroundRepeat: 'repeat-x',
-        backgroundPositionY: '-20px',
-      },
-    },
-  },
-});
 
 const TopTool = styled('div', {
   base: {

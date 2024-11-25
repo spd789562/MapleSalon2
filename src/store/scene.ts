@@ -1,4 +1,5 @@
-import { atom } from 'nanostores';
+import { atom, computed } from 'nanostores';
+import { PreviewScene } from '@/const/scene';
 
 const IMAGE_STORE_PREFIX = 'user-upload-store';
 export const IMAGE_STORE_MAX_SIZE = 16;
@@ -6,8 +7,38 @@ export const IMAGE_STORE_MAX_SIZE = 16;
 export const $sceneOffsetX = atom(0);
 export const $sceneOffsetY = atom(0);
 
-export const $currentSelectScene = atom<string | null>(null);
+export const $currentScene = atom<PreviewScene>(PreviewScene.Color);
+
+export const $sceneCustomColor = atom<string>('#FFFFFF');
+export const $currentCustomScene = atom<string | null>(null);
 export const $userUploadedSceneImages = atom<string[][]>([]);
+
+/* selector */
+export const $sceneCustomStyle = computed(
+  [$currentScene, $sceneCustomColor, $currentCustomScene],
+  (scene, color, customUrl) => {
+    if (scene === PreviewScene.Color) {
+      return {
+        'background-color': color,
+      };
+    }
+    if (scene === PreviewScene.Custom && customUrl) {
+      return {
+        'background-image': `url(${customUrl})`,
+      };
+    }
+    return {};
+  },
+);
+export const $sceneBackgroundPosition = computed(
+  [$currentScene, $sceneOffsetX, $sceneOffsetY],
+  (scene, offsetX, offsetY) => {
+    if (scene === PreviewScene.Custom) {
+      return `calc(50% + ${offsetY}px) calc(50% + ${offsetX}px)`;
+    }
+    return '';
+  },
+);
 
 /* action */
 export function updateSceneOffsetX(value: number) {
