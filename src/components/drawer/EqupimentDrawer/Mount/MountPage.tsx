@@ -1,6 +1,12 @@
-import { onMount } from 'solid-js';
+import { onMount, Show } from 'solid-js';
+import { useStore } from '@nanostores/solid';
 
-import { $isMountUninitialized, prepareAndFetchMountStrings } from '@/store/mount';
+import { UninitializedModal } from '../UninitializedModal';
+
+import {
+  $isMountUninitialized,
+  prepareAndFetchMountStrings,
+} from '@/store/mount';
 
 import { Grid } from 'styled-system/jsx/grid';
 import { EquipListTypeButton } from '@/components/drawer/EqupimentDrawer/EquipListTypeButton';
@@ -8,6 +14,7 @@ import { MountSearchInput } from './MountSearchInput';
 import { MountList } from './MountList';
 
 export const MountPage = () => {
+  const isUninitialized = useStore($isMountUninitialized);
 
   onMount(async () => {
     if ($isMountUninitialized.get()) {
@@ -27,6 +34,9 @@ export const MountPage = () => {
         <EquipListTypeButton />
       </Grid>
       <MountList />
+      <Show when={isUninitialized()}>
+        <UninitializedModal />
+      </Show>
     </Grid>
   );
 };

@@ -1,4 +1,5 @@
-import { onMount } from 'solid-js';
+import { onMount, Show } from 'solid-js';
+import { useStore } from '@nanostores/solid';
 
 import {
   $isSkillUninitialized,
@@ -9,8 +10,11 @@ import { Grid } from 'styled-system/jsx/grid';
 import { EquipListTypeButton } from '@/components/drawer/EqupimentDrawer/EquipListTypeButton';
 import { SkillSearchInput } from './SkillSearchInput';
 import { SkillList } from './SkillList';
+import { UninitializedModal } from '../UninitializedModal';
 
 export const SkillPage = () => {
+  const isUninitialized = useStore($isSkillUninitialized);
+
   onMount(async () => {
     if ($isSkillUninitialized.get()) {
       await prepareAndFetchSkillStrings();
@@ -29,6 +33,9 @@ export const SkillPage = () => {
         <EquipListTypeButton />
       </Grid>
       <SkillList />
+      <Show when={isUninitialized()}>
+        <UninitializedModal />
+      </Show>
     </Grid>
   );
 };
