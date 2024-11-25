@@ -82,6 +82,7 @@ export async function characterToCanvasFramesWithEffects(
   const isOriginalAnimating = character.isAnimating;
 
   Ticker.shared.stop();
+  Ticker.system.stop();
   const current = performance.now();
   Ticker.shared.update(current);
 
@@ -94,7 +95,8 @@ export async function characterToCanvasFramesWithEffects(
 
   const instructionTimeline = character.currentInstructions.reduce(
     (acc, frame) => {
-      acc.push(frame.delay || 100);
+      const prev = acc.length > 0 ? acc[acc.length - 1] : 0;
+      acc.push(prev + (frame.delay ?? 100));
       return acc;
     },
     [] as number[],
@@ -215,6 +217,7 @@ export async function characterToCanvasFramesWithEffects(
   }
 
   Ticker.shared.start();
+  Ticker.system.start();
 
   return resultData;
 }
