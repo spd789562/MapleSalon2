@@ -39,7 +39,7 @@ export const ExportAnimationButton = () => {
         onProgress: updateExportProgress,
       });
       if (data.frames.length === 1) {
-        downloadCanvas(data.frames[0].canvas, 'chair.png');
+        downloadCanvas(data.frames[0].canvas, `chair-${state.chairRef.id}.png`);
         toaster.success({
           title: '匯出成功',
         });
@@ -49,7 +49,10 @@ export const ExportAnimationButton = () => {
       }
 
       const blob = await getAnimatedCharacterBlob(data, exportType);
-      downloadBlob(blob, `chair${ActionExportTypeExtensions[exportType]}`);
+      downloadBlob(
+        blob,
+        `chair-${state.chairRef.id}${ActionExportTypeExtensions[exportType]}`,
+      );
 
       toaster.success({
         title: '匯出成功',

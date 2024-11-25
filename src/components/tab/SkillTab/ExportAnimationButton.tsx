@@ -44,7 +44,10 @@ export const ExportAnimationButton = () => {
       );
 
       const blob = await getAnimatedCharacterBlob(frames, exportType);
-      downloadBlob(blob, `character${ActionExportTypeExtensions[exportType]}`);
+      downloadBlob(
+        blob,
+        `skill-${state.skillRef.id}-${ActionExportTypeExtensions[exportType]}`,
+      );
 
       toaster.success({
         title: '匯出成功',
@@ -53,7 +56,7 @@ export const ExportAnimationButton = () => {
       finishExport();
     } catch (_) {
       toaster.error({
-        title: '匯出時發生未知錯誤',
+        title: '匯出時發生未知錯誤，檔案可能過大',
       });
       finishExport();
       return $interactionLock.set(false);

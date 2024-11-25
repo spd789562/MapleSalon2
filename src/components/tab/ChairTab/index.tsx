@@ -13,6 +13,8 @@ import { EffectSwitch } from './EffectSwitch';
 // import { ResetButton } from './ResetButton';
 // import { SaveButton } from './SaveButton';
 import { ExportAnimationButton } from './ExportAnimationButton';
+import { ExportSnapshotButton } from './ExportSnapshotButton';
+import { ExportSnapshotToClipboardButton } from './ExportSnapshotToClipboardButton';
 import { OpenCharacterSelectionButton } from './OpenCharacterSelectionButton';
 import { ExportProgress } from './ExportProgress';
 import { ChairTabProvider } from './ChairTabContext';
@@ -29,12 +31,16 @@ export const ChairTab = () => {
           <EffectSwitch />
         </HStack>
         <CharacterScene />
-        <HStack mt="2" pl="2">
+        <HStack mt="2" pl="2" flexWrap="wrap">
           <NameInput />
           <NameTagSwitch />
           <ChatBalloonInput />
           <ChatBalloonSwitch />
-          <ExportAnimationButton />
+          <HStack>
+            <ExportAnimationButton />
+            <ExportSnapshotButton />
+            <ExportSnapshotToClipboardButton />
+          </HStack>
         </HStack>
         <ExportProgress />
       </ChairTabCard>

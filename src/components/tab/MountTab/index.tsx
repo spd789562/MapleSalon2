@@ -12,6 +12,8 @@ import { OpenCharacterSelectionButton } from '@/components/tab/ChairTab/OpenChar
 import { EffectSwitch } from '@/components/tab/ChairTab/EffectSwitch';
 import { MountActionSelect } from './MountActionSelect';
 import { ExportAnimationButton } from './ExportAnimationButton';
+import { ExportSnapshotButton } from './ExportSnapshotButton';
+import { ExportSnapshotToClipboardButton } from './ExportSnapshotToClipboardButton';
 import { ExportProgress } from './ExportProgress';
 import { MountTabProvider } from './MountTabContext';
 
@@ -35,7 +37,11 @@ export const MountTab = () => {
           <NameTagSwitch />
           <ChatBalloonInput />
           <ChatBalloonSwitch />
-          <ExportAnimationButton />
+          <HStack>
+            <ExportAnimationButton />
+            <ExportSnapshotButton />
+            <ExportSnapshotToClipboardButton />
+          </HStack>
         </HStack>
         <ExportProgress />
       </MountTabCard>
