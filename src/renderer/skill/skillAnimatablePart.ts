@@ -25,6 +25,9 @@ export class SkillAnimatablePart extends BaseAnimatablePart<SkillPart> {
   }
   complete() {
     this.visible = false;
+    this.currentFrame = 0;
+    /* @ts-ignore */
+    this._updateFrame();
   }
   get timeline() {
     return this.frames.reduce((acc, frame) => {

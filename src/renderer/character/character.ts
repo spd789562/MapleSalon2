@@ -116,8 +116,8 @@ export class Character extends Container {
     this.nameTag = new BaseNameTag('');
     this.nameTag.visible = false;
     this.nameTag.position.set(0, 3);
-    this.nameTag.zIndex = 0;
-    this.bodyContainer.zIndex = 1;
+    this.nameTag.zIndex = 1;
+    this.bodyContainer.zIndex = 0;
     this.chatBalloon = new ChatBalloon('default: Hello');
     this.chatBalloon.visible = false;
     this.chatBalloon.position.set(-10, -60);

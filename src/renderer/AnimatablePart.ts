@@ -112,6 +112,7 @@ export abstract class BaseAnimatablePart<
       this.onComplete?.();
     } else if (this._currentTime >= this.textures.length && !this.loop) {
       this._playing = false;
+      this.stop();
       this.onComplete?.();
     } else if (previousFrame !== this.currentFrame) {
       if (this.loop && this.onLoop) {

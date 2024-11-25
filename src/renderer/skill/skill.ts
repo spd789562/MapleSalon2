@@ -19,7 +19,7 @@ export function getSkillParentPath(id: string) {
   return `${preifx}.img`;
 }
 
-const SkillEffectKeyReg = /^(effect|screen|keydown)[0-9]?$/;
+const SkillEffectKeyReg = /^(effect|screen|keydown|special)[0-9]?$/;
 
 export class Skill {
   destroyed = false;
@@ -51,6 +51,9 @@ export class Skill {
   get isNormalAction() {
     return isValidAction(this.action as CharacterAction);
   }
+  get isJumpingAction() {
+    return this.wz?.info?.avaliableInJumpingState === 1;
+  }
   get isPlaying() {
     return (
       this.backLayers.some((layer) => layer.playing) ||
@@ -70,6 +73,9 @@ export class Skill {
     this.createItems(this.wz);
     if (this.wz.action?.[0]) {
       this.action = this.wz.action[0];
+    }
+    if (this.isJumpingAction) {
+      this.action = CharacterAction.Jump;
     }
     if (this.wz.randomEffect !== undefined) {
       this.setRandomEffectName();
@@ -123,7 +129,10 @@ export class Skill {
       if (!(SkillEffectKeyReg.test(key) && data)) {
         continue;
       }
-      if ((data as WzSkillPngSet)[0].width !== undefined) {
+      const firstNumberKey = Object.keys(data).find((k) =>
+        Number.isInteger(Number(k)),
+      ) as unknown as keyof WzSkillPngSet;
+      if ((data as WzSkillPngSet)[firstNumberKey].width !== undefined) {
         items.push(new SkillItem(key, data as WzSkillPngSet, this));
       } else {
         items.push(...this.createFieldItems(key, data as WzSkillPngSets));
@@ -139,7 +148,7 @@ export class Skill {
       if (Number.isNaN(Number(key)) || !data) {
         continue;
       }
-      if ((data[0] as WzPngPieceInfo)?.delay !== undefined) {
+      if ((data[0] as WzPngPieceInfo)?.width !== undefined) {
         items.push(new SkillItem(field, data, this));
       }
     }
@@ -166,6 +175,8 @@ export class Skill {
         item.animatablePart.currentFrame = 0;
         /* @ts-ignore */
         item.animatablePart._currentTime = 0;
+        /* @ts-ignore */
+        item.animatablePart._updateFrame();
       }
     }
   }

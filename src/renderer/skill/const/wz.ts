@@ -3,12 +3,15 @@ import type { CharacterAction } from '@/const/actions';
 
 export type WzSkillData = {
   action?: WzSkillAction;
+  info?: WzSkillInfo;
   /* booleans */
   randomEffect?: number;
+  invisible?: number;
 } & WzSkillEffect &
   WzSkillScreenEffect &
   WzSkillKeyDownEffect &
-  WzSkillPrepareEffect;
+  WzSkillPrepareEffect &
+  WzSkillSpecialEffect;
 
 export type WzSkillAction = Record<number, CharacterAction | string>;
 
@@ -31,6 +34,14 @@ export type WzSkillKeyDownEffect = {
 export type WzSkillPrepareEffect = {
   prepare?: WzSkillSetOrSets;
 } & Record<`prepare${number}`, WzSkillSetOrSets>;
+
+export type WzSkillSpecialEffect = {
+  special?: WzSkillSetOrSets;
+} & Record<`special${number}`, WzSkillSetOrSets>;
+
+export interface WzSkillInfo {
+  avaliableInJumpingState?: number;
+}
 
 export interface WzPngPieceInfo {
   origin: Vec2;
