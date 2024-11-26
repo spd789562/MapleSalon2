@@ -1,7 +1,12 @@
 import { type JSX, createSignal } from 'solid-js';
 import { Portal } from 'solid-js/web';
 
-import { $sceneOffsetX, $sceneOffsetY } from '@/store/scene';
+import {
+  $sceneOffsetX,
+  $sceneOffsetY,
+  $sceneRepeatX,
+  $sceneRepeatY,
+} from '@/store/scene';
 
 import { XIcon } from 'lucide-solid';
 import { Stack } from 'styled-system/jsx/stack';
@@ -13,6 +18,7 @@ import * as Popover from '@/components/ui/popover';
 import { UploadBackgroundButton } from './UploadBackgroundButton';
 import { SceneOffsetNumberInput } from './SceneOffsetNumberInput';
 import { SceneOffsetResetButton } from './SceneOffsetResetButton';
+import { SceneRepeatSwitch } from './SceneRepeatSwitch';
 import { UploadHistory } from './UploadHistory';
 
 const HOVER_DELAY = 300;
@@ -64,8 +70,6 @@ export const CharacterSceneBackgroundPopover = (
             </Popover.Arrow>
             <Stack gap="2">
               <Popover.Title>自訂背景</Popover.Title>
-              {/* <Popover.Description>
-              </Popover.Description> */}
               <UploadBackgroundButton />
               <HStack gap="2">
                 <Text>X 位移</Text>
@@ -76,6 +80,10 @@ export const CharacterSceneBackgroundPopover = (
                 <Text>Y 位移</Text>
                 <SceneOffsetNumberInput target={$sceneOffsetY} />
                 <SceneOffsetResetButton title="Y 位移" target={$sceneOffsetY} />
+              </HStack>
+              <HStack gap="2">
+                <SceneRepeatSwitch title="重複 X" target={$sceneRepeatX} />
+                <SceneRepeatSwitch title="重複 Y" target={$sceneRepeatY} />
               </HStack>
               <Text>上傳紀錄</Text>
               <UploadHistory />

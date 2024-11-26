@@ -6,6 +6,7 @@ import {
   $currentScene,
   $sceneCustomStyle,
   $sceneBackgroundPosition,
+  $sceneBackgroundRepeat,
 } from '@/store/scene';
 
 import { PreviewSceneBackground } from '@/const/scene';
@@ -19,6 +20,7 @@ export const CharacterSceneContainer = (
   const scene = useStore($currentScene);
   const customColorStyle = useStore($sceneCustomStyle);
   const customBackgroundPosition = useStore($sceneBackgroundPosition);
+  const customBackgroundRepeat = useStore($sceneBackgroundRepeat);
 
   return (
     <Container
@@ -26,6 +28,7 @@ export const CharacterSceneContainer = (
       style={{
         ...customColorStyle(),
         'background-position': customBackgroundPosition(),
+        'background-repeat': customBackgroundRepeat(),
       }}
     >
       {props.children}

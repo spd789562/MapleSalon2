@@ -6,6 +6,8 @@ export const IMAGE_STORE_MAX_SIZE = 16;
 
 export const $sceneOffsetX = atom(0);
 export const $sceneOffsetY = atom(0);
+export const $sceneRepeatX = atom(true);
+export const $sceneRepeatY = atom(true);
 
 export const $currentScene = atom<PreviewScene>(PreviewScene.Color);
 
@@ -35,6 +37,15 @@ export const $sceneBackgroundPosition = computed(
   (scene, offsetX, offsetY) => {
     if (scene === PreviewScene.Custom) {
       return `calc(50% + ${offsetY}px) calc(50% + ${offsetX}px)`;
+    }
+    return '';
+  },
+);
+export const $sceneBackgroundRepeat = computed(
+  [$currentScene, $sceneRepeatX, $sceneRepeatY],
+  (scene, repeatX, repeatY) => {
+    if (scene === PreviewScene.Custom) {
+      return `${repeatX ? 'repeat' : 'no-repeat'} ${repeatY ? 'repeat' : 'no-repeat'}`;
     }
     return '';
   },
