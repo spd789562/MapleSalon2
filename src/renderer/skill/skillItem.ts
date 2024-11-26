@@ -7,14 +7,16 @@ import { SkillAnimatablePart } from './skillAnimatablePart';
 export class SkillItem {
   filters: Filter[] = [];
   name: string;
+  subName: string;
   wz: WzSkillPngSet;
   skill: Skill;
   frameCount = 0;
   frames: SkillPart[] = [];
   animatablePart?: SkillAnimatablePart;
 
-  constructor(name: string, wz: WzSkillPngSet, skill: Skill) {
+  constructor(name: string, wz: WzSkillPngSet, skill: Skill, subName = '') {
     this.name = name;
+    this.subName = subName;
     this.wz = wz;
     this.skill = skill;
     const keys = Object.keys(wz).map((key) => Number.parseInt(key, 10) || 0);

@@ -178,7 +178,7 @@ export async function characterToCanvasFramesWithEffects(
     let end = mergedTimeline.length - 1;
     while (start !== end) {
       const mid = start + Math.floor((end - start) / 2);
-      if (mergedTimeline[mid] >= duractionMs) {
+      if (mergedTimeline[mid] > duractionMs) {
         end = mid;
       } else {
         start = mid + 1;

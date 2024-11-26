@@ -39,6 +39,7 @@ export const ExportFrameButton = () => {
         app.renderer,
         {
           onProgress: updateExportProgress,
+          padWhiteSpace,
         },
       );
       files.push(

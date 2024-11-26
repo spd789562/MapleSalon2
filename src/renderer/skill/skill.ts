@@ -37,6 +37,7 @@ export class Skill {
   randomIndex = -1;
   defaultSpeed = 1;
   notRandomMap = new Set<string>();
+  #_visible = false;
   constructor(id: string, defaultSpeed = 1) {
     this.id = id;
     this.parentPath = getSkillParentPath(id);
@@ -85,6 +86,18 @@ export class Skill {
       }
     }
   }
+  get visible() {
+    return this.#_visible;
+  }
+  set visible(value: boolean) {
+    this.#_visible = value;
+    for (const layer of this.backLayers) {
+      layer.visible = value;
+    }
+    for (const layer of this.frontLayers) {
+      layer.visible = value;
+    }
+  }
   async load() {
     if (this.wz) {
       return;
@@ -99,7 +112,7 @@ export class Skill {
     if (this.wz.action?.[0]) {
       this.action = this.wz.action[0];
     }
-    if (this.isJumpingAction) {
+    if (this.isJumpingAction && !this.wz.action?.[0]) {
       this.action = CharacterAction.Jump;
     }
     if (this.wz.randomEffect !== undefined) {
@@ -163,7 +176,7 @@ export class Skill {
         continue;
       }
       if ((data as WzSkillPngSet)[firstNumberKey].width !== undefined) {
-        items.push(new SkillItem(key, data as WzSkillPngSet, this));
+        items.push(new SkillItem(key, data as WzSkillPngSet, this, '0'));
       } else {
         items.push(...this.createFieldItems(key, data as WzSkillPngSets));
       }
@@ -193,7 +206,7 @@ export class Skill {
         continue;
       }
       if ((data[0] as WzPngPieceInfo)?.width !== undefined) {
-        items.push(new SkillItem(field, data, this));
+        items.push(new SkillItem(field, data, this, key));
       }
     }
     return items;

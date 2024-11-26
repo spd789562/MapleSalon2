@@ -11,6 +11,7 @@ import { ChatBalloonSwitch } from '@/components/CharacterPreview/ChatBalloonSwit
 import { OpenCharacterSelectionButton } from '@/components/tab/ChairTab/OpenCharacterSelectionButton';
 import { EffectSwitch } from '@/components/tab/ChairTab/EffectSwitch';
 import { ExportAnimationButton } from './ExportAnimationButton';
+import { ExportFrameButton } from './ExportFrameButton';
 import { ExportProgress } from './ExportProgress';
 import { SkillTabProvider } from './SkillTabContext';
 
@@ -31,7 +32,10 @@ export const SkillTab = () => {
           <NameTagSwitch />
           <ChatBalloonInput />
           <ChatBalloonSwitch />
-          <ExportAnimationButton />
+          <HStack>
+            <ExportAnimationButton />
+            <ExportFrameButton />
+          </HStack>
         </HStack>
         <ExportProgress />
       </SkillTabCard>
