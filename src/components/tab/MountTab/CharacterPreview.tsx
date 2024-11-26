@@ -27,6 +27,7 @@ import {
 import { usePureStore } from '@/store';
 
 import { useChatBalloonText } from '@/components/CharacterPreview/useChatBalloonText';
+import { useCharacterVisible } from '@/components/tab/ChairTab/CharacterVisibleSwitch';
 
 import { Character } from '@/renderer/character/character';
 import { TamingMob } from '@/renderer/tamingMob/tamingMob';
@@ -59,6 +60,8 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   const characters: Character[] = [];
 
   useChatBalloonText(mainCharacter);
+  useCharacterVisible(mainCharacter);
+  useCharacterVisible(characters);
 
   mainCharacter.loadEvent.addListener(
     'error',

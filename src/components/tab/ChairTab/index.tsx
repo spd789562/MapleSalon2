@@ -9,6 +9,7 @@ import { NameTagSwitch } from '@/components/CharacterPreview/NameTagSwitch';
 import { ChatBalloonInput } from '@/components/CharacterPreview/ChatBalloonInput';
 import { ChatBalloonSwitch } from '@/components/CharacterPreview/ChatBalloonSwitch';
 import { EffectSwitch } from './EffectSwitch';
+import { CharacterVisibleSwitch } from './CharacterVisibleSwitch';
 // import { ActionSelect } from './ActionSelect';
 // import { ResetButton } from './ResetButton';
 // import { SaveButton } from './SaveButton';
@@ -29,6 +30,7 @@ export const ChairTab = () => {
           </Box>
           <OpenCharacterSelectionButton />
           <EffectSwitch />
+          <CharacterVisibleSwitch />
         </HStack>
         <CharacterScene />
         <HStack mt="2" pl="2" flexWrap="wrap">

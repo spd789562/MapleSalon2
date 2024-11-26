@@ -27,6 +27,7 @@ import {
 import { usePureStore } from '@/store';
 
 import { useChatBalloonText } from '@/components/CharacterPreview/useChatBalloonText';
+import { useCharacterVisible } from '@/components/tab/ChairTab/CharacterVisibleSwitch';
 import { useSkillTab } from './SkillTabContext';
 
 import { Character } from '@/renderer/character/character';
@@ -57,6 +58,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   const character = new Character();
 
   useChatBalloonText(character);
+  useCharacterVisible(character);
   setCharacterRef(character);
 
   character.loadEvent.addListener(

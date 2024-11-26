@@ -10,6 +10,7 @@ import { ChatBalloonInput } from '@/components/CharacterPreview/ChatBalloonInput
 import { ChatBalloonSwitch } from '@/components/CharacterPreview/ChatBalloonSwitch';
 import { OpenCharacterSelectionButton } from '@/components/tab/ChairTab/OpenCharacterSelectionButton';
 import { EffectSwitch } from '@/components/tab/ChairTab/EffectSwitch';
+import { CharacterVisibleSwitch } from '@/components/tab/ChairTab/CharacterVisibleSwitch';
 import { MountActionSelect } from './MountActionSelect';
 import { ExportAnimationButton } from './ExportAnimationButton';
 import { ExportSnapshotButton } from './ExportSnapshotButton';
@@ -30,6 +31,7 @@ export const MountTab = () => {
           </Box>
           <OpenCharacterSelectionButton />
           <EffectSwitch />
+          <CharacterVisibleSwitch />
         </HStack>
         <CharacterScene />
         <HStack mt="2" pl="2" flexWrap="wrap">

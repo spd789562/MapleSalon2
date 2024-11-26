@@ -30,6 +30,7 @@ import {
 import { usePureStore } from '@/store';
 
 import { useChatBalloonText } from '@/components/CharacterPreview/useChatBalloonText';
+import { useCharacterVisible } from './CharacterVisibleSwitch';
 
 import { Character } from '@/renderer/character/character';
 import { Chair } from '@/renderer/chair/chair';
@@ -64,6 +65,8 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   // const chair = new Chair(3018528, '03018.img');
   // const chair = new Chair(3015895, '030158.img');
   useChatBalloonText(mainCharacter);
+  useCharacterVisible(mainCharacter);
+  useCharacterVisible(characters);
 
   mainCharacter.loadEvent.addListener(
     'error',

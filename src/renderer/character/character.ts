@@ -125,12 +125,12 @@ export class Character extends Container {
     this.chatBalloon.zIndex = 2;
     this.backSkillContainer.zIndex = -1;
     this.frontSkillContainer.zIndex = 3;
-    this.addChild(this.frontSkillContainer);
-    this.addChild(this.nameTag);
-    this.addChild(this.bodyContainer);
-    this.addChild(this.chatBalloon);
-    this.addChild(this.backSkillContainer);
     this.bodyContainer.addChild(this.bodyFrame);
+    this.addChild(this.backSkillContainer);
+    this.addChild(this.bodyContainer);
+    this.addChild(this.nameTag);
+    this.addChild(this.chatBalloon);
+    this.addChild(this.frontSkillContainer);
   }
 
   get action() {
