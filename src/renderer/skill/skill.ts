@@ -53,7 +53,7 @@ export class Skill {
         return true;
       }
 
-      const randomName = `${prefix}${this.randomIndex === 0 ? '' : this.randomIndex}`;
+      const randomName = `${prefix}${this.randomIndex === 1 ? '' : this.randomIndex}`;
       return k === randomName;
     });
   }
@@ -203,7 +203,7 @@ export class Skill {
     if (randomCount === 0) {
       return;
     }
-    const randomIndex = Math.floor(Math.random() * randomCount);
+    const randomIndex = Math.floor(Math.random() * randomCount) + 1;
     this.randomIndex = randomIndex;
   }
   getTimelines(): number[][] {
