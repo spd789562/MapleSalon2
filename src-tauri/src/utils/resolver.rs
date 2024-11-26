@@ -201,6 +201,52 @@ pub async fn load_wz_by_base(
     Ok(())
 }
 
+pub async fn resolve_pack_ms(path: &str, base_node: &WzNodeArc) -> Result<()> {
+    let first_parent = Path::new(&path).parent().unwrap();
+    // the Pack folder only exist in newer structure
+    if first_parent.file_stem().unwrap() != "Base" {
+        return Ok(());
+    }
+    let wz_root_path = first_parent.parent().unwrap();
+
+    let pack_path = format!("{}/{}", wz_root_path.to_str().unwrap(), "Packs");
+
+    if fs::try_exists(&pack_path).await.is_err() {
+        return Ok(());
+    }
+
+    let mut entries = fs::read_dir(&pack_path).await?;
+
+    
+    while let Some(item) = entries.next_entry().await? {
+        if !item.file_name().to_str().unwrap().starts_with("Skill") {
+            continue;
+        }
+
+        let ms_node = WzNode::from_ms_file(item.path(), Some(base_node))?.into_lock();
+        
+        block_parse(&ms_node).await?;
+
+        let root_read = base_node.read().unwrap();
+
+        for (path, node) in ms_node.read().unwrap().children.iter() {
+            let p =  Path::new(path.as_str());
+            let path_without_file = p.parent().unwrap();
+            let filename = p.file_name().unwrap().to_str().unwrap();
+            let dest_node = root_read.at_path(path_without_file.to_str().unwrap());
+            if dest_node.is_none() {
+                continue;
+            }
+            let dest_node = dest_node.unwrap();
+
+            node.write().unwrap().parent = Arc::downgrade(&dest_node);
+            dest_node.write().unwrap().children.insert(filename.into(), node.clone());
+        }
+    }
+
+    Ok(())
+}
+
 pub async fn resolve_base(path: &str, version: Option<WzMapleVersion>) -> Result<WzNodeArc> {
     if !path.ends_with("Base.wz") {
         return Err(Error::Io(std::io::Error::new(
@@ -218,6 +264,8 @@ pub async fn resolve_base(path: &str, version: Option<WzMapleVersion>) -> Result
         Some(path),
     )
     .await?;
+
+    resolve_pack_ms(path, &base_node).await?;
 
     Ok(base_node)
 }
