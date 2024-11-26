@@ -36,7 +36,7 @@ export class SkillPart implements AnimatableFrame {
     };
     this.isEmpty =
       !!frameData.path && frameData.width === 1 && frameData.height === 1;
-    this.zIndex = frameData.z || 0;
+    this.zIndex = (item.wz as { z?: number }).z ?? frameData.z ?? 0;
     this.delay = frameData.delay || 100;
   }
 

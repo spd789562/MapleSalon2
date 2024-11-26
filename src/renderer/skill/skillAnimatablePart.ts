@@ -24,10 +24,14 @@ export class SkillAnimatablePart extends BaseAnimatablePart<SkillPart> {
     this.updatePositionByFrame(currentFrame);
   }
   complete() {
-    this.visible = false;
-    this.currentFrame = 0;
-    /* @ts-ignore */
-    this._updateFrame();
+    const character = this.item.skill.character;
+    const lastInstructionFrame = character?.currentInstructions.length || 1;
+    if (character && character.instructionFrame !== lastInstructionFrame - 1) {
+      this.visible = false;
+      this.currentFrame = 0;
+      /* @ts-ignore */
+      this._updateFrame();
+    }
   }
   get timeline() {
     return this.frames.reduce((acc, frame) => {
