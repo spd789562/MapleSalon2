@@ -32,7 +32,7 @@ export class SkillAnimatablePart extends BaseAnimatablePart<SkillPart> {
   get timeline() {
     return this.frames.reduce((acc, frame) => {
       const prev = acc.length > 0 ? acc[acc.length - 1] : 0;
-      acc.push(prev + frame.delay);
+      acc.push(prev + frame.delay * this.animationSpeed);
       return acc;
     }, [] as number[]);
   }

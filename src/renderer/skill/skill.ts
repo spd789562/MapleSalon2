@@ -20,6 +20,8 @@ export function getSkillParentPath(id: string) {
 }
 
 const SkillEffectKeyReg = /^(effect|screen|keydown|special)[0-9]?$/;
+const SkillPrefixReg = /^(effect|screen|keydown|special)/;
+const EffectKeys = ['effect', 'screen', 'keydown', 'special'];
 
 export class Skill {
   destroyed = false;
@@ -32,21 +34,36 @@ export class Skill {
   frontLayers: SkillAnimatablePart[] = [];
   character?: Character;
   randomEffectName = '';
-  constructor(id: string) {
+  randomIndex = -1;
+  defaultSpeed = 1;
+  notRandomMap = new Set<string>();
+  constructor(id: string, defaultSpeed = 1) {
     this.id = id;
     this.parentPath = getSkillParentPath(id);
+    this.defaultSpeed = defaultSpeed;
   }
   get skillPath() {
     return `Skill/${this.parentPath}/skill/${this.id}`;
   }
+  get randomItems() {
+    return Array.from(this.items.entries()).filter(([k, _]) => {
+      const prefix = k.match(SkillPrefixReg)?.[0] || k;
+      const notRandom = this.notRandomMap.has(prefix);
+      if (notRandom) {
+        return true;
+      }
+
+      const randomName = `${prefix}${this.randomIndex === 0 ? '' : this.randomIndex}`;
+      return k === randomName;
+    });
+  }
+  get allItems() {
+    return Array.from(this.items.entries());
+  }
   get currentItems() {
-    return Array.from(this.items.entries())
-      .filter(([k, _]) =>
-        this.randomEffectName
-          ? k.startsWith('effect') && k === this.randomEffectName
-          : true,
-      )
-      .flatMap(([_k, v]) => v);
+    return (this.randomIndex !== -1 ? this.randomItems : this.allItems).flatMap(
+      ([_, items]) => items,
+    );
   }
   get isNormalAction() {
     return isValidAction(this.action as CharacterAction);
@@ -59,6 +76,14 @@ export class Skill {
       this.backLayers.some((layer) => layer.playing) ||
       this.frontLayers.some((layer) => layer.playing)
     );
+  }
+  set speed(speed: number) {
+    const items = this.currentItems;
+    for (const item of items) {
+      if (item.animatablePart) {
+        item.animatablePart.animationSpeed = speed;
+      }
+    }
   }
   async load() {
     if (this.wz) {
@@ -95,6 +120,7 @@ export class Skill {
       if (!animatablePart) {
         continue;
       }
+      animatablePart.animationSpeed = this.defaultSpeed;
       const zIndex = animatablePart.zIndex;
       if (zIndex < 0) {
         this.backLayers.push(animatablePart);
@@ -123,6 +149,7 @@ export class Skill {
     }
   }
   createItems(wz: WzSkillData) {
+    const typeCountMap = new Map<string, number>();
     for (const key in wz) {
       const items: SkillItem[] = [];
       const data = wz[key as keyof WzSkillData];
@@ -132,12 +159,29 @@ export class Skill {
       const firstNumberKey = Object.keys(data).find((k) =>
         Number.isInteger(Number(k)),
       ) as unknown as keyof WzSkillPngSet;
+      if (!firstNumberKey) {
+        continue;
+      }
       if ((data as WzSkillPngSet)[firstNumberKey].width !== undefined) {
         items.push(new SkillItem(key, data as WzSkillPngSet, this));
       } else {
         items.push(...this.createFieldItems(key, data as WzSkillPngSets));
       }
+      const prefix = key.match(SkillPrefixReg)?.[0] || key;
+      if (prefix) {
+        const count = typeCountMap.get(prefix) || 0;
+        typeCountMap.set(prefix, count + 1);
+      }
       this.items.set(key, items);
+    }
+    const randomCount = this.wz?.randomEffect || 0;
+    if (randomCount === 0) {
+      return;
+    }
+    for (const key of EffectKeys) {
+      if (typeCountMap.get(key) !== randomCount) {
+        this.notRandomMap.add(key);
+      }
     }
   }
   createFieldItems(field: string, wz: WzSkillPngSets) {
@@ -155,14 +199,12 @@ export class Skill {
     return items;
   }
   setRandomEffectName() {
-    const effectKeys = Array.from(this.items.keys()).filter((key) =>
-      key.startsWith('effect'),
-    );
-    if (effectKeys.length === 0) {
+    const randomCount = this.wz?.randomEffect || 0;
+    if (randomCount === 0) {
       return;
     }
-    const randomIndex = Math.floor(Math.random() * effectKeys.length);
-    this.randomEffectName = effectKeys[randomIndex];
+    const randomIndex = Math.floor(Math.random() * randomCount);
+    this.randomIndex = randomIndex;
   }
   getTimelines(): number[][] {
     return this.currentItems
@@ -184,10 +226,13 @@ export class Skill {
   destroy() {
     this.destroyed = true;
     this.character = undefined;
+    this.backLayers = [];
+    this.frontLayers = [];
     for (const items of this.items.values()) {
       for (const item of items) {
         item.destroy();
       }
     }
+    this.items.clear();
   }
 }

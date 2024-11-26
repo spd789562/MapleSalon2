@@ -96,7 +96,7 @@ export async function characterToCanvasFramesWithEffects(
   const instructionTimeline = character.currentInstructions.reduce(
     (acc, frame) => {
       const prev = acc.length > 0 ? acc[acc.length - 1] : 0;
-      acc.push(prev + (frame.delay ?? 100));
+      acc.push(prev + (frame.delay ?? 100) * character.speed);
       return acc;
     },
     [] as number[],

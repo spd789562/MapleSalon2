@@ -70,6 +70,7 @@ export class Character extends Container {
   #_useExpression = CharacterExpressions.Default;
   #_earType = CharacterEarType.HumanEar;
   #_handType = CharacterHandType.DoubleHand;
+  #_speed = 1;
   #_renderId = '';
   flip = false;
   forceFlip = false;
@@ -170,6 +171,15 @@ export class Character extends Container {
     this.#_handType = handType;
 
     this.updateActionByHandType();
+  }
+  get speed() {
+    return this.#_speed;
+  }
+  set speed(speed: number) {
+    this.#_speed = speed;
+    if (this.skill) {
+      this.skill.speed = speed;
+    }
   }
 
   get instructionFrame() {
@@ -279,7 +289,7 @@ export class Character extends Container {
       return false;
     }
     this.skill?.destroy();
-    const skill = new Skill(skillId);
+    const skill = new Skill(skillId, this.speed);
     skill.character = this;
     await skill.load();
     const instruction = skill.isNormalAction ? undefined : skill.action;
@@ -518,7 +528,7 @@ export class Character extends Container {
     this.skill?.play();
     this.currentTicker = (delta) => {
       const currentDuration = instructions[this.instructionFrame]?.delay || 100;
-      this.currentDelta += delta.deltaMS;
+      this.currentDelta += delta.deltaMS * this.speed;
       if (this.currentDelta > currentDuration) {
         this.currentDelta %= currentDuration;
         if (this.instructionFrame + 1 >= maxFrame) {
