@@ -24,6 +24,10 @@ const options = [
     value: EquipTab.History,
     label: '近期使用',
   },
+  {
+    value: EquipTab.Favorite,
+    label: '收藏',
+  },
 ];
 
 export const EquipTabs = () => {

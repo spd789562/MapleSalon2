@@ -19,6 +19,7 @@ export enum EquipTab {
   Hair = 'hair',
   Face = 'face',
   History = 'history',
+  Favorite = 'favorite',
 }
 
 export enum EquipListType {
@@ -63,6 +64,10 @@ onSet($equipmentDrawerEquipTab, () => {
 });
 
 /* computed */
+export const $isFavoriteTab = computed(
+  $equipmentDrawerEquipTab,
+  (tab) => tab === EquipTab.Favorite,
+);
 export const $isShowEquipCategorySelection = computed(
   $equipmentDrawerEquipTab,
   (tab) => tab === EquipTab.Equip,
