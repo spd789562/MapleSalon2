@@ -31,6 +31,7 @@ import { usePureStore } from '@/store';
 
 import { useChatBalloonText } from '@/components/CharacterPreview/useChatBalloonText';
 import { useCharacterVisible } from './CharacterVisibleSwitch';
+import { useCharacterEffectVisible } from './EffectSwitch';
 
 import { Character } from '@/renderer/character/character';
 import { Chair } from '@/renderer/chair/chair';
@@ -49,7 +50,6 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   const characterData = from($previewCharacter);
   const chairData = usePureStore($currentChair);
   const otherCharacters = usePureStore($otherCharacters);
-  const enableCharacterEffect = usePureStore($enableCharacterEffect);
   const isRendererInitialized = usePureStore($isGlobalRendererInitialized);
   const [isInit, setIsInit] = createSignal<boolean>(false);
 
@@ -65,8 +65,11 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   // const chair = new Chair(3018528, '03018.img');
   // const chair = new Chair(3015895, '030158.img');
   useChatBalloonText(mainCharacter);
-  useCharacterVisible(mainCharacter);
-  useCharacterVisible(characters);
+  useCharacterVisible([mainCharacter, characters]);
+  useCharacterEffectVisible(
+    [mainCharacter, characters],
+    () => !!chair?.isHideEffect,
+  );
 
   mainCharacter.loadEvent.addListener(
     'error',
@@ -188,12 +191,11 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
       }
     }
     const needHideEffect = chair.isHideEffect || !$enableCharacterEffect.get();
-    if (chair.isHideEffect && $enableCharacterEffect.get()) {
-      for (const character of characters) {
-        character.toggleEffectVisibility(!needHideEffect);
-      }
-      mainCharacter.toggleEffectVisibility(!needHideEffect);
+    for (const character of characters) {
+      character.toggleEffectVisibility(needHideEffect);
     }
+    mainCharacter.toggleEffectVisibility(needHideEffect);
+
     type Tuple = [Character, CharacterData];
     const sitData = [[mainCharacter, mainCharacterData] as Tuple].concat(
       others.map((c, i) => [characters[i], c] as Tuple),
@@ -215,16 +217,6 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     if (viewport && $zoomTarget.get() !== props.target) {
       viewport.scaled = scaled;
       viewport.moveCenter(center);
-    }
-  });
-
-  createEffect(() => {
-    const enableEffect = enableCharacterEffect();
-    if (chair && !chair.isHideEffect) {
-      for (const character of characters) {
-        character.toggleEffectVisibility(!enableEffect);
-      }
-      mainCharacter.toggleEffectVisibility(!enableEffect);
     }
   });
 

@@ -28,6 +28,7 @@ import { usePureStore } from '@/store';
 
 import { useChatBalloonText } from '@/components/CharacterPreview/useChatBalloonText';
 import { useCharacterVisible } from '@/components/tab/ChairTab/CharacterVisibleSwitch';
+import { useCharacterEffectVisible } from '@/components/tab/ChairTab/EffectSwitch';
 import { useSkillTab } from './SkillTabContext';
 
 import { Character } from '@/renderer/character/character';
@@ -45,7 +46,6 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   const zoomInfo = usePureStore($previewChairZoomInfo);
   const characterData = from($previewCharacter);
   const skillData = usePureStore($currentSkill);
-  const enableCharacterEffect = usePureStore($enableCharacterEffect);
   const isRendererInitialized = usePureStore($isGlobalRendererInitialized);
   const [isInit, setIsInit] = createSignal<boolean>(false);
   const [_, { setCharacterRef, setSkillRef }] = useSkillTab();
@@ -58,7 +58,8 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   const character = new Character();
 
   useChatBalloonText(character);
-  useCharacterVisible(character);
+  useCharacterVisible([character]);
+  useCharacterEffectVisible([character], () => false);
   setCharacterRef(character);
 
   character.loadEvent.addListener(
@@ -169,11 +170,6 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
       viewport.scaled = scaled;
       viewport.moveCenter(center);
     }
-  });
-
-  createEffect(() => {
-    const enableEffect = enableCharacterEffect();
-    character.toggleEffectVisibility(!enableEffect);
   });
 
   return <CanvasContainer ref={container} />;

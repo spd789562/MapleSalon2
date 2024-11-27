@@ -111,18 +111,16 @@ export async function characterToCanvasFramesWithEffects(
   }
 
   /* reset effects frame */
-  for (const effect of character.allEffectPieces) {
-    if (character.isHideAllEffect) {
-      break;
+  if (character.isHideAllEffect) {
+    for (const effect of character.allEffectPieces) {
+      effect.currentFrame = 0;
+      /* @ts-ignore */
+      effect._currentTime = 0;
+      if (needCalculateMaxDuration && effect.totalDuration > duractionMs) {
+        duractionMs = effect.totalDuration;
+      }
+      timelines.push(effect.timeline);
     }
-
-    effect.currentFrame = 0;
-    /* @ts-ignore */
-    effect._currentTime = 0;
-    if (needCalculateMaxDuration && effect.totalDuration > duractionMs) {
-      duractionMs = effect.totalDuration;
-    }
-    timelines.push(effect.timeline);
   }
   /* reset name tag frame */
   if (
