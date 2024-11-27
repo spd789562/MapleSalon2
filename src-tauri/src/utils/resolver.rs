@@ -8,7 +8,8 @@ use wz_reader::{version::WzMapleVersion, SharedWzMutableKey, WzNode, WzNodeArc, 
 use super::{block_parse, block_parse_with_parent};
 use crate::{Error, Result};
 
-const WZ_ROOT_FOLDER_NEED_LOAD: [&str; 6] = ["Base", "Character", "Effect", "String", "UI", "Skill"];
+const WZ_ROOT_FOLDER_NEED_LOAD: [&str; 6] =
+    ["Base", "Character", "Effect", "String", "UI", "Skill"];
 
 pub async fn get_root_wz_file_path(dir: &DirEntry) -> Option<String> {
     let dir_name = dir.file_name();
@@ -209,28 +210,29 @@ pub async fn resolve_pack_ms(path: &str, base_node: &WzNodeArc) -> Result<()> {
     }
     let wz_root_path = first_parent.parent().unwrap();
 
-    let pack_path = format!("{}/{}", wz_root_path.to_str().unwrap(), "Packs");
+    let pack_path = wz_root_path.join("Pack");
 
-    if fs::try_exists(&pack_path).await.is_err() {
+    let pack_entry = fs::read_dir(&pack_path).await;
+
+    if pack_entry.is_err() {
         return Ok(());
     }
 
-    let mut entries = fs::read_dir(&pack_path).await?;
+    let mut entries = pack_entry.unwrap();
 
-    
     while let Some(item) = entries.next_entry().await? {
         if !item.file_name().to_str().unwrap().starts_with("Skill") {
             continue;
         }
 
         let ms_node = WzNode::from_ms_file(item.path(), Some(base_node))?.into_lock();
-        
+
         block_parse(&ms_node).await?;
 
         let root_read = base_node.read().unwrap();
 
         for (path, node) in ms_node.read().unwrap().children.iter() {
-            let p =  Path::new(path.as_str());
+            let p = Path::new(path.as_str());
             let path_without_file = p.parent().unwrap();
             let filename = p.file_name().unwrap().to_str().unwrap();
             let dest_node = root_read.at_path(path_without_file.to_str().unwrap());
@@ -240,7 +242,11 @@ pub async fn resolve_pack_ms(path: &str, base_node: &WzNodeArc) -> Result<()> {
             let dest_node = dest_node.unwrap();
 
             node.write().unwrap().parent = Arc::downgrade(&dest_node);
-            dest_node.write().unwrap().children.insert(filename.into(), node.clone());
+            dest_node
+                .write()
+                .unwrap()
+                .children
+                .insert(filename.into(), node.clone());
         }
     }
 
