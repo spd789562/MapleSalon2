@@ -1,7 +1,6 @@
-import { createMemo, Switch, Match } from 'solid-js';
+import { createMemo, Switch, Match, from } from 'solid-js';
 import { computed } from 'nanostores';
 import { useStore } from '@nanostores/solid';
-import { usePureStore } from '@/store';
 
 import {
   $equipmentDrawerEquipFilteredString,
@@ -11,6 +10,7 @@ import {
   EquipTab,
   EquipListType,
 } from '@/store/equipDrawer';
+import type { EquipItem } from '@/store/string';
 import { RowVirtualizer } from '@/components/ui/rowVirtualizer';
 import { EquipItemButton } from './EquipItemButton';
 import { EquipItemRowButton } from './EquipitemRowButton';
@@ -45,8 +45,8 @@ const DefaultHeightMap = {
 };
 
 export const EquipList = () => {
+  const equipStrings = from($equipmentDrawerEquipFilteredString);
   const equipRenderType = useStore($equipRenderType);
-  const equipStrings = usePureStore($equipmentDrawerEquipFilteredString);
 
   const columnCount = createMemo(() => ColumnCountMap[equipRenderType()]);
   const defaultItemHeight = createMemo(
@@ -80,7 +80,7 @@ export const EquipList = () => {
           </Match>
         </Switch>
       )}
-      data={equipStrings()}
+      data={(equipStrings() || []) as EquipItem[]}
     />
   );
 };

@@ -18,7 +18,7 @@ export const $equipmentFavorite = atom<EquipItem[]>([]);
 
 export const $equipmentFavoriteEquipCategory =
   atom<EquipCategorySelections>(AllCategory);
-export const $equipmentFavoriteEquipCategorySelectionOpen = atom(true);
+export const $equipmentFavoriteEquipCategorySelectionOpen = atom(false);
 
 export const $equipmentFavoriteSearch = map<
   Partial<Record<EquipCategorySelections, string>>
@@ -34,7 +34,7 @@ export async function initializeSavedEquipmentFavorite() {
   }
 }
 
-export function appendFavorite(item: EquipItem) {
+export function appendFavoriteEquip(item: EquipItem) {
   const current = $equipmentFavorite.get().filter((e) => e.id !== item.id);
   const list = [...current, item];
   $equipmentFavorite.set(list);
@@ -45,7 +45,7 @@ export function appendFavorite(item: EquipItem) {
   }
 }
 
-export function removeFavorite(item: EquipItem) {
+export function removeFavoriteEquip(item: EquipItem) {
   const current = $equipmentFavorite.get().filter((e) => e.id !== item.id);
   $equipmentFavorite.set(current);
   try {
@@ -53,6 +53,10 @@ export function removeFavorite(item: EquipItem) {
   } catch (_) {
     console.error('Failed to save favorite');
   }
+}
+
+export function isFavoriteEquip(id: number) {
+  return $equipmentFavorite.get().some((e) => e.id === id);
 }
 
 export function saveFavorite() {
@@ -84,6 +88,9 @@ function validateEquipItem(item: EquipItem) {
   }
   if (item.isChatBalloon) {
     returnItem.isChatBalloon = !!item.isChatBalloon;
+  }
+  if (item.category) {
+    returnItem.category = item.category;
   }
 
   return returnItem;

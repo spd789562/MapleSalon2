@@ -7,6 +7,7 @@ import { selectNewItem } from '@/store/character/action';
 import { CssTooltip } from '@/components/ui/cssTooltip';
 import { LoadableEquipIcon } from '@/components/elements/LoadableEquipIcon';
 import { CharacterAvatar } from './CharacterAvatar';
+import { AddToFavoriteButton } from './AddToFavoriteButton';
 
 export interface EquipItemButtonProps {
   item: EquipItem;
@@ -27,7 +28,7 @@ export const EquipItemButton = (props: EquipItemButtonProps) => {
   }
 
   return (
-    <EquipItemButtonContainer p="1" type="button" onClick={handleClick}>
+    <EquipItemButtonContainer type="button" onClick={handleClick}>
       <CssTooltip
         width="full"
         height="full"
@@ -53,6 +54,9 @@ export const EquipItemButton = (props: EquipItemButtonProps) => {
           </Match>
         </Switch>
       </CssTooltip>
+      <FavoriteButtonPositioner>
+        <AddToFavoriteButton id={props.item.id} item={props.item} />
+      </FavoriteButtonPositioner>
     </EquipItemButtonContainer>
   );
 };
@@ -61,5 +65,24 @@ const EquipItemButtonContainer = styled('button', {
   base: {
     width: 'full',
     height: 'full',
+    cursor: 'pointer',
+    padding: '1',
+    position: 'relative',
+    '& .favorite-button': {
+      visibility: 'hidden',
+    },
+    '&:hover': {
+      '& .favorite-button': {
+        visibility: 'visible',
+      },
+    },
+  },
+});
+
+const FavoriteButtonPositioner = styled('div', {
+  base: {
+    position: 'absolute',
+    top: '0',
+    right: '0',
   },
 });

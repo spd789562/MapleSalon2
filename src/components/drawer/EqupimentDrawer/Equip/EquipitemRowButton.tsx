@@ -6,12 +6,13 @@ import { selectNewItem } from '@/store/character/action';
 import { LoadableEquipIcon } from '@/components/elements/LoadableEquipIcon';
 import { Text } from '@/components/ui/text';
 import { PureTextClipboard } from '@/components/ui/clipboard';
+import { AddToFavoriteButton } from './AddToFavoriteButton';
 
 import { byteLength } from '@/utils/string';
 
 export const rowFontSize = (text: string) => {
   const len = byteLength(text);
-  return len > 36 ? '0.875rem' : '1rem';
+  return len > 28 ? '0.85rem' : '1rem';
 };
 
 export interface EquipItemRowButtonProps {
@@ -49,6 +50,7 @@ export const EquipItemRowButton = (props: EquipItemRowButtonProps) => {
       >
         <PureTextClipboard value={props.item.name} />
       </EquipItemName>
+      <AddToFavoriteButton id={props.item.id} item={props.item} />
     </EquipItemButtonContainer>
   );
 };
@@ -58,7 +60,7 @@ const EquipItemButtonContainer = styled('button', {
     width: 'full',
     height: 'full',
     display: 'grid',
-    gridTemplateColumns: 'auto auto 1fr',
+    gridTemplateColumns: 'auto auto 1fr auto',
     alignItems: 'center',
     cursor: 'pointer',
     '&:hover': {

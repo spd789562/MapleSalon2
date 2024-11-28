@@ -1,13 +1,13 @@
-import { createMemo, Switch, Match } from 'solid-js';
+import { createMemo, Switch, Match, from } from 'solid-js';
 import { computed } from 'nanostores';
 import { useStore } from '@nanostores/solid';
-import { usePureStore } from '@/store';
 
 import {
   $equipmentDrawerEquipListType,
   $equipmentDrawerExperimentCharacterRender,
   EquipListType,
 } from '@/store/equipDrawer';
+import type { EquipItem } from '@/store/string';
 import {
   $equipmentFavoriteEquipCategory,
   $equipmentFavoriteEquipFilteredString,
@@ -47,7 +47,7 @@ const DefaultHeightMap = {
 
 export const FavoriteList = () => {
   const equipRenderType = useStore($equipRenderType);
-  const equipStrings = usePureStore($equipmentFavoriteEquipFilteredString);
+  const equipStrings = from($equipmentFavoriteEquipFilteredString);
 
   const columnCount = createMemo(() => ColumnCountMap[equipRenderType()]);
   const defaultItemHeight = createMemo(
@@ -81,7 +81,7 @@ export const FavoriteList = () => {
           </Match>
         </Switch>
       )}
-      data={equipStrings()}
+      data={(equipStrings() || []) as EquipItem[]}
     />
   );
 };

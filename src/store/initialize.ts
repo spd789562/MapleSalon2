@@ -12,6 +12,7 @@ import {
   $defaultLoadItem,
 } from '@/store/settingDialog';
 import { initializeSavedEquipmentHistory } from '@/store/equipHistory';
+import { initializeSavedEquipmentFavorite } from '@/store/equipFavorite';
 import { prepareAndFetchEquipStrings } from '@/store/string';
 import { prepareAndFetchChairStrings } from '@/store/chair';
 import { initialGlobalRenderer } from '@/store/renderer';
@@ -52,6 +53,7 @@ export async function initApp() {
     await initializeSavedFileSelectHistory();
     await initializeSavedSetting();
     await initializeSavedEquipmentHistory();
+    await initializeSavedEquipmentFavorite();
   } catch (_) {
     toaster.error({
       title: '初始化錯誤',

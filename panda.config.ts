@@ -21,6 +21,7 @@ export default defineConfig({
         'tomato',
         'crimson',
         'orange',
+        'yellow',
         'amber',
         'grass',
         'cyan',
