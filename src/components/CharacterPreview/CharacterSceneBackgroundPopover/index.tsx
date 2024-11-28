@@ -8,7 +8,7 @@ import {
   $sceneRepeatY,
 } from '@/store/scene';
 
-import { XIcon } from 'lucide-solid';
+import CloseIcon from 'lucide-solid/icons/x';
 import { Stack } from 'styled-system/jsx/stack';
 import { HStack } from 'styled-system/jsx/hstack';
 import { Box } from 'styled-system/jsx/box';
@@ -98,7 +98,7 @@ export const CharacterSceneBackgroundPopover = (
                     {...closeProps()}
                     onClick={handleOutsideClick}
                   >
-                    <XIcon />
+                    <CloseIcon />
                   </IconButton>
                 )}
               />

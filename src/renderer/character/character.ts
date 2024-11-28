@@ -299,9 +299,7 @@ export class Character extends Container {
     ) as CharacterAction;
     characterData.action = action;
     characterData.instruction = instruction;
-    if (!instruction) {
-      this.bodyFrame.position.set(0, 0);
-    }
+    this.bodyFrame.position.set(0, 0);
     this.skill = skill;
     return true;
   }

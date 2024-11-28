@@ -111,7 +111,7 @@ export async function characterToCanvasFramesWithEffects(
   }
 
   /* reset effects frame */
-  if (character.isHideAllEffect) {
+  if (!character.isHideAllEffect) {
     for (const effect of character.allEffectPieces) {
       effect.currentFrame = 0;
       /* @ts-ignore */

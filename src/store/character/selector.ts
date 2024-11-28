@@ -55,7 +55,7 @@ export const $currentChatBalloonId = computed(
 export const $showNameTag = computed($totalInfo, (info) => !!info.showNameTag);
 export const $showChatBalloon = computed(
   $totalInfo,
-  (info) => !!info.chatBalloonId,
+  (info) => !!info.showChatBalloon,
 );
 
 export const $currentCharacter = batched(
