@@ -210,7 +210,7 @@ pub async fn resolve_pack_ms(path: &str, base_node: &WzNodeArc) -> Result<()> {
     }
     let wz_root_path = first_parent.parent().unwrap();
 
-    let pack_path = wz_root_path.join("Pack");
+    let pack_path = wz_root_path.join("Packs");
 
     let pack_entry = fs::read_dir(&pack_path).await;
 
