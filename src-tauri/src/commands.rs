@@ -1,6 +1,6 @@
 use crate::{handlers, models, utils, AppStore, Error, Result};
 use serde_json::{to_string, Map, Value};
-use tauri::{command, AppHandle, Runtime, State, Window};
+use tauri::{command, ipc, AppHandle, Runtime, State, Window};
 use wz_reader::{util::node_util, version::WzMapleVersion, WzNodeCast};
 
 #[command]
@@ -161,6 +161,19 @@ pub(crate) async fn get_childs_info<R: Runtime>(
             }
         })
         .collect())
+}
+
+#[command]
+pub(crate) fn encode_webp(request: ipc::Request) -> ipc::Response {
+    let ipc::InvokeBody::Raw(webp_data) = request.body() else {
+        return ipc::Response::new(vec![]);
+    };
+    let data = handlers::webp::encode_wep_animation(&webp_data);
+    if let Ok(data) = data {
+        ipc::Response::new(data.to_vec())
+    } else {
+        ipc::Response::new(vec![])
+    }
 }
 
 // #[command]

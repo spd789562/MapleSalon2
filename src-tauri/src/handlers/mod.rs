@@ -9,6 +9,7 @@ mod png;
 mod skill;
 mod smap;
 mod string;
+pub mod webp;
 mod zmap;
 
 pub use chair::*;
