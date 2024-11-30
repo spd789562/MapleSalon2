@@ -11,7 +11,7 @@ import type {
   Vec2,
   ItemDyeInfo,
 } from './const/data';
-import type { WzItem, WzEffectItem } from './const/wz';
+import type { WzItem, WzEffectItem, WzPieceFrame } from './const/wz';
 
 import {
   isFaceId,
@@ -119,16 +119,32 @@ export class CharacterItem implements RenderItemInfo {
     const expressions = Object.keys(wz).filter((key) =>
       expressionNeedToBuild.includes(key as CharacterExpressions),
     ) as CharacterExpressions[];
+    console.log('expressions', expressions, wz);
     for (const expression of expressions) {
       const expressionWz = wz[expression];
 
       if (!expressionWz) {
         continue;
       }
-
+      console.log('expressionWz', expressionWz);
       const actionItem = new CharacterFaceItem(expression, expressionWz, this);
 
       this.actionPieces.set(expression, actionItem);
+    }
+    // fix some face not have default frame
+    if (
+      !wz[CharacterExpressions.Default] &&
+      wz[CharacterExpressions.Blink]?.[0]
+    ) {
+      const { delay, ...blinkFrameOne } = wz[CharacterExpressions.Blink][0];
+
+      const actionItem = new CharacterFaceItem(
+        CharacterExpressions.Default,
+        blinkFrameOne as unknown as Record<number, WzPieceFrame>,
+        this,
+      );
+
+      this.actionPieces.set(CharacterExpressions.Default, actionItem);
     }
     if (!this.isCleanedWz) {
       for (const key of Object.keys(wz)) {
