@@ -69,7 +69,7 @@ export class SkillPart implements AnimatableFrame {
     if (this._srpite) {
       return this._srpite;
     }
-    const sprite = new Sprite(this.getTexture());
+    const sprite = Sprite.from(this.getTexture());
     // sprite.anchor.set(1, 1); // not sure it right to do
     this._srpite = sprite;
     return this._srpite;

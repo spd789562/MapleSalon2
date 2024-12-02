@@ -138,7 +138,7 @@ export class ChatBalloonBackground extends Container {
     this.addSpriteWithPos(8, x, y);
   }
   addSpriteWithPos(textureIndex: number, x: number, y: number) {
-    const sprite = new Sprite(this.assets[textureIndex]);
+    const sprite = Sprite.from(this.assets[textureIndex]);
     const offset = this.pieces[textureIndex]?.origin || { x: 0, y: 0 };
     const xOffsetByArrow =
       this.pieces[9] && this.assets[7].width > this.assets[9].width

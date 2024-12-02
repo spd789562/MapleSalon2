@@ -82,7 +82,7 @@ class RepeatCenterPiece extends Container {
     this.removeChildren();
     const centerCount = Math.ceil(this._nameWidth / this.texture.width);
     for (let i = 0; i < centerCount; i++) {
-      const sprite = new Sprite(this.texture);
+      const sprite = Sprite.from(this.texture);
       sprite.x = this.texture.width * i;
       this.addChild(sprite);
     }

@@ -25,7 +25,7 @@ export interface WzMapInfoData {
 
 export interface WzMapLayerInfo {
   info: {
-    ts: string;
+    tS: string;
   };
   obj?: Record<number, WzMapObjInfo>;
   tile?: Record<number, WzMapTileInfo>;
@@ -69,7 +69,7 @@ export interface WzMapObjInfo {
   l1: string;
   l2: string;
   /** index of layer 0-9 */
-  layer: number;
+  layer?: number;
   x: number;
   y: number;
   z: number;
@@ -78,7 +78,10 @@ export interface WzMapObjInfo {
   /** moving 0 or 1 */
   move: number;
 
+  spineAni?: string;
+
   /* not sure */
+  flow?: number;
   dynamic?: number;
   name?: string;
   piece: number;
@@ -134,6 +137,16 @@ export interface WzMapFootholdInfo {
   next: number;
   prev: number;
 }
+
+export type WzMapObjTypeFolder = Record<string, WzMapObjFolder>;
+export type WzMapObjFolder = Record<string, WzMapObjData>;
+export type WzMapObjData = WzMapObjFrames & Record<string, WzMapObjFrames>;
+export type WzMapObjFrames = Record<string, WzPngPieceInfo>;
+
+export type WzMapBackStaticFolder = Record<string, WzPngPieceInfo>;
+export type WzMapBackAniFolder = Record<string, Record<number, WzPngPieceInfo>>;
+
+export type WzMapTileFolder = Record<string, Record<string, WzPngPieceInfo>>;
 
 export interface WzPngPieceInfo {
   origin: Vec2;

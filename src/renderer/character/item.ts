@@ -119,14 +119,12 @@ export class CharacterItem implements RenderItemInfo {
     const expressions = Object.keys(wz).filter((key) =>
       expressionNeedToBuild.includes(key as CharacterExpressions),
     ) as CharacterExpressions[];
-    console.log('expressions', expressions, wz);
     for (const expression of expressions) {
       const expressionWz = wz[expression];
 
       if (!expressionWz) {
         continue;
       }
-      console.log('expressionWz', expressionWz);
       const actionItem = new CharacterFaceItem(expression, expressionWz, this);
 
       this.actionPieces.set(expression, actionItem);

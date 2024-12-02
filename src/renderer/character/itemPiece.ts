@@ -96,7 +96,7 @@ export class CharacterItemPiece implements AnimatableFrame {
     if (this._srpite) {
       return this._srpite;
     }
-    this._srpite = new Sprite(this.getTexture());
+    this._srpite = Sprite.from(this.getTexture());
     return this._srpite;
   }
   getResource() {
