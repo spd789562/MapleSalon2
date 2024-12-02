@@ -77,7 +77,7 @@ export async function characterToCanvasFramesWithEffects(
   },
 ) {
   let duractionMs = options?.duractionMs || 0;
-  const needCalculateMaxDuration = !duractionMs || character.skill;
+  const needCalculateMaxDuration = !!duractionMs || character.skill;
 
   const isOriginalAnimating = character.isAnimating;
 
@@ -170,7 +170,10 @@ export async function characterToCanvasFramesWithEffects(
 
   const mergedTimeline = createMergedTimeline(timelines);
 
-  if (needCalculateMaxDuration) {
+  if (
+    needCalculateMaxDuration &&
+    mergedTimeline[mergedTimeline.length - 1] > duractionMs
+  ) {
     // binary search the portion
     let start = 0;
     let end = mergedTimeline.length - 1;
