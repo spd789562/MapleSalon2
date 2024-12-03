@@ -1,26 +1,42 @@
-import { Container } from 'pixi.js';
+import { Container, Sprite, Texture, type Renderer } from 'pixi.js';
 
 import type { WzMapData } from './const/wz';
 import { CharacterLoader } from '../character/loader';
 import { MapTileSet } from './mapTileSet';
 import { MapObjSet } from './mapObjSet';
+import { MapBackSet } from './mapBackSet';
 
 const LAYER_COUNT = 16;
 const BOTTOM_LAYER = 0;
-const CHARACTER_LAYER = 5;
 const TOP_LAYER = 15;
 
 export class MapleMap extends Container {
   id: string;
   wz: WzMapData | null = null;
   layers: Container[] = [];
-  constructor(id: string) {
+  renderer: Renderer;
+  readonly bottomLayer = BOTTOM_LAYER;
+  readonly topLayer = TOP_LAYER;
+  edges = {
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  };
+  size = {
+    width: 800,
+    height: 600,
+  };
+
+  constructor(id: string, renderer: Renderer) {
     super();
     this.id = id;
-    this.sortableChildren = true;
+    // this.sortableChildren = true;
+    this.renderer = renderer;
     for (let i = 0; i < LAYER_COUNT; i++) {
       const layer = new Container();
       layer.sortableChildren = true;
+      layer.zIndex = i;
       this.layers.push(layer);
       this.addChild(layer);
     }
@@ -35,9 +51,23 @@ export class MapleMap extends Container {
     if (!this.wz) {
       return;
     }
+    this.setMapBound(this.wz);
+
     await this.loadTileSet(this.wz);
     await this.loadObjSet(this.wz);
-    this.position.set(-2000, -300);
+    await this.loadBackSet(this.wz);
+  }
+  setMapBound(wz: WzMapData) {
+    this.size.width = wz.miniMap.width || this.edges.right - this.edges.left;
+    this.size.height = wz.miniMap.height || this.edges.bottom - this.edges.top;
+    this.edges.top = wz.miniMap ? -wz.miniMap.centerY : this.edges.top;
+    this.edges.left = wz.miniMap ? -wz.miniMap.centerX : this.edges.left;
+    this.edges.bottom = wz.miniMap
+      ? this.edges.top + this.size.height
+      : this.edges.bottom;
+    this.edges.right = wz.miniMap
+      ? this.edges.left + this.size.width
+      : this.edges.right;
   }
   async loadTileSet(wz: WzMapData) {
     const sets: Record<number, MapTileSet> = {};
@@ -62,11 +92,11 @@ export class MapleMap extends Container {
   async loadObjSet(wz: WzMapData) {
     const objSet = new MapObjSet(wz);
     await objSet.load();
-    for (let i = 0; i < LAYER_COUNT; i++) {
-      const layer = objSet.layers[i];
-      for (const obj of layer) {
-        this.layers[i + 1].addChild(obj);
-      }
-    }
+    objSet.putOnMap(this);
+  }
+  async loadBackSet(wz: WzMapData) {
+    const backSet = new MapBackSet(wz, this);
+    await backSet.load();
+    backSet.putOnMap(this);
   }
 }

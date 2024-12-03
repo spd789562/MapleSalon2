@@ -7,9 +7,10 @@ import type {
   WzMapObjInfo,
 } from './const/wz';
 import { CharacterLoader } from '../character/loader';
+import type { MapleMap } from './map';
 import { MapObj } from './mapObj';
 
-const LAYER_COUNT = 16;
+const LAYER_COUNT = 14;
 
 export class MapObjSet {
   unprocessedObjs: WzMapObjInfo[][] = [];
@@ -53,7 +54,7 @@ export class MapObjSet {
     for (let i = 0; i < LAYER_COUNT; i++) {
       const unprocessLayer = this.unprocessedObjs[i] || [];
       for (const obj of unprocessLayer) {
-        if ((obj?.flow ?? 0) > 0 || obj?.spineAni) {
+        if ((obj?.flow ?? 0) > 0 || obj?.spineAni || obj?.hide === 1) {
           continue;
         }
         const objData = wz[obj.oS]?.[obj.l0]?.[obj.l1]?.[
@@ -73,6 +74,14 @@ export class MapObjSet {
     await Assets.load(Array.from(textureMap.values()));
     for (const obj of this.layers.flat()) {
       obj.prepareResource();
+    }
+  }
+  putOnMap(mapleMap: MapleMap) {
+    for (let i = 0; i < LAYER_COUNT; i++) {
+      const layer = this.layers[i];
+      for (const obj of layer) {
+        mapleMap.layers[i + 1].addChild(obj);
+      }
     }
   }
 }

@@ -79,6 +79,7 @@ export interface WzMapObjInfo {
   move: number;
 
   spineAni?: string;
+  hide?: number;
 
   /* not sure */
   flow?: number;
@@ -143,6 +144,10 @@ export type WzMapObjFolder = Record<string, WzMapObjData>;
 export type WzMapObjData = WzMapObjFrames & Record<string, WzMapObjFrames>;
 export type WzMapObjFrames = Record<string, WzPngPieceInfo>;
 
+export type WzMapBackFolder = {
+  ani: WzMapBackAniFolder;
+  back: WzMapBackStaticFolder;
+};
 export type WzMapBackStaticFolder = Record<string, WzPngPieceInfo>;
 export type WzMapBackAniFolder = Record<string, Record<number, WzPngPieceInfo>>;
 
