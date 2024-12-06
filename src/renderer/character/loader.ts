@@ -183,6 +183,10 @@ class Loader {
     });
     return Sprite.from(texture);
   }
+
+  getRaw(path: string) {
+    return fetch(`${this.apiHost}/node/raw/${path}?force_parse=true`);
+  }
 }
 
 export const CharacterLoader = new Loader();
