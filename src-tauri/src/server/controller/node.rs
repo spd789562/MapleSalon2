@@ -8,6 +8,7 @@ use axum::extract::{Path, Query};
 use axum::{body::Body, extract::State, http::header, response::IntoResponse};
 use image::ImageFormat;
 use wz_reader::util::node_util;
+use wz_reader::WzNodeCast;
 
 use super::super::AppState;
 
@@ -57,6 +58,29 @@ pub async fn get_image_unparsed(
             (header::CACHE_CONTROL, "max-age=3600"),
         ],
         body,
+    ))
+}
+
+pub async fn get_raw(TargetNodeExtractor(node): TargetNodeExtractor) -> Result<impl IntoResponse> {
+    let buffer: Vec<u8>;
+
+    if let Some(raw) = node.read().unwrap().try_as_raw_data() {
+        buffer = raw.get_buffer().to_vec();
+    } else if let Some(raw) = node.read().unwrap().try_as_sound() {
+        if raw.sound_type != wz_reader::property::WzSoundType::Binary {
+            return Err(Error::NodeTypeMismatch("WzSound(Binary)"));
+        }
+        buffer = raw.get_buffer();
+    } else {
+        return Err(Error::NodeTypeMismatch("WzRaw or WzSound"));
+    }
+
+    Ok((
+        [
+            (header::CONTENT_TYPE, "application/octet-stream"),
+            (header::CACHE_CONTROL, "public, max-age=3600"),
+        ],
+        buffer,
     ))
 }
 
