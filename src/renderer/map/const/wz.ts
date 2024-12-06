@@ -1,4 +1,5 @@
 import type { Vec2 } from './data';
+import type { WzSpineData } from '@/renderer/spine/const/wz';
 
 export type WzMapData = {
   back: Record<number, WzMapBackInfo>;
@@ -59,9 +60,13 @@ export interface WzMapBackInfo {
   /** moving speed */
   flowX?: number;
   flowY?: number;
+
+  spineAni?: string;
+  backTags?: string;
 }
 
 export interface WzMapObjInfo {
+  id?: number;
   /** obj {oS}.img name */
   oS: string;
   /** {oS}.img/{l0}/{l1}/{l2} */
@@ -142,11 +147,12 @@ export interface WzMapFootholdInfo {
 export type WzMapObjTypeFolder = Record<string, WzMapObjFolder>;
 export type WzMapObjFolder = Record<string, WzMapObjData>;
 export type WzMapObjData = WzMapObjFrames & Record<string, WzMapObjFrames>;
-export type WzMapObjFrames = Record<string, WzPngPieceInfo>;
+export type WzMapObjFrames = Record<string, WzPngPieceInfo> & WzSpineData;
 
 export type WzMapBackFolder = {
   ani: WzMapBackAniFolder;
   back: WzMapBackStaticFolder;
+  spine: Record<string, WzSpineData>;
 };
 export type WzMapBackStaticFolder = Record<string, WzPngPieceInfo>;
 export type WzMapBackAniFolder = Record<string, Record<number, WzPngPieceInfo>>;

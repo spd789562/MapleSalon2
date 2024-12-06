@@ -8,13 +8,16 @@ import {
 
 import type { WzMapObjData, WzMapObjInfo, WzPngPieceInfo } from './const/wz';
 import { CharacterLoader } from '../character/loader';
+import { type SkeletonData, Spine } from '@esotericsoftware/spine-pixi-v8';
+import { compositezIndex } from '../uniqZindex';
 
 export class MapObj extends Container {
   info: WzMapObjInfo;
   wz: WzMapObjData;
   frames: [string, number][] = [];
-  renderObj: Sprite | AnimatedSprite | null = null;
-  constructor(info: WzMapObjInfo, wz: WzMapObjData) {
+  renderObj: Sprite | AnimatedSprite | Spine | null = null;
+  skeletonData?: SkeletonData;
+  constructor(info: WzMapObjInfo, wz: WzMapObjData, id: number) {
     super();
     this.info = info;
     this.wz = wz;
@@ -22,10 +25,13 @@ export class MapObj extends Container {
     numberKeys.sort((a, b) => a - b);
     for (const key of numberKeys) {
       const obj = wz[key] as unknown as WzPngPieceInfo;
+      if (!obj) {
+        continue;
+      }
       this.frames.push([obj._outlink || obj.path || '', obj.delay || 100]);
     }
     this.position.set(info.x ?? 0, info.y ?? 0);
-    this.zIndex = info.z ?? 0;
+    this.zIndex = compositezIndex(info.z ?? 0, id);
     this.scale.x = info.f === 1 ? -1 : 1;
   }
   get resources() {
@@ -39,12 +45,18 @@ export class MapObj extends Container {
     });
   }
   prepareResource() {
-    if (this.frames.length < 2) {
+    if (this.frames.length < 2 && !this.skeletonData) {
       this.renderObj = Sprite.from(this.frames[0][0]);
       this.renderObj.pivot.set(
         this.wz[0]?.origin?.x || 0,
         this.wz[0]?.origin?.y || 0,
       );
+    } else if (this.skeletonData) {
+      const spine = new Spine(this.skeletonData);
+      if (this.info.spineAni) {
+        spine.state.setAnimation(0, this.info.spineAni, true);
+      }
+      this.renderObj = spine;
     } else {
       const sprite = new AnimatedSprite(
         this.frames.map((frame) => ({

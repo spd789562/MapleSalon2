@@ -1,4 +1,4 @@
-import { Assets, Graphics, type UnresolvedAsset } from 'pixi.js';
+import { Assets, type UnresolvedAsset } from 'pixi.js';
 
 import type {
   WzMapData,
@@ -6,15 +6,18 @@ import type {
   WzMapBackFolder,
   WzPngPieceInfo,
 } from './const/wz';
+import type { WzSpineData } from '../spine/const/wz';
 import { CharacterLoader } from '../character/loader';
 import { MapBack } from './mapBack';
 import type { MapleMap } from './map';
+import { createSkeletonData } from '../spine/createSkeletonData';
 
 export class MapBackSet {
   unprocessedBacks: [WzMapBackInfo, number][] = [];
   layers: [MapBack[], MapBack[]] = [[], []];
   imgUsed = new Set<string>();
   map: MapleMap;
+  showTagItems = false;
   constructor(wz: WzMapData, map: MapleMap) {
     this.initialize(wz);
     this.map = map;
@@ -34,7 +37,6 @@ export class MapBackSet {
   }
   async load() {
     const imgUsed = Array.from(this.imgUsed);
-    console.log('imgUsed', imgUsed);
     const objWzs = (await Promise.all(
       imgUsed.map((img) =>
         CharacterLoader.getPieceWzByPath(`Map/Back/${img}.img`),
@@ -49,28 +51,49 @@ export class MapBackSet {
     );
     const textureMap = new Map<string, UnresolvedAsset>();
     for (const [info, zIndex] of this.unprocessedBacks) {
-      if (info.ani && info.ani > 1) {
+      if (!this.showTagItems && info.backTags) {
         continue;
       }
-      const backTyep = info.ani === 1 ? 'ani' : 'back';
+      const backTyep =
+        info.ani === 1 ? 'ani' : info.ani === 2 ? 'spine' : 'back';
       const _backData = wz[info.bS]?.[backTyep]?.[info.no];
       if (!_backData) {
         continue;
       }
-      const backData =
-        info.ani === 1
-          ? (_backData as Record<number, WzPngPieceInfo>)
-          : {
-              0: _backData as WzPngPieceInfo,
-            };
-      const backObj = new MapBack(info, backData, zIndex, this);
-      for (const asset of backObj.resources) {
-        textureMap.set(asset.alias as string, asset);
+      if (info.ani === 2) {
+        const backObj = new MapBack(
+          info,
+          {
+            0:
+              (_backData as WzSpineData)['0'] ||
+              (_backData as WzSpineData['skeleton']),
+          },
+          zIndex,
+          this,
+        );
+        const prefix = `Map/Back/${info.bS}.img/spine/${info.no}`;
+        const data = await createSkeletonData(_backData as WzSpineData, prefix);
+        console.log('data', data);
+        if (data) {
+          backObj.skeletonData = data;
+          const layer = info.front === 1 ? 1 : 0;
+          this.layers[layer].push(backObj);
+        }
+      } else {
+        const backData =
+          info.ani === 1
+            ? (_backData as Record<number, WzPngPieceInfo>)
+            : {
+                0: _backData as WzPngPieceInfo,
+              };
+        const backObj = new MapBack(info, backData, zIndex, this);
+        for (const asset of backObj.resources) {
+          textureMap.set(asset.alias as string, asset);
+        }
+        const layer = info.front === 1 ? 1 : 0;
+        this.layers[layer].push(backObj);
       }
-      const layer = info.front === 1 ? 1 : 0;
-      this.layers[layer].push(backObj);
     }
-    console.log('textureMap', textureMap);
     this.unprocessedBacks = [];
     await Assets.load(Array.from(textureMap.values()));
     for (const back of this.layers.flat()) {

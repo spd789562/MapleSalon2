@@ -1,4 +1,5 @@
-import { Container, Sprite, Texture, type Renderer } from 'pixi.js';
+import { Container, type Renderer } from 'pixi.js';
+import type { Viewport } from 'pixi-viewport';
 
 import type { WzMapData } from './const/wz';
 import { CharacterLoader } from '../character/loader';
@@ -15,6 +16,7 @@ export class MapleMap extends Container {
   wz: WzMapData | null = null;
   layers: Container[] = [];
   renderer: Renderer;
+  viewport: Viewport;
   readonly bottomLayer = BOTTOM_LAYER;
   readonly topLayer = TOP_LAYER;
   edges = {
@@ -28,11 +30,12 @@ export class MapleMap extends Container {
     height: 600,
   };
 
-  constructor(id: string, renderer: Renderer) {
+  constructor(id: string, renderer: Renderer, viewport: Viewport) {
     super();
     this.id = id;
     // this.sortableChildren = true;
     this.renderer = renderer;
+    this.viewport = viewport;
     for (let i = 0; i < LAYER_COUNT; i++) {
       const layer = new Container();
       layer.sortableChildren = true;
@@ -54,7 +57,7 @@ export class MapleMap extends Container {
     this.setMapBound(this.wz);
 
     await this.loadTileSet(this.wz);
-    await this.loadObjSet(this.wz);
+    // await this.loadObjSet(this.wz);
     await this.loadBackSet(this.wz);
   }
   setMapBound(wz: WzMapData) {

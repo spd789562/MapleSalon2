@@ -8,7 +8,7 @@ import {
 } from 'pixi.js';
 
 export interface CloneableContainer extends Container {
-  clone(): this;
+  clone(): CloneableContainer;
 }
 
 export enum TileMode {

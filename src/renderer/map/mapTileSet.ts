@@ -8,11 +8,13 @@ import {
 
 import type { WzMapTileInfo, WzMapTileFolder } from './const/wz';
 import { CharacterLoader } from '../character/loader';
+import { compositezIndex } from '../uniqZindex';
 
 export interface TileItem {
   name: string;
   x: number;
   y: number;
+  z: number;
 }
 
 export class MapTileSet extends Container {
@@ -46,6 +48,7 @@ export class MapTileSet extends Container {
         name,
         x: point.x ?? 0,
         y: point.y ?? 0,
+        z: compositezIndex(tile.z ?? 0, key),
       });
     }
   }
@@ -88,13 +91,14 @@ export class MapTileSet extends Container {
     this.renderTile();
   }
   renderTile() {
-    for (const { name, x, y } of this.tiles) {
+    for (const { name, x, y, z } of this.tiles) {
       const spriteOrigin = this.tileNames.get(name);
       const sprite = Sprite.from(Assets.get(name));
       if (spriteOrigin) {
         sprite.pivot.set(spriteOrigin.x, spriteOrigin.y);
       }
       sprite.position.set(x, y);
+      sprite.zIndex = z;
       this.addChild(sprite);
     }
   }

@@ -8,13 +8,17 @@ import {
   type UnresolvedAsset,
   type Renderer,
   Rectangle,
+  type DestroyOptions,
 } from 'pixi.js';
+import { type SkeletonData, Spine } from '@esotericsoftware/spine-pixi-v8';
 
 import type { WzMapBackInfo, WzPngPieceInfo } from './const/wz';
 import { CharacterLoader } from '../character/loader';
 import type { MapBackSet } from './mapBackSet';
 import {
+  type CloneableContainer,
   GapTilingAnimatedSprite,
+  GapTilingContainer,
   GapTilingSprite,
   TileMode,
 } from '../container/GapTilingContainer';
@@ -58,14 +62,22 @@ export class MapBack extends Container {
   info: WzMapBackInfo;
   wz: Record<number, WzPngPieceInfo>;
   frames: [string, number][] = [];
-  renderObj: TilingSprite | GapTilingSprite | Sprite | AnimatedSprite | null =
-    null;
+  renderObj:
+    | TilingSprite
+    | GapTilingSprite
+    | GapTilingContainer
+    | GapTilingAnimatedSprite
+    | Sprite
+    | AnimatedSprite
+    | CloneableSpine
+    | null = null;
   mode: TileMode;
   gapType = BackGapType.Zero;
   gap = { x: 0, y: 0 };
   flowSpeed = { x: 0, y: 0 };
   size = { width: 800, height: 600 };
   set: MapBackSet;
+  skeletonData?: SkeletonData;
   constructor(
     info: WzMapBackInfo,
     wz: Record<number, WzPngPieceInfo>,
@@ -80,6 +92,9 @@ export class MapBack extends Container {
     numberKeys.sort((a, b) => a - b);
     for (const key of numberKeys) {
       const obj = wz[key] as unknown as WzPngPieceInfo;
+      if (!obj) {
+        continue;
+      }
       this.frames.push([obj._outlink || obj.path || '', obj.delay || 100]);
     }
     this.position.set(info.x ?? 0, info.y ?? 0);
@@ -100,14 +115,23 @@ export class MapBack extends Container {
       } as UnresolvedAsset;
     });
   }
-  private getRenderObj(): Sprite | AnimatedSprite {
-    if (this.frames.length < 2) {
+  private getRenderObj(): Sprite | AnimatedSprite | CloneableSpine {
+    if (this.frames.length < 2 && !this.skeletonData) {
       const renderObj = Sprite.from(this.frames[0][0]);
       renderObj.pivot.set(
         this.wz[0]?.origin?.x || 0,
         this.wz[0]?.origin?.y || 0,
       );
       return renderObj;
+    }
+    if (this.skeletonData) {
+      const spine = new Spine(this.skeletonData);
+      // spine.pivot.set(this.wz[0]?.origin?.x || 0, this.wz[0]?.origin?.y || 0);
+      if (this.info.spineAni) {
+        spine.state.setAnimation(0, this.info.spineAni, true);
+      }
+      const clone = new CloneableSpine(this.skeletonData, spine);
+      return clone;
     }
     const sprite = new AnimatedSprite(
       this.frames.map((frame) => ({
@@ -136,6 +160,7 @@ export class MapBack extends Container {
     renderer: Renderer,
   ) {
     const target = this.getRenderObj();
+    console.log('target', target, this.info.cx, target.width);
     this.gap.x =
       (this.info.cx ?? 0) > 0 || this.info.cx % target.width !== 0
         ? this.info.cx - target.width
@@ -157,26 +182,22 @@ export class MapBack extends Container {
       this.mode !== TileMode.Horizontal
         ? this.set.map.edges.top
         : (this.info.y ?? 0);
-    console.log('this.position', this.position, this.size);
     if (this.mode === TileMode.None) {
       // it should unreachable
       return;
     }
+    const isStatic = this.frames.length < 2 && !this.skeletonData;
     // static and tileing
-    if (this.gapType === BackGapType.Zero && this.frames.length < 2) {
-      this.putZeroGapTiling(target);
+    if (this.gapType === BackGapType.Zero && isStatic) {
+      this.putZeroGapTiling(target as Sprite);
       // static and tiling with gap
-    } else if (
-      this.gapType === BackGapType.Positive &&
-      this.frames.length < 2
-    ) {
-      this.putPositiveGapTiling(target, renderer);
+    } else if (this.gapType === BackGapType.Positive && isStatic) {
+      this.putPositiveGapTiling(target as Sprite, renderer);
     } else {
       this.putExpensiveGapTiling(target);
     }
     const needMoving = !!this.info.flowX || !!this.info.flowY;
     if (needMoving) {
-      console.log('add move ticker');
       Ticker.shared.add(this.moveTicker);
     }
   }
@@ -191,7 +212,6 @@ export class MapBack extends Container {
     }
   }
   putZeroGapTiling(originSprite: Sprite) {
-    console.log('putZeroGapTiling');
     this.renderObj = new TilingSprite({
       texture: originSprite.texture,
       width: this.size.width,
@@ -200,7 +220,6 @@ export class MapBack extends Container {
     this.addChild(this.renderObj);
   }
   putPositiveGapTiling(originSprite: Sprite, renderer: Renderer) {
-    console.log('putPositiveGapTiling', originSprite);
     const _spacedTexture = new Container();
     _spacedTexture.addChild(originSprite);
     const spacedTexture = renderer.generateTexture({
@@ -223,19 +242,25 @@ export class MapBack extends Container {
     this.renderObj.pivot.y =
       this.mode !== TileMode.Horizontal ? 0 : originSprite.pivot.y;
     this.addChild(this.renderObj);
-    console.log('this.renderObj', this.renderObj.height, this.position.y);
   }
-  putExpensiveGapTiling(originSprite: Sprite) {
-    if (this.frames.length < 2) {
-      console.log('putExpensiveGapTiling static');
+  putExpensiveGapTiling(
+    originSprite: Sprite | AnimatedSprite | CloneableSpine,
+  ) {
+    if (this.frames.length < 2 && !this.skeletonData) {
       this.renderObj = new GapTilingSprite({
-        target: originSprite,
+        target: originSprite as Sprite,
+        size: this.size,
+        gap: this.gap,
+        mode: this.mode,
+      });
+    } else if (this.skeletonData) {
+      this.renderObj = new GapTilingContainer({
+        target: originSprite as CloneableSpine,
         size: this.size,
         gap: this.gap,
         mode: this.mode,
       });
     } else {
-      console.log('putExpensiveGapTiling animated');
       this.renderObj = new GapTilingAnimatedSprite({
         target: originSprite as AnimatedSprite,
         size: this.size,
@@ -258,8 +283,34 @@ export class MapBack extends Container {
       | GapTilingSprite
       | GapTilingAnimatedSprite;
     tilingSprite.tilePosition = {
-      x: tilingSprite.tilePosition.x + this.flowSpeed.x / delta.deltaMS,
-      y: tilingSprite.tilePosition.y + this.flowSpeed.y / delta.deltaMS,
+      x: tilingSprite.tilePosition.x + (this.flowSpeed.x * 5) / 60,
+      y: tilingSprite.tilePosition.y + (this.flowSpeed.y * 5) / 60,
     };
   };
+  destroy(options?: DestroyOptions): void {
+    super.destroy(options);
+    Ticker.shared.remove(this.moveTicker);
+  }
+}
+
+export class CloneableSpine extends Container implements CloneableContainer {
+  skeletonData: SkeletonData;
+  spine: Spine;
+  constructor(skeletonData: SkeletonData, spine: Spine) {
+    super();
+    this.skeletonData = skeletonData;
+    this.spine = spine;
+    this.addChild(spine);
+  }
+  clone() {
+    const spine = new Spine(this.skeletonData);
+    const clone = new CloneableSpine(this.skeletonData, spine);
+    const currentAnimateion = this.spine.state.getCurrent(0);
+    if (currentAnimateion?.animation?.name) {
+      spine.state.setAnimation(0, currentAnimateion.animation.name, true);
+    }
+    spine.pivot.copyFrom(this.spine.pivot);
+    spine.position.copyFrom(this.spine.position);
+    return clone;
+  }
 }

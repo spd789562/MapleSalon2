@@ -9,6 +9,8 @@ import type {
 import { CharacterLoader } from '../character/loader';
 import type { MapleMap } from './map';
 import { MapObj } from './mapObj';
+import { createSkeletonData } from '../spine/createSkeletonData';
+import type { WzSpineData } from '../spine/const/wz';
 
 const LAYER_COUNT = 14;
 
@@ -30,8 +32,11 @@ export class MapObjSet {
       if (!objData?.obj) {
         continue;
       }
-      for (const obj of Object.values(objData.obj)) {
-        this.unprocessedObjs[layer].push(obj);
+      for (const [id, obj] of Object.entries(objData.obj)) {
+        this.unprocessedObjs[layer].push({
+          ...obj,
+          id: Number(id),
+        });
         this.imgUsed.add(obj.oS);
       }
     }
@@ -54,7 +59,7 @@ export class MapObjSet {
     for (let i = 0; i < LAYER_COUNT; i++) {
       const unprocessLayer = this.unprocessedObjs[i] || [];
       for (const obj of unprocessLayer) {
-        if ((obj?.flow ?? 0) > 0 || obj?.spineAni || obj?.hide === 1) {
+        if ((obj?.flow ?? 0) > 0 || obj?.hide === 1) {
           continue;
         }
         const objData = wz[obj.oS]?.[obj.l0]?.[obj.l1]?.[
@@ -63,11 +68,24 @@ export class MapObjSet {
         if (!objData) {
           continue;
         }
-        const mapObj = new MapObj(obj, objData);
-        for (const asset of mapObj.resources) {
-          textureMap.set(asset.alias as string, asset);
+        if (obj.spineAni) {
+          const mapObj = new MapObj(obj, objData, obj.id || 0);
+          const prefix = `Map/Obj/${obj.oS}.img/${obj.l0}/${obj.l1}/${obj.l2}`;
+          const skeletonData = await createSkeletonData(
+            objData as WzSpineData,
+            prefix,
+          );
+          if (skeletonData) {
+            mapObj.skeletonData = skeletonData;
+            this.layers[i].push(mapObj);
+          }
+        } else {
+          const mapObj = new MapObj(obj, objData, obj.id || 0);
+          for (const asset of mapObj.resources) {
+            textureMap.set(asset.alias as string, asset);
+          }
+          this.layers[i].push(mapObj);
         }
-        this.layers[i].push(mapObj);
       }
     }
     this.unprocessedObjs = [];
