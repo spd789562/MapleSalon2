@@ -15,6 +15,8 @@
   "license": "MIT",
   "dependencies": {
     "@ark-ui/solid": "3.5.0",
+    "@esotericsoftware/spine-core": "^4.2.66",
+    "@esotericsoftware/spine-pixi-v8": "^4.2.66",
     "@nanostores/solid": "0.4.2",
     "@pdf-lib/upng": "1.0.1",
     "@tanstack/solid-virtual": "3.10.6",
@@ -34,7 +36,7 @@
     "p-queue": "8.0.1",
     "pixi-filters": "6.0.5",
     "pixi-viewport": "^6.0.3",
-    "pixi.js": "^8.6.1",
+    "pixi.js": "^8.6.3",
     "solid-js": "1.9.2",
     "throttle-debounce": "5.0.0",
     "wasm-webp": "0.0.2"
