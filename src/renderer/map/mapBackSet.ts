@@ -73,7 +73,6 @@ export class MapBackSet {
         );
         const prefix = `Map/Back/${info.bS}.img/spine/${info.no}`;
         const data = await createSkeletonData(_backData as WzSpineData, prefix);
-        console.log('data', data);
         if (data) {
           backObj.skeletonData = data;
           const layer = info.front === 1 ? 1 : 0;

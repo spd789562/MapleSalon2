@@ -23,9 +23,10 @@ abstract class GapTilingBase<T extends Container> extends Container {
   grid: Container[][] = [];
   _distence = new Point(0, 0);
   _mask = new Sprite(Texture.WHITE);
-  _tilePosition = new Point(0, 0);
+  _tilePosition;
   maxXcount: number;
   maxYcount: number;
+  mode: TileMode;
   constructor(options: {
     target: T;
     size: { width: number; height: number };
@@ -35,8 +36,10 @@ abstract class GapTilingBase<T extends Container> extends Container {
     super();
     const { target, size, gap, mode } = options;
     this.target = target;
+    this.mode = mode;
     const width = mode === TileMode.Vertical ? target.width : size.width;
     const height = mode === TileMode.Horizontal ? target.height : size.height;
+    this._tilePosition = new Point(target.pivot.x, target.pivot.y);
 
     this._distence.set(target.width + gap.x, target.height + gap.y);
     this.maxXcount = Math.ceil(width / this._distence.x) + 1;
@@ -52,58 +55,74 @@ abstract class GapTilingBase<T extends Container> extends Container {
     this.addChild(mask);
   }
   abstract initializeTiling(): void;
+  abstract cloneTarget(): T;
   get tilePosition() {
     return this._tilePosition;
   }
   set tilePosition(point: PointData) {
-    this.positionUpdate({
-      x: this._tilePosition.x - point.x,
-      y: this._tilePosition.y - point.y,
-    });
+    // this._tilePosition.x %= this._distence.x;
+    // this._tilePosition.y %= this._distence.y;
     this._tilePosition.copyFrom(point);
+    this.positionUpdate();
   }
-  positionUpdate({ x, y }: PointData) {
-    for (let i = 0; i < this.maxYcount; i++) {
-      for (let j = 0; j < this.maxXcount; j++) {
-        const target = this.grid[i][j];
-        target.position.x += x;
-        target.position.y += y;
+  set size({ width, height }: { width: number; height: number }) {
+    this._mask.width = width;
+    this._mask.height = height;
+    // this.maxXcount = Math.ceil(width / this._distence.x) + 1;
+    // this.maxYcount = Math.ceil(height / this._distence.y) + 1;
+    this.positionUpdate();
+  }
+  positionUpdate() {
+    const basePoint = {
+      x: 0,
+      y: 0,
+    };
+    let tileCountX = 1;
+    let tileCountY = 1;
+
+    // horizontal and both
+    if (this.mode !== TileMode.Vertical) {
+      let x = this._tilePosition.x % this._distence.x;
+      if (x > 0) {
+        x -= this._distence.x;
+      }
+      basePoint.x = x;
+      tileCountX =
+        Math.ceil((this._mask.width + basePoint.x) / this._distence.x) + 1;
+    }
+
+    // vertical and both
+    if (this.mode !== TileMode.Horizontal) {
+      let y = this._tilePosition.y % this._distence.y;
+      if (y > 0) {
+        y -= this._distence.y;
+      }
+      basePoint.y = y;
+      tileCountY =
+        Math.ceil((this._mask.height + basePoint.y) / this._distence.y) + 1;
+    }
+
+    let index = 0;
+    for (let i = 0; i < tileCountX; i++) {
+      for (let j = 0; j < tileCountY; j++) {
+        // ensure the children
+        if (this.children[index] === undefined) {
+          this.addChild(this.cloneTarget());
+        }
+        const child = this.children[index];
+        child.position.set(
+          basePoint.x + j * this._distence.x,
+          basePoint.y + i * this._distence.y,
+        );
+
+        index += 1;
       }
     }
-    for (let i = 0; i < this.maxYcount; i++) {
-      for (let j = 0; j < this.maxXcount; j++) {
-        const target = this.grid[i][j];
-        let isRePosition = false;
-        const repositionPoint = {
-          x: target.position.x,
-          y: target.position.y,
-        };
-        if (repositionPoint.x < -this._distence.x) {
-          const prev = this.grid[i][j === 0 ? this.maxXcount - 1 : j - 1];
-          repositionPoint.x = prev.position.x + this._distence.x;
-          isRePosition = true;
-        } else if (repositionPoint.x > this._mask.width) {
-          const next = this.grid[i][j === this.maxXcount - 1 ? 0 : j + 1];
-          repositionPoint.x = next.position.x - this._distence.x;
-          isRePosition = true;
-        }
-
-        if (repositionPoint.y < -this._distence.y) {
-          const prev = this.grid[i === 0 ? this.maxYcount - 1 : i - 1][j];
-          repositionPoint.y = prev.position.y + this._distence.y;
-          isRePosition = true;
-        } else if (repositionPoint.y > this._mask.height) {
-          const next = this.grid[i === this.maxYcount - 1 ? 0 : i + 1][j];
-          repositionPoint.y = next.position.y - this._distence.y;
-          isRePosition = true;
-        }
-
-        if (isRePosition) {
-          target.position.copyFrom(repositionPoint);
-          this.removeChild(target);
-          this.addChild(target);
-        }
-      }
+    if (this.children.length > index) {
+      const removed = this.removeChildren(index);
+      // for (const child of removed) {
+      //   child.destroy();
+      // }
     }
   }
 }
@@ -112,7 +131,7 @@ export class GapTilingContainer extends GapTilingBase<CloneableContainer> {
   initializeTiling() {
     for (let i = 0; i < this.maxYcount; i++) {
       for (let j = 0; j < this.maxXcount; j++) {
-        const cloned = this.target.clone();
+        const cloned = this.cloneTarget();
         cloned.position.set(j * this._distence.x, i * this._distence.y);
         if (this.grid[i] === undefined) {
           this.grid[i] = [];
@@ -122,12 +141,15 @@ export class GapTilingContainer extends GapTilingBase<CloneableContainer> {
       }
     }
   }
+  cloneTarget() {
+    return this.target.clone();
+  }
 }
 export class GapTilingAnimatedSprite extends GapTilingBase<AnimatedSprite> {
   initializeTiling() {
     for (let i = 0; i < this.maxYcount; i++) {
       for (let j = 0; j < this.maxXcount; j++) {
-        const cloned = new AnimatedSprite(this.target.textures);
+        const cloned = this.cloneTarget();
         cloned.position.set(j * this._distence.x, i * this._distence.y);
         if (this.grid[i] === undefined) {
           this.grid[i] = [];
@@ -136,6 +158,21 @@ export class GapTilingAnimatedSprite extends GapTilingBase<AnimatedSprite> {
         this.addChild(cloned);
       }
     }
+  }
+  cloneTarget() {
+    const sprite = new AnimatedSprite(this.target.textures);
+    /* @ts-ignore */
+    sprite._durations = this.target._durations;
+    sprite.onFrameChange = (frame) => {
+      sprite.pivot.set(
+        /* @ts-ignore */
+        this.target._origins[frame]?.x || 0,
+        /* @ts-ignore */
+        this.target._origins[frame]?.y || 0,
+      );
+    };
+    sprite.play();
+    return sprite;
   }
 }
 
@@ -143,7 +180,7 @@ export class GapTilingSprite extends GapTilingBase<Sprite> {
   initializeTiling() {
     for (let i = 0; i < this.maxYcount; i++) {
       for (let j = 0; j < this.maxXcount; j++) {
-        const cloned = Sprite.from(this.target.texture);
+        const cloned = this.cloneTarget();
         cloned.position.set(j * this._distence.x, i * this._distence.y);
         if (this.grid[i] === undefined) {
           this.grid[i] = [];
@@ -152,5 +189,8 @@ export class GapTilingSprite extends GapTilingBase<Sprite> {
         this.addChild(cloned);
       }
     }
+  }
+  cloneTarget() {
+    return Sprite.from(this.target.texture);
   }
 }

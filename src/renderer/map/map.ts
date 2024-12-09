@@ -57,7 +57,7 @@ export class MapleMap extends Container {
     this.setMapBound(this.wz);
 
     await this.loadTileSet(this.wz);
-    // await this.loadObjSet(this.wz);
+    await this.loadObjSet(this.wz);
     await this.loadBackSet(this.wz);
   }
   setMapBound(wz: WzMapData) {

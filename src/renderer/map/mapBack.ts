@@ -139,11 +139,14 @@ export class MapBack extends Container {
         time: frame[1],
       })),
     );
+    const origins = this.frames.map((_, i) => ({
+      x: this.wz[i]?.origin?.x || 0,
+      y: this.wz[i]?.origin?.y || 0,
+    }));
+    /* @ts-ignore */
+    sprite._origins = origins;
     sprite.onFrameChange = (frame) => {
-      sprite.pivot.set(
-        this.wz[frame]?.origin?.x || 0,
-        this.wz[frame]?.origin?.y || 0,
-      );
+      sprite.pivot.copyFrom(origins[frame] ?? { x: 0, y: 0 });
     };
     sprite.onFrameChange(0);
     sprite.play();
@@ -160,13 +163,12 @@ export class MapBack extends Container {
     renderer: Renderer,
   ) {
     const target = this.getRenderObj();
-    console.log('target', target, this.info.cx, target.width);
     this.gap.x =
-      (this.info.cx ?? 0) > 0 || this.info.cx % target.width !== 0
+      (this.info.cx ?? 0) > 0 && this.info.cx % target.width !== 0
         ? this.info.cx - target.width
         : 0;
     this.gap.y =
-      (this.info.cy ?? 0) > 0 || this.info.cy % target.height !== 0
+      (this.info.cy ?? 0) > 0 && this.info.cy % target.height !== 0
         ? this.info.cy - target.height
         : 0;
     this.gapType = getGapType(this.gap.x, this.gap.y);
