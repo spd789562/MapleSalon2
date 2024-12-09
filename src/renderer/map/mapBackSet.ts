@@ -96,30 +96,15 @@ export class MapBackSet {
     this.unprocessedBacks = [];
     await Assets.load(Array.from(textureMap.values()));
     for (const back of this.layers.flat()) {
-      back.prepareResource(this.map.size, this.map.renderer);
+      back.prepareResource(this.map.renderer);
     }
   }
   putOnMap(mapleMap: MapleMap) {
-    // const debugbackGraph = new Graphics();
-    // debugbackGraph.rect(0, 0, this.map.size.width, this.map.size.height);
-    // debugbackGraph.fill(0x00ff00);
-    // debugbackGraph.alpha = 0.5;
-    // debugbackGraph.position.set(this.map.edges.left, this.map.edges.top);
-    // mapleMap.layers[mapleMap.bottomLayer].addChild(debugbackGraph);
     for (const back of this.layers[0]) {
       if (!back.renderObj) {
         continue;
       }
-      // const debugGraph = new Graphics();
-      // debugGraph.rect(0, 0, back.size.width, back.size.height);
-      // debugGraph.stroke({
-      //   color: 0xff0000,
-      //   width: 4,
-      // });
-      // debugGraph.position.copyFrom(back.position);
-      // debugGraph.pivot.copyFrom(back.renderObj?.pivot || { x: 0, y: 0 });
       mapleMap.layers[mapleMap.bottomLayer].addChild(back);
-      // mapleMap.layers[mapleMap.topLayer].addChild(debugGraph);
     }
     for (const foreground of this.layers[1]) {
       mapleMap.layers[mapleMap.topLayer].addChild(foreground);

@@ -93,6 +93,7 @@ export interface WzMapObjInfo {
   piece: number;
   zM: number;
   r: number;
+  tags?: string;
 }
 
 export interface WzMapTileInfo {
