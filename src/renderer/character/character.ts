@@ -536,6 +536,7 @@ export class Character extends Container {
         if (this.instructionFrame + 1 >= maxFrame) {
           if (!this.skill?.isPlaying) {
             this.instructionFrame = 0;
+            this.bodyFrame.position.set(0, 0);
             this.skill?.play();
           }
         } else {

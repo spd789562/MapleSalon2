@@ -126,7 +126,9 @@ export class Skill {
       .flatMap((item) => item.frames)
       .flatMap((part) => part.resources)
       .filter(Boolean) as UnresolvedAsset[];
-    await Assets.load(assets);
+    try {
+      await Promise.all(assets.map((asset) => Assets.load(asset)));
+    } catch (error) {}
     for (const item of items) {
       item.prepareResource();
       const animatablePart = item.animatablePart;
