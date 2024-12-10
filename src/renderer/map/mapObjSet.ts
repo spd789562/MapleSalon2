@@ -1,4 +1,4 @@
-import { Assets, type UnresolvedAsset } from 'pixi.js';
+import { Assets, Container, type UnresolvedAsset } from 'pixi.js';
 
 import type {
   WzMapObjTypeFolder,
@@ -17,10 +17,14 @@ const LAYER_COUNT = 14;
 export class MapObjSet {
   unprocessedObjs: WzMapObjInfo[][] = [];
   layers: MapObj[][] = [];
+  layerContainers: Container[] = [];
   imgUsed = new Set<string>();
   constructor(wz: WzMapData) {
     for (let i = 0; i < LAYER_COUNT; i++) {
       this.layers.push([]);
+      const container = new Container();
+      container.sortableChildren = true;
+      this.layerContainers.push(container);
       this.unprocessedObjs.push([]);
     }
     this.initialize(wz);
@@ -78,6 +82,7 @@ export class MapObjSet {
           if (skeletonData) {
             mapObj.skeletonData = skeletonData;
             this.layers[i].push(mapObj);
+            this.layerContainers[i].addChild(mapObj);
           }
         } else {
           const mapObj = new MapObj(obj, objData, obj.id || 0);
@@ -85,6 +90,7 @@ export class MapObjSet {
             textureMap.set(asset.alias as string, asset);
           }
           this.layers[i].push(mapObj);
+          this.layerContainers[i].addChild(mapObj);
         }
       }
     }
@@ -97,8 +103,9 @@ export class MapObjSet {
   putOnMap(mapleMap: MapleMap) {
     for (let i = 0; i < LAYER_COUNT; i++) {
       const layer = this.layers[i];
-      for (const obj of layer) {
-        mapleMap.layers[i + 1].addChild(obj);
+      const container = this.layerContainers[i];
+      if (layer.length > 0) {
+        mapleMap.layers[i + 1].addChild(container);
       }
     }
   }
