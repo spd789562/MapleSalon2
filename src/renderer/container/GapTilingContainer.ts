@@ -66,6 +66,9 @@ abstract class GapTilingBase<T extends Container> extends Container {
     this.positionUpdate();
   }
   positionUpdate() {
+    if (this.destroyed) {
+      return;
+    }
     const basePoint = {
       x: 0,
       y: 0,

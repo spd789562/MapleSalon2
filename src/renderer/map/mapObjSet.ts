@@ -102,4 +102,11 @@ export class MapObjSet {
       }
     }
   }
+  destroy() {
+    for (const obj of this.layers.flat()) {
+      obj.destroy();
+    }
+    this.layers = [];
+    this.imgUsed.clear();
+  }
 }

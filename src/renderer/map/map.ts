@@ -1,4 +1,4 @@
-import { Container, type Renderer } from 'pixi.js';
+import { Container, type DestroyOptions, type Renderer } from 'pixi.js';
 import type { Viewport } from 'pixi-viewport';
 
 import type { WzMapData } from './const/wz';
@@ -29,6 +29,9 @@ export class MapleMap extends Container {
     width: 800,
     height: 600,
   };
+  tileSets: Record<number, MapTileSet> = {};
+  objSet?: MapObjSet;
+  backSet?: MapBackSet;
 
   constructor(id: string, renderer: Renderer, viewport: Viewport) {
     super();
@@ -91,15 +94,34 @@ export class MapleMap extends Container {
       const container = this.layers[layer + 1];
       container.addChild(set);
     }
+    this.tileSets = sets;
   }
   async loadObjSet(wz: WzMapData) {
     const objSet = new MapObjSet(wz);
+    this.objSet = objSet;
     await objSet.load();
     objSet.putOnMap(this);
   }
   async loadBackSet(wz: WzMapData) {
     const backSet = new MapBackSet(wz, this);
+    this.backSet = backSet;
     await backSet.load();
     backSet.putOnMap(this);
+  }
+  destroy(options?: DestroyOptions): void {
+    super.destroy(options);
+    for (const layer in this.tileSets) {
+      const set = this.tileSets[layer];
+      if (!set) {
+        continue;
+      }
+      set.destroy();
+      /* @ts-ignore */
+      this.tileSets[layer] = null;
+    }
+    /* @ts-ignore */
+    this.tileSets = null;
+    this.objSet?.destroy();
+    this.backSet?.destroy();
   }
 }

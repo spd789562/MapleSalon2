@@ -102,4 +102,9 @@ export class MapTileSet extends Container {
       this.addChild(sprite);
     }
   }
+  destroy() {
+    super.destroy();
+    this.tileNames.clear();
+    this.tiles = [];
+  }
 }

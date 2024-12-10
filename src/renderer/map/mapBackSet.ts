@@ -110,4 +110,13 @@ export class MapBackSet {
       mapleMap.layers[mapleMap.topLayer].addChild(foreground);
     }
   }
+  destroy() {
+    for (const back of this.layers.flat()) {
+      back.destroy();
+    }
+    this.layers = [[], []];
+    this.imgUsed.clear();
+    /* @ts-ignore */
+    this.map = null;
+  }
 }
