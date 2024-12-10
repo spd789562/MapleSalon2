@@ -152,6 +152,12 @@ export class MapBack extends Container {
       if (this.info.spineAni) {
         spine.state.setAnimation(0, this.info.spineAni, true);
       }
+      if (
+        this.info.spineName &&
+        spine.skeleton.data.findSkin(this.info.spineName)
+      ) {
+        spine.skeleton.setSkinByName(this.info.spineName);
+      }
       spine.scale.x = this.fliped ? -1 : 1;
       const clone = new CloneableSpine(this.skeletonData, spine);
       return clone;

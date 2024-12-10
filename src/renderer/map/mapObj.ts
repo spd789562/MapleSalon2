@@ -56,6 +56,12 @@ export class MapObj extends Container {
       if (this.info.spineAni) {
         spine.state.setAnimation(0, this.info.spineAni, true);
       }
+      if (
+        this.info.spineName &&
+        spine.skeleton.data.findSkin(this.info.spineName)
+      ) {
+        spine.skeleton.setSkinByName(this.info.spineName);
+      }
       this.renderObj = spine;
     } else {
       const sprite = new AnimatedSprite(

@@ -28,7 +28,6 @@ export async function loadAtlasAndImage(
     if (!url) {
       return;
     }
-    console.log('loadAtlasAndImage', url);
     const textures = await Assets.load<Texture>({
       src: CharacterLoader.getPieceUrl(url),
       loadParser: 'loadTextures',

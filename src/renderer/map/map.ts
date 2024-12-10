@@ -64,8 +64,8 @@ export class MapleMap extends Container {
     await this.loadBackSet(this.wz);
   }
   setMapBound(wz: WzMapData) {
-    this.size.width = wz.miniMap.width || this.edges.right - this.edges.left;
-    this.size.height = wz.miniMap.height || this.edges.bottom - this.edges.top;
+    this.size.width = wz.miniMap?.width || this.edges.right - this.edges.left;
+    this.size.height = wz.miniMap?.height || this.edges.bottom - this.edges.top;
     this.edges.top = wz.miniMap ? -wz.miniMap.centerY : this.edges.top;
     this.edges.left = wz.miniMap ? -wz.miniMap.centerX : this.edges.left;
     this.edges.bottom = wz.miniMap

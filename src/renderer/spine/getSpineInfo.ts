@@ -19,14 +19,15 @@ export function getSpineInfo(wz: WzSpineData): SpineInfo | undefined {
     };
   }
   const skelSpineName = `${spinePrefix}.skel`;
-  if (wz[skelSpineName]) {
+  // skel property is null
+  if (skelSpineName in wz) {
     return {
       type: SpineType.Binary,
       spineFileName: skelSpineName,
       atlasFileName: atlasName,
     };
   }
-  if (wz[spinePrefix]) {
+  if (spinePrefix in wz) {
     const type = (wz[spinePrefix] as { duration?: number }).duration
       ? SpineType.Binary
       : SpineType.Json;
@@ -41,19 +42,19 @@ export function getSpineInfo(wz: WzSpineData): SpineInfo | undefined {
 export function getMainVersionFromJson(json: {
   skeleton?: { spine: string };
   spine?: string;
-}): SpineVersion | undefined {
+}): [SpineVersion, string] | undefined {
   const version = json.skeleton ? json.skeleton.spine : json.spine;
   if (!version) {
     return undefined;
   }
-  const major = version.split('.')[0];
-  switch (major) {
+  const splits = version.split('.');
+  switch (splits[0]) {
     case '2':
-      return SpineVersion.V2;
+      return [SpineVersion.V2, splits[1]];
     case '3':
-      return SpineVersion.V3;
+      return [SpineVersion.V3, splits[1]];
     case '4':
-      return SpineVersion.V4;
+      return [SpineVersion.V4, splits[1]];
     default:
       break;
   }
@@ -62,14 +63,14 @@ export function getMainVersionFromJson(json: {
 
 export function getMainVersionFromBinary(
   buffer: ArrayBuffer,
-): SpineVersion | undefined {
+): [SpineVersion, string] | undefined {
   const input = new BinaryInput(buffer);
   return getMainVersionFromV4skel(input) ?? getMainVersionFromV3skel(input);
 }
 
 function getMainVersionFromV4skel(
   input: BinaryInput,
-): SpineVersion | undefined {
+): [SpineVersion, string] | undefined {
   /* @ts-ignore */
   const pos = input.index as number;
   // skip hash
@@ -84,10 +85,10 @@ function getMainVersionFromV4skel(
     const version = input.readString() ?? '';
     const major = version?.substring(0, 1);
     if (major === '4') {
-      return SpineVersion.V4;
+      return [SpineVersion.V4, version?.substring(2, 3)];
     }
     if (major === '2') {
-      return SpineVersion.V2;
+      return [SpineVersion.V2, version?.substring(2, 3)];
     }
   }
   /* @ts-ignore */
@@ -97,7 +98,7 @@ function getMainVersionFromV4skel(
 
 function getMainVersionFromV3skel(
   input: BinaryInput,
-): SpineVersion | undefined {
+): [SpineVersion, string] | undefined {
   const hashLen = input.readInt(true);
   // skip hash
   if (hashLen > 1) {
@@ -107,11 +108,12 @@ function getMainVersionFromV3skel(
   // version len
   input.readInt(true);
   const major = input.readUnsignedByte();
+  input.readByte();
   if (major === 50) {
-    return SpineVersion.V2;
+    return [SpineVersion.V2, String.fromCharCode(input.readByte())];
   }
   if (major === 51) {
-    return SpineVersion.V3;
+    return [SpineVersion.V3, String.fromCharCode(input.readByte())];
   }
 
   return undefined;

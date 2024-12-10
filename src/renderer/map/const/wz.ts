@@ -62,6 +62,7 @@ export interface WzMapBackInfo {
   flowY?: number;
 
   spineAni?: string;
+  spineName?: string;
   backTags?: string;
 }
 
@@ -84,6 +85,7 @@ export interface WzMapObjInfo {
   move: number;
 
   spineAni?: string;
+  spineName?: string;
   hide?: number;
 
   /* not sure */

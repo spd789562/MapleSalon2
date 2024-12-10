@@ -17,6 +17,9 @@ import {
 import { loadAtlasAndImage } from './loadAtlasAndImages';
 import { SkeletonJsonV2 } from './SkeletonJsonV2';
 import { SkeletonBinaryV2 } from './SkeletonBinaryV2';
+/* instead of insttall the spine-core@4.1 just use the 4.1 data parsing */
+import { SkeletonJsonV41 } from './SkeletonJsonV41';
+import { SkeletonBinaryV41 } from './SkeletonBinaryV41';
 
 export async function createSkeletonData(
   wz: WzSpineData,
@@ -52,7 +55,7 @@ export async function createSkeletonFromJson(
   }
   const attachmentLoader = new AtlasAttachmentLoader(atlas);
   const rawJson = wz[info.spineFileName];
-  let version: undefined | string;
+  let version: undefined | string[];
   try {
     const json = JSON.parse(rawJson);
     version = getMainVersionFromJson(json);
@@ -64,9 +67,11 @@ export async function createSkeletonFromJson(
   }
 
   const parser =
-    version === SpineVersion.V2
+    version[0] === SpineVersion.V2
       ? new SkeletonJsonV2(attachmentLoader)
-      : new SkeletonJson(attachmentLoader);
+      : version[1] === '1'
+        ? new SkeletonJsonV41(attachmentLoader)
+        : new SkeletonJson(attachmentLoader);
   parser.scale = scale;
   const skeletonData = parser.readSkeletonData(rawJson);
 
@@ -98,9 +103,11 @@ export async function createSkeletonFromBinary(
     return null;
   }
   const parser =
-    version === SpineVersion.V2
+    version[0] === SpineVersion.V2
       ? new SkeletonBinaryV2(attachmentLoader)
-      : new SkeletonBinary(attachmentLoader);
+      : version[1] === '1'
+        ? new SkeletonBinaryV41(attachmentLoader)
+        : new SkeletonBinary(attachmentLoader);
   parser.scale = scale;
   const skeletonData = parser.readSkeletonData(rawSkel);
   Assets.cache.set(hash, skeletonData);
