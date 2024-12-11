@@ -9,6 +9,7 @@ export type WzMapData = {
   miniMap: WzMapMiniMapInfo;
   life?: unknown;
   reactor?: unknown;
+  particle?: Record<string, Record<string, WzMapParticleInfo>>;
   info: WzMapInfoData;
 } & WzMapLayer;
 
@@ -145,6 +146,14 @@ export interface WzMapFootholdInfo {
   piece: number;
   next: number;
   prev: number;
+}
+
+export interface WzMapParticleInfo {
+  rx: number;
+  ry: number;
+  x: number;
+  y: number;
+  z: number;
 }
 
 export type WzMapObjTypeFolder = Record<string, WzMapObjFolder>;
