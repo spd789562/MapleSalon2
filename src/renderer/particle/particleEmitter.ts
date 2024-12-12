@@ -53,10 +53,10 @@ export class ParticleEmitter {
     if (particleData.GRAVITY) {
       this.gravity.x = particleData.GRAVITY.x;
       this.gravity.y = particleData.GRAVITY.y;
-      console.log(this.gravity);
     }
+    this.particalCount = this.wz.totalParticle;
+    this.setBlendMode(); // not sure this is right
     this.initialize();
-    // this.setBlendMode(); not sure this is right
   }
   static async createFromWz(name: string) {
     const path = `Effect/particle.img/${name}`;
@@ -75,7 +75,7 @@ export class ParticleEmitter {
     return new ParticleEmitter(data, texture);
   }
   update(d: Ticker) {
-    const delta = d.deltaTime * 0.1;
+    const delta = d.deltaMS * 0.001;
 
     const emitCount = this.emitPersecond * delta;
     for (let i = 0; i < emitCount; i++) {
@@ -86,12 +86,18 @@ export class ParticleEmitter {
         particle.start();
         continue;
       }
-      particle.update(delta);
       this.index++;
       if (this.index >= this.particles.length) {
         this.index = 0;
       }
     }
+    for (const particle of this.particles) {
+      if (particle.dead) {
+        continue;
+      }
+      particle.update(delta);
+    }
+    this.container.update();
   }
   setBlendMode() {
     const src = this.wz.blendFuncSrc;
@@ -101,12 +107,12 @@ export class ParticleEmitter {
         dst === ParticleBlendFunc.ONE ||
         dst === ParticleBlendFunc.DST_ALPHA
       ) {
-        this.container.blendMode = 'normal';
+        this.container.blendMode = 'add';
       } else if (
         dst === ParticleBlendFunc.ONE_MINUS_SRC_ALPHA ||
         dst === ParticleBlendFunc.SRC_COLOR
       ) {
-        this.container.blendMode = 'add';
+        this.container.blendMode = 'normal';
       }
       return;
     }
@@ -118,13 +124,12 @@ export class ParticleEmitter {
     }
   }
   initialize() {
-    const particleCount = this.wz.totalParticle || 200;
+    const particleCount = this.particalCount || 200;
     for (let i = 0; i < particleCount; i++) {
       const particleItem = this.createParticle();
       this.particles.push(particleItem);
       this.container.addParticle(particleItem.particle);
     }
-    console.log(this.particles[0]);
   }
   generateParticleData() {
     const data = {} as ParticleItemOptions & ParticleOptions;
@@ -228,7 +233,7 @@ export class ParticleEmitter {
     if (range === 0) {
       return value;
     }
-    return value + (Math.random() * 2 - 1) * range;
+    return value + Math.random() * range;
   }
   randomRangeUnit(value: number, range: number) {
     const v = this.randomRange(value, range);
@@ -252,10 +257,10 @@ export class ParticleEmitter {
   }
   createColorFromNumber(rgba: number) {
     return new Color([
-      (rgba >> 16) & 0xff,
-      (rgba >> 8) & 0xff,
-      rgba & 0xff,
-      (rgba >> 24) & 0xff,
+      ((rgba >> 16) & 0xff) / 255,
+      ((rgba >> 8) & 0xff) / 255,
+      (rgba & 0xff) / 255,
+      ((rgba >> 24) & 0xff) / 255,
     ]);
   }
 }

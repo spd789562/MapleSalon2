@@ -30,7 +30,7 @@ export interface ParticleItemOptions {
 
 export class ParticleItem {
   lifeTime: number; // ms
-  lifeRemain: number;
+  life: number;
   lifePercent: number;
 
   scaleBegin: number;
@@ -67,7 +67,7 @@ export class ParticleItem {
   ) {
     this.emitter = emitter;
     this.lifeTime = options.lifeTime;
-    this.lifeRemain = this.lifeTime;
+    this.life = this.lifeTime;
     this.lifePercent = 1;
 
     this.scaleBegin = options.scaleBegin;
@@ -98,41 +98,53 @@ export class ParticleItem {
     if (this.dead) {
       return;
     }
-    this.lifeRemain -= deltaSec;
-    this.lifePercent = this.lifeRemain / this.lifeTime;
-    if (this.lifeRemain <= 0) {
+    this.life += deltaSec;
+    this.lifePercent = this.life / this.lifeTime;
+    if (this.lifePercent >= 1) {
       this.dead = true;
       this.particle.alpha = 0;
+      this.particle.x = 0;
+      this.particle.y = 0;
       return;
     }
-    const accDir = this.emitter.accDirTmp.copyFrom(this.dir);
-    if (accDir.x !== 0 || accDir.y !== 0) {
-      accDir.normalize();
-    }
-    const radial = this.emitter.radialTmp.copyFrom(accDir).multiply({
-      x: this.radialAccel,
-      y: this.radialAccel,
+    const accDir = this.emitter.accDirTmp.copyFrom({
+      x: this.particle.x,
+      y: this.particle.y,
     });
+    if (accDir.x !== 0 || accDir.y !== 0) {
+      accDir.normalize(accDir);
+    }
+    const radial = this.emitter.radialTmp.copyFrom(accDir).multiply(
+      {
+        x: this.radialAccel,
+        y: this.radialAccel,
+      },
+      this.emitter.radialTmp,
+    );
     const tangent = this.emitter.tangentTmp; // tengent seems not used according to WCR2
-    const acc = radial.add(tangent).add(this.emitter.gravity);
-    this.dir.add(acc.multiply({ x: deltaSec, y: deltaSec }));
+    const acc = radial.add(tangent, radial).add(this.emitter.gravity, radial);
+    this.dir.add(acc.multiply({ x: deltaSec, y: deltaSec }), this.dir);
     this.particle.x += this.dir.x * deltaSec;
     this.particle.y += this.dir.y * deltaSec;
 
     this.angle += this.rotationSpeed * deltaSec;
-    const t = 1 - this.lifePercent;
+    const t = this.lifePercent;
     const rad = this.lerp(this.radiusBegin, this.radiusEnd, t);
     if (rad > 0) {
       const radian = (this.angle * Math.PI) / 180;
       this.particle.x += Math.cos(radian) * rad * deltaSec;
       this.particle.y += Math.sin(radian) * rad * deltaSec;
     }
-    this.color.setValue({
-      r: this.lerp(this.colorBegin.red, this.colorEnd.red, t),
-      g: this.lerp(this.colorBegin.green, this.colorEnd.green, t),
-      b: this.lerp(this.colorBegin.blue, this.colorEnd.blue, t),
-      a: this.lerp(this.colorBegin.alpha, this.colorEnd.alpha, t),
-    });
+    this.color.setValue([
+      this.lerp(this.colorBegin.red, this.colorEnd.red, t),
+      this.lerp(this.colorBegin.green, this.colorEnd.green, t),
+      this.lerp(this.colorBegin.blue, this.colorEnd.blue, t),
+    ]);
+    this.particle.alpha = this.lerp(
+      this.colorBegin.alpha,
+      this.colorEnd.alpha,
+      t,
+    );
     this.particle.tint = this.color;
     this.particle.rotation = this.lerp(this.rotationBegin, this.rotationEnd, t);
     const scale = this.lerp(this.scaleBegin, this.scaleEnd, t);
@@ -144,9 +156,13 @@ export class ParticleItem {
   }
   start() {
     this.dead = false;
-    this.lifeRemain = this.lifeTime;
+    this.life = 0;
     this.lifePercent = 0;
     this.particle.alpha = 1;
+    this.particle.scaleX = this.scaleBegin;
+    this.particle.scaleY = this.scaleBegin;
+    this.particle.rotation = this.rotationBegin;
+    this.particle.tint = this.colorBegin;
     this.color.setValue(this.colorBegin);
   }
 }
