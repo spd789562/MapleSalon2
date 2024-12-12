@@ -4,8 +4,8 @@ import {
   Particle,
   type ParticleOptions,
   Point,
-  type PointData,
 } from 'pixi.js';
+import 'pixi.js/math-extras';
 import type { ParticleEmitter } from './particleEmitter';
 
 export interface ParticleItemOptions {
@@ -93,6 +93,7 @@ export class ParticleItem {
     this.tangentialAccel = 0;
 
     this.particle = new Particle(options);
+    this.particle.alpha = 0;
   }
   update(deltaSec: number) {
     if (this.dead) {
@@ -107,6 +108,7 @@ export class ParticleItem {
       this.particle.y = 0;
       return;
     }
+    // acc direction -> pos.normalize
     const accDir = this.emitter.accDirTmp.copyFrom({
       x: this.particle.x,
       y: this.particle.y,
@@ -114,6 +116,7 @@ export class ParticleItem {
     if (accDir.x !== 0 || accDir.y !== 0) {
       accDir.normalize(accDir);
     }
+    // rad = accDri * radialAccel
     const radial = this.emitter.radialTmp.copyFrom(accDir).multiply(
       {
         x: this.radialAccel,
@@ -122,8 +125,10 @@ export class ParticleItem {
       this.emitter.radialTmp,
     );
     const tangent = this.emitter.tangentTmp; // tengent seems not used according to WCR2
+    // acc = radial + tangent + gravity
     const acc = radial.add(tangent, radial).add(this.emitter.gravity, radial);
-    this.dir.add(acc.multiply({ x: deltaSec, y: deltaSec }), this.dir);
+    // dir = dir + acc * deltaSec
+    this.dir.add(acc.multiply({ x: deltaSec, y: deltaSec }, acc), this.dir);
     this.particle.x += this.dir.x * deltaSec;
     this.particle.y += this.dir.y * deltaSec;
 
@@ -140,16 +145,65 @@ export class ParticleItem {
       this.lerp(this.colorBegin.green, this.colorEnd.green, t),
       this.lerp(this.colorBegin.blue, this.colorEnd.blue, t),
     ]);
-    this.particle.alpha = this.lerp(
-      this.colorBegin.alpha,
-      this.colorEnd.alpha,
-      t,
-    );
+    this.particle.alpha = this.calculateAlpha();
     this.particle.tint = this.color;
     this.particle.rotation = this.lerp(this.rotationBegin, this.rotationEnd, t);
     const scale = this.lerp(this.scaleBegin, this.scaleEnd, t);
     this.particle.scaleX = scale;
     this.particle.scaleY = scale;
+  }
+  calculateAlpha() {
+    const t = this.lifePercent;
+    const alphaPoints = this.emitter.alphaPoints;
+    if (alphaPoints.length === 0) {
+      return this.lerp(this.colorBegin.alpha, this.colorEnd.alpha, t);
+    }
+    if (t < alphaPoints[0][1]) {
+      return this.lerp(
+        this.colorBegin.alpha,
+        alphaPoints[0][0],
+        t / alphaPoints[0][1],
+      );
+    }
+    if (alphaPoints[1]) {
+      if (t < alphaPoints[1][1]) {
+        return this.lerp(
+          alphaPoints[0][0],
+          alphaPoints[1][0],
+          (t - alphaPoints[0][1]) / (alphaPoints[1][1] - alphaPoints[0][1]),
+        );
+      }
+      return this.lerp(
+        alphaPoints[1][0],
+        this.colorEnd.alpha,
+        (t - alphaPoints[1][1]) / (1 - alphaPoints[1][1]),
+      );
+    }
+    return this.lerp(
+      alphaPoints[0][0],
+      this.colorEnd.alpha,
+      (t - alphaPoints[0][1]) / (1 - alphaPoints[0][1]),
+    );
+  }
+  /* not sure where to use it */
+  claculateSpeed() {
+    const t = this.lifePercent;
+    const speedPoints = this.emitter.speedPoints;
+    if (speedPoints.length === 0) {
+      return 1;
+    }
+    for (let i = 1; i < speedPoints.length; i++) {
+      const start = speedPoints[i - 1];
+      const end = speedPoints[i];
+      if (t >= start[1] && t <= end[1]) {
+        return this.lerp(
+          start[0],
+          end[0],
+          (t - start[1]) / (end[1] - start[1]),
+        );
+      }
+    }
+    return 1;
   }
   lerp(a: number, b: number, t: number) {
     return a + (b - a) * t;

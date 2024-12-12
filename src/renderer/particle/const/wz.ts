@@ -35,6 +35,7 @@ export interface WzParticleData {
   texture: WzPngPieceInfo;
   GRAVITY: WzParticleGravityData;
   RADIUS: WzParticleRadiusData;
+  SpeedPoint?: Record<string, { speed: number; time: number }>;
 }
 
 export interface WzParticleGravityData {

@@ -19,6 +19,7 @@ export class ParticleEmitter {
   container: ParticleContainer;
   wz: WzParticleData;
   texture: Texture;
+  textureRad: number;
   startColor: Color;
   startColorVar: Color;
   endColor: Color;
@@ -31,6 +32,13 @@ export class ParticleEmitter {
   accDirTmp = new Point(0, 0);
   tangentTmp = new Point(0, 0);
 
+  // [value, time]
+  speedPoints: [number, number][] = []; // what does this do?
+  alphaPoints: [number, number][] = [];
+
+  _emitTimer = 0;
+  _emitFrequency = 0;
+
   index = 0;
 
   constructor(particleData: WzParticleData, texture: Texture) {
@@ -41,22 +49,52 @@ export class ParticleEmitter {
     this.startColorVar = this.createColorFromNumber(particleData.startColorVar);
     this.endColor = this.createColorFromNumber(particleData.endColor);
     this.endColorVar = this.createColorFromNumber(particleData.endColorVar);
+    this.particalCount = particleData.totalParticle;
     if (particleData.duration > 0) {
       this.emitPersecond =
-        particleData.totalParticle / Math.min(particleData.duration, 1);
+        this.particalCount / Math.min(particleData.duration, 1);
     } else {
       const minLife = Math.max(0, particleData.life - particleData.lifeVar);
       const maxLife = Math.max(0, particleData.life + particleData.lifeVar);
       this.emitPersecond =
-        particleData.totalParticle / Math.max((minLife + maxLife) / 2, 1);
+        this.particalCount / Math.max((minLife + maxLife) / 2, 1);
     }
+    this._emitFrequency = 1 / this.emitPersecond;
     if (particleData.GRAVITY) {
       this.gravity.x = particleData.GRAVITY.x;
       this.gravity.y = particleData.GRAVITY.y;
     }
-    this.particalCount = this.wz.totalParticle;
-    this.setBlendMode(); // not sure this is right
-    this.initialize();
+    this.textureRad =
+      Math.sqrt(
+        this.texture.width * this.texture.width +
+          this.texture.height * this.texture.height,
+      ) * Math.SQRT2;
+    this.genSpeedPoints();
+    this.genAlphaPoints();
+  }
+  genSpeedPoints() {
+    const speedPoints = this.wz.SpeedPoint;
+    if (!speedPoints) {
+      return;
+    }
+    for (const pointData of Object.values(speedPoints)) {
+      this.speedPoints.push([pointData.speed, pointData.time]);
+    }
+    this.speedPoints.sort((a, b) => a[1] - b[1]);
+  }
+  genAlphaPoints() {
+    if (this.wz.MiddlePoint0 > 0) {
+      this.alphaPoints.push([
+        this.wz.MiddlePointAlpha0 / 255,
+        this.wz.MiddlePoint0 / 100,
+      ]);
+    }
+    if (this.wz.MiddlePoint1 > 0) {
+      this.alphaPoints.push([
+        this.wz.MiddlePointAlpha1 / 255,
+        this.wz.MiddlePoint1 / 100,
+      ]);
+    }
   }
   static async createFromWz(name: string) {
     const path = `Effect/particle.img/${name}`;
@@ -74,21 +112,28 @@ export class ParticleEmitter {
     });
     return new ParticleEmitter(data, texture);
   }
+  clone() {
+    return new ParticleEmitter(this.wz, this.texture);
+  }
   update(d: Ticker) {
     const delta = d.deltaMS * 0.001;
 
-    const emitCount = this.emitPersecond * delta;
-    for (let i = 0; i < emitCount; i++) {
-      const particle = this.particles[this.index];
+    this._emitTimer -= Math.max(0, delta);
 
-      if (!particle || particle.dead) {
-        this.resetParticle(particle);
-        particle.start();
-        continue;
-      }
-      this.index++;
-      if (this.index >= this.particles.length) {
-        this.index = 0;
+    while (this._emitTimer <= 0) {
+      this._emitTimer += this._emitFrequency;
+      const emitCount = Math.max(1, Math.floor(this.emitPersecond * delta));
+      for (let i = 0; i < emitCount; i++) {
+        const particle = this.particles[this.index];
+
+        if (!particle || particle.dead) {
+          this.resetParticle(particle);
+          particle.start();
+        }
+        this.index++;
+        if (this.index >= this.particles.length) {
+          this.index = 0;
+        }
       }
     }
     for (const particle of this.particles) {
@@ -130,6 +175,7 @@ export class ParticleEmitter {
       this.particles.push(particleItem);
       this.container.addParticle(particleItem.particle);
     }
+    this.setBlendMode(); // not sure this is right
   }
   generateParticleData() {
     const data = {} as ParticleItemOptions & ParticleOptions;
@@ -138,16 +184,21 @@ export class ParticleEmitter {
       this.wz.startSizeVar,
     );
     const endSize = this.randomRangeUnit(this.wz.endSize, this.wz.endSizeVar);
-    data.scaleBegin = startSize / this.texture.width;
-    data.scaleEnd = endSize / this.texture.width;
+    data.anchorX = 0.5;
+    data.anchorY = 0.5;
+    data.scaleBegin = startSize / this.textureRad;
+    data.scaleEnd = endSize / this.textureRad;
     data.colorBegin = this.randomColor(this.startColor, this.startColorVar);
     data.colorEnd = this.randomColor(this.endColor, this.endColorVar);
-    data.rotationBegin = this.randomRange(
+    data.rotationBegin = this.randomRangeUnit(
       this.wz.startSpin,
       this.wz.startSpinVar,
     );
-    data.rotationEnd = this.randomRange(this.wz.endSpin, this.wz.endSpinVar);
-    data.lifeTime = this.randomRange(this.wz.life, this.wz.lifeVar);
+    data.rotationEnd = this.randomRangeUnit(
+      this.wz.endSpin,
+      this.wz.endSpinVar,
+    );
+    data.lifeTime = this.randomRangeUnit(this.wz.life, this.wz.lifeVar);
     /* particals */
     data.texture = this.texture;
     data.x = this.randomRange(this.wz.posX, this.wz.posVarX);
@@ -159,7 +210,7 @@ export class ParticleEmitter {
     return data;
   }
   setRandomParticleData(particle: ParticleItem) {
-    const speed = this.randomRange(
+    const speed = this.randomRangeUnit(
       this.wz.GRAVITY?.speed || 1,
       this.wz.GRAVITY?.speedVar || 1,
     );
@@ -233,7 +284,7 @@ export class ParticleEmitter {
     if (range === 0) {
       return value;
     }
-    return value + Math.random() * range;
+    return value - range + Math.random() * range * 2;
   }
   randomRangeUnit(value: number, range: number) {
     const v = this.randomRange(value, range);
@@ -249,10 +300,10 @@ export class ParticleEmitter {
     const baseColor = value.toArray();
     const rangeColor = range.toArray();
     return new Color([
-      this.randomRange(baseColor[0], rangeColor[0]),
-      this.randomRange(baseColor[1], rangeColor[1]),
-      this.randomRange(baseColor[2], rangeColor[2]),
-      this.randomRange(baseColor[3], rangeColor[3]),
+      this.randomRangeUnit(baseColor[0], rangeColor[0]),
+      this.randomRangeUnit(baseColor[1], rangeColor[1]),
+      this.randomRangeUnit(baseColor[2], rangeColor[2]),
+      this.randomRangeUnit(baseColor[3], rangeColor[3]),
     ]);
   }
   createColorFromNumber(rgba: number) {
@@ -262,5 +313,9 @@ export class ParticleEmitter {
       (rgba & 0xff) / 255,
       ((rgba >> 24) & 0xff) / 255,
     ]);
+  }
+  destroy() {
+    this.container.destroy();
+    this.particles = [];
   }
 }
