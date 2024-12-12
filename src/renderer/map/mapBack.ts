@@ -254,7 +254,7 @@ export class MapBack extends Container {
     } else {
       this.prepareTiledResource(renderer);
     }
-    Ticker.shared.add(this.parallaxTicker);
+    this.bindParallaxEvent();
   }
   putZeroGapTiling(originSprite: Sprite, renderer: Renderer) {
     let _texture = originSprite.texture;
@@ -386,12 +386,16 @@ export class MapBack extends Container {
       this.position.y = y;
     }
   }
-  bindViewportEvent() {
+  bindParallaxEvent() {
+    if (this.info.rx === -100 && this.info.ry === -100) {
+      return;
+    }
     const viewport = this.set.map.viewport;
+    Ticker.shared.add(this.parallaxTicker);
     viewport.on('moved', this.parallaxTicker);
     viewport.on('zoomed', this.parallaxTicker);
   }
-  removeViewportEvent() {
+  removeParallaxEvent() {
     const viewport = this.set.map.viewport;
     viewport.off('moved', this.parallaxTicker);
     viewport.off('zoomed', this.parallaxTicker);
@@ -400,7 +404,7 @@ export class MapBack extends Container {
   }
   destroy(options?: DestroyOptions): void {
     super.destroy(options);
-    this.removeViewportEvent();
+    this.removeParallaxEvent();
   }
 }
 

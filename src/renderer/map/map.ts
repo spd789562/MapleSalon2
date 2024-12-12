@@ -6,10 +6,12 @@ import { CharacterLoader } from '../character/loader';
 import { MapTileSet } from './mapTileSet';
 import { MapObjSet } from './mapObjSet';
 import { MapBackSet } from './mapBackSet';
+import { MapParticleSet } from './mapParticleSet';
 
-const LAYER_COUNT = 16;
+const LAYER_COUNT = 17;
 const BOTTOM_LAYER = 0;
 const TOP_LAYER = 15;
+const PARTICLE_LAYER = 16;
 
 export class MapleMap extends Container {
   id: string;
@@ -32,6 +34,7 @@ export class MapleMap extends Container {
   tileSets: Record<number, MapTileSet> = {};
   objSet?: MapObjSet;
   backSet?: MapBackSet;
+  particleSet?: MapParticleSet;
 
   constructor(id: string, renderer: Renderer, viewport: Viewport) {
     super();
@@ -62,6 +65,7 @@ export class MapleMap extends Container {
     await this.loadObjSet(this.wz);
     await this.loadTileSet(this.wz);
     await this.loadBackSet(this.wz);
+    await this.loadParticleSet(this.wz);
   }
   setMapBound(wz: WzMapData) {
     this.size.width = wz.miniMap?.width || this.edges.right - this.edges.left;
@@ -108,6 +112,14 @@ export class MapleMap extends Container {
     await backSet.load();
     backSet.putOnMap(this);
   }
+  async loadParticleSet(wz: WzMapData) {
+    if (!wz.particle) {
+      return;
+    }
+    const particleSet = new MapParticleSet(wz.particle, this);
+    await particleSet.load();
+    this.layers[PARTICLE_LAYER].addChild(particleSet);
+  }
   destroy(options?: DestroyOptions): void {
     super.destroy(options);
     for (const layer in this.tileSets) {
@@ -123,5 +135,6 @@ export class MapleMap extends Container {
     this.tileSets = null;
     this.objSet?.destroy();
     this.backSet?.destroy();
+    this.particleSet?.destroy();
   }
 }
