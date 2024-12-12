@@ -36,7 +36,7 @@
     "p-queue": "8.0.1",
     "pixi-filters": "6.0.5",
     "pixi-viewport": "^6.0.3",
-    "pixi.js": "^8.6.3",
+    "pixi.js": "^8.6.4",
     "solid-js": "1.9.2",
     "throttle-debounce": "5.0.0",
     "wasm-webp": "0.0.2"
