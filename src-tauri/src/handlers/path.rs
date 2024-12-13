@@ -17,3 +17,6 @@ pub const CASH_CHAIR_STRING_PATH: &'static str = "String/Cash.img";
 
 pub const SKILL_PATH: &'static str = "Skill";
 pub const SKILL_STRING_PATH: &'static str = "String/Skill.img";
+
+pub const MAP_PATH: &'static str = "Map/Map"; // Map0...Map9
+pub const MAP_STRING_PATH: &'static str = "String/Map.img";

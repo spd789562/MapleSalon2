@@ -31,4 +31,5 @@ pub fn string_router() -> Router<AppState> {
         .route("/chair", get(string::get_chairs))
         .route("/mount", get(string::get_mounts))
         .route("/skill", get(string::get_skills))
+        .route("/map", get(string::get_maps))
 }

@@ -136,3 +136,23 @@ pub async fn get_skills(State((root, _)): State<AppState>) -> Result<impl IntoRe
         result.to_string(),
     ))
 }
+
+pub async fn get_maps(State((root, _)): State<AppState>) -> Result<impl IntoResponse> {
+    let result = handlers::resolve_map_string(&root)?;
+
+    let result = result
+        .iter()
+        .map(|(id, name, street_name)| {
+            Value::Array(vec![
+                Value::String(id.to_string()),
+                Value::String(name.to_string()),
+                Value::String(street_name.to_string()),
+            ])
+        })
+        .collect::<Value>();
+
+    Ok((
+        [(header::CONTENT_TYPE, "application/json")],
+        result.to_string(),
+    ))
+}
