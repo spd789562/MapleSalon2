@@ -1,5 +1,5 @@
 import { atom, map } from 'nanostores';
-import { Application } from 'pixi.js';
+import { Application, isWebGPUSupported } from 'pixi.js';
 
 import { CharacterLoader } from '@/renderer/character/loader';
 
@@ -13,7 +13,19 @@ export const $isActionRendererInitialized = atom<boolean>(false);
 
 export const $simpleCharacterCache = map<Record<string, string>>({});
 
+export async function checkWebGpuSupport() {
+  const prefer = $preferRenderer.get();
+  if (prefer === 'webgl') {
+    return;
+  }
+  const isSupported = await isWebGPUSupported().catch(() => false);
+  if (!isSupported) {
+    $preferRenderer.set('webgl');
+  }
+}
+
 export async function initialGlobalRenderer() {
+  await checkWebGpuSupport();
   const app = $globalRenderer.get();
   await CharacterLoader.init();
   await app.init({
@@ -21,6 +33,7 @@ export async function initialGlobalRenderer() {
     height: 340,
     backgroundAlpha: 0,
     preference: $preferRenderer.get(),
+    hello: true,
   });
   $isGlobalRendererInitialized.set(true);
 }
