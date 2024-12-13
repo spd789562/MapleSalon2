@@ -1,32 +1,6 @@
-import {
-  Color,
-  type ColorSource,
-  Particle,
-  type ParticleOptions,
-  Point,
-} from 'pixi.js';
+import { Color, Particle, Point, type Texture } from 'pixi.js';
 import 'pixi.js/math-extras';
 import type { ParticleEmitter } from './particleEmitter';
-
-export interface ParticleItemOptions {
-  scaleBegin: number;
-  scaleEnd: number;
-
-  alphaBegin: number;
-  alphaEnd: number;
-
-  rotationBegin: number;
-  rotationEnd: number;
-  rotationSpeed: number;
-
-  radiusBegin: number;
-  radiusEnd: number;
-
-  colorBegin: ColorSource;
-  colorEnd: ColorSource;
-
-  lifeTime: number;
-}
 
 export class ParticleItem {
   lifeTime: number; // ms
@@ -61,38 +35,35 @@ export class ParticleItem {
 
   emitter: ParticleEmitter;
 
-  constructor(
-    options: ParticleItemOptions & ParticleOptions,
-    emitter: ParticleEmitter,
-  ) {
+  constructor(texture: Texture, emitter: ParticleEmitter) {
     this.emitter = emitter;
-    this.lifeTime = options.lifeTime;
-    this.life = this.lifeTime;
+    this.lifeTime = 0;
+    this.life = 0;
     this.lifePercent = 1;
 
-    this.scaleBegin = options.scaleBegin;
-    this.scaleEnd = options.scaleEnd;
+    this.scaleBegin = 0;
+    this.scaleEnd = 0;
 
-    this.alphaBegin = options.alphaBegin;
-    this.alphaEnd = options.alphaEnd;
+    this.alphaBegin = 0;
+    this.alphaEnd = 0;
 
-    this.rotationBegin = options.rotationBegin;
-    this.rotationEnd = options.rotationEnd;
-    this.rotationSpeed = options.rotationSpeed;
+    this.rotationBegin = 0;
+    this.rotationEnd = 0;
+    this.rotationSpeed = 0;
 
-    this.colorBegin = new Color(options.colorBegin);
-    this.colorEnd = new Color(options.colorEnd);
-    this.color = new Color(options.colorBegin);
+    this.colorBegin = new Color();
+    this.colorEnd = new Color();
+    this.color = new Color();
 
-    this.radiusBegin = options.radiusBegin;
-    this.radiusEnd = options.radiusEnd;
+    this.radiusBegin = 0;
+    this.radiusEnd = 0;
     this.angle = 0;
 
     this.dir = new Point();
     this.radialAccel = 0;
     this.tangentialAccel = 0;
 
-    this.particle = new Particle(options);
+    this.particle = new Particle(texture);
     this.particle.alpha = 0;
   }
   update(deltaSec: number) {
@@ -158,6 +129,7 @@ export class ParticleItem {
     if (alphaPoints.length === 0) {
       return this.lerp(this.colorBegin.alpha, this.colorEnd.alpha, t);
     }
+    // only one mid point - 0 to mid
     if (t < alphaPoints[0][1]) {
       return this.lerp(
         this.colorBegin.alpha,
@@ -166,6 +138,7 @@ export class ParticleItem {
       );
     }
     if (alphaPoints[1]) {
+      // mid0 to mid1
       if (t < alphaPoints[1][1]) {
         return this.lerp(
           alphaPoints[0][0],
@@ -173,12 +146,14 @@ export class ParticleItem {
           (t - alphaPoints[0][1]) / (alphaPoints[1][1] - alphaPoints[0][1]),
         );
       }
+      // mid1 to 1
       return this.lerp(
         alphaPoints[1][0],
         this.colorEnd.alpha,
         (t - alphaPoints[1][1]) / (1 - alphaPoints[1][1]),
       );
     }
+    // only one mid point - mid to 1
     return this.lerp(
       alphaPoints[0][0],
       this.colorEnd.alpha,
