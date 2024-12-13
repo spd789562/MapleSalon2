@@ -1,4 +1,6 @@
 import { invoke } from '@tauri-apps/api/core';
+import { getCurrentWebview } from '@tauri-apps/api/webview';
+
 import { atom } from 'nanostores';
 
 import { $apiHost, $isInitialized } from '@/store/const';
@@ -6,6 +8,8 @@ import { initializeSavedCharacter } from '@/store/characterDrawer';
 import {
   initializeSavedFileSelectHistory,
   appendPathToHistory,
+  getLastSelectedPath,
+  setLastSelectedPath,
 } from '@/store/fileSelectHistory';
 import {
   initializeSavedSetting,
@@ -95,6 +99,15 @@ export async function initByWzBase(path: string) {
     });
     $isWzLoading.set(false);
     return false;
+  }
+
+  const lastPath = await getLastSelectedPath();
+  if (lastPath !== path) {
+    await setLastSelectedPath(path);
+    if (lastPath !== undefined || lastPath !== null || lastPath !== '') {
+      const webview = getCurrentWebview();
+      await webview.clearAllBrowsingData();
+    }
   }
 
   const isSuccess = await initStringAndRenderer(true, $defaultLoadItem.get());

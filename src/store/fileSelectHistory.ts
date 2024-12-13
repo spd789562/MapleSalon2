@@ -5,12 +5,10 @@ import { load } from '@tauri-apps/plugin-store';
 const SAVE_FILENAME = 'path.bin';
 
 const SAVE_KEY = 'filepaths';
+const LAST_PATH_SAVE_KEY = 'lastPath';
 
 /** file selection save, a presistence store on file */
-export const fileStore = await load(SAVE_FILENAME, {
-  /* @ts-ignore */
-  autoSave: 60000 * 5, // 5 minutes
-});
+export const fileStore = await load(SAVE_FILENAME);
 
 export const $savedFileSelectHistory = map<string[]>([]);
 
@@ -45,4 +43,12 @@ export async function removePathFromHistory(filePath: string) {
 export async function clearFileSelectHistory() {
   $savedFileSelectHistory.set([]);
   await fileStore.set(SAVE_KEY, []);
+}
+
+export function getLastSelectedPath() {
+  return fileStore.get<string>(LAST_PATH_SAVE_KEY);
+}
+
+export async function setLastSelectedPath(filePath: string) {
+  await fileStore.set(LAST_PATH_SAVE_KEY, filePath);
 }
