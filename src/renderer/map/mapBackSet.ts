@@ -17,10 +17,15 @@ export class MapBackSet {
   layers: [MapBack[], MapBack[]] = [[], []];
   imgUsed = new Set<string>();
   map: MapleMap;
-  showTagItems = false;
   constructor(wz: WzMapData, map: MapleMap) {
     this.initialize(wz);
     this.map = map;
+  }
+  get tags() {
+    return this.layers
+      .flat()
+      .map((back) => back.info.backTags)
+      .filter(Boolean) as string[];
   }
   initialize(wz: WzMapData) {
     const numberKeys = Object.keys(wz.back || {})
@@ -50,10 +55,8 @@ export class MapBackSet {
       {} as Record<string, WzMapBackFolder>,
     );
     const textureMap = new Map<string, UnresolvedAsset>();
+    const skeletonPromises: (() => Promise<void>)[] = [];
     for (const [info, zIndex] of this.unprocessedBacks) {
-      if (!this.showTagItems && info.backTags) {
-        continue;
-      }
       const backTyep =
         info.ani === 1 ? 'ani' : info.ani === 2 ? 'spine' : 'back';
       const _backData = wz[info.bS]?.[backTyep]?.[info.no];
@@ -72,12 +75,17 @@ export class MapBackSet {
           this,
         );
         const prefix = `Map/Back/${info.bS}.img/spine/${info.no}`;
-        const data = await createSkeletonData(_backData as WzSpineData, prefix);
-        if (data) {
-          backObj.skeletonData = data;
-          const layer = info.front === 1 ? 1 : 0;
-          this.layers[layer].push(backObj);
-        }
+        skeletonPromises.push(async () => {
+          const data = await createSkeletonData(
+            _backData as WzSpineData,
+            prefix,
+          );
+          if (data) {
+            backObj.skeletonData = data;
+            const layer = info.front === 1 ? 1 : 0;
+            this.layers[layer].push(backObj);
+          }
+        });
       } else {
         const backData =
           info.ani === 1
@@ -94,6 +102,7 @@ export class MapBackSet {
       }
     }
     this.unprocessedBacks = [];
+    await Promise.all(skeletonPromises);
     await Assets.load(Array.from(textureMap.values()));
     for (const back of this.layers.flat()) {
       back.prepareResource(this.map.renderer);
@@ -108,6 +117,14 @@ export class MapBackSet {
     }
     for (const foreground of this.layers[1]) {
       mapleMap.layers[mapleMap.topLayer].addChild(foreground);
+    }
+  }
+  toggleVisibilityByTags(disableTags: string[]) {
+    for (const back of this.layers.flat()) {
+      if (!back.info.backTags) {
+        continue;
+      }
+      back.visible = !disableTags.includes(back.info.backTags);
     }
   }
   destroy() {

@@ -29,6 +29,12 @@ export class MapObjSet {
     }
     this.initialize(wz);
   }
+  get tags() {
+    return this.layers
+      .flat()
+      .map((obj) => obj.info.tags)
+      .filter(Boolean) as string[];
+  }
   initialize(wz: WzMapData) {
     const numberKeys = Object.keys(wz).map(Number).filter(Number.isInteger);
     for (const layer of numberKeys) {
@@ -60,6 +66,7 @@ export class MapObjSet {
       {} as Record<string, WzMapObjTypeFolder>,
     );
     const textureMap = new Map<string, UnresolvedAsset>();
+    const skeletonPromises: (() => Promise<void>)[] = [];
     for (let i = 0; i < LAYER_COUNT; i++) {
       const unprocessLayer = this.unprocessedObjs[i] || [];
       for (const obj of unprocessLayer) {
@@ -72,18 +79,20 @@ export class MapObjSet {
         if (!objData) {
           continue;
         }
-        if (obj.spineAni) {
+        if ('spineAni' in obj) {
           const mapObj = new MapObj(obj, objData, obj.id || 0);
           const prefix = `Map/Obj/${obj.oS}.img/${obj.l0}/${obj.l1}/${obj.l2}`;
-          const skeletonData = await createSkeletonData(
-            objData as WzSpineData,
-            prefix,
-          );
-          if (skeletonData) {
-            mapObj.skeletonData = skeletonData;
-            this.layers[i].push(mapObj);
-            this.layerContainers[i].addChild(mapObj);
-          }
+          skeletonPromises.push(async () => {
+            const skeletonData = await createSkeletonData(
+              objData as WzSpineData,
+              prefix,
+            );
+            if (skeletonData) {
+              mapObj.skeletonData = skeletonData;
+              this.layers[i].push(mapObj);
+              this.layerContainers[i].addChild(mapObj);
+            }
+          });
         } else {
           const mapObj = new MapObj(obj, objData, obj.id || 0);
           for (const asset of mapObj.resources) {
@@ -95,6 +104,7 @@ export class MapObjSet {
       }
     }
     this.unprocessedObjs = [];
+    await Promise.all(skeletonPromises);
     await Assets.load(Array.from(textureMap.values()));
     for (const obj of this.layers.flat()) {
       obj.prepareResource();
@@ -109,9 +119,20 @@ export class MapObjSet {
       }
     }
   }
+  toggleVisibilityByTags(disableTags: string[]) {
+    for (const obj of this.layers.flat()) {
+      if (!obj.info.tags) {
+        continue;
+      }
+      obj.visible = !disableTags.includes(obj.info.tags);
+    }
+  }
   destroy() {
     for (const obj of this.layers.flat()) {
       obj.destroy();
+    }
+    for (const container of this.layerContainers) {
+      container.destroy();
     }
     this.layers = [];
     this.imgUsed.clear();

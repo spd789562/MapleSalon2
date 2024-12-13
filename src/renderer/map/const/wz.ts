@@ -154,6 +154,8 @@ export interface WzMapParticleInfo {
   x: number;
   y: number;
   z: number;
+  tags?: string;
+  backTags?: string;
 }
 
 export type WzMapObjTypeFolder = Record<string, WzMapObjFolder>;

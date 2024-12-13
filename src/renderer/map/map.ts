@@ -50,6 +50,18 @@ export class MapleMap extends Container {
       this.addChild(layer);
     }
   }
+  get tags() {
+    const set = new Set<string>(
+      (this.objSet?.tags || []).concat(this.particleSet?.tags || []),
+    );
+    return Array.from(set);
+  }
+  get backTags() {
+    const set = new Set<string>(
+      (this.backSet?.tags || []).concat(this.particleSet?.tags || []),
+    );
+    return Array.from(set);
+  }
   async load() {
     if (!this.wz) {
       const parentMapSuffix = this.id.slice(0, 1);
@@ -120,6 +132,14 @@ export class MapleMap extends Container {
     await particleSet.load();
     this.layers[PARTICLE_LAYER].addChild(particleSet);
   }
+  toggleVisibilityByTags(tags: string[], back = false) {
+    if (back) {
+      this.backSet?.toggleVisibilityByTags(tags);
+    } else {
+      this.objSet?.toggleVisibilityByTags(tags);
+    }
+    this.particleSet?.toggleVisibilityByTags(tags, back);
+  }
   destroy(options?: DestroyOptions): void {
     super.destroy(options);
     for (const layer in this.tileSets) {
@@ -130,6 +150,9 @@ export class MapleMap extends Container {
       set.destroy();
       /* @ts-ignore */
       this.tileSets[layer] = null;
+    }
+    for (const layer of this.layers) {
+      layer.destroy();
     }
     /* @ts-ignore */
     this.tileSets = null;

@@ -18,6 +18,16 @@ export class MapParticleSet extends Container {
     this.map = map;
     this.wz = wz;
   }
+  get tags() {
+    return this.particles
+      .map((obj) => obj.info.tags)
+      .filter(Boolean) as string[];
+  }
+  get backTags() {
+    return this.particles
+      .map((obj) => obj.info.backTags)
+      .filter(Boolean) as string[];
+  }
   async load() {
     const particleNames = Object.keys(this.wz);
     const particlePairs = await Promise.all(
@@ -54,6 +64,16 @@ export class MapParticleSet extends Container {
       particle.emitter.update(delta);
     }
   };
+  toggleVisibilityByTags(disableTags: string[], back = false) {
+    for (const particle of this.particles) {
+      if (back && particle.info.backTags) {
+        particle.visible = !disableTags.includes(particle.info.backTags);
+      }
+      if (!back && particle.info.tags) {
+        particle.visible = !disableTags.includes(particle.info.tags);
+      }
+    }
+  }
   destroy(options?: DestroyOptions) {
     super.destroy(options);
     Ticker.shared.remove(this.emitterTicker);
