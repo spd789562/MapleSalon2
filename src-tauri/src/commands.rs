@@ -39,7 +39,7 @@ pub(crate) async fn init<R: Runtime>(
     state: State<'_, AppStore>,
     path: String,
     version: Option<String>,
-) -> Result<()> {
+) -> Result<i32> {
     let current_root_path = state
         .node
         .read()
@@ -49,7 +49,7 @@ pub(crate) async fn init<R: Runtime>(
 
     if let Some(current_root_path) = current_root_path {
         if current_root_path == path {
-            return Ok(());
+            return Ok(0);
         }
     }
 
@@ -66,7 +66,15 @@ pub(crate) async fn init<R: Runtime>(
 
     state.replace_root(&base_node);
 
-    Ok(())
+    let version = state
+        .node
+        .read()
+        .unwrap()
+        .try_as_file()
+        .map(|f| f.wz_file_meta.patch_version)
+        .unwrap_or(0);
+
+    Ok(version)
 }
 
 #[command]

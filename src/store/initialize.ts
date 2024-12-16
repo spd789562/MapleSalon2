@@ -37,7 +37,7 @@ export const $isWzLoading = atom(false);
 export const $initLoadProgress = atom<InitLoadProgress | undefined>();
 
 export function initialWzBase(path: string) {
-  return invoke<void>('init', { path });
+  return invoke<number>('init', { path });
 }
 
 export function getServerInfo() {
@@ -86,8 +86,9 @@ export async function initByWzBase(path: string) {
   $isWzLoading.set(true);
   $initLoadProgress.set(InitLoadProgress.InitWz);
   await nextTick();
+  let version = 0;
   try {
-    await initialWzBase(path);
+    version = await initialWzBase(path);
   } catch (e) {
     let message = '未知錯誤';
     if (e instanceof Error) {
@@ -101,9 +102,10 @@ export async function initByWzBase(path: string) {
     return false;
   }
 
+  const pathHash = `${path}#${version}`;
   const lastPath = await getLastSelectedPath();
-  if (lastPath !== path) {
-    await setLastSelectedPath(path);
+  if (lastPath !== pathHash) {
+    await setLastSelectedPath(pathHash);
     if (lastPath !== undefined || lastPath !== null || lastPath !== '') {
       const webview = getCurrentWebview();
       await webview.clearAllBrowsingData();
