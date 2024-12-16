@@ -55,6 +55,7 @@ const Container = styled('div', {
         ...PreviewSceneBackground.grid,
       },
       color: {},
+      mapleMap: {},
       henesys: {
         ...PreviewSceneBackground.henesys,
         backgroundRepeat: 'repeat-x',

@@ -4,11 +4,13 @@ import { useStore } from '@nanostores/solid';
 import { css } from 'styled-system/css';
 
 import ImageIcon from 'lucide-solid/icons/image';
+import MapPinned from 'lucide-solid/icons/map-pinned';
 import { $currentScene, $sceneCustomColor } from '@/store/scene';
 import { HStack } from 'styled-system/jsx/hstack';
 import * as RadioButtonGroup from '@/components/ui/radioButtonGroup';
 import { CharacterSceneColorPicker } from './CharacterSceneColorPicker';
 import { CharacterSceneBackgroundPopover } from './CharacterSceneBackgroundPopover';
+import { CharacterSceneMapPopover } from './CharacterSceneMapPopover';
 
 import {
   PreviewScene,
@@ -101,6 +103,24 @@ export const CharacterSceneRadioGroup = () => {
             <RadioButtonGroup.ItemHiddenInput />
           </RadioButtonGroup.Item>
         </CharacterSceneBackgroundPopover>
+        <CharacterSceneMapPopover>
+          <RadioButtonGroup.Item
+            value="mapleMap"
+            width="6"
+            height="6"
+            padding="unset"
+            minWidth="0"
+            title={PreviewSceneNames.mapleMap}
+            backgroundColor="bg.default"
+            borderWidth={2}
+            color="fg.subtle"
+            transition-property="border-color, color, box-shadow"
+          >
+            <MapPinned size="12" />
+            <RadioButtonGroup.ItemControl />
+            <RadioButtonGroup.ItemHiddenInput />
+          </RadioButtonGroup.Item>
+        </CharacterSceneMapPopover>
       </HStack>
     </RadioButtonGroup.Root>
   );

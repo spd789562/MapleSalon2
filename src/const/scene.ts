@@ -7,6 +7,7 @@ export enum PreviewScene {
   Color = 'color',
   Henesys = 'henesys',
   Custom = 'custom',
+  MapleMap = 'mapleMap',
 }
 
 export const PreviewSceneNames: Record<PreviewScene, string> = {
@@ -15,6 +16,7 @@ export const PreviewSceneNames: Record<PreviewScene, string> = {
   [PreviewScene.Color]: '純色背景',
   [PreviewScene.Henesys]: '弓箭手村背景',
   [PreviewScene.Custom]: '自訂背景',
+  [PreviewScene.MapleMap]: '地圖背景',
 };
 
 export const PreviewSceneBackground: Record<PreviewScene, SystemStyleObject> = {
@@ -33,6 +35,7 @@ export const PreviewSceneBackground: Record<PreviewScene, SystemStyleObject> = {
     backgroundRepeat: 'repeat',
   },
   [PreviewScene.Color]: {},
+  [PreviewScene.MapleMap]: {},
   [PreviewScene.Custom]: {
     backgroundPosition: 'center center',
   },
@@ -54,4 +57,5 @@ export const PreviewSceneThemeMap: Record<PreviewScene, string> = {
   [PreviewScene.Color]: 'light',
   [PreviewScene.Henesys]: 'light',
   [PreviewScene.Custom]: 'light',
+  [PreviewScene.MapleMap]: 'light',
 };
