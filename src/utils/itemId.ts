@@ -284,3 +284,7 @@ export function isTamingMobId(id: number) {
 export function getSkillIconPath(id: string, parentPath?: string) {
   return `${$apiHost.get()}/node/image_unparsed/Skill/${parentPath}/skill/${id}/icon`;
 }
+
+export function getMinimapPath(id: string) {
+  return `${$apiHost.get()}/node/image_unparsed/Map/Map/Map${id.slice(0, 1)}/${id}.img/miniMap/canvas`;
+}

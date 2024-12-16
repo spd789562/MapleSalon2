@@ -36,6 +36,7 @@ import { useCharacterEffectVisible } from './EffectSwitch';
 import { Character } from '@/renderer/character/character';
 import { Chair } from '@/renderer/chair/chair';
 import { ZoomContainer } from '@/renderer/ZoomContainer';
+import { MapleMap } from '@/renderer/map/map';
 
 import { toaster } from '@/components/GlobalToast';
 
@@ -122,6 +123,22 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
       }
     });
     container.appendChild(app.canvas);
+
+    const mapleMap = new MapleMap('410007600', app.renderer, viewport);
+    mapleMap.load().then(() => {
+      if (!viewport) {
+        return;
+      }
+      viewport.worldWidth = mapleMap.size.width;
+      viewport.worldHeight = mapleMap.size.height;
+      viewport.clamp({
+        top: Math.min(-mapleMap.size.height, -mapleMap.edges.top),
+        bottom: Math.max(mapleMap.size.height, mapleMap.edges.bottom),
+        left: Math.min(-mapleMap.size.width, -mapleMap.edges.left),
+        right: Math.max(mapleMap.size.width, mapleMap.edges.right),
+      });
+    });
+    viewport.addChild(mapleMap);
     app.stage.addChild(viewport);
 
     setIsInit(true);

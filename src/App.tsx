@@ -22,6 +22,7 @@ import { CharacterSelectionDrawerOpenButton } from './components/drawer/Characte
 
 import { SettingDialog } from './components/dialog/SettingDialog';
 import { CharacterInfoDialog } from './components/dialog/CharacterInfoDialog';
+import { MapSelectionDialog } from './components/dialog/MapSelectionDialog';
 
 import { ItemContextMenuProvider } from './context/itemContextMenu';
 
@@ -54,6 +55,7 @@ function App() {
         <CharacterSelectionDrawerOpenButton />
         <SettingDialog />
         <CharacterInfoDialog />
+        <MapSelectionDialog />
       </Show>
       <GlobalToast />
       <GlobalConfirmDialog />
