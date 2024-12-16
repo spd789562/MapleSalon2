@@ -7,6 +7,9 @@ import {
 import type { HTMLStyledProps } from 'styled-system/types';
 import { createStyleContext } from '@/utils/create-style-context';
 import CheckIcon from 'lucide-solid/icons/check';
+import ClipboardCopyIcon from 'lucide-solid/icons/clipboard-copy';
+import { IconButton } from './icon-button';
+import { Text, type TextProps } from './text';
 
 const { withProvider, withContext } = createStyleContext(clipboard);
 
@@ -47,6 +50,28 @@ export const Trigger = withContext<
 >(Clipboard.Trigger, 'trigger');
 
 export { ClipboardContext as Context } from '@ark-ui/solid';
+
+export const SimpleTextClipboard = (props: {
+  value: string;
+  textProps?: TextProps;
+}) => {
+  return (
+    <Root value={props.value}>
+      <Control alignItems="center">
+        <Text {...props.textProps}>{props.value}</Text>
+        <Clipboard.Trigger
+          asChild={(triggerProps) => (
+            <IconButton size="xs" variant="ghost" {...triggerProps()}>
+              <Clipboard.Indicator copied={<CheckIcon />}>
+                <ClipboardCopyIcon />
+              </Clipboard.Indicator>
+            </IconButton>
+          )}
+        />
+      </Control>
+    </Root>
+  );
+};
 
 export interface PureTextClipboardProps {
   value: string;
