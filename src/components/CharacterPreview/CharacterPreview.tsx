@@ -25,6 +25,7 @@ import { $showUpscaledCharacter } from '@/store/trigger';
 import { $currentScene } from '@/store/scene';
 import { usePureStore } from '@/store';
 import { useChatBalloonText } from './useChatBalloonText';
+import { useResizableApp } from '@/hook/resizableApp';
 import { MapleMapMount } from '@/hook/mapleMap';
 
 import { Character } from '@/renderer/character/character';
@@ -35,6 +36,7 @@ import {
   type PipelineOption,
 } from '@/renderer/filter/anime4k/const';
 
+import { Box } from 'styled-system/jsx/box';
 import { toaster } from '@/components/GlobalToast';
 
 import { PreviewScene } from '@/const/scene';
@@ -59,6 +61,10 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   const ch = new Character();
   props.ref?.(ch);
   useChatBalloonText(ch);
+  useResizableApp({
+    viewport,
+    container: () => container,
+  });
 
   ch.loadEvent.addListener('loading', props.onLoad);
   ch.loadEvent.addListener('loaded', props.onLoaded);
@@ -75,10 +81,11 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
 
   function initScene() {
     const app = $globalRenderer.get();
-    app.renderer.resize(300, 340);
+    app.resizeTo = container;
+    app.renderer.resize(container.clientWidth, container.clientHeight);
     viewport = new ZoomContainer(app, {
-      width: 300,
-      height: 340,
+      width: app.screen.width,
+      height: app.screen.height,
       worldScale: 2,
       maxScale: MAX_ZOOM,
     });
@@ -181,11 +188,10 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
 
   return (
     <>
-      <div ref={container} />
-      <Show when={scene() === PreviewScene.MapleMap}>
+      <Box w="full" h="full" ref={container} />
+      <Show when={scene() === PreviewScene.MapleMap && isInit()}>
         <MapleMapMount
           viewport={() => viewport}
-          isInit={isInit}
           application={$globalRenderer.get()}
           singleTarget={ch}
         />

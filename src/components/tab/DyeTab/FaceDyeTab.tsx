@@ -47,9 +47,8 @@ export const FaceDyeTab = () => {
     horizontalScroll(ref);
   }
 
-
   return (
-    <VStack>
+    <VStack overflow="auto">
       <CardContainer>
         <HStack alignItems="flex-end" m="2">
           <Heading size="2xl">顏色預覽</Heading>

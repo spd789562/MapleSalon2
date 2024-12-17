@@ -15,7 +15,7 @@ import { DyeResult } from './DyeResult';
 
 export const ItemDyeTab = () => {
   return (
-    <Stack mb="4">
+    <Stack mb="4" overflow="auto">
       <CardContainer gap={4}>
         <ItemDyeTabTitle />
         <HStack>

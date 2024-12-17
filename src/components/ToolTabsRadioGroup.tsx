@@ -104,7 +104,6 @@ export const ToolTabsRadioGroup = () => {
 
 const ToolTabsContainer = styled('div', {
   base: {
-    mt: 8,
     mb: 4,
     p: 2,
     borderRadius: 'md',

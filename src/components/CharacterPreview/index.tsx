@@ -24,7 +24,7 @@ import { CharacterPreviewProvider } from './CharacterPreviewContext';
 export const CharacterPreview = () => {
   return (
     <CharacterPreviewProvider>
-      <CharacterPreviewCard>
+      <CharacterPreviewCard gridTemplateRows="auto 1fr auto auto">
         <HStack justify="center" mb="2" flexWrap="wrap">
           <HandTypeToggleGroup />
           <EarTypeToggleGroup />
@@ -69,5 +69,6 @@ const CharacterPreviewCard = styled('div', {
     bg: 'bg.default',
     position: 'relative',
     overflow: 'hidden',
+    display: 'grid',
   },
 });

@@ -85,7 +85,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   function handleCanvasResize() {
     const app = $globalRenderer.get();
     app.renderer.resize(container.clientWidth, container.clientHeight);
-    viewport?.resize(app.screen.width, app.screen.height);
+    viewport?.resizeScreen(app.screen.width, app.screen.height);
   }
 
   function initScene() {

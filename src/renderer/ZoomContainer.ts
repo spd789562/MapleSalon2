@@ -10,6 +10,8 @@ export interface ZoomContainerOptions {
   defaultInteraction?: boolean;
 }
 export class ZoomContainer extends Viewport {
+  worldScale: number;
+  hasMap: boolean;
   constructor(app: Application, options: ZoomContainerOptions) {
     const worldScale = options.worldScale || 1;
     const worldWidth = app.screen.width * worldScale;
@@ -23,6 +25,8 @@ export class ZoomContainer extends Viewport {
       events: app.renderer.events,
       disableOnContextMenu: true,
     });
+    this.worldScale = worldScale;
+    this.hasMap = false;
 
     this.drag()
       .pinch()
@@ -43,6 +47,16 @@ export class ZoomContainer extends Viewport {
     } else {
       this.disable();
     }
+  }
+  resizeScreen(width: number, height: number) {
+    this.screenWidth = width;
+    this.screenHeight = height;
+    if (!this.hasMap) {
+      console.log('resize', width, height);
+      this.worldWidth = width * this.worldScale;
+      this.worldHeight = height * this.worldScale;
+    }
+    console.log(this);
   }
   disable() {
     this.plugins.pause('drag');

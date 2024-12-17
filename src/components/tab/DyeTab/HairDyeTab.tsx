@@ -48,7 +48,7 @@ export const HairDyeTab = () => {
   }
 
   return (
-    <VStack>
+    <VStack overflow="auto">
       <CardContainer>
         <HStack alignItems="flex-end" m="2">
           <Heading size="2xl">髮色預覽</Heading>
