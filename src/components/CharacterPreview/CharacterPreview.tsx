@@ -1,4 +1,11 @@
-import { onCleanup, createEffect, createSignal, from, on } from 'solid-js';
+import {
+  onCleanup,
+  createEffect,
+  createSignal,
+  from,
+  on,
+  Show,
+} from 'solid-js';
 import type { ReadableAtom } from 'nanostores';
 
 import {
@@ -15,8 +22,10 @@ import {
   updateZoom,
 } from '@/store/previewZoom';
 import { $showUpscaledCharacter } from '@/store/trigger';
+import { $currentScene } from '@/store/scene';
 import { usePureStore } from '@/store';
 import { useChatBalloonText } from './useChatBalloonText';
+import { MapleMapMount } from '@/hook/mapleMap';
 
 import { Character } from '@/renderer/character/character';
 import { ZoomContainer } from '@/renderer/ZoomContainer';
@@ -27,6 +36,8 @@ import {
 } from '@/renderer/filter/anime4k/const';
 
 import { toaster } from '@/components/GlobalToast';
+
+import { PreviewScene } from '@/const/scene';
 
 export interface CharacterPreviewViewProps {
   onLoad: () => void;
@@ -41,6 +52,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   const isRendererInitialized = usePureStore($isGlobalRendererInitialized);
   const [isInit, setIsInit] = createSignal<boolean>(false);
   const isShowUpscale = usePureStore($showUpscaledCharacter);
+  const scene = usePureStore($currentScene);
   let container!: HTMLDivElement;
   let viewport: ZoomContainer | undefined;
   let upscaleFilter: Anime4kFilter | undefined;
@@ -167,5 +179,17 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     }
   });
 
-  return <div ref={container} />;
+  return (
+    <>
+      <div ref={container} />
+      <Show when={scene() === PreviewScene.MapleMap}>
+        <MapleMapMount
+          viewport={() => viewport}
+          isInit={isInit}
+          application={$globalRenderer.get()}
+          singleTarget={ch}
+        />
+      </Show>
+    </>
+  );
 };

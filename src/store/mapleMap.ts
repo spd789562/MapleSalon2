@@ -17,9 +17,18 @@ export const $mapSearch = atom<string>('');
 export const $selectedMap = atom<MapItem | null>(null);
 export const $currentMap = atom<MapItem | null>(null);
 
+export const $mapTargetLayer = atom(3);
+export const $mapTargetPosX = atom(0);
+export const $mapTargetPosY = atom(0);
 export const $mapOffsetX = atom(0);
 export const $mapOffsetY = atom(0);
 
+export const $mapTags = atom<
+  {
+    name: string;
+    disabled: boolean;
+  }[]
+>([]);
 export const $mapOptions = map({});
 
 /* computed */
@@ -82,4 +91,22 @@ export function submitMapSelection() {
     return;
   }
   $currentMap.set({ ...map });
+  $mapTargetPosX.set(0);
+  $mapTargetPosY.set(0);
+}
+export function updateMapTags(tags: string[]) {
+  $mapTags.set(
+    tags.map((name) => ({
+      name,
+      disabled: false,
+    })),
+  );
+}
+export function toggleMapTag(name: string) {
+  const tags = $mapTags.get();
+  $mapTags.set(
+    tags.map((tag) =>
+      tag.name === name ? { ...tag, disabled: !tag.disabled } : tag,
+    ),
+  );
 }

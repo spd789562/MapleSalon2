@@ -1,4 +1,9 @@
-import { Container, type DestroyOptions, type Renderer } from 'pixi.js';
+import {
+  Container,
+  Rectangle,
+  type DestroyOptions,
+  type Renderer,
+} from 'pixi.js';
 import type { Viewport } from 'pixi-viewport';
 
 import type { WzMapData } from './const/wz';
@@ -21,16 +26,7 @@ export class MapleMap extends Container {
   viewport: Viewport;
   readonly bottomLayer = BOTTOM_LAYER;
   readonly topLayer = TOP_LAYER;
-  edges = {
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-  };
-  size = {
-    width: 800,
-    height: 600,
-  };
+  edge = new Rectangle();
   tileSets: Record<number, MapTileSet> = {};
   objSet?: MapObjSet;
   backSet?: MapBackSet;
@@ -80,16 +76,15 @@ export class MapleMap extends Container {
     await this.loadParticleSet(this.wz);
   }
   setMapBound(wz: WzMapData) {
-    this.size.width = wz.miniMap?.width || this.edges.right - this.edges.left;
-    this.size.height = wz.miniMap?.height || this.edges.bottom - this.edges.top;
-    this.edges.top = wz.miniMap ? -wz.miniMap.centerY : this.edges.top;
-    this.edges.left = wz.miniMap ? -wz.miniMap.centerX : this.edges.left;
-    this.edges.bottom = wz.miniMap
-      ? this.edges.top + this.size.height
-      : this.edges.bottom;
-    this.edges.right = wz.miniMap
-      ? this.edges.left + this.size.width
-      : this.edges.right;
+    const widthByEdge = (wz.info?.VRRight || 0) - (wz.info?.VRLeft || 0);
+    const heightByEdge = (wz.info?.VRTop || 0) - (wz.info?.VRBottom || 0);
+    const width = Math.max(wz.miniMap?.width || 0, widthByEdge);
+    const height = Math.max(wz.miniMap?.height || 0, heightByEdge);
+
+    this.edge.x = Math.min(-(wz.miniMap?.centerX || 0), wz.info?.VRLeft || 0);
+    this.edge.y = Math.min(-(wz.miniMap?.centerY || 0), wz.info?.VRTop || 0);
+    this.edge.width = width;
+    this.edge.height = height;
   }
   async loadTileSet(wz: WzMapData) {
     const sets: Record<number, MapTileSet> = {};
