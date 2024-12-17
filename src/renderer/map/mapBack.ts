@@ -243,7 +243,7 @@ export class MapBack extends Container {
       renderObj.pivot.y = target.pivot.y;
     }
 
-    const needMoving = !!this.info.flowX || !!this.info.flowY;
+    const needMoving = this.flowMode !== TileMode.None;
     if (needMoving) {
       Ticker.shared.add(this.moveTicker);
     }

@@ -529,6 +529,9 @@ export class Character extends Container {
     this.playBodyFrame();
     this.skill?.play();
     this.currentTicker = (delta) => {
+      if (this.destroyed) {
+        return;
+      }
       const currentDuration = instructions[this.instructionFrame]?.delay || 100;
       this.currentDelta += delta.deltaMS * this.speed;
       if (this.currentDelta > currentDuration) {

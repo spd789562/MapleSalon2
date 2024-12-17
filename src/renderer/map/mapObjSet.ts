@@ -104,7 +104,7 @@ export class MapObjSet {
       }
     }
     this.unprocessedObjs = [];
-    await Promise.all(skeletonPromises);
+    await Promise.all(skeletonPromises.map((fn) => fn()));
     await Assets.load(Array.from(textureMap.values()));
     for (const obj of this.layers.flat()) {
       obj.prepareResource();

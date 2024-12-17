@@ -33,7 +33,7 @@ export class MapBackSet {
       .filter(Number.isInteger);
     for (const layer of numberKeys) {
       const backInfo = wz.back[layer];
-      if (!backInfo) {
+      if (!backInfo || !backInfo.bS) {
         continue;
       }
       this.imgUsed.add(backInfo.bS);
@@ -102,7 +102,7 @@ export class MapBackSet {
       }
     }
     this.unprocessedBacks = [];
-    await Promise.all(skeletonPromises);
+    await Promise.all(skeletonPromises.map((fn) => fn()));
     await Assets.load(Array.from(textureMap.values()));
     for (const back of this.layers.flat()) {
       back.prepareResource(this.map.renderer);
