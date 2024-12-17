@@ -15,6 +15,7 @@ import * as Popover from '@/components/ui/popover';
 import { SceneOffsetNumberInput } from '@/components/CharacterPreview/CharacterSceneBackgroundPopover/SceneOffsetNumberInput';
 import { SceneOffsetResetButton } from '@/components/CharacterPreview/CharacterSceneBackgroundPopover/SceneOffsetResetButton';
 import { OpenMapSelectionButton } from './OpenMapSelectionButton';
+import { TargetPositionPad } from './TargetPositionPad';
 const HOVER_DELAY = 300;
 
 export interface CharacterSceneMapPopoverProps {
@@ -54,6 +55,7 @@ export const CharacterSceneMapPopover = (
             <Stack gap="2">
               <Popover.Title>地圖背景</Popover.Title>
               <OpenMapSelectionButton />
+              <TargetPositionPad />
               <HStack gap="2">
                 <Text>X 位移</Text>
                 <SceneOffsetNumberInput target={$mapOffsetX} />

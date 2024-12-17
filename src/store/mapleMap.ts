@@ -16,8 +16,9 @@ export const $mapSearch = atom<string>('');
 
 export const $selectedMap = atom<MapItem | null>(null);
 export const $currentMap = atom<MapItem | null>(null);
+export const $currentMapRect = atom({ x: 0, y: 0, width: 0, height: 0 });
 
-export const $mapTargetLayer = atom(3);
+export const $mapTargetLayer = atom(6);
 export const $mapTargetPosX = atom(0);
 export const $mapTargetPosY = atom(0);
 export const $mapOffsetX = atom(0);
@@ -93,6 +94,18 @@ export function submitMapSelection() {
   $currentMap.set({ ...map });
   $mapTargetPosX.set(0);
   $mapTargetPosY.set(0);
+}
+export function updateMapRect(rect: {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}) {
+  $currentMapRect.set(rect);
+}
+export function updateMapTargetPos(x: number, y: number) {
+  $mapTargetPosX.set(x);
+  $mapTargetPosY.set(y);
 }
 export function updateMapTags(tags: string[]) {
   $mapTags.set(
