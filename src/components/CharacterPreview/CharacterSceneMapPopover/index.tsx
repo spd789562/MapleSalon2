@@ -1,19 +1,17 @@
 import type { JSX } from 'solid-js';
 import { Portal } from 'solid-js/web';
 
-import { $mapOffsetX, $mapOffsetY } from '@/store/mapleMap';
-
 import { useHoverTrigger } from '@/hook/hoverTrigger';
 
 import CloseIcon from 'lucide-solid/icons/x';
+import MousePointerClickIcon from 'lucide-solid/icons/mouse-pointer-click';
+import MoveIcon from 'lucide-solid/icons/move';
 import { Stack } from 'styled-system/jsx/stack';
 import { HStack } from 'styled-system/jsx/hstack';
 import { Box } from 'styled-system/jsx/box';
 import { Text } from '@/components/ui/text';
 import { IconButton } from '@/components/ui/icon-button';
 import * as Popover from '@/components/ui/popover';
-import { SceneOffsetNumberInput } from '@/components/CharacterPreview/CharacterSceneBackgroundPopover/SceneOffsetNumberInput';
-import { SceneOffsetResetButton } from '@/components/CharacterPreview/CharacterSceneBackgroundPopover/SceneOffsetResetButton';
 import { OpenMapSelectionButton } from './OpenMapSelectionButton';
 import { TargetPositionPad } from './TargetPositionPad';
 const HOVER_DELAY = 300;
@@ -48,24 +46,22 @@ export const CharacterSceneMapPopover = (
       </Popover.Trigger>
       <Portal>
         <Popover.Positioner>
-          <Popover.Content>
+          <Popover.Content minWidth="16rem">
             <Popover.Arrow>
               <Popover.ArrowTip />
             </Popover.Arrow>
             <Stack gap="2">
               <Popover.Title>地圖背景</Popover.Title>
               <OpenMapSelectionButton />
+              <HStack gap="1" alignItems="center">
+                <Text size="md">物體位置</Text>
+                <HStack gap="1" alignItems="center" color="gray.10">
+                  <MousePointerClickIcon size={14} />
+                  <span>/</span>
+                  <MoveIcon size={14} />
+                </HStack>
+              </HStack>
               <TargetPositionPad />
-              <HStack gap="2">
-                <Text>X 位移</Text>
-                <SceneOffsetNumberInput target={$mapOffsetX} />
-                <SceneOffsetResetButton title="X 位移" target={$mapOffsetX} />
-              </HStack>
-              <HStack gap="2">
-                <Text>Y 位移</Text>
-                <SceneOffsetNumberInput target={$mapOffsetY} />
-                <SceneOffsetResetButton title="Y 位移" target={$mapOffsetY} />
-              </HStack>
               <Text>快速選擇(最多5筆)</Text>
             </Stack>
             <Box position="absolute" top="1" right="1">

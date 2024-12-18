@@ -1,4 +1,6 @@
 import { createEffect, createSignal, untrack } from 'solid-js';
+import { createRAF } from '@solid-primitives/raf';
+import { useKeyDownList } from '@solid-primitives/keyboard';
 import { useStore } from '@nanostores/solid';
 import { usePureStore } from '@/store';
 import { styled } from 'styled-system/jsx/factory';
@@ -10,46 +12,121 @@ import {
   updateMapTargetPos,
 } from '@/store/mapleMap';
 
+const MoveFactor = {
+  ARROWUP: { x: 0, y: -0.5 },
+  ARROWDOWN: { x: 0, y: 0.5 },
+  ARROWLEFT: { x: -0.5, y: 0 },
+  ARROWRIGHT: { x: 0.5, y: 0 },
+};
+const LONG_PRESS_TIME = 200;
+
 export const TargetPositionPad = () => {
   const [isDragging, setIsDragging] = createSignal(false);
+  const [isKeyDown, setIsKeyDown] = createSignal(false);
   const [boundRectWidth, setBoundRectWidth] = createSignal('100%');
   const [boundRectHeight, setBoundRectHeight] = createSignal('100%');
-  const [translate, setTranslate] = createSignal('translate(0%, 0%)');
+  const [translate, setTranslate] = createSignal({ x: 0, y: 0 });
+  const [relativeRect, setRelativeRect] = createSignal({
+    left: 0,
+    top: 0,
+    width: 0,
+    height: 0,
+  });
   const targetPosX = useStore($mapTargetPosX);
   const targetPosY = useStore($mapTargetPosY);
   const mapRect = usePureStore($currentMapRect);
+  const keydowns = useKeyDownList();
+  const [running, start, stop] = createRAF(handleKeyDownContinue);
 
+  let longPressTimer = 0;
   let relativeContainer!: HTMLDivElement;
 
-  function handleMouseMove(event: MouseEvent) {
-    const rect = mapRect();
-    const x = event.clientX;
-    const y = event.clientY;
-    const { left, top, width, height } =
-      relativeContainer.getBoundingClientRect();
-    const tx = x - left;
-    const ty = y - top;
-    const clampX = Math.max(0, Math.min(width, tx));
-    const clampY = Math.max(0, Math.min(height, ty));
+  function refreshRect() {
+    const rect = relativeContainer.getBoundingClientRect();
+    setRelativeRect({
+      left: rect.left,
+      top: rect.top,
+      width: rect.width,
+      height: rect.height,
+    });
+  }
 
-    setTranslate(`translate(${clampX}px, ${clampY}px)`);
+  function handleMoveTarget(x: number, y: number) {
+    const { width, height } = relativeRect();
+    const clampX = Math.max(0, Math.min(width, x));
+    const clampY = Math.max(0, Math.min(height, y));
+    setTranslate({ x: clampX, y: clampY });
+    const rect = mapRect();
 
     const px = (clampX / width) * rect.width + rect.x;
     const py = (clampY / height) * rect.height + rect.y;
     updateMapTargetPos(px, py);
   }
 
+  /* arrow keys move */
+  function handleKeyDownContinue() {
+    if (!isKeyDown()) {
+      return;
+    }
+    longPressTimer += 16;
+    if (longPressTimer < LONG_PRESS_TIME && longPressTimer > 16) {
+      return;
+    }
+    const factor = { x: 0, y: 0 };
+    for (const k of keydowns()) {
+      const f = MoveFactor[k as keyof typeof MoveFactor] ?? { x: 0, y: 0 };
+      factor.x += f.x;
+      factor.y += f.y;
+    }
+    const currentTranslate = translate();
+    handleMoveTarget(
+      currentTranslate.x + factor.x,
+      currentTranslate.y + factor.y,
+    );
+  }
+  function handleKeyDown(event: KeyboardEvent) {
+    if (isDragging()) {
+      setIsDragging(false);
+    }
+    if (event.key?.startsWith('Arrow') && !isKeyDown()) {
+      refreshRect();
+      setIsKeyDown(true);
+      start();
+    }
+  }
+  function handleKeyUp() {
+    const anyArrows = keydowns().some((k) => k.startsWith('ARROW'));
+    if (anyArrows) {
+      return;
+    }
+    if (isKeyDown()) {
+      longPressTimer = 0;
+      setIsKeyDown(false);
+    }
+    if (running()) {
+      stop();
+    }
+  }
+
+  /* mouse drag */
+  function handleMouseMove(event: MouseEvent) {
+    const x = event.clientX;
+    const y = event.clientY;
+    const { left, top } = relativeRect();
+    const tx = x - left;
+    const ty = y - top;
+    handleMoveTarget(tx, ty);
+  }
   function handleMove(event: MouseEvent) {
     if (isDragging()) {
       handleMouseMove(event);
     }
   }
-
   function handleEndDrag() {
     setIsDragging(false);
   }
-
   function handleStartDrag(event: MouseEvent) {
+    refreshRect();
     setIsDragging(true);
     handleMouseMove(event);
   }
@@ -64,6 +141,7 @@ export const TargetPositionPad = () => {
       setBoundRectWidth(`${(rect.height / rect.width) * 100}%`);
       setBoundRectHeight('100%');
     }
+    setTimeout(refreshRect, 0);
   });
   createEffect(() => {
     const x = targetPosX();
@@ -73,7 +151,7 @@ export const TargetPositionPad = () => {
 
     const px = ((x - rect.x) / rect.width) * width;
     const py = ((y - rect.y) / rect.height) * height;
-    setTranslate(`translate(${px}px, ${py}px)`);
+    setTranslate({ x: px, y: py });
   });
 
   return (
@@ -90,7 +168,11 @@ export const TargetPositionPad = () => {
           role="button"
           onMouseDown={handleStartDrag}
           onMouseUp={handleEndDrag}
-          style={{ transform: translate() }}
+          onKeyDown={handleKeyDown}
+          onKeyUp={handleKeyUp}
+          style={{
+            transform: `translate(${translate().x}px, ${translate().y}px)`,
+          }}
         />
       </MapBoundRect>
     </TargetPositionPadContainer>
@@ -105,7 +187,7 @@ const TargetPositionPadContainer = styled('div', {
     overflow: 'hidden',
     borderRadius: 'md',
     border: '1px solid',
-    borderColor: 'gray.3',
+    borderColor: 'gray.6',
   },
 });
 
