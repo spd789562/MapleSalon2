@@ -20,6 +20,8 @@ export const cssTooltip = defineRecipe({
       py: '1',
       textStyle: 'xs',
       minWidth: '16',
+      maxWidth: '36',
+      width: 'max-content',
       opacity: 0,
       pointerEvents: 'none',
       transform: 'translate(-50%, -50%)',
