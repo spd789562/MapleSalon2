@@ -37,8 +37,29 @@ class Loader {
     this.zmap = await fetch(`${this.apiHost}/mapping/zmap`).then((res) =>
       res.json(),
     );
-    this.zmap?.reverse();
-    this.zmap?.push('effect');
+    if (!this.zmap) {
+      return;
+    }
+    this.zmap.reverse();
+    // manually add capBelowHead, wtf?
+    const armBelowHeadIndex = this.zmap.indexOf('armBelowHead');
+    if (armBelowHeadIndex > -1) {
+      this.zmap = [
+        ...this.zmap.slice(0, armBelowHeadIndex),
+        'capBelowHead',
+        ...this.zmap.slice(armBelowHeadIndex),
+      ];
+    }
+    // also fix capBelowHair
+    const hairBelowBodyIndex = this.zmap.indexOf('hairBelowBody');
+    if (hairBelowBodyIndex > -1) {
+      this.zmap = [
+        ...this.zmap.slice(0, hairBelowBodyIndex),
+        'capBelowHair',
+        ...this.zmap.slice(hairBelowBodyIndex),
+      ];
+    }
+    this.zmap.push('effect');
   }
   async loadSmap() {
     this.smap = await fetch(`${this.apiHost}/mapping/smap`).then((res) =>
