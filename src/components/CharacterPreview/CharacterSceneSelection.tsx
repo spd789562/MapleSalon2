@@ -1,13 +1,20 @@
+import { Switch, Match } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 import { styled } from 'styled-system/jsx/factory';
 
 import { $sceneCustomStyle, $currentScene } from '@/store/scene';
 import { $sceneSelectionOpen } from '@/store/trigger';
 
+import ImageIcon from 'lucide-solid/icons/image';
+import MapPinned from 'lucide-solid/icons/map-pinned';
 import ChevronLeftIcon from 'lucide-solid/icons/chevron-left';
 import { CharacterSceneRadioGroup } from './CharacterSceneRadioGroup';
 
-import { PreviewSceneBackground, PreviewSceneNames } from '@/const/scene';
+import {
+  PreviewScene,
+  PreviewSceneBackground,
+  PreviewSceneNames,
+} from '@/const/scene';
 
 export const CharacterSceneSelection = () => {
   const scene = useStore($currentScene);
@@ -35,7 +42,16 @@ export const CharacterSceneSelection = () => {
           title={PreviewSceneNames[scene()]}
           bgType={scene()}
           style={customColorStyle()}
-        />
+        >
+          <Switch>
+            <Match when={scene() === PreviewScene.Custom}>
+              <ImageIcon size={24} />
+            </Match>
+            <Match when={scene() === PreviewScene.MapleMap}>
+              <MapPinned size={24} />
+            </Match>
+          </Switch>
+        </BackgroundBlock>
       </BlockContainer>
     </Positioner>
   );
@@ -85,6 +101,7 @@ const BackgroundBlock = styled('div', {
       color: {
         border: '1px solid',
         borderColor: 'border.muted',
+        color: 'gray.11',
       },
       henesys: {
         ...PreviewSceneBackground.henesys,
@@ -92,6 +109,9 @@ const BackgroundBlock = styled('div', {
       },
       custom: {
         ...PreviewSceneBackground.custom,
+      },
+      mapleMap: {
+        color: 'gray.11',
       },
     },
   },

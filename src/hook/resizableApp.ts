@@ -1,4 +1,4 @@
-import { type Accessor, onMount } from 'solid-js';
+import { type Accessor, onCleanup, onMount } from 'solid-js';
 import { $globalRenderer } from '@/store/renderer';
 import type { ZoomContainer } from '@/renderer/ZoomContainer';
 
@@ -18,6 +18,10 @@ export function useResizableApp(props: ResizableAppProps) {
 
   onMount(() => {
     observer.observe(props.container());
+  });
+
+  onCleanup(() => {
+    observer.disconnect();
   });
 
   return observer;

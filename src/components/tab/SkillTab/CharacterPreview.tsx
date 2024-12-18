@@ -4,7 +4,7 @@ import {
   createSignal,
   from,
   on,
-  onMount,
+  Show,
 } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
 
@@ -24,12 +24,15 @@ import {
   updateCenter,
   updateZoom,
 } from '@/store/previewChairZoom';
+import { $isMapleMapScene } from '@/store/scene';
 import { usePureStore } from '@/store';
 
 import { useChatBalloonText } from '@/components/CharacterPreview/useChatBalloonText';
 import { useCharacterVisible } from '@/components/tab/ChairTab/CharacterVisibleSwitch';
 import { useCharacterEffectVisible } from '@/components/tab/ChairTab/EffectSwitch';
 import { useSkillTab } from './SkillTabContext';
+import { useResizableApp } from '@/hook/resizableApp';
+import { MapleMapMount } from '@/hook/mapleMap';
 
 import { Character } from '@/renderer/character/character';
 import type { Skill } from '@/renderer/skill/skill';
@@ -47,10 +50,9 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   const characterData = from($previewCharacter);
   const skillData = usePureStore($currentSkill);
   const isRendererInitialized = usePureStore($isGlobalRendererInitialized);
+  const isMap = usePureStore($isMapleMapScene);
   const [isInit, setIsInit] = createSignal<boolean>(false);
   const [_, { setCharacterRef, setSkillRef }] = useSkillTab();
-
-  const canvasResizeObserver = new ResizeObserver(handleCanvasResize);
 
   let container!: HTMLDivElement;
   let skill: Skill | undefined;
@@ -60,6 +62,10 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   useChatBalloonText(character);
   useCharacterVisible([character]);
   useCharacterEffectVisible([character], () => false);
+  useResizableApp({
+    viewport,
+    container: () => container,
+  });
   setCharacterRef(character);
 
   character.loadEvent.addListener(
@@ -72,12 +78,6 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
       });
     },
   );
-
-  function handleCanvasResize() {
-    const app = $globalRenderer.get();
-    app.renderer.resize(container.clientWidth, container.clientHeight);
-    viewport?.resize(app.screen.width, app.screen.height);
-  }
 
   function initScene() {
     const app = $globalRenderer.get();
@@ -127,10 +127,6 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     }),
   );
 
-  onMount(() => {
-    canvasResizeObserver.observe(container);
-  });
-
   onCleanup(() => {
     const app = $globalRenderer.get();
     if (viewport) {
@@ -143,7 +139,6 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     character.destroy();
     skill?.destroy();
     container.children.length > 0 && container.removeChild(app.canvas);
-    canvasResizeObserver.disconnect();
   });
 
   createEffect(async () => {
@@ -172,12 +167,23 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     }
   });
 
-  return <CanvasContainer ref={container} />;
+  return (
+    <>
+      <CanvasContainer ref={container} />
+      <Show when={isMap() && isInit()}>
+        <MapleMapMount
+          viewport={() => viewport}
+          application={$globalRenderer.get()}
+          singleTarget={() => character}
+        />
+      </Show>
+    </>
+  );
 };
 
 const CanvasContainer = styled('div', {
   base: {
     width: 'full',
-    height: 'calc(100vh - 270px)',
+    height: 'full',
   },
 });

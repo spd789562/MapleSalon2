@@ -50,6 +50,9 @@ export const $sceneBackgroundRepeat = computed(
     return '';
   },
 );
+export const $isMapleMapScene = computed([$currentScene], (scene) => {
+  return scene === PreviewScene.MapleMap;
+});
 
 /* action */
 export function updateSceneOffsetX(value: number) {

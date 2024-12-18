@@ -1,4 +1,4 @@
-import { type Accessor, createEffect, onCleanup } from 'solid-js';
+import { type Accessor, createEffect, onCleanup, untrack } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 
 import {
@@ -21,7 +21,7 @@ import { MapleMap } from '@/renderer/map/map';
 export interface UseMapleMapProps {
   viewport: Accessor<ZoomContainer | undefined>;
   application: Application;
-  singleTarget: Container;
+  singleTarget: Accessor<Container>;
 }
 export function MapleMapMount(props: UseMapleMapProps) {
   const currentMap = useStore($currentMap);
@@ -45,7 +45,8 @@ export function MapleMapMount(props: UseMapleMapProps) {
       return;
     }
     viewport.hasMap = true;
-    props.singleTarget.removeFromParent();
+    const target = untrack(() => props.singleTarget());
+    target.removeFromParent();
     map?.destroy();
     updateMapTags($mapTags, []);
     updateMapTags($mapBackgroundTags, []);
@@ -70,8 +71,8 @@ export function MapleMapMount(props: UseMapleMapProps) {
       updateMapTargetPos(centerX, centerY);
     }
     const layer = $mapTargetLayer.get() + 1;
-    props.singleTarget.zIndex = 99999999;
-    map.layers[layer].addChild(props.singleTarget);
+    target.zIndex = 99999999;
+    map.layers[layer].addChild(target);
     viewport.addChild(map);
   });
 
@@ -95,27 +96,42 @@ export function MapleMapMount(props: UseMapleMapProps) {
 
   createEffect(() => {
     const layer = targetLayer() + 1;
+    const target = untrack(() => props.singleTarget());
     if (map) {
-      map.layers[layer].addChild(props.singleTarget);
+      map.layers[layer].addChild(target);
     }
   });
 
   createEffect(() => {
     const x = targetPosX();
     const y = targetPosY();
-    props.singleTarget.position.set(x, y);
+    const target = untrack(() => props.singleTarget());
+    target.position.set(x, y);
+  });
+
+  createEffect(() => {
+    const target = props.singleTarget();
+    if (map) {
+      const layer = $mapTargetLayer.get() + 1;
+      target.zIndex = 99999999;
+      map.layers[layer].addChild(target);
+      const x = $mapTargetPosX.get();
+      const y = $mapTargetPosY.get();
+      target.position.set(x, y);
+    }
   });
 
   onCleanup(() => {
     const viewport = props.viewport();
+    const target = untrack(() => props.singleTarget());
     map?.destroy();
     map = undefined;
     if (viewport) {
-      viewport.addChild(props.singleTarget);
+      viewport.addChild(target);
       viewport.hasMap = false;
       viewport.moveCenter(0, 0);
     }
-    props.singleTarget.position.set(0, 0);
+    target.position.set(0, 0);
   });
 
   return null;

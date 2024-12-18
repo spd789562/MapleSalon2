@@ -22,7 +22,7 @@ import {
   updateZoom,
 } from '@/store/previewZoom';
 import { $showUpscaledCharacter } from '@/store/trigger';
-import { $currentScene } from '@/store/scene';
+import { $isMapleMapScene } from '@/store/scene';
 import { usePureStore } from '@/store';
 import { useChatBalloonText } from './useChatBalloonText';
 import { useResizableApp } from '@/hook/resizableApp';
@@ -54,7 +54,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   const isRendererInitialized = usePureStore($isGlobalRendererInitialized);
   const [isInit, setIsInit] = createSignal<boolean>(false);
   const isShowUpscale = usePureStore($showUpscaledCharacter);
-  const scene = usePureStore($currentScene);
+  const isMap = usePureStore($isMapleMapScene);
   let container!: HTMLDivElement;
   let viewport: ZoomContainer | undefined;
   let upscaleFilter: Anime4kFilter | undefined;
@@ -189,11 +189,11 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   return (
     <>
       <Box w="full" h="full" ref={container} />
-      <Show when={scene() === PreviewScene.MapleMap && isInit()}>
+      <Show when={isMap() && isInit()}>
         <MapleMapMount
           viewport={() => viewport}
           application={$globalRenderer.get()}
-          singleTarget={ch}
+          singleTarget={() => ch}
         />
       </Show>
     </>

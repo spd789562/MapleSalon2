@@ -5,6 +5,7 @@ import {
   from,
   on,
   onMount,
+  Show,
 } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
 
@@ -24,12 +25,17 @@ import {
   updateCenter,
   updateZoom,
 } from '@/store/previewChairZoom';
+
+import { $isMapleMapScene } from '@/store/scene';
 import { usePureStore } from '@/store';
 
 import { useChatBalloonText } from '@/components/CharacterPreview/useChatBalloonText';
 import { useCharacterVisible } from '@/components/tab/ChairTab/CharacterVisibleSwitch';
 import { useCharacterEffectVisible } from '@/components/tab/ChairTab/EffectSwitch';
+import { useResizableApp } from '@/hook/resizableApp';
+import { MapleMapMount } from '@/hook/mapleMap';
 
+import { Container } from 'pixi.js';
 import { Character } from '@/renderer/character/character';
 import { TamingMob } from '@/renderer/tamingMob/tamingMob';
 import { ZoomContainer } from '@/renderer/ZoomContainer';
@@ -49,9 +55,9 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   const mountAction = usePureStore($mountAction);
   const otherCharacters = usePureStore($otherCharacters);
   const isRendererInitialized = usePureStore($isGlobalRendererInitialized);
+  const isMap = usePureStore($isMapleMapScene);
   const [isInit, setIsInit] = createSignal<boolean>(false);
-
-  const canvasResizeObserver = new ResizeObserver(handleCanvasResize);
+  const [mapTarget, setMapTarget] = createSignal<Container>(new Container());
 
   let container!: HTMLDivElement;
   let mount: TamingMob | undefined;
@@ -65,6 +71,13 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     [mainCharacter, characters],
     () => !!mount?.isHideEffect,
   );
+  useResizableApp({
+    viewport,
+    container: () => container,
+  });
+  onMount(() => {
+    setMapTarget(mainCharacter);
+  });
 
   mainCharacter.loadEvent.addListener(
     'error',
@@ -76,12 +89,6 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
       });
     },
   );
-
-  function handleCanvasResize() {
-    const app = $globalRenderer.get();
-    app.renderer.resize(container.clientWidth, container.clientHeight);
-    viewport?.resize(app.screen.width, app.screen.height);
-  }
 
   function initScene() {
     const app = $globalRenderer.get();
@@ -130,10 +137,6 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     }),
   );
 
-  onMount(() => {
-    canvasResizeObserver.observe(container);
-  });
-
   onCleanup(() => {
     const app = $globalRenderer.get();
     if (viewport) {
@@ -146,7 +149,6 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     mainCharacter.destroy();
     mount?.destroy();
     container.children.length > 0 && container.removeChild(app.canvas);
-    canvasResizeObserver.disconnect();
   });
 
   createEffect(async () => {
@@ -181,6 +183,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
       character.toggleEffectVisibility(needHideEffect);
     }
     mainCharacter.toggleEffectVisibility(needHideEffect);
+    mainCharacter.position.set(0, 0);
 
     type Tuple = [Character, CharacterData];
     const sitData = [[mainCharacter, mainCharacterData] as Tuple].concat(
@@ -190,6 +193,11 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     mount.playByInstructions();
     viewport?.addChild(mount);
 
+    if ($isMapleMapScene.get()) {
+      setMapTarget(mount);
+    } else {
+      viewport?.addChild(mount);
+    }
     props.onLoaded();
   });
 
@@ -204,12 +212,23 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     }
   });
 
-  return <CanvasContainer ref={container} />;
+  return (
+    <>
+      <CanvasContainer ref={container} />
+      <Show when={isMap() && isInit()}>
+        <MapleMapMount
+          viewport={() => viewport}
+          application={$globalRenderer.get()}
+          singleTarget={mapTarget}
+        />
+      </Show>
+    </>
+  );
 };
 
 const CanvasContainer = styled('div', {
   base: {
     width: 'full',
-    height: 'calc(100vh - 270px)',
+    height: 'full',
   },
 });

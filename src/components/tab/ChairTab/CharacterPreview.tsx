@@ -5,6 +5,7 @@ import {
   from,
   on,
   onMount,
+  Show,
 } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
 
@@ -27,12 +28,16 @@ import {
   updateCenter,
   updateZoom,
 } from '@/store/previewChairZoom';
+import { $isMapleMapScene } from '@/store/scene';
 import { usePureStore } from '@/store';
 
 import { useChatBalloonText } from '@/components/CharacterPreview/useChatBalloonText';
 import { useCharacterVisible } from './CharacterVisibleSwitch';
 import { useCharacterEffectVisible } from './EffectSwitch';
+import { useResizableApp } from '@/hook/resizableApp';
+import { MapleMapMount } from '@/hook/mapleMap';
 
+import { Container } from 'pixi.js';
 import { Character } from '@/renderer/character/character';
 import { Chair } from '@/renderer/chair/chair';
 import { ZoomContainer } from '@/renderer/ZoomContainer';
@@ -51,9 +56,9 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   const chairData = usePureStore($currentChair);
   const otherCharacters = usePureStore($otherCharacters);
   const isRendererInitialized = usePureStore($isGlobalRendererInitialized);
+  const isMap = usePureStore($isMapleMapScene);
   const [isInit, setIsInit] = createSignal<boolean>(false);
-
-  const canvasResizeObserver = new ResizeObserver(handleCanvasResize);
+  const [mapTarget, setMapTarget] = createSignal<Container>(new Container());
 
   let container!: HTMLDivElement;
   let chair: Chair | undefined;
@@ -70,6 +75,13 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     [mainCharacter, characters],
     () => !!chair?.isHideEffect,
   );
+  useResizableApp({
+    viewport,
+    container: () => container,
+  });
+  onMount(() => {
+    setMapTarget(mainCharacter);
+  });
 
   mainCharacter.loadEvent.addListener(
     'error',
@@ -81,12 +93,6 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
       });
     },
   );
-
-  function handleCanvasResize() {
-    const app = $globalRenderer.get();
-    app.renderer.resize(container.clientWidth, container.clientHeight);
-    viewport?.resizeScreen(app.screen.width, app.screen.height);
-  }
 
   function initScene() {
     const app = $globalRenderer.get();
@@ -136,10 +142,6 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     }),
   );
 
-  onMount(() => {
-    canvasResizeObserver.observe(container);
-  });
-
   onCleanup(() => {
     const app = $globalRenderer.get();
     if (viewport) {
@@ -152,7 +154,6 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     mainCharacter.destroy();
     chair?.destroy();
     container.children.length > 0 && container.removeChild(app.canvas);
-    canvasResizeObserver.disconnect();
   });
 
   createEffect(async () => {
@@ -196,6 +197,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
       character.toggleEffectVisibility(needHideEffect);
     }
     mainCharacter.toggleEffectVisibility(needHideEffect);
+    mainCharacter.position.set(0, 0);
 
     type Tuple = [Character, CharacterData];
     const sitData = [[mainCharacter, mainCharacterData] as Tuple].concat(
@@ -207,7 +209,11 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     }
     await chair.sitCharacter(sitData);
     chair.play();
-    viewport?.addChild(chair);
+    if ($isMapleMapScene.get()) {
+      setMapTarget(chair);
+    } else {
+      viewport?.addChild(chair);
+    }
   });
 
   createEffect(() => {
@@ -221,12 +227,23 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     }
   });
 
-  return <CanvasContainer ref={container} />;
+  return (
+    <>
+      <CanvasContainer ref={container} />
+      <Show when={isMap() && isInit()}>
+        <MapleMapMount
+          viewport={() => viewport}
+          application={$globalRenderer.get()}
+          singleTarget={mapTarget}
+        />
+      </Show>
+    </>
+  );
 };
 
 const CanvasContainer = styled('div', {
   base: {
     width: 'full',
-    height: 'calc(100vh - 270px)',
+    height: 'full',
   },
 });
