@@ -1,6 +1,11 @@
-import { atom, computed, map, type WritableAtom } from 'nanostores';
+import { atom, computed, type WritableAtom } from 'nanostores';
 
-import { $apiHost } from './const';
+import { $currentScene } from '@/store/scene';
+import { $apiHost } from '@/store/const';
+
+import { PreviewScene } from '@/const/scene';
+
+const MAX_SELECTION = 5;
 
 export interface MapItem {
   id: string;
@@ -16,11 +21,14 @@ export interface TagItem {
 /* [id, name, region] */
 type MapStringResponseItem = [string, string, string];
 
+export const $isMapLoading = atom(false);
 export const $mapStrings = atom<MapItem[]>([]);
 export const $mapSearch = atom<string>('');
 
 export const $selectedMap = atom<MapItem | null>(null);
 export const $currentMap = atom<MapItem | null>(null);
+export const $selectMapHistory = atom<MapItem[]>([]);
+
 export const $currentMapRect = atom({ x: 0, y: 0, width: 0, height: 0 });
 
 export const $mapTargetLayer = atom(6);
@@ -31,7 +39,6 @@ export const $mapOffsetY = atom(0);
 
 export const $mapTags = atom<TagItem[]>([]);
 export const $mapBackgroundTags = atom<TagItem[]>([]);
-export const $mapOptions = map({});
 
 /* computed */
 export const $mapFilterdStrings = computed(
@@ -92,9 +99,16 @@ export function submitMapSelection() {
   if (!map) {
     return;
   }
+  appendMapSelection({ ...map });
+  updateCurrentMap(map);
+}
+export function updateCurrentMap(map: MapItem) {
   $currentMap.set({ ...map });
   $mapTargetPosX.set(0);
   $mapTargetPosY.set(0);
+  if ($currentScene.get() !== PreviewScene.MapleMap) {
+    $currentScene.set(PreviewScene.MapleMap);
+  }
 }
 export function updateMapRect(rect: {
   x: number;
@@ -123,4 +137,12 @@ export function toggleMapTag(target: WritableAtom<TagItem[]>, name: string) {
       tag.name === name ? { ...tag, disabled: !tag.disabled } : tag,
     ),
   );
+}
+
+export function appendMapSelection(map: MapItem) {
+  const list = $selectMapHistory.get();
+  if (list.length >= MAX_SELECTION) {
+    list.pop();
+  }
+  $selectMapHistory.set([map, ...list]);
 }
