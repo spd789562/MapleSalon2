@@ -30,8 +30,9 @@ export const TargetLayerNumberInput = () => {
         value={count().toString()}
         onValueChange={handleCountChange}
         allowOverflow={false}
-        width="8rem"
+        width="6rem"
         size="sm"
+        marginLeft="auto"
       />
     </HStack>
   );

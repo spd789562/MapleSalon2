@@ -6,8 +6,11 @@ import {
   $mapTargetLayer,
   $mapTargetPosX,
   $mapTargetPosY,
+  $mapTags,
+  $mapBackgroundTags,
   updateMapRect,
   updateMapTargetPos,
+  updateMapTags,
 } from '@/store/mapleMap';
 
 import type { Container, Application } from 'pixi.js';
@@ -26,6 +29,9 @@ export function MapleMapMount(props: UseMapleMapProps) {
   const targetPosX = useStore($mapTargetPosX);
   const targetPosY = useStore($mapTargetPosY);
 
+  const tags = useStore($mapTags);
+  const backgroundTags = useStore($mapBackgroundTags);
+
   let map: MapleMap | undefined;
 
   createEffect(async () => {
@@ -41,6 +47,8 @@ export function MapleMapMount(props: UseMapleMapProps) {
     viewport.hasMap = true;
     props.singleTarget.removeFromParent();
     map?.destroy();
+    updateMapTags($mapTags, []);
+    updateMapTags($mapBackgroundTags, []);
     map = new MapleMap(mapData.id, app.renderer, viewport);
     await map.load();
 
@@ -53,6 +61,8 @@ export function MapleMapMount(props: UseMapleMapProps) {
       right: map.edge.right,
     });
     updateMapRect(map.edge);
+    updateMapTags($mapTags, map.tags);
+    updateMapTags($mapBackgroundTags, map.backTags);
     if (map.edge.x > 0 || map.edge.y > 0) {
       const centerX = map.edge.x + map.edge.width / 2;
       const centerY = map.edge.y + map.edge.height / 2;
@@ -63,6 +73,24 @@ export function MapleMapMount(props: UseMapleMapProps) {
     props.singleTarget.zIndex = 99999999;
     map.layers[layer].addChild(props.singleTarget);
     viewport.addChild(map);
+  });
+
+  createEffect(() => {
+    const tagList = tags();
+    if (map) {
+      map.toggleVisibilityByTags(
+        tagList.filter((t) => t.disabled).map((t) => t.name),
+      );
+    }
+  });
+  createEffect(() => {
+    const tagList = backgroundTags();
+    if (map) {
+      map.toggleVisibilityByTags(
+        tagList.filter((t) => t.disabled).map((t) => t.name),
+        true,
+      );
+    }
   });
 
   createEffect(() => {

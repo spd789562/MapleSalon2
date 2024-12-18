@@ -1,4 +1,4 @@
-import { atom, computed, map } from 'nanostores';
+import { atom, computed, map, type WritableAtom } from 'nanostores';
 
 import { $apiHost } from './const';
 
@@ -6,6 +6,11 @@ export interface MapItem {
   id: string;
   name: string;
   region: string;
+}
+
+export interface TagItem {
+  name: string;
+  disabled: boolean;
 }
 
 /* [id, name, region] */
@@ -24,12 +29,8 @@ export const $mapTargetPosY = atom(0);
 export const $mapOffsetX = atom(0);
 export const $mapOffsetY = atom(0);
 
-export const $mapTags = atom<
-  {
-    name: string;
-    disabled: boolean;
-  }[]
->([]);
+export const $mapTags = atom<TagItem[]>([]);
+export const $mapBackgroundTags = atom<TagItem[]>([]);
 export const $mapOptions = map({});
 
 /* computed */
@@ -107,17 +108,17 @@ export function updateMapTargetPos(x: number, y: number) {
   $mapTargetPosX.set(x);
   $mapTargetPosY.set(y);
 }
-export function updateMapTags(tags: string[]) {
-  $mapTags.set(
+export function updateMapTags(target: WritableAtom<TagItem[]>, tags: string[]) {
+  target.set(
     tags.map((name) => ({
       name,
       disabled: false,
     })),
   );
 }
-export function toggleMapTag(name: string) {
-  const tags = $mapTags.get();
-  $mapTags.set(
+export function toggleMapTag(target: WritableAtom<TagItem[]>, name: string) {
+  const tags = target.get();
+  target.set(
     tags.map((tag) =>
       tag.name === name ? { ...tag, disabled: !tag.disabled } : tag,
     ),

@@ -50,13 +50,13 @@ export class MapleMap extends Container {
     const set = new Set<string>(
       (this.objSet?.tags || []).concat(this.particleSet?.tags || []),
     );
-    return Array.from(set);
+    return Array.from(set).sort();
   }
   get backTags() {
     const set = new Set<string>(
       (this.backSet?.tags || []).concat(this.particleSet?.tags || []),
     );
-    return Array.from(set);
+    return Array.from(set).sort();
   }
   async load() {
     if (!this.wz) {
@@ -77,7 +77,7 @@ export class MapleMap extends Container {
   }
   setMapBound(wz: WzMapData) {
     const widthByEdge = (wz.info?.VRRight || 0) - (wz.info?.VRLeft || 0);
-    const heightByEdge = (wz.info?.VRTop || 0) - (wz.info?.VRBottom || 0);
+    const heightByEdge = (wz.info?.VRBottom || 0) - (wz.info?.VRTop || 0);
     const width = Math.max(wz.miniMap?.width || 0, widthByEdge);
     const height = Math.max(wz.miniMap?.height || 0, heightByEdge);
 
@@ -124,6 +124,7 @@ export class MapleMap extends Container {
       return;
     }
     const particleSet = new MapParticleSet(wz.particle, this);
+    this.particleSet = particleSet;
     await particleSet.load();
     this.layers[PARTICLE_LAYER].addChild(particleSet);
   }

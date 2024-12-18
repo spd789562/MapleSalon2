@@ -40,7 +40,7 @@ export const CharacterSceneMapPopover = (
       </Popover.Trigger>
       <Portal>
         <Popover.Positioner>
-          <Popover.Content minWidth="16rem">
+          <Popover.Content width="16rem">
             <Popover.Arrow>
               <Popover.ArrowTip />
             </Popover.Arrow>
