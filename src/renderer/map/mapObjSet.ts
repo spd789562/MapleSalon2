@@ -1,4 +1,5 @@
 import { Assets, Container, type UnresolvedAsset } from 'pixi.js';
+import type { SkeletonData } from '@esotericsoftware/spine-core';
 
 import type {
   WzMapObjTypeFolder,
@@ -66,6 +67,10 @@ export class MapObjSet {
       {} as Record<string, WzMapObjTypeFolder>,
     );
     const textureMap = new Map<string, UnresolvedAsset>();
+    const awaitedSkeletonData = new Map<
+      string,
+      Promise<SkeletonData | undefined | null>
+    >();
     const skeletonPromises: (() => Promise<void>)[] = [];
     for (let i = 0; i < LAYER_COUNT; i++) {
       const unprocessLayer = this.unprocessedObjs[i] || [];
@@ -82,11 +87,16 @@ export class MapObjSet {
         if ('spineAni' in obj) {
           const mapObj = new MapObj(obj, objData, obj.id || 0);
           const prefix = `Map/Obj/${obj.oS}.img/${obj.l0}/${obj.l1}/${obj.l2}`;
+          let dataPromise = awaitedSkeletonData.get(prefix);
+          if (!dataPromise) {
+            dataPromise = createSkeletonData(objData as WzSpineData, prefix);
+            if (!dataPromise) {
+              continue;
+            }
+            awaitedSkeletonData.set(prefix, dataPromise);
+          }
           skeletonPromises.push(async () => {
-            const skeletonData = await createSkeletonData(
-              objData as WzSpineData,
-              prefix,
-            );
+            const skeletonData = await dataPromise;
             if (skeletonData) {
               mapObj.skeletonData = skeletonData;
               this.layers[i].push(mapObj);
@@ -109,6 +119,8 @@ export class MapObjSet {
     for (const obj of this.layers.flat()) {
       obj.prepareResource();
     }
+    textureMap.clear();
+    awaitedSkeletonData.clear();
   }
   putOnMap(mapleMap: MapleMap) {
     for (let i = 0; i < LAYER_COUNT; i++) {

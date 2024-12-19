@@ -1,4 +1,5 @@
 import { Assets, type UnresolvedAsset } from 'pixi.js';
+import type { SkeletonData } from '@esotericsoftware/spine-core';
 
 import type {
   WzMapData,
@@ -55,6 +56,10 @@ export class MapBackSet {
       {} as Record<string, WzMapBackFolder>,
     );
     const textureMap = new Map<string, UnresolvedAsset>();
+    const awaitedSkeletonData = new Map<
+      string,
+      Promise<SkeletonData | undefined | null>
+    >();
     const skeletonPromises: (() => Promise<void>)[] = [];
     for (const [info, zIndex] of this.unprocessedBacks) {
       const backTyep =
@@ -75,11 +80,16 @@ export class MapBackSet {
           this,
         );
         const prefix = `Map/Back/${info.bS}.img/spine/${info.no}`;
+        let dataPromise = awaitedSkeletonData.get(prefix);
+        if (!dataPromise) {
+          dataPromise = createSkeletonData(_backData as WzSpineData, prefix);
+          if (!dataPromise) {
+            continue;
+          }
+          awaitedSkeletonData.set(prefix, dataPromise);
+        }
         skeletonPromises.push(async () => {
-          const data = await createSkeletonData(
-            _backData as WzSpineData,
-            prefix,
-          );
+          const data = await dataPromise;
           if (data) {
             backObj.skeletonData = data;
             const layer = info.front === 1 ? 1 : 0;
@@ -107,6 +117,8 @@ export class MapBackSet {
     for (const back of this.layers.flat()) {
       back.prepareResource(this.map.renderer);
     }
+    textureMap.clear();
+    awaitedSkeletonData.clear();
   }
   putOnMap(mapleMap: MapleMap) {
     for (const back of this.layers[0]) {
