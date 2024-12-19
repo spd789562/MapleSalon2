@@ -9,6 +9,7 @@ import {
   type Renderer,
   Rectangle,
   type DestroyOptions,
+  Point,
 } from 'pixi.js';
 import { type SkeletonData, Spine } from '@esotericsoftware/spine-pixi-v8';
 
@@ -88,7 +89,7 @@ export class MapBack extends Container {
   gapType = BackGapType.Zero;
   gap = { x: 0, y: 0 };
   flowSpeed = { x: 0, y: 0 };
-  basePosition = { x: 0, y: 0 };
+  lastPosition = new Point();
   targetSize = { width: 0, height: 0 };
   fliped = false;
   size = { width: 800, height: 600 };
@@ -188,7 +189,6 @@ export class MapBack extends Container {
     this.targetSize.width = this.renderObj.width;
     this.targetSize.height = this.renderObj.height;
     this.addChild(this.renderObj);
-    Ticker.shared.add(this.parallaxTicker);
   }
   private prepareTiledResource(renderer: Renderer) {
     const viewport = this.set.map.viewport;
@@ -230,20 +230,27 @@ export class MapBack extends Container {
     }
 
     const renderObj = this.renderObj as TilingSprite | GapTilingSprite;
+    const center = viewport.center;
+    const xInc = (center.x * ((this.info.rx ?? 0) + 100)) / 100;
+    const yInc = (center.y * ((this.info.ry ?? 0) + 100)) / 100;
+    this.lastPosition.set(xInc, yInc);
+    const tempPoint = Point.shared;
 
     // setting the initial position
     if (this.mode === TileMode.Horizontal || this.mode === TileMode.Both) {
-      renderObj.tilePosition.x = -target.pivot.x + this.info.x;
+      tempPoint.x = xInc + this.info.x - target.pivot.x;
     } else if (this.info.ani !== 1) {
       renderObj.pivot.x = target.pivot.x;
     }
     if (this.mode === TileMode.Vertical || this.mode === TileMode.Both) {
-      renderObj.tilePosition.y = -target.pivot.y + this.info.y;
+      tempPoint.y = yInc + this.info.y - target.pivot.y;
     } else if (this.info.ani !== 1) {
       renderObj.pivot.y = target.pivot.y;
     }
-
-    const needMoving = this.flowMode !== TileMode.None;
+    if (renderObj.tilePosition) {
+      renderObj.tilePosition = tempPoint;
+    }
+    const needMoving = this.flowSpeed.x !== 0 || this.flowSpeed.y !== 0;
     if (needMoving) {
       Ticker.shared.add(this.moveTicker);
     }
@@ -254,6 +261,7 @@ export class MapBack extends Container {
     } else {
       this.prepareTiledResource(renderer);
     }
+    this.parallaxTicker();
     this.bindParallaxEvent();
   }
   putZeroGapTiling(originSprite: Sprite, renderer: Renderer) {
@@ -356,20 +364,21 @@ export class MapBack extends Container {
       | GapTilingAnimatedSprite;
     const originWidth = this.size.width;
     const originHeight = this.size.height;
-    this.updateViewportData();
+    const tileXinc = xInc - this.lastPosition.x;
+    const tileYinc = yInc - this.lastPosition.y;
+    this.lastPosition.set(xInc, yInc);
+    const { xMove, yMove } = this.updateViewportData();
     if (originWidth !== this.size.width || originHeight !== this.size.height) {
       tilingSprite.setSize(this.size.width, this.size.height);
     }
+    const tilePos = Point.shared.copyFrom(tilingSprite.tilePosition);
     if (this.mode === TileMode.Both || this.mode === TileMode.Horizontal) {
-      const tileXinc = xInc - this.basePosition.x;
-      this.basePosition.x = xInc;
-      tilingSprite.tilePosition.x += tileXinc;
+      tilePos.x += tileXinc + xMove;
     }
     if (this.mode === TileMode.Both || this.mode === TileMode.Vertical) {
-      const tileYinc = yInc - this.basePosition.y;
-      this.basePosition.y = yInc;
-      tilingSprite.tilePosition.y += tileYinc;
+      tilePos.y += tileYinc + yMove;
     }
+    tilingSprite.tilePosition = tilePos;
   };
   updateViewportData() {
     const viewport = this.set.map.viewport;
@@ -377,14 +386,22 @@ export class MapBack extends Container {
     const screenHeight = viewport.screenHeightInWorldPixels;
     const x = viewport.center.x - screenWidth / 2;
     const y = viewport.center.y - screenHeight / 2;
+    let xMove = 0;
+    let yMove = 0;
     if (this.mode === TileMode.Both || this.mode === TileMode.Horizontal) {
       this.size.width = screenWidth;
+      xMove = this.position.x - x;
       this.position.x = x;
     }
     if (this.mode === TileMode.Both || this.mode === TileMode.Vertical) {
       this.size.height = screenHeight;
+      yMove = this.position.y - y;
       this.position.y = y;
     }
+    return {
+      xMove,
+      yMove,
+    };
   }
   bindParallaxEvent() {
     if (this.info.rx === -100 && this.info.ry === -100) {

@@ -81,9 +81,6 @@ abstract class GapTilingBase<T extends Container> extends Container {
       let x = this._tilePosition.x % this._distence.x;
       if (x > 0) {
         x -= this._distence.x;
-        if (Math.abs(x) < this._distence.x / 2) {
-          x -= this._distence.x / 2;
-        }
       }
       basePoint.x = x;
       tileCountX =
