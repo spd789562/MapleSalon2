@@ -1,7 +1,11 @@
 import { useStore } from '@nanostores/solid';
 import { usePureStore } from '@/store';
 
-import { $mapFilterdStrings, $selectedMap } from '@/store/mapleMap';
+import {
+  $mapFilterdStrings,
+  $selectedMap,
+  $mapListLastOffset,
+} from '@/store/mapleMap';
 
 import { RowVirtualizer } from '@/components/ui/rowVirtualizer';
 import { MapRowItem } from './MapRowItem';
@@ -20,6 +24,7 @@ export const MapList = () => {
         <MapRowItem item={item} selected={selectedMap()?.id === item.id} />
       )}
       data={mapStrings()}
+      restoreAtom={$mapListLastOffset}
     />
   );
 };

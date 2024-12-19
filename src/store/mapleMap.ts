@@ -24,6 +24,7 @@ type MapStringResponseItem = [string, string, string];
 export const $isMapLoading = atom(false);
 export const $mapStrings = atom<MapItem[]>([]);
 export const $mapSearch = atom<string>('');
+export const $mapListLastOffset = atom(0);
 
 export const $selectedMap = atom<MapItem | null>(null);
 export const $currentMap = atom<MapItem | null>(null);

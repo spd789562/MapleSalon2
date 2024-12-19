@@ -1,4 +1,13 @@
-import { For, createMemo, type JSX, Show, createEffect } from 'solid-js';
+import {
+  For,
+  createMemo,
+  type JSX,
+  Show,
+  createEffect,
+  onCleanup,
+  onMount,
+} from 'solid-js';
+import type { WritableAtom } from 'nanostores';
 
 import { createVirtualizer } from '@tanstack/solid-virtual';
 
@@ -9,6 +18,7 @@ export interface RowVirtualizerProps<Item> {
   data: Item[];
   defaultItemHeight?: number;
   renderItem: (item: Item, index: number) => JSX.Element;
+  restoreAtom?: WritableAtom;
 }
 export function RowVirtualizer<Item>(props: RowVirtualizerProps<Item>) {
   let parentRef!: HTMLDivElement;
@@ -37,6 +47,18 @@ export function RowVirtualizer<Item>(props: RowVirtualizerProps<Item>) {
   createEffect(() => {
     const _ = count();
     virtualizer.scrollToOffset(0);
+  });
+
+  onMount(() => {
+    if (props.restoreAtom) {
+      const restore = props.restoreAtom.get();
+      virtualizer.scrollToOffset(restore);
+    }
+    onCleanup(() => {
+      if (props.restoreAtom) {
+        props.restoreAtom.set(virtualizer.scrollOffset || 0);
+      }
+    });
   });
 
   // const items = virtualizer.getVirtualItems();
