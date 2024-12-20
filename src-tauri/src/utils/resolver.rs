@@ -24,7 +24,7 @@ pub async fn get_root_wz_file_path(dir: &DirEntry) -> Option<String> {
     inner_wz_name.push_str(".wz");
     let inner_wz_path = dir.path().join(inner_wz_name);
 
-    if fs::try_exists(&inner_wz_path).await.unwrap() {
+    if fs::try_exists(&inner_wz_path).await.ok()? {
         return Some(inner_wz_path.to_str().unwrap().to_string());
     }
 
