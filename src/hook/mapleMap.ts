@@ -8,6 +8,7 @@ import {
   $mapTargetPosY,
   $mapTags,
   $mapBackgroundTags,
+  $disabledLayers,
   updateMapRect,
   updateMapTargetPos,
   updateMapTags,
@@ -31,6 +32,7 @@ export function MapleMapMount(props: UseMapleMapProps) {
 
   const tags = useStore($mapTags);
   const backgroundTags = useStore($mapBackgroundTags);
+  const disabledLayerTags = useStore($disabledLayers);
 
   let map: MapleMap | undefined;
 
@@ -64,6 +66,7 @@ export function MapleMapMount(props: UseMapleMapProps) {
     updateMapRect(map.edge);
     updateMapTags($mapTags, map.tags);
     updateMapTags($mapBackgroundTags, map.backTags);
+    map.toggleLayerVisibility($disabledLayers.get());
     if (map.edge.x > 0 || map.edge.y > 0) {
       const centerX = map.edge.x + map.edge.width / 2;
       const centerY = map.edge.y + map.edge.height / 2;
@@ -91,6 +94,12 @@ export function MapleMapMount(props: UseMapleMapProps) {
         tagList.filter((t) => t.disabled).map((t) => t.name),
         true,
       );
+    }
+  });
+  createEffect(() => {
+    const tagList = disabledLayerTags();
+    if (map) {
+      map.toggleLayerVisibility([...tagList]);
     }
   });
 

@@ -40,6 +40,23 @@ export const $mapOffsetY = atom(0);
 
 export const $mapTags = atom<TagItem[]>([]);
 export const $mapBackgroundTags = atom<TagItem[]>([]);
+const mapLayers = [
+  'background',
+  '0',
+  '1',
+  '2',
+  '3',
+  '4',
+  '5',
+  '6',
+  '7',
+  '8',
+  'foreground',
+  'particle',
+];
+export const $mapLayerTags = atom<TagItem[]>(
+  mapLayers.map((name) => ({ name, disabled: false })),
+);
 
 /* computed */
 export const $mapFilterdStrings = computed(
@@ -76,6 +93,9 @@ export const $isMapListUninitialized = computed(
 export const $isMapSubmitDisabled = computed(
   [$selectedMap, $currentMap],
   (map, currentMap) => !map || map.id === currentMap?.id,
+);
+export const $disabledLayers = computed([$mapLayerTags], (tags) =>
+  tags.filter((tag) => tag.disabled).map((tag) => tag.name),
 );
 
 /* actions */

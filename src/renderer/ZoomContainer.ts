@@ -52,11 +52,9 @@ export class ZoomContainer extends Viewport {
     this.screenWidth = width;
     this.screenHeight = height;
     if (!this.hasMap) {
-      console.log('resize', width, height);
       this.worldWidth = width * this.worldScale;
       this.worldHeight = height * this.worldScale;
     }
-    console.log(this);
   }
   disable() {
     this.plugins.pause('drag');

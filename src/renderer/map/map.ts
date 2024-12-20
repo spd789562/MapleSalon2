@@ -26,6 +26,7 @@ export class MapleMap extends Container {
   viewport: Viewport;
   readonly bottomLayer = BOTTOM_LAYER;
   readonly topLayer = TOP_LAYER;
+  readonly particleLayer = PARTICLE_LAYER;
   edge = new Rectangle();
   tileSets: Record<number, MapTileSet> = {};
   objSet?: MapObjSet;
@@ -135,6 +136,31 @@ export class MapleMap extends Container {
       this.objSet?.toggleVisibilityByTags(tags);
     }
     this.particleSet?.toggleVisibilityByTags(tags, back);
+  }
+  toggleLayerVisibility(disabledLayers: string[]) {
+    for (const layer of this.layers) {
+      layer.visible = true;
+    }
+    for (const layer of disabledLayers) {
+      switch (layer) {
+        case 'background':
+          this.layers[this.bottomLayer].visible = false;
+          break;
+        case 'foreground':
+          this.layers[this.topLayer].visible = false;
+          break;
+        case 'particle':
+          this.layers[this.particleLayer].visible = false;
+          break;
+        default: {
+          // assume all other layers are numeric
+          const layerIndex = Number(layer);
+          if (!Number.isNaN(layerIndex)) {
+            this.layers[layerIndex + 1].visible = false;
+          }
+        }
+      }
+    }
   }
   destroy(options?: DestroyOptions): void {
     super.destroy(options);
