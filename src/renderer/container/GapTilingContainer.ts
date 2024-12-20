@@ -80,26 +80,26 @@ abstract class GapTilingBase<T extends Container> extends Container {
     if (this.mode !== TileMode.Vertical) {
       let x = this._tilePosition.x % this._distence.x;
       if (x > 0) {
-        x -= this._distence.x;
+        x -= this._distence.x * 2;
       }
       basePoint.x = x;
       tileCountX =
         Math.ceil(
           (this._mask.width + Math.abs(basePoint.x)) / this._distence.x,
-        ) + 1;
+        ) + 2;
     }
 
     // vertical and both
     if (this.mode !== TileMode.Horizontal) {
       let y = this._tilePosition.y % this._distence.y;
       if (y > 0) {
-        y -= this._distence.y;
+        y -= this._distence.y * 2;
       }
       basePoint.y = y;
       tileCountY =
         Math.ceil(
           (this._mask.height + Math.abs(basePoint.y)) / this._distence.y,
-        ) + 1;
+        ) + 2;
     }
 
     let index = 0;

@@ -397,9 +397,6 @@ export class MapBack extends Container {
     if (needMoving) {
       Ticker.shared.add(this.moveTicker);
     }
-    if (this.info.rx === -100 && this.info.ry === -100) {
-      return;
-    }
     const viewport = this.set.map.viewport;
     Ticker.shared.add(this.parallaxTicker);
     viewport.on('moved', this.parallaxTicker);

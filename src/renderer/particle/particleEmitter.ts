@@ -24,7 +24,7 @@ export class ParticleEmitter {
   endColor: Color;
   endColorVar: Color;
   gravity: Point = new Point(0, 0);
-  particalCount = 1;
+  particleCount = 1;
   emitPersecond = 100;
 
   radialTmp = new Point(0, 0);
@@ -49,14 +49,14 @@ export class ParticleEmitter {
     this.startColorVar = this.createColorFromNumber(particleData.startColorVar);
     this.endColor = this.createColorFromNumber(particleData.endColor);
     this.endColorVar = this.createColorFromNumber(particleData.endColorVar);
-    this.particalCount = particleData.totalParticle;
+    this.particleCount = particleData.totalParticle;
     if (particleData.duration > 0) {
       this.emitPersecond =
-        this.particalCount / Math.min(particleData.duration, 1);
+        this.particleCount / Math.min(particleData.duration, 1);
     } else {
       const minLife = Math.max(0, particleData.life - particleData.lifeVar);
       const maxLife = Math.max(0, particleData.life + particleData.lifeVar);
-      this.emitPersecond = this.particalCount / ((minLife + maxLife) / 2);
+      this.emitPersecond = this.particleCount / ((minLife + maxLife) / 2);
     }
     this._emitFrequency = 1 / this.emitPersecond;
     if (particleData.GRAVITY) {
@@ -146,7 +146,7 @@ export class ParticleEmitter {
     this.container.update();
   }
   tryEmit(deltaSec: number) {
-    const ramining = this.particalCount - this._active;
+    const ramining = this.particleCount - this._active;
     if (ramining <= 0) {
       return;
     }
@@ -189,7 +189,7 @@ export class ParticleEmitter {
     }
   }
   initialize() {
-    const particleCount = this.particalCount || 200;
+    const particleCount = this.particleCount || 200;
     for (let i = 0; i < particleCount; i++) {
       const particleItem = this.createParticle();
       this.particles.push(particleItem);
@@ -268,7 +268,7 @@ export class ParticleEmitter {
       );
     }
 
-    /* set actual partical data */
+    /* set actual particle data */
     particleItem.particle.x = this.randomRange(this.wz.posX, this.wz.posVarX);
     particleItem.particle.y = this.randomRange(this.wz.posY, this.wz.posVarY);
     particleItem.particle.scaleX = particleItem.scaleBegin;
