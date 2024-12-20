@@ -11,6 +11,7 @@ const HOVER_DELAY = 300;
 
 export interface CharacterSceneMapPopoverProps {
   trigger?: JSX.Element;
+  isNeedTransparency?: boolean;
   children?: JSX.Element;
 }
 export const CharacterSceneMapPopover = (
@@ -40,7 +41,11 @@ export const CharacterSceneMapPopover = (
       </Popover.Trigger>
       <Portal>
         <Popover.Positioner>
-          <Popover.Content width="16rem">
+          <Popover.Content
+            width="32rem"
+            maxWidth="32rem"
+            opacity={props.isNeedTransparency ? 0.7 : undefined}
+          >
             <Popover.Arrow>
               <Popover.ArrowTip />
             </Popover.Arrow>

@@ -20,7 +20,12 @@ const MoveFactor = {
 };
 const LONG_PRESS_TIME = 200;
 
-export const TargetPositionPad = () => {
+export interface TargetPositionPadProps {
+  onStartMove?: () => void;
+  onEndMove?: () => void;
+}
+
+export const TargetPositionPad = (props: TargetPositionPadProps) => {
   const [isDragging, setIsDragging] = createSignal(false);
   const [isKeyDown, setIsKeyDown] = createSignal(false);
   const [boundRectWidth, setBoundRectWidth] = createSignal('100%');
@@ -92,16 +97,20 @@ export const TargetPositionPad = () => {
       refreshRect();
       setIsKeyDown(true);
       start();
+      props.onStartMove?.();
     }
   }
-  function handleKeyUp() {
-    const anyArrows = keydowns().some((k) => k.startsWith('ARROW'));
+  function handleKeyUp(event: KeyboardEvent) {
+    const anyArrows = keydowns().some(
+      (k) => k.startsWith('ARROW') && k !== event.key.toUpperCase(),
+    );
     if (anyArrows) {
       return;
     }
     if (isKeyDown()) {
       longPressTimer = 0;
       setIsKeyDown(false);
+      props.onEndMove?.();
     }
     if (running()) {
       stop();
@@ -122,13 +131,15 @@ export const TargetPositionPad = () => {
       handleMouseMove(event);
     }
   }
-  function handleEndDrag() {
-    setIsDragging(false);
-  }
   function handleStartDrag(event: MouseEvent) {
     refreshRect();
     setIsDragging(true);
     handleMouseMove(event);
+    props.onStartMove?.();
+  }
+  function handleEndDrag() {
+    setIsDragging(false);
+    props.onEndMove?.();
   }
 
   createEffect(() => {
