@@ -2,6 +2,7 @@ export async function makeBlobsZipBlob(images: [Blob, string][]) {
   const { ZipWriter, BlobWriter, BlobReader } = await import('@zip.js/zip.js');
   const zip = new ZipWriter(new BlobWriter('application/zip'));
   const newFolders = new Set<string>();
+  const allPaths = new Set<string>();
 
   for (const [_, name] of images) {
     const parts = name.split('/');
@@ -19,6 +20,10 @@ export async function makeBlobsZipBlob(images: [Blob, string][]) {
   );
 
   const promises = images.map(([blob, name]) => {
+    if (allPaths.has(name)) {
+      return;
+    }
+    allPaths.add(name);
     return zip.add(name, new BlobReader(blob));
   });
   await Promise.all(promises);
