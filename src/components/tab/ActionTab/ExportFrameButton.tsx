@@ -101,9 +101,9 @@ export const ExportFrameButton = (props: ExportAnimateButtonProps) => {
         const file = files[0];
         downloadBlob(file[0], file[1]);
       } else {
-        // const zipBlob = await makeBlobsZipBlob(files);
-        // const fileName = 'character-action-split-frame.zip';
-        // downloadBlob(zipBlob, fileName);
+        const zipBlob = await makeBlobsZipBlob(files);
+        const fileName = 'character-action-split-frame.zip';
+        downloadBlob(zipBlob, fileName);
       }
       toaster.success({
         title: '匯出成功',

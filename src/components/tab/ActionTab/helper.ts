@@ -20,7 +20,6 @@ export async function getCharacterFrameBlobs(
 ) {
   const files: [Blob, string][] = [];
   const fileNameSuffix = getCharacterFilenameSuffix(character);
-  console.log('data.frames', fileNameSuffix, data.frames);
   for await (const [index, frame] of data.frames.entries()) {
     const blob = await new Promise<Blob>((resolve) => {
       frame.canvas.toBlob((blob) => {

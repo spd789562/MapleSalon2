@@ -36,10 +36,6 @@
       },
       "wix": {
         "language": ["en-US", "zh-TW", "zh-CN"]
-      },
-      "webviewInstallMode": {
-        "type": "fixedRuntime",
-        "path": "./Microsoft.WebView2.FixedVersionRuntime.128.0.2739.79.x64/"
       }
     }
   }

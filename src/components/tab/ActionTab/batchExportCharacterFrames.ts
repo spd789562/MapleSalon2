@@ -38,7 +38,6 @@ export async function batchExportCharacterFrames(
   const totalTimeline = createMergedTimeline(
     Array.from(characterSet.values()).map((v) => v.timeline),
   );
-  console.log('final timeline', totalTimeline);
 
   let add = 0;
   const totalFrameCount = totalTimeline.length;
@@ -48,9 +47,10 @@ export async function batchExportCharacterFrames(
       if (
         frame <= character.maxFrame &&
         // some frame might still be miss when add 16.666
-        character.timeline[character.nextFrameIndex] >= frame
+        frame >= character.timeline[character.nextFrameIndex]
       ) {
         extractAndPutToData(character, renderer);
+        await nextTick();
       }
     }
     // keep tick until next frame
@@ -85,7 +85,6 @@ function createCharacterDataSet(characters: Character[]) {
     const suffix = getCharacterFilenameSuffix(character);
     const { timelines } = generateCharacterTimeline(character);
     const singleTimeline = createMergedTimeline(timelines);
-    console.log(timelines, singleTimeline);
     characterSet.set(suffix, {
       character,
       timeline: singleTimeline,
