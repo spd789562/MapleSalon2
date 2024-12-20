@@ -2,6 +2,7 @@ import { createSignal, Show } from 'solid-js';
 
 import { $padWhiteSpaceWhenExportFrame } from '@/store/settingDialog';
 import { $forceExportEffect } from '@/store/toolTab';
+import { $globalRenderer } from '@/store/renderer';
 
 import { useActionTab } from './ActionTabContext';
 
@@ -11,6 +12,7 @@ import { SpinLoading } from '@/components/elements/SpinLoading';
 
 import ImagesIcon from 'lucide-solid/icons/images';
 import { toaster } from '@/components/GlobalToast';
+import { batchExportCharacterFrames } from './batchExportCharacterFrames';
 import { getCharacterFrameBlobs } from './helper';
 import { makeBlobsZipBlob } from '@/utils/exportImage/exportBlobToZip';
 import { downloadBlob } from '@/utils/download';
@@ -62,23 +64,46 @@ export const ExportFrameButton = (props: ExportAnimateButtonProps) => {
 
     try {
       const files: [Blob, string][] = [];
-      for await (const characterRef of props.characterRefs) {
-        const frameData = await characterRef.makeCharacterFrames({
-          padWhiteSpace,
-        });
-        files.push(
-          ...(await getCharacterFrameBlobs(frameData, characterRef.character, {
-            includeMoveJson: padWhiteSpace === false,
-          })),
+      if (props.characterRefs.length > 1 && $forceExportEffect.get()) {
+        const exportCharacterData = await batchExportCharacterFrames(
+          props.characterRefs.map((ref) => ref.character),
+          $globalRenderer.get().renderer,
+          {
+            padWhiteSpace,
+          },
         );
+        await Promise.all(
+          exportCharacterData.map(async ([character, data]) => {
+            files.push(
+              ...(await getCharacterFrameBlobs(data, character, {
+                includeMoveJson: padWhiteSpace === false,
+              })),
+            );
+          }),
+        );
+      } else {
+        for await (const characterRef of props.characterRefs) {
+          const frameData = await characterRef.makeCharacterFrames({
+            padWhiteSpace,
+          });
+          files.push(
+            ...(await getCharacterFrameBlobs(
+              frameData,
+              characterRef.character,
+              {
+                includeMoveJson: padWhiteSpace === false,
+              },
+            )),
+          );
+        }
       }
       if (files.length === 1) {
         const file = files[0];
         downloadBlob(file[0], file[1]);
       } else {
-        const zipBlob = await makeBlobsZipBlob(files);
-        const fileName = 'character-action-split-frame.zip';
-        downloadBlob(zipBlob, fileName);
+        // const zipBlob = await makeBlobsZipBlob(files);
+        // const fileName = 'character-action-split-frame.zip';
+        // downloadBlob(zipBlob, fileName);
       }
       toaster.success({
         title: '匯出成功',

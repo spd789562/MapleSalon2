@@ -76,8 +76,7 @@ export async function characterToCanvasFramesWithEffects(
     onProgress?: (progress: number, total: number) => void;
   },
 ) {
-  let duractionMs = options?.duractionMs || 0;
-  const needCalculateMaxDuration = !!duractionMs || character.skill;
+  const needCalculateMaxDuration = !!options?.duractionMs || character.skill;
 
   const isOriginalAnimating = character.isAnimating;
 
@@ -91,59 +90,7 @@ export async function characterToCanvasFramesWithEffects(
   character.currentDelta = 0;
   character.playBodyFrame();
 
-  const timelines = [] as number[][];
-
-  const instructionTimeline = character.currentInstructions.reduce(
-    (acc, frame) => {
-      const prev = acc.length > 0 ? acc[acc.length - 1] : 0;
-      acc.push(prev + (frame.delay ?? 100) * character.speed);
-      return acc;
-    },
-    [] as number[],
-  );
-
-  timelines.push(instructionTimeline);
-
-  const instructionDuration =
-    instructionTimeline[instructionTimeline.length - 1];
-  if (needCalculateMaxDuration && instructionDuration > duractionMs) {
-    duractionMs = instructionDuration;
-  }
-
-  /* reset effects frame */
-  if (!character.isHideAllEffect) {
-    for (const effect of character.allEffectPieces) {
-      effect.currentFrame = 0;
-      /* @ts-ignore */
-      effect._currentTime = 0;
-      if (needCalculateMaxDuration && effect.totalDuration > duractionMs) {
-        duractionMs = effect.totalDuration;
-      }
-      timelines.push(effect.timeline);
-    }
-  }
-  /* reset name tag frame */
-  if (
-    character.nameTag.visible &&
-    character.nameTag.isAnimatedBackground(character.nameTag.background)
-  ) {
-    character.nameTag.background.resetFrame();
-    const nameTagDuration = character.nameTag.background.totalDuration;
-    if (needCalculateMaxDuration && nameTagDuration > duractionMs) {
-      duractionMs = nameTagDuration;
-    }
-    timelines.push(character.nameTag.background.timeline);
-  }
-  if (character.skill) {
-    character.skill.resetDelta();
-    const skillTimelines = character.skill.getTimelines();
-    const maxLast = skillTimelines.reduce((acc, timeline) => {
-      return Math.max(acc, timeline[timeline.length - 1]);
-    }, 0);
-    // if has skill, force overrid the duration
-    duractionMs = maxLast;
-    timelines.push(...skillTimelines);
-  }
+  let { timelines, duractionMs } = generateCharacterTimeline(character);
 
   if (options?.maxDurationMs) {
     duractionMs = Math.min(options.maxDurationMs, duractionMs);
@@ -156,17 +103,6 @@ export async function characterToCanvasFramesWithEffects(
   if (!character.currentInstructions) {
     throw new Error('Character body not found');
   }
-
-  let characterDuraction = 0;
-  const characterTimeline = character.currentInstructions.reduce(
-    (acc, frame) => {
-      characterDuraction += frame.delay || 100;
-      acc.push(characterDuraction);
-      return acc;
-    },
-    [] as number[],
-  );
-  timelines.push(characterTimeline);
 
   const mergedTimeline = createMergedTimeline(timelines);
 
@@ -221,4 +157,51 @@ export async function characterToCanvasFramesWithEffects(
   Ticker.system.start();
 
   return resultData;
+}
+
+export function generateCharacterTimeline(character: Character) {
+  const timelines = [] as number[][];
+  const instructionTimeline = character.currentInstructions.reduce(
+    (acc, frame) => {
+      const prev = acc.length > 0 ? acc[acc.length - 1] : 0;
+      acc.push(prev + (frame.delay ?? 100) * character.speed);
+      return acc;
+    },
+    [] as number[],
+  );
+
+  timelines.push(instructionTimeline);
+
+  /* reset effects frame */
+  if (!character.isHideAllEffect) {
+    for (const effect of character.allEffectPieces) {
+      effect.currentFrame = 0;
+      /* @ts-ignore */
+      effect._currentTime = 0;
+      timelines.push(effect.timeline);
+    }
+  }
+  /* reset name tag frame */
+  if (
+    character.nameTag.visible &&
+    character.nameTag.isAnimatedBackground(character.nameTag.background)
+  ) {
+    character.nameTag.background.resetFrame();
+    timelines.push(character.nameTag.background.timeline);
+  }
+  let duractionMs = timelines.reduce((acc, timeline) => {
+    return Math.max(acc, timeline[timeline.length - 1]);
+  }, 0);
+
+  if (character.skill) {
+    character.skill.resetDelta();
+    const skillTimelines = character.skill.getTimelines();
+    const maxLast = skillTimelines.reduce((acc, timeline) => {
+      return Math.max(acc, timeline[timeline.length - 1]);
+    }, 0);
+    // if has skill, force overrid the duration
+    duractionMs = maxLast;
+    timelines.push(...skillTimelines);
+  }
+  return { timelines, duractionMs };
 }

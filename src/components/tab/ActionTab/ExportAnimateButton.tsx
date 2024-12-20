@@ -2,6 +2,7 @@ import { createSignal, Show } from 'solid-js';
 
 import { $actionExportType, $forceExportEffect } from '@/store/toolTab';
 import { $addBlackBgWhenExportGif } from '@/store/settingDialog';
+import { $globalRenderer } from '@/store/renderer';
 
 import { useActionTab } from './ActionTabContext';
 
@@ -13,6 +14,7 @@ import { SpinLoading } from '@/components/elements/SpinLoading';
 import { ActionExportTypeExtensions } from '@/const/toolTab';
 
 import { toaster } from '@/components/GlobalToast';
+import { batchExportCharacterFrames } from './batchExportCharacterFrames';
 import { getAnimatedCharacterBlob, getCharacterFilenameSuffix } from './helper';
 import { makeBlobsZipBlob } from '@/utils/exportImage/exportBlobToZip';
 import { downloadBlob } from '@/utils/download';
@@ -79,6 +81,24 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
           characterRef.character,
         );
         downloadBlob(blob, `${fileNameSuffix}${exportExt}`);
+      } else if ($forceExportEffect.get()) {
+        const exportCharacterData = await batchExportCharacterFrames(
+          props.characterRefs.map((ref) => ref.character),
+          $globalRenderer.get().renderer,
+          {
+            backgroundColor,
+          },
+        );
+        await Promise.all(
+          exportCharacterData.map(async ([character, data]) => {
+            const blob = await getAnimatedCharacterBlob(data, exportType);
+            const fileNameSuffix = getCharacterFilenameSuffix(character);
+            files.push([blob, `${fileNameSuffix}${exportExt}`]);
+          }),
+        );
+        const zipBlob = await makeBlobsZipBlob(files);
+        const fileName = 'character-action.zip';
+        downloadBlob(zipBlob, fileName);
       } else {
         for await (const characterRef of props.characterRefs) {
           const frameData = await characterRef.makeCharacterFrames({
