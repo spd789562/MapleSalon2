@@ -89,7 +89,9 @@ export class MapBack extends Container {
   gapType = BackGapType.Zero;
   gap = { x: 0, y: 0 };
   flowSpeed = { x: 0, y: 0 };
-  lastPosition = new Point();
+  flowPosition = new Point();
+  movePosition = new Point();
+  basePosition = new Point();
   targetSize = { width: 0, height: 0 };
   fliped = false;
   size = { width: 800, height: 600 };
@@ -196,7 +198,9 @@ export class MapBack extends Container {
     this.targetSize.width = target.width;
     this.targetSize.height = target.height;
     this.gap.x = (this.info.cx ?? 0) > 0 ? this.info.cx - target.width : 0;
+    this.info.cx = this.targetSize.width + this.gap.x;
     this.gap.y = (this.info.cy ?? 0) > 0 ? this.info.cy - target.height : 0;
+    this.info.cy = this.targetSize.height + this.gap.y;
     this.gapType = getGapType(this.gap.x, this.gap.y);
     this.size.width =
       this.mode !== TileMode.Vertical
@@ -230,29 +234,17 @@ export class MapBack extends Container {
     }
 
     const renderObj = this.renderObj as TilingSprite | GapTilingSprite;
-    const center = viewport.center;
-    const xInc = (center.x * ((this.info.rx ?? 0) + 100)) / 100;
-    const yInc = (center.y * ((this.info.ry ?? 0) + 100)) / 100;
-    this.lastPosition.set(xInc, yInc);
-    const tempPoint = Point.shared;
-
     // setting the initial position
     if (this.mode === TileMode.Horizontal || this.mode === TileMode.Both) {
-      tempPoint.x = xInc + this.info.x - target.pivot.x;
+      this.basePosition.x = this.info.x - target.pivot.x;
     } else if (this.info.ani !== 1) {
+      // animation has it own pivot
       renderObj.pivot.x = target.pivot.x;
     }
     if (this.mode === TileMode.Vertical || this.mode === TileMode.Both) {
-      tempPoint.y = yInc + this.info.y - target.pivot.y;
+      this.basePosition.y = this.info.y - target.pivot.y;
     } else if (this.info.ani !== 1) {
       renderObj.pivot.y = target.pivot.y;
-    }
-    if (renderObj.tilePosition) {
-      renderObj.tilePosition = tempPoint;
-    }
-    const needMoving = this.flowSpeed.x !== 0 || this.flowSpeed.y !== 0;
-    if (needMoving) {
-      Ticker.shared.add(this.moveTicker);
     }
   }
   prepareResource(renderer: Renderer) {
@@ -325,7 +317,7 @@ export class MapBack extends Container {
     }
     this.addChild(this.renderObj);
   }
-  moveTicker = (delta: Ticker) => {
+  moveTicker = () => {
     if (this.destroyed || !this.renderObj) {
       return;
     }
@@ -333,9 +325,13 @@ export class MapBack extends Container {
       | TilingSprite
       | GapTilingSprite
       | GapTilingAnimatedSprite;
+    this.flowPosition.x += (this.flowSpeed.x * 5) / 60;
+    this.flowPosition.x %= this.info.cx;
+    this.flowPosition.y += (this.flowSpeed.y * 5) / 60;
+    this.flowPosition.y %= this.info.cy;
     tilingSprite.tilePosition = {
-      x: tilingSprite.tilePosition.x + (this.flowSpeed.x * 5) / 60,
-      y: tilingSprite.tilePosition.y + (this.flowSpeed.y * 5) / 60,
+      x: this.movePosition.x + this.flowPosition.x + this.basePosition.x,
+      y: this.movePosition.y + this.flowPosition.y + this.basePosition.y,
     };
   };
   parallaxTicker = () => {
@@ -364,21 +360,20 @@ export class MapBack extends Container {
       | GapTilingAnimatedSprite;
     const originWidth = this.size.width;
     const originHeight = this.size.height;
-    const tileXinc = xInc - this.lastPosition.x;
-    const tileYinc = yInc - this.lastPosition.y;
-    this.lastPosition.set(xInc, yInc);
-    const { xMove, yMove } = this.updateViewportData();
+    this.updateViewportData();
     if (originWidth !== this.size.width || originHeight !== this.size.height) {
       tilingSprite.setSize(this.size.width, this.size.height);
     }
-    const tilePos = Point.shared.copyFrom(tilingSprite.tilePosition);
     if (this.mode === TileMode.Both || this.mode === TileMode.Horizontal) {
-      tilePos.x += tileXinc + xMove;
+      this.movePosition.x += xInc;
     }
     if (this.mode === TileMode.Both || this.mode === TileMode.Vertical) {
-      tilePos.y += tileYinc + yMove;
+      this.movePosition.y += yInc;
     }
-    tilingSprite.tilePosition = tilePos;
+    tilingSprite.tilePosition = {
+      x: this.basePosition.x + this.flowPosition.x + this.movePosition.x,
+      y: this.basePosition.y + this.flowPosition.y + this.movePosition.y,
+    };
   };
   updateViewportData() {
     const viewport = this.set.map.viewport;
@@ -386,24 +381,22 @@ export class MapBack extends Container {
     const screenHeight = viewport.screenHeightInWorldPixels;
     const x = viewport.center.x - screenWidth / 2;
     const y = viewport.center.y - screenHeight / 2;
-    let xMove = 0;
-    let yMove = 0;
     if (this.mode === TileMode.Both || this.mode === TileMode.Horizontal) {
       this.size.width = screenWidth;
-      xMove = this.position.x - x;
       this.position.x = x;
+      this.movePosition.x = -x;
     }
     if (this.mode === TileMode.Both || this.mode === TileMode.Vertical) {
       this.size.height = screenHeight;
-      yMove = this.position.y - y;
       this.position.y = y;
+      this.movePosition.y = -y;
     }
-    return {
-      xMove,
-      yMove,
-    };
   }
   bindParallaxEvent() {
+    const needMoving = this.flowSpeed.x !== 0 || this.flowSpeed.y !== 0;
+    if (needMoving) {
+      Ticker.shared.add(this.moveTicker);
+    }
     if (this.info.rx === -100 && this.info.ry === -100) {
       return;
     }
