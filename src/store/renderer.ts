@@ -6,10 +6,8 @@ import { CharacterLoader } from '@/renderer/character/loader';
 export const $preferRenderer = atom<'webgl' | 'webgpu'>('webgpu');
 
 export const $globalRenderer = atom<Application>(new Application());
-export const $actionRenderer = atom<Application>(new Application());
 
 export const $isGlobalRendererInitialized = atom<boolean>(false);
-export const $isActionRendererInitialized = atom<boolean>(false);
 
 export const $simpleCharacterCache = map<Record<string, string>>({});
 

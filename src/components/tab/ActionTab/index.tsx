@@ -2,11 +2,7 @@ import { Index, onCleanup, onMount, createSignal, createMemo } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
 import { useStore } from '@nanostores/solid';
 
-import {
-  $preferRenderer,
-  $actionRenderer,
-  $isActionRendererInitialized,
-} from '@/store/renderer';
+import { $globalRenderer } from '@/store/renderer';
 import { $actionExportHandType } from '@/store/toolTab';
 
 import { VStack } from 'styled-system/jsx/vstack';
@@ -40,7 +36,7 @@ export const ActionTab = () => {
   const canvasResizeObserver = new ResizeObserver(handleCanvasResize);
   let appContainer!: HTMLDivElement;
   const characterRefs: ActionCharacterRef[] = [];
-  const app = $actionRenderer.get();
+  const app = $globalRenderer.get();
 
   const actions = createMemo(() => {
     if (handType() === CharacterHandType.Gun) {
@@ -64,16 +60,7 @@ export const ActionTab = () => {
     });
   }
 
-  onMount(async () => {
-    const isInitialized = $isActionRendererInitialized.get();
-    if (!isInitialized) {
-      await app.init({
-        resizeTo: appContainer,
-        backgroundAlpha: 0,
-        preference: $preferRenderer.get(),
-      });
-      $isActionRendererInitialized.set(true);
-    }
+  onMount(() => {
     appContainer.appendChild(app.canvas);
     app.resizeTo = appContainer;
     canvasResizeObserver.observe(appContainer);

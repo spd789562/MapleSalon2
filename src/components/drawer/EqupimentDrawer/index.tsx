@@ -15,6 +15,7 @@ import { ToolTab } from '@/const/toolTab';
 
 const NONE_MINI_CHARACTER_TABS: (ToolTab | undefined)[] = [
   ToolTab.Character,
+  ToolTab.AllAction,
   ToolTab.Chair,
   ToolTab.Mount,
   ToolTab.Skill,
