@@ -162,6 +162,12 @@ pub fn resolve_equip_string_by_category(category_string_node: &WzNodeArc) -> Str
                 if text_node.is_none() {
                     return result;
                 }
+                // duel blade should count as a shield
+                let actual_category = if name.starts_with("134") {
+                    EquipCategory::Shield
+                } else {
+                    category.clone()
+                };
 
                 let text_node = text_node.unwrap();
 
@@ -169,7 +175,7 @@ pub fn resolve_equip_string_by_category(category_string_node: &WzNodeArc) -> Str
                 let name_text = text_node_read.try_as_string().map(WzString::get_string);
                 if let Some(Ok(text)) = name_text {
                     result.push((
-                        category.clone(),
+                        actual_category,
                         name,
                         text,
                         false, // is cash
@@ -232,8 +238,13 @@ pub fn resolve_equip_string(
                 if category_node_read.children.contains_key(id) {
                     return None;
                 }
+                let actual_category = if id.starts_with("134") {
+                    EquipCategory::Shield
+                } else {
+                    category.clone()
+                };
                 Some((
-                    category.clone(),
+                    actual_category,
                     id.to_string(),
                     empty_node_name.clone(),
                     false, // is cash
