@@ -6,28 +6,33 @@ import {
   on,
   Show,
 } from 'solid-js';
-import type { ReadableAtom } from 'nanostores';
 
 import {
   $isGlobalRendererInitialized,
   $globalRenderer,
 } from '@/store/renderer';
-import type { CharacterData, CharacterItemInfo } from '@/store/character/store';
+import type { CharacterItemInfo } from '@/store/character/store';
+import {
+  $currentCharacter,
+  $previewCharacter,
+} from '@/store/character/selector';
 import {
   MAX_ZOOM,
   MIN_ZOOM,
   $zoomTarget,
-  $previewZoomInfo,
+  $previewChairZoomInfo,
   updateCenter,
   updateZoom,
-} from '@/store/previewZoom';
+} from '@/store/previewChairZoom';
 import { $showUpscaledCharacter } from '@/store/trigger';
 import { $isMapleMapScene } from '@/store/scene';
+import { $showPreviousCharacter } from '@/store/trigger';
 import { usePureStore } from '@/store';
 import { useChatBalloonText } from './useChatBalloonText';
 import { useResizableApp } from '@/hook/resizableApp';
 import { MapleMapMount } from '@/hook/mapleMap';
 
+import { Container } from 'pixi.js';
 import { Character } from '@/renderer/character/character';
 import { ZoomContainer } from '@/renderer/ZoomContainer';
 import { Anime4kFilter } from '@/renderer/filter/anime4k/Anime4kFilter';
@@ -39,18 +44,17 @@ import {
 import { Box } from 'styled-system/jsx/box';
 import { toaster } from '@/components/GlobalToast';
 
-import { PreviewScene } from '@/const/scene';
-
 export interface CharacterPreviewViewProps {
   onLoad: () => void;
   onLoaded: () => void;
   ref?: (element: Character) => void;
-  store: ReadableAtom<CharacterData>;
   target: string;
 }
 export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
-  const zoomInfo = usePureStore($previewZoomInfo);
-  const characterData = from(props.store);
+  const zoomInfo = usePureStore($previewChairZoomInfo);
+  const isShowComparison = usePureStore($showPreviousCharacter);
+  const characterData = from($previewCharacter);
+  const originalCharacterData = from($currentCharacter);
   const isRendererInitialized = usePureStore($isGlobalRendererInitialized);
   const [isInit, setIsInit] = createSignal<boolean>(false);
   const isShowUpscale = usePureStore($showUpscaledCharacter);
@@ -58,7 +62,10 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   let container!: HTMLDivElement;
   let viewport: ZoomContainer | undefined;
   let upscaleFilter: Anime4kFilter | undefined;
+  const characterContainer = new Container();
   const ch = new Character();
+  const originalCh = new Character();
+  characterContainer.addChild(ch);
   props.ref?.(ch);
   useChatBalloonText(ch);
   useResizableApp({
@@ -112,7 +119,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
       }
     });
     container.appendChild(app.canvas);
-    viewport.addChild(ch);
+    viewport.addChild(characterContainer);
     app.stage.addChild(viewport);
 
     setIsInit(true);
@@ -142,6 +149,24 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     const data = characterData();
     if (isInit() && data) {
       await ch.update({ ...data });
+    }
+  });
+
+  createEffect(async () => {
+    const originalData = originalCharacterData();
+    if (isInit() && originalData && isShowComparison()) {
+      await originalCh.update({ ...originalData });
+    }
+  });
+
+  createEffect(() => {
+    if (isShowComparison()) {
+      characterContainer.addChild(originalCh);
+      ch.position.set(150, 0);
+      originalCh.position.set(-150, 0);
+    } else {
+      characterContainer.removeChild(originalCh);
+      ch.position.set(0, 0);
     }
   });
 
@@ -193,7 +218,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
         <MapleMapMount
           viewport={() => viewport}
           application={$globalRenderer.get()}
-          singleTarget={() => ch}
+          singleTarget={() => characterContainer}
         />
       </Show>
     </>

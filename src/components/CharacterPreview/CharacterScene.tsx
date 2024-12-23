@@ -1,19 +1,10 @@
 import { Show } from 'solid-js';
-import { useStore } from '@nanostores/solid';
 import { styled } from 'styled-system/jsx/factory';
-
-import {
-  $currentCharacter,
-  $previewCharacter,
-} from '@/store/character/selector';
-import { $showPreviousCharacter } from '@/store/trigger';
 
 import { useCharacterPreview } from './CharacterPreviewContext';
 
-import ChevronRightIcon from 'lucide-solid/icons/chevron-right';
 import { LoadingWithBackdrop } from '@/components/elements/LoadingWithBackdrop';
 import { CharacterSceneContainer } from './CharacterSceneContainer';
-import { CharacterView } from './Character';
 import { CharacterPreviewView } from './CharacterPreview';
 import { CharacterSceneSelection } from './CharacterSceneSelection';
 import { ShowPreviousSwitch } from './ShowPreviousSwitch';
@@ -22,7 +13,6 @@ import { ZoomControl } from './ZoomControl';
 
 export const CharacterScene = () => {
   const [state, actions] = useCharacterPreview();
-  const isShowComparison = useStore($showPreviousCharacter);
 
   function handleLoad() {
     actions.setIsLoading(true);
@@ -33,21 +23,9 @@ export const CharacterScene = () => {
 
   return (
     <CharacterSceneContainer>
-      <Show when={isShowComparison()}>
-        <CharacterView
-          onLoad={handleLoad}
-          onLoaded={handleLoaded}
-          store={$currentCharacter}
-          target="original"
-        />
-        <CompareSeparator>
-          <ChevronRightIcon size={32} />
-        </CompareSeparator>
-      </Show>
       <CharacterPreviewView
         onLoad={handleLoad}
         onLoaded={handleLoaded}
-        store={$previewCharacter}
         target="preview"
         ref={actions.setCharacterRef}
       />
