@@ -4,12 +4,12 @@ import { styled } from 'styled-system/jsx/factory';
 import {
   MAX_ZOOM,
   MIN_ZOOM,
-  $previewZoom,
+  $previewChairZoom,
   resetZoom,
   resetCenter,
   addZoom,
   subtractZoom,
-} from '@/store/previewZoom';
+} from '@/store/previewChairZoom';
 
 import ResetIcon from 'lucide-solid/icons/rotate-ccw';
 import ViewIcon from 'lucide-solid/icons/view';
@@ -19,7 +19,7 @@ import { HStack } from 'styled-system/jsx/hstack';
 import { IconButton } from '@/components/ui/icon-button';
 
 export const ZoomControl = () => {
-  const currentZoom = useStore($previewZoom);
+  const currentZoom = useStore($previewChairZoom);
 
   const percent = () => Math.round(currentZoom() * 100);
 
