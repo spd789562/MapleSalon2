@@ -139,6 +139,14 @@ export function MapleMapMount(props: UseMapleMapProps) {
       viewport.addChild(target);
       viewport.hasMap = false;
       viewport.moveCenter(0, 0);
+      viewport.worldHeight = viewport.screenHeight * viewport.worldScale;
+      viewport.worldWidth = viewport.screenWidth * viewport.worldScale;
+      viewport.clamp({
+        top: -viewport.screenHeight,
+        left: -viewport.screenWidth,
+        bottom: viewport.screenHeight,
+        right: viewport.screenWidth,
+      });
     }
     target.position.set(0, 0);
   });
