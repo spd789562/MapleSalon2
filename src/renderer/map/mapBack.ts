@@ -365,10 +365,19 @@ export class MapBack extends Container {
       tilingSprite.setSize(this.size.width, this.size.height);
     }
     if (this.mode === TileMode.Both || this.mode === TileMode.Horizontal) {
-      this.movePosition.x += xInc;
+      if (this.flowSpeed.x !== 0) {
+        // if a thing has flow speed, it should not be affected by the viewport moving
+        this.movePosition.x = -xInc;
+      } else {
+        this.movePosition.x += xInc;
+      }
     }
     if (this.mode === TileMode.Both || this.mode === TileMode.Vertical) {
-      this.movePosition.y += yInc;
+      if (this.flowSpeed.y !== 0) {
+        this.movePosition.y = -yInc;
+      } else {
+        this.movePosition.y += yInc;
+      }
     }
     tilingSprite.tilePosition = {
       x: this.basePosition.x + this.flowPosition.x + this.movePosition.x,
