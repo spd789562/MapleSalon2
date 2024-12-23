@@ -52,7 +52,7 @@ export const CharacterSceneBackgroundPopover = (
       open={isOpen()}
       positioning={{
         strategy: 'fixed',
-        placement: 'top-end',
+        placement: 'top',
       }}
       onInteractOutside={handleOutsideClick}
     >

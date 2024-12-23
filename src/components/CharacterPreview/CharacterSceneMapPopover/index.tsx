@@ -7,11 +7,13 @@ import MoveIcon from 'lucide-solid/icons/move';
 import { Stack } from 'styled-system/jsx/stack';
 import { HStack } from 'styled-system/jsx/hstack';
 import { Heading } from '@/components/ui/heading';
+import { CssTooltip } from '@/components/ui/cssTooltip';
 import { IconCssTooltip, IconType } from '@/components/elements/IconTooltip';
 import { CharacterSceneMapPopover as ScenePopover } from './CharacterSceneMapPopover';
 import { OpenMapSelectionButton } from './OpenMapSelectionButton';
 import { TargetPositionPad } from './TargetPositionPad';
 import { TargetLayerNumberInput } from './TargetLayerNumberInput';
+import { TargetOffsetNumberInputs } from './TargetOffsetNumberInputs';
 import { MapLayerToggleTag } from './MapLayerToggleTag';
 import { MapToggleTag } from './MapToggleTag';
 import { MapSelectionHistory } from './MapSelectionHistory';
@@ -37,13 +39,14 @@ export const CharacterSceneMapPopover = (
             onStartMove={() => setIsUsingPad(true)}
             onEndMove={() => setIsUsingPad(false)}
           />
+          <TargetOffsetNumberInputs />
           <TargetLayerNumberInput />
+        </Stack>
+        <Stack width="50%">
           <Heading size="md" as="h4">
             顯示圖層
           </Heading>
           <MapLayerToggleTag />
-        </Stack>
-        <Stack width="50%">
           <HStack gap="1" alignItems="center">
             <Heading size="md" as="h4">
               背景、前景標籤
@@ -73,10 +76,12 @@ const TargetPositionTitle = () => (
     <Heading size="md" as="h4">
       物體位置
     </Heading>
-    <HStack gap="1" alignItems="center" color="gray.10">
-      <MousePointerClickIcon size={14} />
-      <span>/</span>
-      <MoveIcon size={14} />
-    </HStack>
+    <CssTooltip data-tooltip-content="於範圍內拖曳，或點擊拖曳點使用方向鍵移動">
+      <HStack gap="1" alignItems="center" color="gray.10">
+        <MousePointerClickIcon size={14} />
+        <span>/</span>
+        <MoveIcon size={14} />
+      </HStack>
+    </CssTooltip>
   </HStack>
 );
