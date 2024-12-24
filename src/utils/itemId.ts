@@ -137,8 +137,9 @@ export function getGender(id: number): Gender {
   if (id < 100000) {
     return getFaceOrHairGender(id);
   }
-  /* 104xxxx ~ 106xxxx is overall, coat, and pants, only those has gender restriction */
-  if (id > 1040000 && id < 1070000) {
+  /* ~~104xxxx ~ 106xxxx~~ is overall, coat, and pants, only those has gender restriction */
+  /* I was wrong, seem cap(100xxxx) and acceessories also has same rule of gender restriction */
+  if (id > 1000000 && id < 1070000) {
     return getEquipGender(id);
   }
   return Gender.Share;
