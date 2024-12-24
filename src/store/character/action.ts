@@ -255,7 +255,7 @@ export function addItemToChanges(
         id: item.id,
         name: item.name,
         isDeleted: false,
-        enableEffect: item.hasEffect ? currentItems[category] : undefined,
+        enableEffect: item.hasEffect ? true : undefined,
       }),
     );
   } else {

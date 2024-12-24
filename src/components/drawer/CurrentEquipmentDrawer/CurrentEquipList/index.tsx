@@ -21,6 +21,9 @@ const CategoryList = [
   'Face Accessory',
   'Eye Decoration',
   'Earrings',
+  'RingEffect',
+  'NecklaceEffect',
+  'Effect',
 ] as EquipSubCategory[];
 
 export const CurrentEquipList = () => {

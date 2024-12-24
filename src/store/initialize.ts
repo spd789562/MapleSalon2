@@ -145,7 +145,7 @@ export async function initStringAndRenderer(
     $initLoadProgress.set(InitLoadProgress.InitItem);
     await nextTick();
     try {
-      await prepareAndFetchChairStrings(needLoadItem);
+      await prepareAndFetchChairStrings();
     } catch (_) {
       toaster.error({
         title: '初始化錯誤',

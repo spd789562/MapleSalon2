@@ -24,6 +24,9 @@ export enum EquipCategory {
   AuthenticForce = '21',
   Skin = '22',
   SkillSkin = '23',
+  Effect = '25',
+  RingEffect = '26',
+  NecklaceEffect = '27',
   Unknown = '24',
 }
 
@@ -51,6 +54,9 @@ const ValidEquipSubCategory = [
   'Eye Decoration',
   'Earrings',
   'NameTag',
+  'RingEffect',
+  'NecklaceEffect',
+  'Effect',
 ];
 
 export type EquipSubCategory =
@@ -87,7 +93,10 @@ export type EquipSubCategory =
   | 'Eye Decoration'
   | 'Earrings'
   | 'NameTag'
-  | 'ChatBalloon';
+  | 'ChatBalloon'
+  | 'RingEffect'
+  | 'NecklaceEffect'
+  | 'Effect';
 
 export type UnavailableEquipCategory =
   | EquipCategory.Dragon

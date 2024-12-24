@@ -93,6 +93,10 @@ export abstract class CategorizedItem<Name extends string> {
     if (effectPos === 1) {
       basePos.y = 0;
     }
+    // for job tails like kaiser and hoyoung
+    if (effectPos === 4) {
+      basePos.y = 25;
+    }
 
     return basePos;
   }

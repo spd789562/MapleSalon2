@@ -23,6 +23,7 @@ import {
   isBodyId,
   isCapId,
   isShoesId,
+  isCashEffectId,
 } from '@/utils/itemId';
 import {
   gatFaceAvailableColorIds,
@@ -190,6 +191,17 @@ export class CharacterItem implements RenderItemInfo {
       this.isCleanedWz = true;
     }
   }
+  private loadEffectOnlyAction(wz: WzEffectItem) {
+    const actionNeedToBuild = Object.values(CharacterAction);
+
+    for (const action of actionNeedToBuild) {
+      const effectWz = wz[action] || wz.default;
+
+      const actionItem = new CharacterActionItem(action, {}, this, effectWz);
+
+      this.actionPieces.set(action, actionItem);
+    }
+  }
   private loadWeapon(wz: WzItem) {
     const isSingleHand =
       this.character.handType === CharacterHandType.SingleHand;
@@ -229,13 +241,16 @@ export class CharacterItem implements RenderItemInfo {
     }
 
     if (this.wz === null) {
+      if (this.effectWz) {
+        this.loadEffectOnlyAction(this.effectWz);
+      }
       return;
     }
 
     /* some item will not have info, WTF? */
-    this.islot = (this.wz.info?.islot?.match(/.{1,2}/g) || []) as PieceIslot[];
-    this.vslot = (this.wz.info?.vslot?.match(/.{1,2}/g) || []) as PieceIslot[];
-    this.isOverrideFace = this.wz.info?.invisibleFace === 1;
+    this.islot = (this.wz?.info?.islot?.match(/.{1,2}/g) || []) as PieceIslot[];
+    this.vslot = (this.wz?.info?.vslot?.match(/.{1,2}/g) || []) as PieceIslot[];
+    this.isOverrideFace = this.wz?.info?.invisibleFace === 1;
 
     /* a shoe should alwasy be a shoe! pls */
     if (isShoesId(this.info.id) && !this.islot.includes('So')) {
@@ -249,6 +264,12 @@ export class CharacterItem implements RenderItemInfo {
     } else if (this.isHair && this.avaliableDye.size === 0) {
       const ids = gatHairAvailableColorIds(this.info.id);
       this.avaliableDye = new Map(ids.map((id) => [getHairColorId(id), id]));
+    }
+
+    const baseKeys = Object.keys(this.wz);
+    if (baseKeys.length === 1 && baseKeys[0] === 'info' && this.effectWz) {
+      this.loadEffectOnlyAction(this.effectWz as WzEffectItem);
+      return;
     }
 
     if (this.isUseExpressionItem) {

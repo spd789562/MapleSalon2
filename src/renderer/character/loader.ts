@@ -7,11 +7,12 @@ import type { WzNameTag } from '../nameTag/wz';
 import type { WzChatBalloon } from '../chatBalloon/wz';
 
 import { getItemFolderFromId } from '@/utils/itemFolder';
+import { isCashEffectId } from '@/utils/itemId';
 
 class Loader {
   zmap?: Zmap = [];
   smap?: Smap;
-  wzImageFolder: string[] = [];
+  wzImageFolder = new Set<string>();
   loadingMap = new Map<string, Promise<unknown>>();
   pathExistCache = new Map<number, string>();
   instructionMap = new Map<string, WzActionInstruction[]>();
@@ -67,13 +68,17 @@ class Loader {
     );
   }
   async loadWzImageFolder() {
-    this.wzImageFolder = await fetch(
-      `${this.apiHost}/mapping/images?cache=14400`,
-    )
-      .then((res) => res.json())
-      .then((data: string[]) =>
-        data.filter((path) => path.startsWith('Character')),
-      );
+    this.wzImageFolder = new Set(
+      await fetch(`${this.apiHost}/mapping/images?cache=14400`)
+        .then((res) => res.json())
+        .then((data: string[]) =>
+          data.filter(
+            (path) =>
+              path.startsWith('Character') || path.startsWith('Item/Cash'),
+          ),
+        ),
+    );
+    console.log(this.wzImageFolder);
   }
   async loadInstructionMap() {
     const data = await this.getPieceWzByPath<
@@ -95,10 +100,11 @@ class Loader {
       frameKeys.sort((a, b) => a - b);
       for (const frame in frameKeys) {
         const instruction = instructions[frame];
-        frames.push({
-          ...instruction,
-          delay: Math.abs(instruction.delay || 100),
-        });
+        instruction &&
+          frames.push({
+            ...instruction,
+            delay: Math.abs(instruction.delay || 100),
+          });
       }
       this.instructionMap.set(action, frames);
     }
@@ -108,7 +114,7 @@ class Loader {
   }
   checkPathExist(path: string) {
     const imgPath = (path.split('.img') || [])[0];
-    return this.wzImageFolder.includes(imgPath);
+    return this.wzImageFolder.has(imgPath);
   }
   getPiecePathIfExist(id: number, folder?: string) {
     let getfolder = folder;
@@ -119,9 +125,11 @@ class Loader {
     if (existPath) {
       return existPath;
     }
-    const path = `Character/${getfolder}${id.toString().padStart(8, '0')}.img`;
+    const path = isCashEffectId(id)
+      ? `Item/Cash/0501.img/${id.toString().padStart(8, '0')}`
+      : `Character/${getfolder}${id.toString().padStart(8, '0')}.img`;
 
-    const exists = this.wzImageFolder.includes(path);
+    const exists = this.wzImageFolder.has(path);
     this.pathExistCache.set(id, exists ? path : '');
     if (!exists) {
       return null;
@@ -145,7 +153,8 @@ class Loader {
   }
   async getPieceWz(id: number): Promise<WzItem | null> {
     const path = this.getPiecePathIfExist(id);
-    if (!path) {
+    // prevent cash effect get loaded wrongly
+    if (!path || isCashEffectId(id)) {
       return null;
     }
     return await this.getPieceWzByPath<WzItem>(path);
@@ -171,7 +180,10 @@ class Loader {
       return null;
     }
 
-    const alias = `Effect/ItemEff.img/${id}`;
+    let alias = `Effect/ItemEff.img/${id}`;
+    if (isCashEffectId(id)) {
+      alias = `Item/Cash/0501.img/${id.toString().padStart(8, '0')}`;
+    }
 
     const data = await Assets.load<T>({
       alias,

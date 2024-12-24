@@ -1,4 +1,4 @@
-import { Show, Switch, Match, createMemo } from 'solid-js';
+import { Show, Switch, Match, createMemo, createEffect } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 import { styled } from 'styled-system/jsx/factory';
 
@@ -52,6 +52,10 @@ export const EquipItem = (props: EquipItemProps) => {
       return undefined;
     }
     return _handleDelete;
+  });
+  createEffect(() => {
+    const itemInfo = item();
+    console.log(itemInfo, props.category);
   });
 
   return (

@@ -67,11 +67,7 @@ export const $isChairUninitialized = computed(
 );
 
 /* actions */
-export async function prepareAndFetchChairStrings(loadItem = true) {
-  if (loadItem) {
-    await fetch(`${$apiHost.get()}/node/load_extra_paths?path=Item`);
-  }
-
+export async function prepareAndFetchChairStrings() {
   const strings = await fetch(`${$apiHost.get()}/string/chair`)
     .then((res) => res.json())
     .then((res: ChairStringResponseItem[]) =>

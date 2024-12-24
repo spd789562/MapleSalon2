@@ -37,6 +37,9 @@ const options: {
   { id: 'Skin', label: '膚色' },
   { id: 'NameTag', label: '名牌' },
   { id: 'ChatBalloon', label: '聊天戒指' },
+  { id: 'Effect', label: '商城特效' },
+  { id: 'RingEffect', label: '特效戒指' },
+  { id: 'NecklaceEffect', label: '特效項鍊' },
 ];
 
 export const CategorySelection = () => {

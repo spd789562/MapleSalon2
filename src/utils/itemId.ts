@@ -94,6 +94,10 @@ export function isCashWeaponId(id: number): boolean {
   return Math.floor(id / 10000) === 170;
 }
 
+export function isCashEffectId(id: number): boolean {
+  return id >= 5010000 && id < 5020000;
+}
+
 export function getFaceOrHairGender(id: number): Gender {
   const tag = Math.floor(id / 1000) % 10;
   switch (tag) {
@@ -178,8 +182,16 @@ export function getSubCategory(id: number): EquipSubCategory | null {
       return 'Shield';
     case 110:
       return 'Cape';
+    case 111:
+      return 'RingEffect';
+    case 112:
+      return 'NecklaceEffect';
+    case 501: // CashEffect
+      return 'Effect';
     case 170:
       return 'CashWeapon';
+    default:
+      break;
   }
 
   if (partOfId >= 121 && partOfId < 170) {
@@ -222,12 +234,21 @@ export function getCategoryBySubCategory(
     case 'Weapon':
     case 'CashWeapon':
       return EquipCategory.Weapon;
+    case 'RingEffect':
+      return EquipCategory.RingEffect;
+    case 'NecklaceEffect':
+      return EquipCategory.NecklaceEffect;
+    case 'Effect':
+      return EquipCategory.Effect;
+    default:
+      break;
   }
   return null;
 }
 
+const ID_REG = /\d{8}/;
 export function replaceIdInPath(path: string, id: number): string {
-  return path.replace(/\d{8}/, String(id).padStart(8, '0'));
+  return path.replace(ID_REG, String(id).padStart(8, '0'));
 }
 
 export function getIconPath(id: number, folder?: string) {
@@ -240,6 +261,11 @@ export function getIconPath(id: number, folder?: string) {
     getfolder = getItemFolderFromId(id);
   }
   let iconPath = 'info/icon';
+
+  if (isCashEffectId(id)) {
+    return `${$apiHost.get()}/node/image_unparsed/Item/Cash/0501.img/${id.toString().padStart(8, '0')}/${iconPath}`;
+  }
+
   if (getfolder === 'Face/') {
     iconPath = 'blink/0/face';
   } else if (getfolder === 'Hair/') {

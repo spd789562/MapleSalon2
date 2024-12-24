@@ -8,7 +8,11 @@ import { CharacterEarType } from '@/const/ears';
 import { CharacterHandType } from '@/const/hand';
 
 export type CharacterItemInfo = ItemInfo &
-  Partial<{ isDeleted: boolean; isDeleteDye: boolean; name: string }>;
+  Partial<{
+    isDeleted: boolean;
+    isDeleteDye: boolean;
+    name: string;
+  }>;
 
 export type CharacterItems = Record<EquipSubCategory, CharacterItemInfo>;
 
@@ -116,6 +120,7 @@ export const $currentCharacterInfo = deepMap<
   expression: CharacterExpressions.Default,
   earType: CharacterEarType.HumanEar,
   handType: CharacterHandType.SingleHand,
+  skillId: undefined,
 });
 
 export const $currentItem = atom<

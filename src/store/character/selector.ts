@@ -75,7 +75,6 @@ export const $totalItemsApplyDeletion = batched(
   [$currentCharacterItems, $currentItemChanges],
   getUpdateItems,
 );
-
 export const $previewCharacter = computed(
   [$totalInfo, $totalItemsApplyDeletion],
   (info, items) => {
