@@ -43,6 +43,12 @@ pub async fn get_images(State(root): State<AppState>) -> Result<impl IntoRespons
 
     handlers::get_image_nodes(&root.0, &mut nodes);
 
+    if let Some(effect_nodes) = handlers::get_cash_effect_nodes(&root.0) {
+        for node in effect_nodes.read().unwrap().children.values() {
+            nodes.push(node.clone());
+        }
+    }
+
     let json_array: Value = nodes
         .drain(..)
         .map(|node| Value::String(node.read().unwrap().get_full_path()))

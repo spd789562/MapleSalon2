@@ -213,6 +213,12 @@ pub fn resolve_equip_string_by_category(category_string_node: &WzNodeArc) -> Str
     category_result
 }
 
+pub fn get_cash_effect_nodes(root: &WzNodeArc) -> Option<WzNodeArc> {
+    let node = root.read().unwrap().at_path(CASH_EFFECT_PATH)?;
+    node_util::parse_node(&node).ok()?;
+    Some(node)
+}
+
 pub fn resolve_cash_effect_string(root: &WzNodeArc) -> Option<StringDictInner> {
     let mut result = Vec::new();
     let cash_effect_node = root.read().unwrap().at_path(CASH_EFFECT_PATH)?;
