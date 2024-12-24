@@ -89,16 +89,16 @@ class Loader {
         continue;
       }
       const frames: WzActionInstruction[] = [];
-      for (const frame in instructions) {
-        const numberdFrame = Number(frame);
-        if (Number.isNaN(numberdFrame)) {
-          continue;
-        }
+      const frameKeys = Object.keys(instructions)
+        .map(Number)
+        .filter((n) => !Number.isNaN(n));
+      frameKeys.sort((a, b) => a - b);
+      for (const frame in frameKeys) {
         const instruction = instructions[frame];
-        frames[numberdFrame] = {
+        frames.push({
           ...instruction,
           delay: Math.abs(instruction.delay || 100),
-        };
+        });
       }
       this.instructionMap.set(action, frames);
     }
