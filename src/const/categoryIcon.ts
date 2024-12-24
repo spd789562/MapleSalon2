@@ -13,6 +13,7 @@ import SmileIcon from 'lucide-solid/icons/smile';
 import SmilePlusIcon from 'lucide-solid/icons/smile-plus';
 import IdCardIcon from 'lucide-solid/icons/id-card';
 import MessageSquareMore from 'lucide-solid/icons/message-square-more';
+import DollarSignIcon from 'lucide-solid/icons/circle-dollar-sign';
 import CoatLineIcon from 'mingcute_icon/svg/part/coat_line.svg';
 import HatLineIcon from 'mingcute_icon/svg/part/hat_line.svg';
 import EarLineIcon from 'mingcute_icon/svg/part/ear_line.svg';
@@ -23,6 +24,8 @@ import GloveLineIcon from 'mingcute_icon/svg/part/glove_line.svg';
 import ySkewLineIcon from 'mingcute_icon/svg/design/y_skew_line.svg';
 import FaceLineIcon from 'mingcute_icon/svg/part/face_line.svg';
 import HairLineIcon from 'mingcute_icon/svg/part/hair_2_line.svg';
+import StopCircleLineIcon from 'mingcute_icon/svg/media/stop_circle_line.svg';
+import LoadingIcon from 'mingcute_icon/svg/system/loading_4_line.svg';
 
 export interface DynamicIcon {
   type: IconType;
@@ -50,5 +53,8 @@ export const CategoryIconMap: Partial<
   Face: { type: IconType.Svg, icon: SmileIcon },
   NameTag: { type: IconType.Lucide, icon: IdCardIcon },
   ChatBalloon: { type: IconType.Lucide, icon: MessageSquareMore },
+  Effect: { type: IconType.Svg, icon: DollarSignIcon },
+  RingEffect: { type: IconType.Svg, icon: StopCircleLineIcon },
+  NecklaceEffect: { type: IconType.Svg, icon: LoadingIcon },
   [AllCategory]: { type: IconType.Lucide, icon: LayoutGridIcon },
 };
