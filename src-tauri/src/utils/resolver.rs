@@ -8,7 +8,7 @@ use wz_reader::{version::WzMapleVersion, SharedWzMutableKey, WzNode, WzNodeArc, 
 use super::{block_parse, block_parse_with_parent};
 use crate::{Error, Result};
 
-const WZ_ROOT_FOLDER_NEED_LOAD: [&str; 7] = [
+const WZ_ROOT_FOLDER_NEED_LOAD: [&str; 8] = [
     "Base",
     "Character",
     "Effect",
@@ -16,6 +16,7 @@ const WZ_ROOT_FOLDER_NEED_LOAD: [&str; 7] = [
     "UI",
     "Skill",
     "Map",
+    "Item",
 ];
 
 pub async fn get_root_wz_file_path(dir: &DirEntry) -> Option<String> {

@@ -1,11 +1,18 @@
 use rayon::prelude::*;
-use wz_reader::{property::WzString, WzNodeArc, WzNodeCast};
+use wz_reader::{
+    property::{resolve_string_from_node, WzString},
+    util::node_util,
+    WzNodeArc, WzNodeCast,
+};
 
 use super::item::{
     get_is_cash_item, get_is_chat_balloon, get_is_colorvar, get_is_name_tag, get_item_info_node,
     get_item_node_from_category,
 };
-use super::path::{CHARACTER_ITEM_PATH, EQUIP_EFFECT_PATH, EQUIP_STRING_PATH};
+use super::path::{
+    CASH_EFFECT_PATH, CASH_EFFECT_STRING_PATH, CHARACTER_ITEM_PATH, EQUIP_EFFECT_PATH,
+    EQUIP_STRING_PATH,
+};
 
 use serde::Serialize;
 
@@ -55,6 +62,9 @@ pub enum EquipCategory {
     Skin,
     SkillSkin,
     Unknown,
+    RingEffect,
+    NecklessEffect,
+    Effect, // for cash
 }
 
 impl std::fmt::Display for EquipCategory {
@@ -84,6 +94,9 @@ impl std::fmt::Display for EquipCategory {
             EquipCategory::Skin => 22,
             EquipCategory::SkillSkin => 23,
             EquipCategory::Unknown => 24,
+            EquipCategory::Effect => 25,
+            EquipCategory::RingEffect => 26,
+            EquipCategory::NecklessEffect => 27,
         };
 
         write!(f, "{}", repr_number)
@@ -200,6 +213,43 @@ pub fn resolve_equip_string_by_category(category_string_node: &WzNodeArc) -> Str
     category_result
 }
 
+pub fn resolve_cash_effect_string(root: &WzNodeArc) -> Option<StringDictInner> {
+    let mut result = Vec::new();
+    let cash_effect_node = root.read().unwrap().at_path(CASH_EFFECT_PATH)?;
+    let cash_string_node = root.read().unwrap().at_path(CASH_EFFECT_STRING_PATH)?;
+
+    node_util::parse_node(&cash_effect_node).ok()?;
+    node_util::parse_node(&cash_string_node).ok()?;
+
+    let cash_string_read = cash_string_node.read().unwrap();
+    for (full_id, effect_node) in cash_effect_node.read().unwrap().children.iter() {
+        if effect_node.read().unwrap().at("effect").is_none() {
+            continue;
+        }
+
+        let id = full_id.trim_start_matches('0');
+        let name = cash_string_read
+            .at_path(&format!("{}/name", id))
+            .and_then(|node| resolve_string_from_node(&node).ok())
+            .unwrap_or(String::from("null"));
+
+        result.push((
+            EquipCategory::Effect,
+            id.to_string(),
+            name,
+            true,  // is cash
+            false, // has colorvar
+            true,  // has effect
+            false, // is name tag
+            false, // is chat balloon
+        ));
+    }
+
+    result.sort_by(|a, b| a.1.cmp(&b.1));
+
+    Some(result)
+}
+
 pub fn resolve_equip_string(
     root: &WzNodeArc,
     equip_node: &WzNodeArc,
@@ -275,8 +325,20 @@ pub fn resolve_equip_string(
                     item.7 = get_is_chat_balloon(&info_node);
                 }
                 // item has effect
-                if effect_node.read().unwrap().at(&item.1).is_some() {
+                if effect_node
+                    .read()
+                    .unwrap()
+                    .at(&item.1)
+                    .and_then(|node| node.read().unwrap().at("effect"))
+                    .is_some()
+                {
                     item.5 = true;
+                }
+                if item.0 == EquipCategory::Ring && item.5 {
+                    item.0 = EquipCategory::RingEffect;
+                } else if item.0 == EquipCategory::Accessory && item.1.starts_with("112") && item.5
+                {
+                    item.0 = EquipCategory::NecklessEffect;
                 }
             });
         }
@@ -286,11 +348,16 @@ pub fn resolve_equip_string(
         result.extend(category_result);
     }
 
+    // skins
     if let Some(skin_string_node) = string_node.at("Skin") {
         let mut category_result = resolve_equip_string_by_category(&skin_string_node);
         category_result.sort_by(|a, b| a.1.cmp(&b.1));
 
         result.extend(category_result);
+    }
+
+    if let Some(list) = resolve_cash_effect_string(root) {
+        result.extend(list);
     }
 
     Ok(result)
