@@ -212,7 +212,6 @@ export class Character extends Container {
     const renderId = this.startLoad();
     const hasSkillChanged = await this.updateSkill(characterData);
     const hasAttributeChanged = this.updateAttribute(characterData);
-    console.log(characterData.items);
     const hasAddAnyItem = await this.updateItems(
       Object.values(characterData.items),
     );

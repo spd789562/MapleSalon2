@@ -6,5 +6,6 @@ export type InitialDictionary = RawDictionary['initial'];
 export type ErrorDictionary = RawDictionary['error'];
 
 export type Dictionary = Flatten<RawDictionary>;
+export type I18nKeys = keyof Dictionary;
 
 export type Locale = 'zh_tw';

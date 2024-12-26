@@ -1,4 +1,5 @@
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $isWzLoading } from '@/store/initialize';
 import { removePathFromHistory } from '@/store/fileSelectHistory';
@@ -10,6 +11,7 @@ export interface DeletePathButtonProps {
   path: string;
 }
 export const DeletePathButton = (props: DeletePathButtonProps) => {
+  const t = useTranslate();
   const isGlobalWzLoading = useStore($isWzLoading);
 
   async function handleClick() {
@@ -23,7 +25,7 @@ export const DeletePathButton = (props: DeletePathButtonProps) => {
     <IconButton
       onClick={handleClick}
       disabled={isGlobalWzLoading()}
-      title="刪除此紀錄"
+      title={t('initial.removeHistory')}
       variant="ghost"
       size="sm"
     >

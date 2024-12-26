@@ -2,6 +2,8 @@ import { createSignal, Show } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 import { styled } from 'styled-system/jsx/factory';
 
+import { useTranslate } from '@/context/i18n';
+
 import { open } from '@tauri-apps/plugin-dialog';
 
 import { $isWzLoading, initByWzBase } from '@/store/initialize';
@@ -10,6 +12,7 @@ import LoaderCircle from 'lucide-solid/icons/loader-circle';
 import { Button } from '@/components/ui/button';
 
 export const SelectWzButton = () => {
+  const t = useTranslate();
   const isGlobalWzLoading = useStore($isWzLoading);
   const [isLoading, setIsLoading] = createSignal(false);
 
@@ -24,7 +27,7 @@ export const SelectWzButton = () => {
     if (path) {
       setIsLoading(true);
       try {
-        await initByWzBase(path);
+        await initByWzBase(path, t);
       } finally {
         setIsLoading(false);
       }
@@ -42,7 +45,7 @@ export const SelectWzButton = () => {
           <LoaderCircle />
         </Loading>
       </Show>
-      載入新 Base.wz
+      {t('initial.loadNewBaseWz')}
     </Button>
   );
 };

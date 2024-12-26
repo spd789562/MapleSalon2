@@ -1,6 +1,8 @@
 import { Index, Show } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
 
+import { useTranslate } from '@/context/i18n';
+
 import { usePureStore } from '@/store';
 import { $savedFileSelectHistory } from '@/store/fileSelectHistory';
 
@@ -12,18 +14,19 @@ import { OpenPathButton } from './OpenPathButton';
 import { LoadPathButton } from './LoadPathButton';
 
 export const SelectHistoryTable = () => {
+  const t = useTranslate();
   const pathList = usePureStore($savedFileSelectHistory);
 
   return (
     <Show
       when={pathList().length}
-      fallback={<EmptyBlock>尚無選擇紀錄</EmptyBlock>}
+      fallback={<EmptyBlock>{t('initial.emptyHistoryText')}</EmptyBlock>}
     >
       <Table.Root tableLayout="fixed">
         <Table.Head>
           <Table.Row>
             <Table.Header width="3rem" />
-            <Table.Header>路徑</Table.Header>
+            <Table.Header>{t('initial.historyPathTitle')}</Table.Header>
             <Table.Header width="11rem" />
           </Table.Row>
         </Table.Head>

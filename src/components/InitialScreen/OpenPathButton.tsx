@@ -2,6 +2,8 @@ import { useStore } from '@nanostores/solid';
 import { exists } from '@tauri-apps/plugin-fs';
 import { open } from '@tauri-apps/plugin-shell';
 
+import { useTranslate } from '@/context/i18n';
+
 import { $isWzLoading } from '@/store/initialize';
 
 import FolderIcon from 'lucide-solid/icons/folder-symlink';
@@ -15,6 +17,7 @@ export interface OpenPathButtonProps {
   path: string;
 }
 export const OpenPathButton = (props: OpenPathButtonProps) => {
+  const t = useTranslate();
   const isGlobalWzLoading = useStore($isWzLoading);
 
   async function handleClick() {
@@ -47,7 +50,7 @@ export const OpenPathButton = (props: OpenPathButtonProps) => {
     <IconButton
       onClick={handleClick}
       disabled={isGlobalWzLoading()}
-      title="開啟此路徑"
+      title={t('initial.openPathTip')}
       variant="outline"
       size="sm"
     >

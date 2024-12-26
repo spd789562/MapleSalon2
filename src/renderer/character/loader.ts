@@ -78,7 +78,6 @@ class Loader {
           ),
         ),
     );
-    console.log(this.wzImageFolder);
   }
   async loadInstructionMap() {
     const data = await this.getPieceWzByPath<

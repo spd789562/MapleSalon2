@@ -1,5 +1,6 @@
 import { Show, onMount } from 'solid-js';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from './context/i18n';
 
 import { $wzReady } from '@/store/const';
 import { initApp } from './store/initialize';
@@ -24,46 +25,42 @@ import { SettingDialog } from './components/dialog/SettingDialog';
 import { CharacterInfoDialog } from './components/dialog/CharacterInfoDialog';
 import { MapSelectionDialog } from './components/dialog/MapSelectionDialog';
 
-import { I18nProvider } from './context/i18n';
-import { ItemContextMenuProvider } from './context/itemContextMenu';
-
 import './store/effects';
 
 import './App.css';
 
 function App() {
   const ready = useStore($wzReady);
+  const t = useTranslate();
 
   onMount(async () => {
-    await initApp();
+    await initApp(t);
   });
 
   return (
-    <I18nProvider>
-      <ItemContextMenuProvider>
-        <Show when={!ready()}>
-          <InitialScreen />
-        </Show>
-        <Show when={ready()}>
-          <AppContainer>
-            <ToolTabsRadioGroup />
-            <ToolTabPage />
-          </AppContainer>
-          <EquipOpenButton />
-          <CurrentEquipOpenButton />
-          <CurrentEquipmentDrawer />
-          <EqupimentDrawer />
-          <CharacterSelectionDrawer />
-          <CharacterSelectionDrawerOpenButton />
-          <SettingDialog />
-          <CharacterInfoDialog />
-          <MapSelectionDialog />
-        </Show>
-        <GlobalToast />
-        <GlobalConfirmDialog />
-        <GlobalItemContextMenu />
-      </ItemContextMenuProvider>
-    </I18nProvider>
+    <>
+      <Show when={!ready()}>
+        <InitialScreen />
+      </Show>
+      <Show when={ready()}>
+        <AppContainer>
+          <ToolTabsRadioGroup />
+          <ToolTabPage />
+        </AppContainer>
+        <EquipOpenButton />
+        <CurrentEquipOpenButton />
+        <CurrentEquipmentDrawer />
+        <EqupimentDrawer />
+        <CharacterSelectionDrawer />
+        <CharacterSelectionDrawerOpenButton />
+        <SettingDialog />
+        <CharacterInfoDialog />
+        <MapSelectionDialog />
+      </Show>
+      <GlobalToast />
+      <GlobalConfirmDialog />
+      <GlobalItemContextMenu />
+    </>
   );
 }
 

@@ -13,13 +13,20 @@ import {
   type Translator,
 } from '@solid-primitives/i18n';
 import { dict as zhTwDict } from '@/assets/i18n/zh_tw';
-import type { RawDictionary, Dictionary, Locale } from '@/assets/i18n/type';
+import type {
+  RawDictionary,
+  Dictionary,
+  Locale,
+  I18nKeys,
+} from '@/assets/i18n/type';
+
+export type AppTranslator = Translator<Dictionary>;
 
 export interface UseI18nContextReturn {
   locale: Accessor<Locale>;
   setLocale: (locale: Locale) => void;
-  t: Translator<Dictionary>;
-  tArg: Translator<Dictionary>;
+  t: AppTranslator;
+  tArg: AppTranslator;
 }
 
 export const I18nContext = createContext<UseI18nContextReturn>();
@@ -66,8 +73,8 @@ export function useI18n() {
 }
 
 export function useTranslate() {
-  const { t } = useI18n();
-  return t;
+  const { tArg } = useI18n();
+  return tArg;
 }
 
 export function useTranslateArg() {
@@ -87,3 +94,5 @@ export function useSetLocale() {
     setLocale,
   };
 }
+
+export type { I18nKeys };

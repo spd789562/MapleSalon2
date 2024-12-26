@@ -1,6 +1,8 @@
 import { invoke } from '@tauri-apps/api/core';
 import { getCurrentWebview } from '@tauri-apps/api/webview';
 
+import type { AppTranslator } from '@/context/i18n';
+
 import { atom } from 'nanostores';
 
 import { $apiHost, $isInitialized } from '@/store/const';
@@ -48,7 +50,7 @@ export function getServerInfo() {
   }>('get_server_url');
 }
 
-export async function initApp() {
+export async function initApp(t: AppTranslator) {
   $isWzLoading.set(true);
   $initLoadProgress.set(InitLoadProgress.SaveFile);
   await nextTick();
@@ -60,8 +62,8 @@ export async function initApp() {
     await initializeSavedEquipmentFavorite();
   } catch (_) {
     toaster.error({
-      title: '初始化錯誤',
-      description: '無法建立或讀取存檔，請確認應用程式權限並重啟。',
+      title: t('error.initTitle'),
+      description: t('error.initDescPermission'),
       duration: 20000,
     });
     $isWzLoading.set(false);
@@ -73,7 +75,7 @@ export async function initApp() {
   $apiHost.set(url);
 
   if (is_initialized) {
-    await initStringAndRenderer(!is_load_items, $defaultLoadItem.get());
+    await initStringAndRenderer(!is_load_items, $defaultLoadItem.get(), t);
     $isInitialized.set(is_initialized);
   }
 
@@ -82,7 +84,7 @@ export async function initApp() {
   console.info('API host:', url);
 }
 
-export async function initByWzBase(path: string) {
+export async function initByWzBase(path: string, t: AppTranslator) {
   $isWzLoading.set(true);
   $initLoadProgress.set(InitLoadProgress.InitWz);
   await nextTick();
@@ -90,13 +92,13 @@ export async function initByWzBase(path: string) {
   try {
     version = await initialWzBase(path);
   } catch (e) {
-    let message = '未知錯誤';
+    let message = t('error.unknownError');
     if (e instanceof Error) {
       message = e.message;
     }
     toaster.error({
-      title: '初始化 Base.wz 錯誤',
-      description: `錯誤訊息：${message}`,
+      title: t('error.initBaseWzTitle'),
+      description: t('error.message', { text: message }) as string,
     });
     $isWzLoading.set(false);
     return false;
@@ -112,7 +114,11 @@ export async function initByWzBase(path: string) {
     }
   }
 
-  const isSuccess = await initStringAndRenderer(true, $defaultLoadItem.get());
+  const isSuccess = await initStringAndRenderer(
+    true,
+    $defaultLoadItem.get(),
+    t,
+  );
 
   if (!isSuccess) {
     $isWzLoading.set(false);
@@ -130,13 +136,14 @@ export async function initByWzBase(path: string) {
 export async function initStringAndRenderer(
   needLoadItem: boolean,
   needLoadChair: boolean,
+  t: AppTranslator,
 ) {
   try {
     await prepareAndFetchEquipStrings();
   } catch (_) {
     toaster.error({
-      title: '初始化錯誤',
-      description: '無法讀取裝備資訊，請檢察 Wz 完整度。',
+      title: t('error.initTitle'),
+      description: t('error.initEquipError'),
     });
     return false;
   }
@@ -148,8 +155,8 @@ export async function initStringAndRenderer(
       await prepareAndFetchChairStrings();
     } catch (_) {
       toaster.error({
-        title: '初始化錯誤',
-        description: '無法讀取椅子資訊，請檢察 Wz 完整度。',
+        title: t('error.initTitle'),
+        description: t('error.initChairError'),
       });
       return false;
     }
@@ -163,8 +170,8 @@ export async function initStringAndRenderer(
     await initialGlobalRenderer();
   } catch (_) {
     toaster.error({
-      title: '初始化錯誤',
-      description: '無法初始化渲染器，請更新 webview2。',
+      title: t('error.initTitle'),
+      description: t('error.initRendererError'),
     });
     return false;
   }

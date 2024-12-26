@@ -3,6 +3,8 @@ import { useStore } from '@nanostores/solid';
 import { exists } from '@tauri-apps/plugin-fs';
 import { styled } from 'styled-system/jsx/factory';
 
+import { useTranslate } from '@/context/i18n';
+
 import { $isWzLoading, initByWzBase } from '@/store/initialize';
 
 import LoaderCircle from 'lucide-solid/icons/loader-circle';
@@ -14,6 +16,7 @@ export interface LoadPathButtonProps {
   path: string;
 }
 export const LoadPathButton = (props: LoadPathButtonProps) => {
+  const t = useTranslate();
   const isGlobalWzLoading = useStore($isWzLoading);
   const [isLoading, setIsLoading] = createSignal(false);
 
@@ -30,7 +33,7 @@ export const LoadPathButton = (props: LoadPathButtonProps) => {
     }
     setIsLoading(true);
     try {
-      await initByWzBase(props.path);
+      await initByWzBase(props.path, t);
     } finally {
       setIsLoading(false);
     }
@@ -47,7 +50,7 @@ export const LoadPathButton = (props: LoadPathButtonProps) => {
           <LoaderCircle />
         </Loading>
       </Show>
-      載入
+      {t('initial.loadExistBaseWz')}
     </Button>
   );
 };

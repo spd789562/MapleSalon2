@@ -21,14 +21,14 @@ export const InitialScreen = () => {
         <HStack w="full">
           <Heading size="lg">{t('initial.selectWzTitle')}</Heading>
           <HStack ml="auto">
-            <span>選擇新檔</span>
+            <span>{t('initial.loadNewBaseWz')}</span>
             <SelectWzButton />
           </HStack>
         </HStack>
         <Text color="fg.subtle" size="sm">
-          Base.wz 通常存在於 &#123;楓之谷資料夾路徑&#125;/Data/Base/Base.wz
+          {t('initial.wzPositionTip')}
         </Text>
-        <Heading size="md">歷史紀錄</Heading>
+        <Heading size="md">{t('initial.historyTitle')}</Heading>
         <Box w="full" maxHeight="70vh" overflow="auto">
           <SelectHistoryTable />
         </Box>
