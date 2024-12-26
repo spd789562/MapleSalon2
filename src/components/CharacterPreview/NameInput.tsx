@@ -1,4 +1,5 @@
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $currentName } from '@/store/character/selector';
 import { setCharacterName } from '@/store/character/action';
@@ -13,6 +14,7 @@ export interface NameInputProps {
   id?: string;
 }
 export const NameInput = (props: NameInputProps) => {
+  const t = useTranslate();
   const name = useStore($currentName);
 
   const handleNameChange = debounce(300, (value: string) => {
@@ -22,11 +24,11 @@ export const NameInput = (props: NameInputProps) => {
   return (
     <HStack>
       <Text as="label" for={props.id ?? 'character-name'}>
-        角色名稱
+        {t('character.name')}
       </Text>
       <Input
         id={props.id ?? 'character-name'}
-        placeholder="輸入角色名稱"
+        placeholder={t('character.namePlaceholder')}
         value={name()}
         onInput={(e) => handleNameChange(e.target.value)}
         minWidth={7}

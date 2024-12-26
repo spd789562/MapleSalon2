@@ -1,5 +1,6 @@
 import { createEffect } from 'solid-js';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $showCharacter } from '@/store/chair';
 import { $showChatBalloon, $showNameTag } from '@/store/character/selector';
@@ -24,6 +25,7 @@ export const useCharacterVisible = (character: (Character | Character[])[]) => {
 };
 
 export const CharacterVisibleSwitch = () => {
+  const t = useTranslate();
   const visible = useStore($showCharacter);
 
   function handleChange(details: ChangeDetails) {
@@ -32,7 +34,7 @@ export const CharacterVisibleSwitch = () => {
 
   return (
     <Switch checked={visible()} onCheckedChange={handleChange}>
-      顯示角色
+      {t('character.show')}
     </Switch>
   );
 };

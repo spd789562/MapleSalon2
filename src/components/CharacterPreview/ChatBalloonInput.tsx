@@ -1,5 +1,6 @@
 import { Show } from 'solid-js';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $chatBalloonContent } from '@/store/character/store';
 
@@ -15,6 +16,7 @@ export interface ChatBalloonInputProps {
   id?: string;
 }
 export const ChatBalloonInput = (props: ChatBalloonInputProps) => {
+  const t = useTranslate();
   const text = useStore($chatBalloonContent);
 
   const handleNameChange = debounce(300, (value: string) => {
@@ -28,11 +30,11 @@ export const ChatBalloonInput = (props: ChatBalloonInputProps) => {
   return (
     <HStack position="relative">
       <Text as="label" for={props.id ?? 'chat-content'}>
-        聊天文字
+        {t('character.chatBalloon')}
       </Text>
       <Input
         id={props.id ?? 'chat-content'}
-        placeholder="輸入聊天泡泡內容"
+        placeholder={t('character.chatBalloonPlaceholder')}
         value={text()}
         onInput={(e) => handleNameChange(e.target.value)}
         minWidth={7}
@@ -43,8 +45,8 @@ export const ChatBalloonInput = (props: ChatBalloonInputProps) => {
       <Show when={text()}>
         <IconButton
           onClick={handleClear}
-          aria-label="清除聊天文字"
-          title="清除聊天文字"
+          aria-label={t('character.chatBalloonClear')}
+          title={t('character.chatBalloonClear')}
           variant="ghost"
           size="xs"
           position="absolute"

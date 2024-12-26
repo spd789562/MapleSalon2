@@ -1,5 +1,6 @@
 import { type Accessor, createEffect } from 'solid-js';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $enableCharacterEffect } from '@/store/chair';
 
@@ -24,6 +25,7 @@ export const useCharacterEffectVisible = (
 };
 
 export const EffectSwitch = () => {
+  const t = useTranslate();
   const isAnimating = useStore($enableCharacterEffect);
 
   function handleChange(details: ChangeDetails) {
@@ -32,7 +34,7 @@ export const EffectSwitch = () => {
 
   return (
     <Switch checked={isAnimating()} onCheckedChange={handleChange}>
-      顯示角色特效
+      {t('character.showEffect')}
     </Switch>
   );
 };

@@ -1,4 +1,5 @@
 import { styled } from 'styled-system/jsx/factory';
+import { useTranslate } from '@/context/i18n';
 
 import { VStack } from 'styled-system/jsx/vstack';
 import { HStack } from 'styled-system/jsx/hstack';
@@ -15,6 +16,7 @@ export interface ActionTabTitleProps {
   characterRefs: ActionCharacterRef[];
 }
 export const ActionTabTitle = (props: ActionTabTitleProps) => {
+  const t = useTranslate();
   return (
     <TitleContainer>
       <VStack alignItems="flex-start">
@@ -24,7 +26,7 @@ export const ActionTabTitle = (props: ActionTabTitleProps) => {
         <ForceExportEffectSwitch />
         <Divider height="2rem" orientation="vertical" />
         <HStack>
-          <div>手勢</div>
+          <div>{t('character.handType')}</div>
           <ExportHandTypeToggleGroup />
         </HStack>
         <Divider height="2rem" orientation="vertical" />

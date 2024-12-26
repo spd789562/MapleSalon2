@@ -1,3 +1,5 @@
+import { useTranslate } from '@/context/i18n';
+
 import { VStack } from 'styled-system/jsx/vstack';
 import { SimpleField } from '@/components/ui/field';
 import { NameInput } from '@/components/CharacterPreview/NameInput';
@@ -11,6 +13,8 @@ import { ActionSelect } from '@/components/CharacterPreview/ActionSelect';
 import { AnimatingSwitch } from '@/components/CharacterPreview/AnimatingSwitch';
 
 export const CharacterSetting = () => {
+  const t = useTranslate();
+
   return (
     <VStack px="2" py="4" gap={4} alignItems="flex-start">
       <NameInput id="setting-name" />
@@ -18,16 +22,16 @@ export const CharacterSetting = () => {
       <ChatBalloonInput id="setting-chat" />
       <ChatBalloonSwitch />
       <AnimatingSwitch />
-      <SimpleField label="手勢">
+      <SimpleField label={t('character.handType')}>
         <HandTypeToggleGroup />
       </SimpleField>
-      <SimpleField label="耳型">
+      <SimpleField label={t('character.earType')}>
         <EarTypeToggleGroup />
       </SimpleField>
-      <SimpleField label="表情" width="40">
+      <SimpleField label={t('character.expression')} width="40">
         <ExpressionSelect />
       </SimpleField>
-      <SimpleField label="動作" width="40">
+      <SimpleField label={t('character.action')} width="40">
         <ActionSelect />
       </SimpleField>
     </VStack>

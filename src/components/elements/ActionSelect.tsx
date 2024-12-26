@@ -1,50 +1,51 @@
+import { useTranslate } from '@/context/i18n';
 import { SimpleSelect, type ValueChangeDetails } from '@/components/ui/select';
 
 import { CharacterAction } from '@/const/actions';
 
 const options = [
   {
-    label: '站立',
+    label: 'character.actionStand1',
     value: CharacterAction.Stand1,
   },
   {
-    label: '坐下',
+    label: 'character.actionSit',
     value: CharacterAction.Sit,
   },
   {
-    label: '走路',
+    label: 'character.actionWalk1',
     value: CharacterAction.Walk1,
   },
   {
-    label: '跳躍',
+    label: 'character.actionJump',
     value: CharacterAction.Jump,
   },
   {
-    label: '飛行/游泳',
+    label: 'character.actionFly',
     value: CharacterAction.Fly,
   },
   {
-    label: '攀爬(梯子)',
+    label: 'character.actionLadder',
     value: CharacterAction.Ladder,
   },
   {
-    label: '攀爬(繩子)',
+    label: 'character.actionRope',
     value: CharacterAction.Rope,
   },
   {
-    label: '警戒',
+    label: 'character.actionAlert',
     value: CharacterAction.Alert,
   },
   {
-    label: '施放',
+    label: 'character.actionHeal',
     value: CharacterAction.Heal,
   },
   {
-    label: '趴下',
+    label: 'character.actionProne',
     value: CharacterAction.Prone,
   },
   {
-    label: '趴下攻擊',
+    label: 'character.actionProneStab',
     value: CharacterAction.ProneStab,
   },
   ...[
@@ -80,17 +81,27 @@ export interface ActionSelectProps {
   onValueChange: (value: CharacterAction | undefined) => void;
 }
 export const ActionSelect = (props: ActionSelectProps) => {
+  const t = useTranslate();
+
   function handleActionChange(details: ValueChangeDetails) {
     const firstItem = details.value?.[0] as CharacterAction | undefined;
     props.onValueChange(firstItem);
   }
+
+  const _options = options.map((option) => ({
+    label:
+      option.value !== option.label
+        ? (t(option.label) as string)
+        : option.label,
+    value: option.value,
+  }));
 
   return (
     <SimpleSelect
       positioning={{
         sameWidth: true,
       }}
-      items={options}
+      items={_options}
       value={[props.value]}
       onValueChange={handleActionChange}
       groupTitle="角色動作"
