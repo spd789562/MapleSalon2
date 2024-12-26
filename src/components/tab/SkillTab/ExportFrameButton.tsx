@@ -4,6 +4,7 @@ import { $padWhiteSpaceWhenExportFrame } from '@/store/settingDialog';
 import { $globalRenderer } from '@/store/renderer';
 
 import { useSkillTab } from './SkillTabContext';
+import { useTranslate } from '@/context/i18n';
 
 import { Button } from '@/components/ui/button';
 
@@ -15,6 +16,7 @@ import { downloadBlob } from '@/utils/download';
 import { nextTick } from '@/utils/eventLoop';
 
 export const ExportFrameButton = () => {
+  const t = useTranslate();
   const [state, { startExport, finishExport, updateExportProgress }] =
     useSkillTab();
 
@@ -26,7 +28,7 @@ export const ExportFrameButton = () => {
     const app = $globalRenderer.get();
     if (!(app && state.skillRef && state.characterRef)) {
       toaster.error({
-        title: '尚未載入完畢',
+        title: t('export.notLoaded'),
       });
       return;
     }
@@ -103,11 +105,11 @@ export const ExportFrameButton = () => {
       const fileName = `skill-${state.skillRef.id}-frame.zip`;
       downloadBlob(zipBlob, fileName);
       toaster.success({
-        title: '匯出成功',
+        title: t('export.success'),
       });
     } catch (_) {
       toaster.error({
-        title: '匯出發生未知錯誤',
+        title: t('export.error'),
       });
     } finally {
       state.skillRef.visible = true;
@@ -118,11 +120,11 @@ export const ExportFrameButton = () => {
   return (
     <Button
       variant="outline"
-      title="個別匯出角色及技能分鏡"
+      title={t('export.skillAssets')}
       onClick={handleClick}
       disabled={state.isExporting}
     >
-      匯出分鏡
+      {t('export.assets')}
     </Button>
   );
 };

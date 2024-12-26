@@ -1,5 +1,7 @@
 import type { JSX } from 'solid-js';
 
+import { useTranslate } from '@/context/i18n';
+
 import { Button } from '@/components/ui/button';
 
 import { downloadCanvas } from '@/utils/download';
@@ -20,6 +22,7 @@ export interface ExportTableButtonProps {
   disabled?: boolean;
 }
 export const ExportTableButton = (props: ExportTableButtonProps) => {
+  const t = useTranslate();
   async function handleClick() {
     const validImageCounts = props.images.filter((img) => img?.src).length;
     const colCounts = props.avaialbeColorIds.length;
@@ -31,7 +34,7 @@ export const ExportTableButton = (props: ExportTableButtonProps) => {
         : validImageCounts === colCounts;
     if (!isAllImagesLoaded) {
       toaster.error({
-        title: '圖片尚未載入完畢',
+        title: t('export.notLoaded'),
       });
       return;
     }
@@ -50,7 +53,7 @@ export const ExportTableButton = (props: ExportTableButtonProps) => {
     const ctx = canvas.getContext('2d');
     if (!ctx) {
       toaster.error({
-        title: '匯出失敗，無法建立 Canvas',
+        title: t('export.errorCanvas'),
       });
       return;
     }
@@ -96,7 +99,7 @@ export const ExportTableButton = (props: ExportTableButtonProps) => {
       await downloadCanvas(canvas, props.fileName);
     } catch (_) {
       toaster.error({
-        title: '匯出失敗，Canvas 無法建立 Blob',
+        title: t('export.errorBlob'),
       });
     }
   }

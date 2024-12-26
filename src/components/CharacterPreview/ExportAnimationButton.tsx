@@ -4,6 +4,7 @@ import { $exportType, $addBlackBgWhenExportGif } from '@/store/settingDialog';
 import { $interactionLock } from '@/store/trigger';
 
 import { useCharacterPreview } from './CharacterPreviewContext';
+import { useTranslate } from '@/context/i18n';
 
 import type { Character } from '@/renderer/character/character';
 
@@ -38,6 +39,7 @@ export function exportCharacterSnapshot(
 }
 
 export const ExportAnimationButton = () => {
+  const t = useTranslate();
   const [state, { startExport, finishExport, updateExportProgress }] =
     useCharacterPreview();
 
@@ -45,7 +47,7 @@ export const ExportAnimationButton = () => {
     const app = $globalRenderer.get();
     if (!(app && state.characterRef)) {
       toaster.error({
-        title: '尚未載入完畢',
+        title: t('export.notLoaded'),
       });
       return;
     }
@@ -75,13 +77,13 @@ export const ExportAnimationButton = () => {
       downloadBlob(blob, `character${ActionExportTypeExtensions[exportType]}`);
 
       toaster.success({
-        title: '匯出成功',
+        title: t('export.success'),
       });
       $interactionLock.set(false);
       finishExport();
-    } catch (e) {
+    } catch (_) {
       toaster.error({
-        title: '匯出時發生未知錯誤',
+        title: t('export.error'),
       });
       finishExport();
       return $interactionLock.set(false);
@@ -93,9 +95,9 @@ export const ExportAnimationButton = () => {
       onClick={handleExport}
       variant="outline"
       disabled={state.isExporting}
-      title="匯出含特效的完整動畫"
+      title={t('export.animationWithEffect')}
     >
-      匯出動畫
+      {t('export.animation')}
     </Button>
   );
 };

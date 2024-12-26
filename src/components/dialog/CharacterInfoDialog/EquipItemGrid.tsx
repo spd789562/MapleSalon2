@@ -5,6 +5,7 @@ import { $currentCharacterInfo } from '@/store/characterInfo';
 import { getEquipById } from '@/store/string';
 
 import { useExportContent } from './CharacterInfoDialog';
+import { useTranslate } from '@/context/i18n';
 
 import CopyIcon from 'lucide-solid/icons/copy';
 import ArrowDownToLineIcon from 'lucide-solid/icons/arrow-down-to-line';
@@ -29,6 +30,7 @@ import { toaster } from '@/components/GlobalToast';
  * |  Shoes               | NameTag  |
  */
 export const EquipItemGrid = () => {
+  const t = useTranslate();
   const [isExporting, setIsExporting] = createSignal(false);
   const exportContent = useExportContent();
   const currentCharacterInfo = usePureStore($currentCharacterInfo);
@@ -53,11 +55,11 @@ export const EquipItemGrid = () => {
       await copyImage(url);
       URL.revokeObjectURL(url);
       toaster.success({
-        title: '已複製',
+        title: t('export.copied'),
       });
     } catch (_) {
       toaster.error({
-        title: '匯出失敗',
+        title: t('export.error'),
       });
     }
     setIsExporting(false);
@@ -74,7 +76,7 @@ export const EquipItemGrid = () => {
       downloadBlob(blob, 'character-info.png');
     } catch (_) {
       toaster.error({
-        title: '匯出失敗',
+        title: t('export.error'),
       });
     }
     setIsExporting(false);
@@ -112,16 +114,24 @@ export const EquipItemGrid = () => {
           <EquipItem category="Glove" item={items().Glove} />
           <EquipItem category="Shoes" item={items().Shoes} />
           <EquipItem category="NameTag" item={nameTagItem()} />
-          <Stack direction="row" alignItems="flex-end" justify="flex-end" gridColumn="2/2">
+          <Stack
+            direction="row"
+            alignItems="flex-end"
+            justify="flex-end"
+            gridColumn="2/2"
+          >
             <Show when={!isExporting()}>
               <IconButton
                 onClick={handleCopyToClipboard}
                 variant="outline"
-                title="複製至剪貼簿"
+                title={t('export.copyToClipboard')}
               >
                 <CopyIcon />
               </IconButton>
-              <IconButton onClick={handleDownload} title="下載成圖片">
+              <IconButton
+                onClick={handleDownload}
+                title={t('export.downloadAsImage')}
+              >
                 <ArrowDownToLineIcon />
               </IconButton>
             </Show>

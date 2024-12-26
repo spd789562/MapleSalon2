@@ -3,6 +3,7 @@ import { $exportType, $addBlackBgWhenExportGif } from '@/store/settingDialog';
 import { $interactionLock } from '@/store/trigger';
 
 import { useChairTab } from './ChairTabContext';
+import { useTranslate } from '@/context/i18n';
 
 import { Button } from '@/components/ui/button';
 
@@ -15,13 +16,14 @@ import { nextTick } from '@/utils/eventLoop';
 import { ActionExportType, ActionExportTypeExtensions } from '@/const/toolTab';
 
 export const ExportAnimationButton = () => {
+  const t = useTranslate();
   const [state, { startExport, finishExport, updateExportProgress }] =
     useChairTab();
   async function handleExport() {
     const app = $globalRenderer.get();
     if (!(app && state.chairRef)) {
       toaster.error({
-        title: '尚未載入完畢',
+        title: t('export.notLoaded'),
       });
       return;
     }
@@ -41,7 +43,7 @@ export const ExportAnimationButton = () => {
       if (data.frames.length === 1) {
         downloadCanvas(data.frames[0].canvas, `chair-${state.chairRef.id}.png`);
         toaster.success({
-          title: '匯出成功',
+          title: t('export.success'),
         });
         $interactionLock.set(false);
         finishExport();
@@ -55,13 +57,13 @@ export const ExportAnimationButton = () => {
       );
 
       toaster.success({
-        title: '匯出成功',
+        title: t('export.success'),
       });
       $interactionLock.set(false);
       finishExport();
-    } catch (e) {
+    } catch (_) {
       toaster.error({
-        title: '匯出時發生未知錯誤',
+        title: t('export.error'),
       });
       finishExport();
       return $interactionLock.set(false);
@@ -73,9 +75,9 @@ export const ExportAnimationButton = () => {
       onClick={handleExport}
       variant="outline"
       disabled={state.isExporting}
-      title="匯出動畫"
+      title={t('export.animation')}
     >
-      匯出動畫
+      {t('export.animation')}
     </Button>
   );
 };

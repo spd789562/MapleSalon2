@@ -1,5 +1,7 @@
 import { createSignal, createMemo, Show } from 'solid-js';
 
+import { useTranslate } from '@/context/i18n';
+
 import { usePureStore } from '@/store';
 import { createEquipItemByCategory } from '@/store/character/selector';
 
@@ -22,6 +24,7 @@ import { FaceColorHex } from '@/const/face';
 const $faceItem = createEquipItemByCategory('Face');
 
 export const FaceDyeTab = () => {
+  const t = useTranslate();
   const allColorRefs: HTMLImageElement[] = [];
   const mixDyeColorRefs: HTMLImageElement[] = [];
   const [showFullCharacter, setShowFullCharacter] = createSignal(false);
@@ -66,7 +69,7 @@ export const FaceDyeTab = () => {
               getColorHex={getFaceColorHex}
               disabled={!faceItem()?.id}
             >
-              匯出表格圖
+              {t('export.sheet')}
             </ExportTableButton>
             <ExportSeperateButton
               fileName="face-all-color.zip"
@@ -74,7 +77,7 @@ export const FaceDyeTab = () => {
               imageCounts={avaialbeFaceColorIds().length}
               disabled={!faceItem()?.id}
             >
-              匯出(.zip)
+              {t('export.zip')}
             </ExportSeperateButton>
           </HStack>
         </HStack>
@@ -110,7 +113,7 @@ export const FaceDyeTab = () => {
               getColorHex={getFaceColorHex}
               disabled={!faceItem()?.id}
             >
-              匯出表格圖
+              {t('export.sheet')}
             </ExportTableButton>
             <ExportSeperateButton
               fileName="face-mix-dye.zip"
@@ -120,7 +123,7 @@ export const FaceDyeTab = () => {
               }
               disabled={!faceItem()?.id}
             >
-              匯出(.zip)
+              {t('export.zip')}
             </ExportSeperateButton>
           </HStack>
         </HStack>

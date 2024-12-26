@@ -1,4 +1,5 @@
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import {
   $isExportable,
@@ -15,6 +16,7 @@ import { ExportTableButton } from './ExportTableButton';
 import { ExportSeperateButton } from '../DyeTab/ExportSeperateButton';
 
 export const DyeResult = () => {
+  const t = useTranslate();
   const isExportable = useStore($isExportable);
   const count = useStore($dyeResultCount);
   const columnCounts = useStore($dyeResultColumnCount);
@@ -38,7 +40,7 @@ export const DyeResult = () => {
             columnCounts={columnCounts()}
             disabled={!isExportable()}
           >
-            匯出表格圖
+            {t('export.sheet')}
           </ExportTableButton>
           <ExportSeperateButton
             fileName="dye-table.zip"
@@ -46,7 +48,7 @@ export const DyeResult = () => {
             imageCounts={count()}
             disabled={!isExportable()}
           >
-            匯出(.zip)
+            {t('export.zip')}
           </ExportSeperateButton>
         </HStack>
       </HStack>

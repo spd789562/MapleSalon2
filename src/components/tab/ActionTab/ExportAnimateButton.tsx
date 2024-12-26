@@ -5,6 +5,7 @@ import { $addBlackBgWhenExportGif } from '@/store/settingDialog';
 import { $globalRenderer } from '@/store/renderer';
 
 import { useActionTab } from './ActionTabContext';
+import { useTranslate } from '@/context/i18n';
 
 import ImagePlay from 'lucide-solid/icons/image-play';
 import { Button, type ButtonProps } from '@/components/ui/button';
@@ -27,6 +28,7 @@ export interface ExportAnimateButtonProps {
   isIcon?: boolean;
 }
 export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
+  const t = useTranslate();
   const [state, { startExport, finishExport }] = useActionTab();
   const [isExporting, setIsExporting] = createSignal(false);
 
@@ -35,9 +37,8 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
       return;
     }
     toaster.create({
-      title: '正在匯出',
-      description:
-        '因啟用特效匯出，需花費較長的時間，請勿離開此分頁，將導致匯出中斷',
+      title: t('export.exporting'),
+      description: t('export.effectExportDesc'),
     });
   }
 
@@ -51,7 +52,7 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
       ) && props.characterRefs.length >= 0;
     if (!isAllLoaded) {
       toaster.error({
-        title: '動作尚未全部載入完畢',
+        title: t('export.actionNotLoaded'),
       });
       return;
     }
@@ -115,11 +116,11 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
         downloadBlob(zipBlob, fileName);
       }
       toaster.success({
-        title: '匯出成功',
+        title: t('export.success'),
       });
     } catch (_) {
       toaster.error({
-        title: '匯出發生未知錯誤',
+        title: t('export.error'),
       });
     } finally {
       setIsExporting(false);
@@ -133,9 +134,9 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
       variant={props.variant}
       onClick={handleClick}
       disabled={isExporting() || state.isExporting}
-      title="匯出動圖"
+      title={t('export.animation')}
     >
-      <Show when={props.isIcon} fallback="匯出動圖">
+      <Show when={props.isIcon} fallback={t('export.animation')}>
         <ImagePlay />
       </Show>
       <Show when={isExporting()}>

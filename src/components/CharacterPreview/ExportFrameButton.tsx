@@ -2,6 +2,7 @@ import { $padWhiteSpaceWhenExportFrame } from '@/store/settingDialog';
 import { $globalRenderer } from '@/store/renderer';
 
 import { useCharacterPreview } from './CharacterPreviewContext';
+import { useTranslate } from '@/context/i18n';
 
 import { Button } from '@/components/ui/button';
 
@@ -13,6 +14,7 @@ import { downloadBlob } from '@/utils/download';
 import { nextTick } from '@/utils/eventLoop';
 
 export const ExportFrameButton = () => {
+  const t = useTranslate();
   const [state, { startExport, finishExport, updateExportProgress }] =
     useCharacterPreview();
 
@@ -24,7 +26,7 @@ export const ExportFrameButton = () => {
     const app = $globalRenderer.get();
     if (!(app && state.characterRef)) {
       toaster.error({
-        title: '尚未載入完畢',
+        title: t('export.notLoaded'),
       });
       return;
     }
@@ -56,11 +58,11 @@ export const ExportFrameButton = () => {
         downloadBlob(zipBlob, fileName);
       }
       toaster.success({
-        title: '匯出成功',
+        title: t('export.success'),
       });
     } catch (_) {
       toaster.error({
-        title: '匯出發生未知錯誤',
+        title: t('export.error'),
       });
     } finally {
       finishExport();
@@ -70,11 +72,11 @@ export const ExportFrameButton = () => {
   return (
     <Button
       variant="outline"
-      title="匯出當前分鏡"
       onClick={handleClick}
       disabled={state.isExporting}
+      title={t('export.currentFrames')}
     >
-      匯出分鏡
+      {t('export.frames')}
     </Button>
   );
 };

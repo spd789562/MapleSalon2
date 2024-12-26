@@ -1,4 +1,5 @@
 import { Show, Match, Switch } from 'solid-js';
+import { useTranslate } from '@/context/i18n';
 
 import { useCharacterPreview } from './CharacterPreviewContext';
 
@@ -6,6 +7,7 @@ import { Text } from '@/components/ui/text';
 import { ProgressWithBackdrop } from '@/components/elements/ProgressWithBackdrop';
 
 export const ExportProgress = () => {
+  const t = useTranslate();
   const [state] = useCharacterPreview();
 
   return (
@@ -23,10 +25,10 @@ export const ExportProgress = () => {
       >
         <Switch>
           <Match when={state.exportProgress < 100}>
-            <Text size="xl">正在建立影格</Text>
+            <Text size="xl">{t('export.exportProgressFrame')}</Text>
           </Match>
           <Match when={state.exportProgress === 100}>
-            <Text size="xl">準備匯出中...</Text>
+            <Text size="xl">{t('export.exportProgressReady')}</Text>
           </Match>
         </Switch>
       </ProgressWithBackdrop>

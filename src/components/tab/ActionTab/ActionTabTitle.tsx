@@ -31,7 +31,7 @@ export const ActionTabTitle = (props: ActionTabTitleProps) => {
         </HStack>
         <Divider height="2rem" orientation="vertical" />
         <HStack>
-          <div>動圖格式</div>
+          <div>{t('export.animatFormat')}</div>
           <ExportTypeToggleGroup />
         </HStack>
         <ExportAnimateButton characterRefs={props.characterRefs} />

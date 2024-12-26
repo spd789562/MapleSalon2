@@ -1,6 +1,7 @@
 import { $globalRenderer } from '@/store/renderer';
 
 import { useMountTab } from './MountTabContext';
+import { useTranslate } from '@/context/i18n';
 
 import { Button } from '@/components/ui/button';
 import { extractCanvas } from '@/utils/extract';
@@ -9,6 +10,7 @@ import { downloadCanvas } from '@/utils/download';
 import { toaster } from '@/components/GlobalToast';
 
 export const ExportSnapshotButton = () => {
+  const t = useTranslate();
   const [state] = useMountTab();
 
   function handleClick() {
@@ -19,7 +21,7 @@ export const ExportSnapshotButton = () => {
     const app = $globalRenderer.get();
     if (!(app && state.mountRef)) {
       toaster.error({
-        title: '尚未載入完畢',
+        title: t('export.notLoaded'),
       });
       return;
     }
@@ -31,7 +33,7 @@ export const ExportSnapshotButton = () => {
       downloadCanvas(data, `mount-${state.mountRef.id}.png`);
     } catch (_) {
       toaster.error({
-        title: '匯出時發生未知錯誤',
+        title: t('export.error'),
       });
     }
   }
@@ -39,11 +41,11 @@ export const ExportSnapshotButton = () => {
   return (
     <Button
       variant="outline"
-      title="匯出當前快照"
+      title={t('export.currentSnapshot')}
       onClick={handleClick}
       disabled={state.isExporting}
     >
-      匯出快照
+      {t('export.snapshot')}
     </Button>
   );
 };

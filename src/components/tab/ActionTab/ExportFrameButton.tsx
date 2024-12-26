@@ -5,6 +5,7 @@ import { $forceExportEffect } from '@/store/toolTab';
 import { $globalRenderer } from '@/store/renderer';
 
 import { useActionTab } from './ActionTabContext';
+import { useTranslate } from '@/context/i18n';
 
 import { Button, type ButtonProps } from '@/components/ui/button';
 import type { ActionCharacterRef } from './ActionCharacter';
@@ -25,6 +26,7 @@ export interface ExportAnimateButtonProps {
   isIcon?: boolean;
 }
 export const ExportFrameButton = (props: ExportAnimateButtonProps) => {
+  const t = useTranslate();
   const [state, { startExport, finishExport }] = useActionTab();
   const [isExporting, setIsExporting] = createSignal(false);
 
@@ -33,9 +35,8 @@ export const ExportFrameButton = (props: ExportAnimateButtonProps) => {
       return;
     }
     toaster.create({
-      title: '正在匯出',
-      description:
-        '因啟用特效匯出，需花費較長的時間，請勿離開此分頁，將導致匯出中斷',
+      title: t('export.exporting'),
+      description: t('export.effectExportDesc'),
     });
   }
 
@@ -49,7 +50,7 @@ export const ExportFrameButton = (props: ExportAnimateButtonProps) => {
       ) && props.characterRefs.length !== 0;
     if (!isAllLoaded) {
       toaster.error({
-        title: '動作尚未全部載入完畢',
+        title: t('export.actionNotLoaded'),
       });
       return;
     }
@@ -106,11 +107,11 @@ export const ExportFrameButton = (props: ExportAnimateButtonProps) => {
         downloadBlob(zipBlob, fileName);
       }
       toaster.success({
-        title: '匯出成功',
+        title: t('export.success'),
       });
     } catch (_) {
       toaster.error({
-        title: '匯出發生未知錯誤',
+        title: t('export.error'),
       });
     } finally {
       setIsExporting(false);
@@ -122,11 +123,11 @@ export const ExportFrameButton = (props: ExportAnimateButtonProps) => {
     <Button
       size={props.size}
       variant={props.variant}
-      title="匯出動圖分鏡"
+      title={t('export.animationFrames')}
       onClick={handleClick}
       disabled={isExporting() || state.isExporting}
     >
-      <Show when={props.isIcon} fallback="匯出分鏡">
+      <Show when={props.isIcon} fallback={t('export.frames')}>
         <ImagesIcon />
       </Show>
       <Show when={isExporting()}>

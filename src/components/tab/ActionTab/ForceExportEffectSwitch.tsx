@@ -1,4 +1,5 @@
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $forceExportEffect } from '@/store/toolTab';
 
@@ -7,6 +8,7 @@ import { Switch, type ChangeDetails } from '@/components/ui/switch';
 import { IconTooltop, IconType } from '@/components/elements/IconTooltip';
 
 export const ForceExportEffectSwitch = () => {
+  const t = useTranslate();
   const isAnimating = useStore($forceExportEffect);
 
   function handleChange(details: ChangeDetails) {
@@ -16,10 +18,10 @@ export const ForceExportEffectSwitch = () => {
   return (
     <Switch checked={isAnimating()} onCheckedChange={handleChange}>
       <HStack>
-        強制匯出特效
+        {t('export.forceExportEffect')}
         <IconTooltop
           type={IconType.Info}
-          tooltip="動畫及分鏡將會帶有特效(如披風)，但動圖將會無法無縫循環播放"
+          tooltip={t('export.forceExportEffectTip')}
         />
       </HStack>
     </Switch>
