@@ -1,5 +1,7 @@
 import { styled } from 'styled-system/jsx/factory';
 
+import { useTranslate } from '@/context/i18n';
+
 import { Box } from 'styled-system/jsx/box';
 import { VStack } from 'styled-system/jsx/vstack';
 import { HStack } from 'styled-system/jsx/hstack';
@@ -10,12 +12,14 @@ import { SelectWzButton } from './SelectWzButton';
 import { SelectHistoryTable } from './SelectHistoryTable';
 
 export const InitialScreen = () => {
+  const t = useTranslate();
+
   return (
     <ScreenPositioner>
       <LoadText />
       <InitialScreenContainer>
         <HStack w="full">
-          <Heading size="lg">選擇需載入的 Base.wz 檔案</Heading>
+          <Heading size="lg">{t('initial.selectWzTitle')}</Heading>
           <HStack ml="auto">
             <span>選擇新檔</span>
             <SelectWzButton />

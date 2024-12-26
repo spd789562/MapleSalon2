@@ -1,6 +1,5 @@
 import { useStore } from '@nanostores/solid';
 import { exists } from '@tauri-apps/plugin-fs';
-import { normalize } from '@tauri-apps/api/path';
 import { open } from '@tauri-apps/plugin-shell';
 
 import { $isWzLoading } from '@/store/initialize';

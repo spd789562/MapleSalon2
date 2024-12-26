@@ -24,6 +24,7 @@ import { SettingDialog } from './components/dialog/SettingDialog';
 import { CharacterInfoDialog } from './components/dialog/CharacterInfoDialog';
 import { MapSelectionDialog } from './components/dialog/MapSelectionDialog';
 
+import { I18nProvider } from './context/i18n';
 import { ItemContextMenuProvider } from './context/itemContextMenu';
 
 import './store/effects';
@@ -38,29 +39,31 @@ function App() {
   });
 
   return (
-    <ItemContextMenuProvider>
-      <Show when={!ready()}>
-        <InitialScreen />
-      </Show>
-      <Show when={ready()}>
-        <AppContainer>
-          <ToolTabsRadioGroup />
-          <ToolTabPage />
-        </AppContainer>
-        <EquipOpenButton />
-        <CurrentEquipOpenButton />
-        <CurrentEquipmentDrawer />
-        <EqupimentDrawer />
-        <CharacterSelectionDrawer />
-        <CharacterSelectionDrawerOpenButton />
-        <SettingDialog />
-        <CharacterInfoDialog />
-        <MapSelectionDialog />
-      </Show>
-      <GlobalToast />
-      <GlobalConfirmDialog />
-      <GlobalItemContextMenu />
-    </ItemContextMenuProvider>
+    <I18nProvider>
+      <ItemContextMenuProvider>
+        <Show when={!ready()}>
+          <InitialScreen />
+        </Show>
+        <Show when={ready()}>
+          <AppContainer>
+            <ToolTabsRadioGroup />
+            <ToolTabPage />
+          </AppContainer>
+          <EquipOpenButton />
+          <CurrentEquipOpenButton />
+          <CurrentEquipmentDrawer />
+          <EqupimentDrawer />
+          <CharacterSelectionDrawer />
+          <CharacterSelectionDrawerOpenButton />
+          <SettingDialog />
+          <CharacterInfoDialog />
+          <MapSelectionDialog />
+        </Show>
+        <GlobalToast />
+        <GlobalConfirmDialog />
+        <GlobalItemContextMenu />
+      </ItemContextMenuProvider>
+    </I18nProvider>
   );
 }
 

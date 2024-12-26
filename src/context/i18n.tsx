@@ -1,0 +1,89 @@
+import {
+  createSignal,
+  createContext,
+  createResource,
+  useContext,
+  type JSX,
+  type Accessor,
+} from 'solid-js';
+import {
+  flatten,
+  translator,
+  resolveTemplate,
+  type Translator,
+} from '@solid-primitives/i18n';
+import { dict as zhTwDict } from '@/assets/i18n/zh_tw';
+import type { RawDictionary, Dictionary, Locale } from '@/assets/i18n/type';
+
+export interface UseI18nContextReturn {
+  locale: Accessor<Locale>;
+  setLocale: (locale: Locale) => void;
+  t: Translator<Dictionary>;
+  tArg: Translator<Dictionary>;
+}
+
+export const I18nContext = createContext<UseI18nContextReturn>();
+
+async function fetchDictionary(locale: Locale): Promise<Dictionary> {
+  const dict: RawDictionary = (await import(`@/assets/i18n/${locale}/index.ts`))
+    .dict;
+  return flatten(dict);
+}
+
+export function I18nProvider(props: {
+  children: JSX.Element;
+}) {
+  const [locale, setLocale] = createSignal<Locale>('zh_tw');
+  const [dict] = createResource(locale, fetchDictionary, {
+    initialValue: flatten(zhTwDict),
+  });
+
+  const t = translator(dict);
+  const tArg = translator(dict, resolveTemplate);
+
+  return (
+    <I18nContext.Provider
+      value={{
+        locale,
+        setLocale,
+        t,
+        tArg,
+      }}
+    >
+      {props.children}
+    </I18nContext.Provider>
+  );
+}
+
+export function useI18n() {
+  const context = useContext(I18nContext);
+
+  if (!context) {
+    throw new Error('useI18n must be used within a I18nProvider');
+  }
+
+  return context;
+}
+
+export function useTranslate() {
+  const { t } = useI18n();
+  return t;
+}
+
+export function useTranslateArg() {
+  const { tArg } = useI18n();
+  return tArg;
+}
+
+export function useLocale() {
+  const { locale } = useI18n();
+  return locale;
+}
+
+export function useSetLocale() {
+  const { locale, setLocale } = useI18n();
+  return {
+    locale,
+    setLocale,
+  };
+}
