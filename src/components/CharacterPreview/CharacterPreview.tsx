@@ -89,7 +89,10 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   function initScene() {
     const app = $globalRenderer.get();
     app.resizeTo = container;
-    app.renderer.resize(container.clientWidth, container.clientHeight);
+    app.renderer.resize(
+      Math.floor(container.clientWidth),
+      Math.floor(container.clientHeight),
+    );
     viewport = new ZoomContainer(app, {
       width: app.screen.width,
       height: app.screen.height,
