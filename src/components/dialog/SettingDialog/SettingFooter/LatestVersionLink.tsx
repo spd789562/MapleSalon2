@@ -1,5 +1,6 @@
 import { Show, onMount } from 'solid-js';
 import { styled } from 'styled-system/jsx';
+import { useTranslate } from '@/context/i18n';
 
 import { useStore } from '@nanostores/solid';
 
@@ -15,6 +16,7 @@ const RELEASE_PAGE_LINK =
   'https://github.com/spd789562/MapleSalon2/releases/latest';
 
 export const LatestVersionLink = () => {
+  const t = useTranslate();
   const version = useStore($latestVersion);
   const hasNewVersion = useStore($hasNewVersion);
 
@@ -25,11 +27,11 @@ export const LatestVersionLink = () => {
   return (
     <Show when={hasNewVersion()}>
       <Text color="fg.subtle" size="sm" fontWeight="bold">
-        最新版本:&nbsp;
+        {t('setting.newVersion')}:&nbsp;
         <Link
           as="a"
           href={RELEASE_PAGE_LINK}
-          title="點擊前往下載"
+          title={t('setting.goToDownload')}
           target="_blank"
         >
           {version()}

@@ -1,3 +1,5 @@
+import { useTranslate } from '@/context/i18n';
+
 import { Stack } from 'styled-system/jsx/stack';
 import { HStack } from 'styled-system/jsx/hstack';
 import { Text } from '@/components/ui/text';
@@ -13,20 +15,21 @@ import { PreferScaleModeToggleGroup } from './PreferScaleModeToggleGroup';
 import { SettingTooltip } from '@/components/dialog/SettingDialog/SettingTooltip';
 
 export const RenderSetting = () => {
+  const t = useTranslate();
   return (
     <Stack>
-      <Heading size="lg">渲染設定</Heading>
+      <Heading size="lg">{t('setting.renderTitle')}</Heading>
       <HStack gap="7">
         <HStack gap="2">
-          <Text>渲染器</Text>
-          <SettingTooltip tooltip="預設為 WebGPU，部份情況會無法自動判定導致渲染失敗。此設定變更後須重整頁面" />
+          <Text>{t('setting.renderer')}</Text>
+          <SettingTooltip tooltip={t('setting.rendererTip')} />
           <PreferRendererToggleGroup />
         </HStack>
         <UpscaleSwitch />
       </HStack>
       <HStack gap="7">
         <HStack gap="2">
-          <Text>縮放模式</Text>
+          <Text>{t('setting.scaleMode')}</Text>
           <SettingTooltip tooltip="預設為平滑，更改至點陣將於縮放時保留點陣效果。此設定變更後須重整頁面" />
           <PreferScaleModeToggleGroup />
         </HStack>
@@ -34,8 +37,8 @@ export const RenderSetting = () => {
       <HStack justify="space-between">
         <DefaultCharacterRenderingSwitch />
         <HStack gap="1">
-          <Text>角色快照同時渲染數量</Text>
-          <SettingTooltip tooltip="提升或降低角色快照同時渲染數量，過多可能造成應用程式渲染緩慢" />
+          <Text>{t('setting.characterConcurrentRender')}</Text>
+          <SettingTooltip tooltip={t('setting.characterConcurrentRenderTip')} />
           <SimpleCharacterRenderCountInput />
         </HStack>
       </HStack>

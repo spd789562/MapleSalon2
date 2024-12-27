@@ -3,6 +3,7 @@ import { getCurrentWindow, LogicalSize } from '@tauri-apps/api/window';
 import { saveWindowState, StateFlags } from '@tauri-apps/plugin-window-state';
 
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $windowResolution, setWindowResolution } from '@/store/settingDialog';
 
@@ -19,6 +20,7 @@ import {
 } from '@/const/setting/window';
 
 export const ResolutionSelect = () => {
+  const t = useTranslate();
   const settingResolution = useStore($windowResolution);
   const [localResolution, setLocalResolution] = createSignal<
     ResolutionOption | undefined
@@ -51,7 +53,7 @@ export const ResolutionSelect = () => {
   return (
     <HStack>
       <Text as="label" for="resolution-select" textWrap="nowrap">
-        解析度
+        {t('setting.resolution')}
       </Text>
       <SimpleSelect
         id="resolution-select"
@@ -64,7 +66,7 @@ export const ResolutionSelect = () => {
         positioning={{ sameWidth: true }}
       />
       <Button onClick={handleSave} disabled={!isDifferentResolution()}>
-        套用
+        {t('setting.apply')}
       </Button>
     </HStack>
   );

@@ -1,0 +1,82 @@
+export const dict = {
+  characterSelect: '角色選單',
+  save: '儲存',
+  saveAsNew: '另存為新角色',
+  cancel: '取消',
+  cancelChanges: '取消變更',
+  upload: '上傳',
+  newCharacter: '新角色',
+  openCrrentEquipment: '查看當前裝備',
+  applyUpscale: '套用高清化',
+  showCompare: '顯示比對',
+  refreshPage: '重新載入頁面',
+  refreshNow: '立即重整',
+  refreshLater: '稍後重整',
+
+  open: '開啟設定視窗',
+  title: '設定',
+  windowTitle: '視窗設定',
+  freeResize: '自由調整視窗大小',
+  resolution: '解析度',
+  apply: '套用',
+
+  themeTitle: '主題設定',
+  theme: '主題',
+  color: '色彩模式',
+  colorLight: '明亮模式',
+  colorDark: '暗色模式',
+  colorSystem: '系統',
+
+  exportTitle: '匯出設定',
+  frameRemainSpace: '匯出分鏡時填補空白',
+  frameRemainSpaceTip:
+    '分鏡將會統一角色圖片大小，以利播放，若取消勾選時，匯出的 zip 將會含有每張分鏡角色定位的 json 檔',
+  gifWithBackground: '匯出 Gif 時自動填補黑色',
+  gitWithBackgroundTip:
+    '此設定將會使匯出的 Gif 有黑色背景，改善部分裝備為半透明時會導致匯出時黑時白的問題',
+
+  renderTitle: '渲染設定',
+  renderer: '渲染器',
+  rendererTip:
+    '預設為 WebGPU ，部份情況會無法自動判定導致渲染失敗。此設定變更後須重整頁面',
+  changeRendererConfirm: '變更渲染器',
+  changeRendererConfirmDesc:
+    '頁面需要重新載入以套用新的渲染器設定，請問是否立即重整頁面？',
+  scaleMode: '縮放模式',
+  scaleModeTip:
+    '預設為平滑，更改至點陣將於縮放時保留點陣效果。此設定變更後須重整頁面',
+  scaleModeLinear: '平滑',
+  scaleModeNearest: '點陣',
+  scaleModeConfirm: '變更縮放模式',
+  scaleModeConfirmDesc:
+    '頁面需要重新載入以套用新的縮放設定，請問是否立即重整頁面？',
+  experimentalUpscale: '實驗性高清預覽',
+  experimentalUpscaleTip:
+    '新增按鈕顯示高清化的角色預覽，開啟時顯示高清版(Anime4K)的角色預覽，此功能可能造成一些效能影響，請確認有足夠的電腦資源再使用',
+  defaultCharacterRender: '預設角色渲染',
+  defaultCharacterRenderTip:
+    '於髮型及臉型列表時，將預設把道具直接渲染成角色，可以有較佳的預覽體驗，但可能造成大量記憶體消耗',
+  characterConcurrentRender: '角色快照同時渲染數量',
+  characterConcurrentRenderTip:
+    '提升或降低角色快照同時渲染數量，過多可能造成應用程式渲染緩慢',
+  showItemGender: '顯示道具性別',
+  showItemDyeable: '顯示染色標籤',
+
+  otherTitle: '其他設定',
+  saveFolder: '存檔資料夾',
+  openSaveFolder: '開啟存檔資料夾',
+  cacheFolder: '暫存資料夾',
+  openCacheFolder: '開啟暫存資料夾',
+  clearCache: '清除暫存資料',
+  clearCacheTip:
+    '版本更新時若未顯示最新資料，可使用此功能清除暫存。此設定變更後須重整頁面',
+  clearCacheConfirm: '確認是否清除暫存',
+  clearCacheDesc:
+    '若資料確定為舊版本資料時再使用此功能，點擊確認後將會清出暫存並重整頁面',
+
+  currentVersion: '當前版本',
+  newVersion: '最新版本',
+  goToDownload: '點擊前往下載',
+  discordLink: 'Discord 群組',
+  goToDiscord: '點擊前往 Discord 群組邀請',
+};

@@ -1,5 +1,5 @@
-import type { JSX } from 'solid-js';
 import { getCurrentWebview } from '@tauri-apps/api/webview';
+import { useTranslate } from '@/context/i18n';
 
 import { refreshPage } from '@/store/action';
 import { openDialog, DialogType } from '@/store/confirmDialog';
@@ -9,12 +9,12 @@ import { Button } from '@/components/ui/button';
 import { SettingTooltip } from '../SettingTooltip';
 
 export const ClearCacheButton = () => {
+  const t = useTranslate();
   function handleClick() {
     openDialog({
       type: DialogType.Confirm,
-      title: '確認是否清除暫存',
-      description:
-        '若資料確定為舊版本資料時再使用此功能，點擊確認後將會清出暫存並重整頁面',
+      title: t('setting.clearCacheConfirm'),
+      description: t('setting.clearCacheDesc'),
       confirmButton: {
         isAsyncClick: true,
         onClick: async () => {
@@ -30,12 +30,12 @@ export const ClearCacheButton = () => {
     <Button
       onClick={handleClick}
       colorPalette="tomato"
-      title="清除暫存資料"
+      title={t('setting.clearCache')}
       variant="outline"
     >
       <Trash2Icon />
-      清除暫存資料
-      <SettingTooltip tooltip="版本更新時若未顯示最新資料，可使用此功能清除暫存。此設定變更後須重整頁面" />
+      {t('setting.clearCache')}
+      <SettingTooltip tooltip={t('setting.clearCacheTip')} />
     </Button>
   );
 };

@@ -1,4 +1,5 @@
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $preferRenderer, setPreferRenderer } from '@/store/settingDialog';
 import { openDialog, DialogType } from '@/store/confirmDialog';
@@ -21,6 +22,7 @@ const options = [
 ];
 
 export const PreferRendererToggleGroup = () => {
+  const t = useTranslate();
   const renderer = useStore($preferRenderer);
 
   function handleChange(details: ValueChangeDetails) {
@@ -30,17 +32,16 @@ export const PreferRendererToggleGroup = () => {
 
       openDialog({
         type: DialogType.Confirm,
-        title: '變更渲染器',
+        title: t('setting.changeRendererConfirm'),
         closable: true,
-        description:
-          '頁面需要重新載入以套用新的渲染器設定，請問是否立即重整頁面？',
+        description: t('setting.changeRendererConfirmDesc'),
         confirmButton: {
           isAsyncClick: true,
-          text: '立即重整',
+          text: t('setting.refreshNow'),
           onClick: () => refreshPage(),
         },
         cancelButton: {
-          text: '稍後重整',
+          text: t('setting.refreshLater'),
         },
       });
     }

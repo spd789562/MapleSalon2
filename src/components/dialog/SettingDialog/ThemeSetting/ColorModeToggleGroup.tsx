@@ -1,5 +1,6 @@
 import type { JSX } from 'solid-js';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $colorMode, setColorMode } from '@/store/settingDialog';
 
@@ -11,31 +12,10 @@ import {
   type ValueChangeDetails,
 } from '@/components/ui/toggleGroup';
 
-import {
-  ColorMode,
-  ColorModeNames,
-  syncColorMode,
-} from '@/const/setting/colorMode';
-
-const options = [
-  {
-    label: (() => <SunIcon size={16} />) as unknown as JSX.Element,
-    value: ColorMode.Light,
-    title: ColorModeNames[ColorMode.Light],
-  },
-  {
-    label: (() => <MoonIcon size={16} />) as unknown as JSX.Element,
-    value: ColorMode.Dark,
-    title: ColorModeNames[ColorMode.Dark],
-  },
-  {
-    label: (() => <SettingsIcon size={16} />) as unknown as JSX.Element,
-    value: ColorMode.System,
-    title: ColorModeNames[ColorMode.System],
-  },
-];
+import { ColorMode, syncColorMode } from '@/const/setting/colorMode';
 
 export const ColorModeToggleGroup = () => {
+  const t = useTranslate();
   const colorMode = useStore($colorMode);
 
   function handleChange(details: ValueChangeDetails) {
@@ -45,6 +25,23 @@ export const ColorModeToggleGroup = () => {
       setColorMode(changedColorMode);
     }
   }
+  const options = [
+    {
+      label: (() => <SunIcon size={16} />) as unknown as JSX.Element,
+      value: ColorMode.Light,
+      title: t('setting.colorLight'),
+    },
+    {
+      label: (() => <MoonIcon size={16} />) as unknown as JSX.Element,
+      value: ColorMode.Dark,
+      title: t('setting.colorDark'),
+    },
+    {
+      label: (() => <SettingsIcon size={16} />) as unknown as JSX.Element,
+      value: ColorMode.System,
+      title: t('setting.colorSystem'),
+    },
+  ];
 
   return (
     <SimpleToggleGroup

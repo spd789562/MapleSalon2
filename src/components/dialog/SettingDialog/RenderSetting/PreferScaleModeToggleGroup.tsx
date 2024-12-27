@@ -1,4 +1,5 @@
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $preferScaleMode, setPreferScaleMode } from '@/store/settingDialog';
 import { openDialog, DialogType } from '@/store/confirmDialog';
@@ -9,18 +10,8 @@ import {
   type ValueChangeDetails,
 } from '@/components/ui/toggleGroup';
 
-const options = [
-  {
-    label: '平滑',
-    value: 'linear',
-  },
-  {
-    label: '點陣',
-    value: 'nearest',
-  },
-];
-
 export const PreferScaleModeToggleGroup = () => {
+  const t = useTranslate();
   const renderer = useStore($preferScaleMode);
 
   function handleChange(details: ValueChangeDetails) {
@@ -30,21 +21,31 @@ export const PreferScaleModeToggleGroup = () => {
 
       openDialog({
         type: DialogType.Confirm,
-        title: '變更縮放模式',
+        title: t('setting.scaleModeConfirm'),
         closable: true,
-        description:
-          '頁面需要重新載入以套用新的縮放設定，請問是否立即重整頁面？',
+        description: t('setting.scaleModeConfirmDesc'),
         confirmButton: {
           isAsyncClick: true,
-          text: '立即重整',
+          text: t('setting.refreshNow'),
           onClick: () => refreshPage(),
         },
         cancelButton: {
-          text: '稍後重整',
+          text: t('setting.refreshLater'),
         },
       });
     }
   }
+
+  const options = [
+    {
+      label: t('setting.scaleModeLinear'),
+      value: 'linear',
+    },
+    {
+      label: t('setting.scaleModeNearest'),
+      value: 'nearest',
+    },
+  ];
 
   return (
     <SimpleToggleGroup

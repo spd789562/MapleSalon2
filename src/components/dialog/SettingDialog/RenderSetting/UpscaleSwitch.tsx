@@ -1,4 +1,5 @@
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import {
   $enableExperimentalUpscale,
@@ -11,6 +12,7 @@ import { Switch, type ChangeDetails } from '@/components/ui/switch';
 import { SettingTooltip } from '@/components/dialog/SettingDialog/SettingTooltip';
 
 export const UpscaleSwitch = () => {
+  const t = useTranslate();
   const enableExperimentalUpscale = useStore($enableExperimentalUpscale);
 
   function handleChange(details: ChangeDetails) {
@@ -23,8 +25,8 @@ export const UpscaleSwitch = () => {
       onCheckedChange={handleChange}
     >
       <HStack gap="1">
-        <Text>實驗性高清預覽</Text>
-        <SettingTooltip tooltip="新增按鈕顯示高清化的角色預覽，開啟時顯示高清版(Anime4K)的角色預覽，此功能可能造成一些效能影響，請確認有足夠的電腦資源再使用" />
+        <Text>{t('setting.experimentalUpscale')}</Text>
+        <SettingTooltip tooltip={t('setting.experimentalUpscaleTip')} />
       </HStack>
     </Switch>
   );

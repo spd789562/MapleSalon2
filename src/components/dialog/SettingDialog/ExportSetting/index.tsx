@@ -12,7 +12,7 @@ export const ExportSetting = () => {
   const t = useTranslate();
   return (
     <Stack>
-      <Heading size="lg">匯出設定</Heading>
+      <Heading size="lg">{t('setting.exportTitle')}</Heading>
       <HStack justify="flex-start" gap="7">
         <PadWhiteSpaceSwitch />
         <AddBlackBgToGifSwitch />

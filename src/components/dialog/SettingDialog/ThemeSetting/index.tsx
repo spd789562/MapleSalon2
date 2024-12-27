@@ -1,3 +1,5 @@
+import { useTranslate } from '@/context/i18n';
+
 import { Stack } from 'styled-system/jsx/stack';
 import { HStack } from 'styled-system/jsx/hstack';
 import { Text } from '@/components/ui/text';
@@ -6,16 +8,18 @@ import { ThemeRadioGroup } from './ThemeRadioGroup';
 import { ColorModeToggleGroup } from './ColorModeToggleGroup';
 
 export const ThemeSetting = () => {
+  const t = useTranslate();
+
   return (
     <Stack>
-      <Heading size="lg">主題設定</Heading>
+      <Heading size="lg">{t('setting.themeTitle')}</Heading>
       <HStack justify="space-between">
         <HStack>
-          <Text>主題</Text>
+          <Text>{t('setting.theme')}</Text>
           <ThemeRadioGroup />
         </HStack>
         <HStack>
-          <Text>色彩模式</Text>
+          <Text>{t('setting.color')}</Text>
           <ColorModeToggleGroup />
         </HStack>
       </HStack>

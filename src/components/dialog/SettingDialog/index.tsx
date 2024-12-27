@@ -1,3 +1,5 @@
+import { useTranslate } from '@/context/i18n';
+
 import { Stack } from 'styled-system/jsx/stack';
 import { Title } from '@/components/ui/dialog';
 import { SettingDialog as Dialog } from './SettingDialog';
@@ -9,10 +11,11 @@ import { OtherSetting } from './OtherSetting';
 import { SettingFooter } from './SettingFooter';
 
 export const SettingDialog = () => {
+  const t = useTranslate();
   return (
     <Dialog>
       <Stack gap="3" p="6">
-        <Title fontSize="xl">設定</Title>
+        <Title fontSize="xl">{t('setting.title')}</Title>
         <WindowSetting />
         <ThemeSetting />
         <ExportSetting />

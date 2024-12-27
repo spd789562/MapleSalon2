@@ -4,12 +4,6 @@ export enum ColorMode {
   System = 'system',
 }
 
-export const ColorModeNames: Record<ColorMode, string> = {
-  [ColorMode.Light]: '亮色模式',
-  [ColorMode.Dark]: '暗色模式',
-  [ColorMode.System]: '系統',
-};
-
 function isSystemDarkMode() {
   return window.matchMedia('(prefers-color-scheme: dark)').matches;
 }

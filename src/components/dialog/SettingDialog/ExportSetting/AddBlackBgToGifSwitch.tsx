@@ -1,4 +1,5 @@
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import {
   $addBlackBgWhenExportGif,
@@ -11,6 +12,7 @@ import { Switch, type ChangeDetails } from '@/components/ui/switch';
 import { SettingTooltip } from '@/components/dialog/SettingDialog/SettingTooltip';
 
 export const AddBlackBgToGifSwitch = () => {
+  const t = useTranslate();
   const addBlackBgWhenExportGif = useStore($addBlackBgWhenExportGif);
 
   function handleChange(details: ChangeDetails) {
@@ -20,8 +22,8 @@ export const AddBlackBgToGifSwitch = () => {
   return (
     <Switch checked={addBlackBgWhenExportGif()} onCheckedChange={handleChange}>
       <HStack gap="1">
-        <Text>匯出 Gif 時自動填補黑色</Text>
-        <SettingTooltip tooltip="此設定將會使匯出的 Gif 有黑色背景，改善部分裝備為半透明時會導致匯出時黑時白的問題" />
+        <Text>{t('setting.gifWithBackground')}</Text>
+        <SettingTooltip tooltip={t('setting.gitWithBackgroundTip')} />
       </HStack>
     </Switch>
   );
