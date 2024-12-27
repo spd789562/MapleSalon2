@@ -1,5 +1,6 @@
 import { createSignal, splitProps } from 'solid-js';
 import type { ReadableAtom } from 'nanostores';
+import { useTranslate } from '@/context/i18n';
 
 import { Grid } from 'styled-system/jsx/grid';
 import { HStack } from 'styled-system/jsx';
@@ -23,6 +24,7 @@ export interface CharacterSelectionDialogProps extends DialogRootProps {
 export const CharacterSelectionDialog = (
   props: CharacterSelectionDialogProps,
 ) => {
+  const t = useTranslate();
   const [selectedIds, setSelectIds] = createSignal([] as string[]);
   const [selfProps, dialogProps] = splitProps(props, [
     'columnCount',
@@ -68,7 +70,7 @@ export const CharacterSelectionDialog = (
         height="[100%]"
         padding="4"
       >
-        <Title>選擇共乘角色</Title>
+        <Title>{t('common.selectShareCharacter')}</Title>
         <CharacterGrid
           columnCount={selfProps.columnCount ?? DEFAULT_COLUMN_COUNT}
           selectedIds={selectedIds()}
@@ -76,7 +78,7 @@ export const CharacterSelectionDialog = (
         />
         <HStack justify="flex-end" py="1">
           <Button variant="outline" onClick={handleClear}>
-            清除選取
+            {t('common.clearSelection')}
           </Button>
         </HStack>
       </Grid>

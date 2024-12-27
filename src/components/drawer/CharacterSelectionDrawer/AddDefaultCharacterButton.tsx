@@ -1,4 +1,5 @@
 import { styled } from 'styled-system/jsx/factory';
+import { useTranslate } from '@/context/i18n';
 
 import PlusIcon from 'lucide-solid/icons/plus';
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,8 @@ import { appendDefaultCharacter } from '@/store/characterDrawer';
 import CharacterUnknownPng from '@/assets/character-unknown.png';
 
 export const AddDefaultCharacterButton = () => {
+  const t = useTranslate();
+
   const handleClick = () => {
     appendDefaultCharacter();
   };
@@ -15,13 +18,16 @@ export const AddDefaultCharacterButton = () => {
   return (
     <Button
       onClick={handleClick}
-      title="新增角色"
+      title={t('setting.newCharacter')}
       variant="outline"
       position="relative"
       height="unset"
       width="4.5rem"
     >
-      <CharacterImage alt="新增角色-圖片" src={CharacterUnknownPng} />
+      <CharacterImage
+        alt={t('setting.newCharacter')}
+        src={CharacterUnknownPng}
+      />
       <PlusIcon size={28} style={{ width: 'unset', height: 'unset' }} />
     </Button>
   );

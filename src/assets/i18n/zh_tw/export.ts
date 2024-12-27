@@ -24,6 +24,7 @@ export const dict = {
   copied: '已複製',
   copyToClipboard: '複製至剪貼簿',
   downloadAsImage: '下載為圖片',
+  copyImage: '複製圖片',
 
   exporting: '正在匯出',
   effectExportDesc:

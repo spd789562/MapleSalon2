@@ -1,4 +1,5 @@
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import {
   $currentEquipDrawerTab,
@@ -10,23 +11,23 @@ import {
   type ValueChangeDetails,
 } from '@/components/ui/toggleGroup';
 
-const options = [
-  {
-    value: CurrentEquipDrawerTab.Equip,
-    label: '當前裝備',
-  },
-  {
-    value: CurrentEquipDrawerTab.Setting,
-    label: '角色設定',
-  },
-];
-
 export const CurrentEquipDrawerTabs = () => {
+  const t = useTranslate();
   const equipTab = useStore($currentEquipDrawerTab);
 
   function handleChange(value: ValueChangeDetails) {
     $currentEquipDrawerTab.set(value.value as CurrentEquipDrawerTab);
   }
+  const options = [
+    {
+      value: CurrentEquipDrawerTab.Equip,
+      label: t('tab.currentEquipment'),
+    },
+    {
+      value: CurrentEquipDrawerTab.Setting,
+      label: t('tab.characterSetting'),
+    },
+  ];
 
   return (
     <SimpleToggleGroup

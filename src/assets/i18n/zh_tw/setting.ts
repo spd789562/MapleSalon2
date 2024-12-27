@@ -1,5 +1,4 @@
 export const dict = {
-  characterSelect: '角色選單',
   save: '儲存',
   saveSuccess: '儲存成功',
   saveAsNew: '另存為新角色',
@@ -13,7 +12,7 @@ export const dict = {
   uploadFailed: '上傳失敗',
   uploadCharacter: '上傳角色',
   fileFormatError: '檔案格式錯誤',
-  newCharacter: '新角色',
+  newCharacter: '新增角色',
   openCrrentEquipment: '查看當前裝備',
   applyUpscale: '套用高清化',
   showCompare: '顯示比對',

@@ -1,5 +1,6 @@
 import { splitProps, Show } from 'solid-js';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 import { Portal } from 'solid-js/web';
 
 import { $itemContextMenuTargetInfo } from '@/store/itemContextMenu';
@@ -12,6 +13,7 @@ import * as Menu from '@/components/ui/menu';
 import { useItemContextMenu } from '@/context/itemContextMenu';
 
 export const GlobalItemContextMenu = () => {
+  const t = useTranslate();
   const menu = useItemContextMenu();
   const itemInfo = useStore($itemContextMenuTargetInfo);
 
@@ -32,7 +34,10 @@ export const GlobalItemContextMenu = () => {
                 )}
               </Show>
               <Show when={itemInfo()?.icon}>
-                <ItemContextMenuItem value="image" label="複製圖片" />
+                <ItemContextMenuItem
+                  value="image"
+                  label={t('export.copyImage')}
+                />
               </Show>
             </Menu.ItemGroup>
           </Menu.Content>

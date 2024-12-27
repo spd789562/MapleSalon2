@@ -1,6 +1,7 @@
 import { Index } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 import { styled } from 'styled-system/jsx/factory';
+import { useTranslate } from '@/context/i18n';
 
 import { $toolTab } from '@/store/toolTab';
 
@@ -45,6 +46,7 @@ const options = [
 ];
 
 export const ToolTabsRadioGroup = () => {
+  const t = useTranslate();
   const tab = useStore($toolTab);
 
   function handleChange(detail: RadioButtonGroup.ValueChangeDetails) {
@@ -70,7 +72,7 @@ export const ToolTabsRadioGroup = () => {
                 <RadioButtonGroup.ItemControl />
                 <RadioButtonGroup.ItemHiddenInput />
                 <RadioButtonGroup.ItemText>
-                  {option().label}
+                  {t(option().label) as string}
                 </RadioButtonGroup.ItemText>
               </RadioButtonGroup.Item>
             )}

@@ -1,5 +1,6 @@
 import { Portal } from 'solid-js/web';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import {
   $characterSelectionDrawerOpen,
@@ -12,6 +13,7 @@ import { TopBarPositioner, TopBarToggle } from '@/components/ui/topBarToggle';
 import { IconButton } from '@/components/ui/icon-button';
 
 export const CharacterSelectionDrawerOpenButton = () => {
+  const t = useTranslate();
   const isOpen = useStore($characterSelectionDrawerOpen);
 
   function handleToggle() {
@@ -35,7 +37,7 @@ export const CharacterSelectionDrawerOpenButton = () => {
           >
             <SettingIcon size={24} style={{ 'margin-left': 'unset' }} />
           </IconButton>
-          <span>角色選單</span>
+          <span>{t('tab.characterList')}</span>
           <ChevronDownIcon size={24} />
         </TopBarToggle>
       </TopBarPositioner>

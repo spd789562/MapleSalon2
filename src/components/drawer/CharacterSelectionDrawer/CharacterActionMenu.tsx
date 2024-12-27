@@ -1,5 +1,6 @@
 import { splitProps, Show, type JSX } from 'solid-js';
 import { Portal } from 'solid-js/web';
+import { useTranslate } from '@/context/i18n';
 
 import { HStack } from 'styled-system/jsx/hstack';
 import InfoIcon from 'lucide-solid/icons/info';
@@ -14,6 +15,7 @@ export interface CharacterActionMenuProps extends Menu.RootProps {
   children?: JSX.Element;
 }
 export const CharacterActionMenu = (props: CharacterActionMenuProps) => {
+  const t = useTranslate();
   const [localProps, rootProps] = splitProps(props, ['name', 'children']);
 
   function handleKeyDown(e: KeyboardEvent) {
@@ -43,27 +45,27 @@ export const CharacterActionMenu = (props: CharacterActionMenuProps) => {
               <CharacterActionMenuItem
                 value="detail"
                 icon={<InfoIcon size={12} />}
-                label="詳細資訊"
+                label={t('common.detail')}
                 keybind="I"
                 keybindPx="2"
               />
               <CharacterActionMenuItem
                 value="clone"
                 icon={<CopyIcon size={12} />}
-                label="複製"
+                label={t('common.copy')}
                 keybind="C"
                 keybindPx="1"
               />
               <CharacterActionMenuItem
                 value="download"
                 icon={<ArrowDownToLineIcon size={12} />}
-                label="下載"
+                label={t('common.download')}
               />
               <Menu.Separator />
               <CharacterActionMenuItem
                 value="delete"
                 icon={<Trash2Icon size={12} />}
-                label="刪除"
+                label={t('common.delete')}
                 keybind="Delete"
               />
             </Menu.ItemGroup>

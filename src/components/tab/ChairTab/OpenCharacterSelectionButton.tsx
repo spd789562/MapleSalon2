@@ -1,4 +1,5 @@
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $otherCharacterIds } from '@/store/chair';
 import { $chairCharacterSelectionDialogOpen } from '@/store/trigger';
@@ -8,6 +9,7 @@ import type { OpenChangeDetails } from '@/components/ui/dialog';
 import { CharacterSelectionDialog } from '@/components/dialog/CharacterSelectionDialog';
 
 export const OpenCharacterSelectionButton = () => {
+  const t = useTranslate();
   const isOpen = useStore($chairCharacterSelectionDialogOpen);
 
   function handleExit(ids: string[]) {
@@ -26,8 +28,12 @@ export const OpenCharacterSelectionButton = () => {
 
   return (
     <>
-      <Button variant="outline" onClick={handleOpen}>
-        選擇共乘角色
+      <Button
+        variant="outline"
+        onClick={handleOpen}
+        title={t('common.selectShareCharacterTip')}
+      >
+        {t('common.selectShareCharacter')}
       </Button>
       <CharacterSelectionDialog
         open={isOpen()}

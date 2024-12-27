@@ -1,3 +1,5 @@
+import type { I18nKeys } from '@/context/i18n';
+
 export enum ToolTab {
   Character = 'character',
   AllAction = 'allAction',
@@ -9,15 +11,15 @@ export enum ToolTab {
   Skill = 'skill',
 }
 
-export const ToolTabNames: Record<ToolTab, string> = {
-  [ToolTab.Character]: '角色預覽',
-  [ToolTab.AllAction]: '全部動作',
-  [ToolTab.HairDye]: '髮型顏色',
-  [ToolTab.FaceDye]: '臉型顏色',
-  [ToolTab.ItemDye]: '裝備染色表',
-  [ToolTab.Chair]: '椅子預覽',
-  [ToolTab.Mount]: '坐騎預覽',
-  [ToolTab.Skill]: '技能預覽',
+export const ToolTabNames: Record<ToolTab, I18nKeys> = {
+  [ToolTab.Character]: 'tab.characterPreview',
+  [ToolTab.AllAction]: 'tab.allAction',
+  [ToolTab.HairDye]: 'tab.hairColor',
+  [ToolTab.FaceDye]: 'tab.faceColor',
+  [ToolTab.ItemDye]: 'tab.equipDye',
+  [ToolTab.Chair]: 'tab.chairPreview',
+  [ToolTab.Mount]: 'tab.mountPreview',
+  [ToolTab.Skill]: 'tab.skillPreview',
 };
 
 export enum ActionExportType {
