@@ -1,6 +1,7 @@
 import { type Accessor, Switch, Match } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
 import { cq } from 'styled-system/patterns';
+import { useTranslate } from '@/context/i18n';
 
 import { HStack } from 'styled-system/jsx/hstack';
 import { VStack } from 'styled-system/jsx/vstack';
@@ -21,6 +22,7 @@ export interface ActionCardProps {
   ref: Accessor<ActionCharacterRef>;
 }
 export const ActionCard = (props: ActionCardProps) => {
+  const t = useTranslate();
   return (
     <CardContainer>
       <CardTitle w="full" class={cq({ name: 'actionHeader' })}>
@@ -34,10 +36,10 @@ export const ActionCard = (props: ActionCardProps) => {
         >
           <Switch fallback={props.action}>
             <Match when={CharacterActionNames[props.action as CharacterAction]}>
-              {(name) => name()}
+              {(name) => t(name()) as string}
             </Match>
             <Match when={CharacterSpecialActionNames[props.action]}>
-              {(name) => name()}
+              {(name) => t(name()) as string}
             </Match>
           </Switch>
         </Heading>

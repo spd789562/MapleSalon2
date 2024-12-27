@@ -1,6 +1,7 @@
 import type { JSX } from 'solid-js';
 import { Portal } from 'solid-js/web';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $equpimentDrawerOpen, $equpimentDrawerPin } from '@/store/trigger';
 
@@ -24,6 +25,7 @@ interface EquipDrawerProps {
   body: JSX.Element;
 }
 export const EquipDrawer = (props: EquipDrawerProps) => {
+  const t = useTranslate();
   const isOpen = useStore($equpimentDrawerOpen);
   const isPinned = useStore($equpimentDrawerPin);
   const isMatch = useMediaQuery('(min-width: 64rem)');
@@ -55,6 +57,8 @@ export const EquipDrawer = (props: EquipDrawerProps) => {
                   <PinIconButton store={$equpimentDrawerPin} variant="ghost" />
                 </Box>
                 <IconButton
+                  aria-label={t('common.close')}
+                  title={t('common.close')}
                   variant="ghost"
                   onClick={handleClose}
                   disabled={isPinned() && isMatch()}

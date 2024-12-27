@@ -54,12 +54,12 @@ export const FaceDyeTab = () => {
     <VStack overflow="auto">
       <CardContainer>
         <HStack alignItems="flex-end" m="2">
-          <Heading size="2xl">顏色預覽</Heading>
+          <Heading size="2xl">{t('dye.faceColorPreview')}</Heading>
           <Switch
             checked={showFullCharacter()}
             onCheckedChange={handleSwitchChange}
           >
-            顯示完整腳色
+            {t('dye.showFullCharacter')}
           </Switch>
           <HStack marginLeft="auto">
             <ExportTableButton
@@ -84,7 +84,7 @@ export const FaceDyeTab = () => {
         <TableContainer ref={bindScrollRef}>
           <Show
             when={faceItem()?.id}
-            fallback={<EmptyBlock>尚未選擇臉型</EmptyBlock>}
+            fallback={<EmptyBlock>{t('dye.faceUnselected')}</EmptyBlock>}
           >
             <AllColorTable
               category="Face"
@@ -98,12 +98,12 @@ export const FaceDyeTab = () => {
       </CardContainer>
       <CardContainer>
         <HStack alignItems="flex-end" m="2">
-          <Heading size="2xl">混染預覽</Heading>
+          <Heading size="2xl">{t('dye.mixDyePreview')}</Heading>
           <Switch
             checked={showFullCharacter()}
             onCheckedChange={handleSwitchChange}
           >
-            顯示完整腳色
+            {t('dye.showFullCharacter')}
           </Switch>
           <HStack marginLeft="auto">
             <ExportTableButton
@@ -130,7 +130,7 @@ export const FaceDyeTab = () => {
         <TableContainer ref={bindScrollRef}>
           <Show
             when={faceItem()?.id}
-            fallback={<EmptyBlock>尚未選擇臉型</EmptyBlock>}
+            fallback={<EmptyBlock>{t('dye.showFullCharacter')}</EmptyBlock>}
           >
             <MixDyeTable
               category="Face"

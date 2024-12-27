@@ -26,10 +26,10 @@ export const DyeResult = () => {
     <>
       <HStack>
         <Heading size="lg" width="rem">
-          染色結果
+          {t('dye.dyeResult')}
         </Heading>
         <HStack>
-          <Text>每行數量</Text>
+          <Text>{t('dye.columnCountPreRow')}</Text>
           <ResultColumnCountNumberInput />
         </HStack>
         <HStack ml="auto">

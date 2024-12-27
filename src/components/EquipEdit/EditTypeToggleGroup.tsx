@@ -1,4 +1,5 @@
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $equpimentDrawerEditType } from '@/store/trigger';
 
@@ -7,18 +8,8 @@ import {
   type ValueChangeDetails,
 } from '@/components/ui/toggleGroup';
 
-const options = [
-  {
-    label: '混染',
-    value: 'mixDye',
-  },
-  {
-    label: '稜鏡',
-    value: 'hsvAdjust',
-  },
-];
-
 export const EditTypeToggleGroup = () => {
+  const t = useTranslate();
   const editType = useStore($equpimentDrawerEditType);
 
   function handleChange(details: ValueChangeDetails) {
@@ -27,6 +18,17 @@ export const EditTypeToggleGroup = () => {
       $equpimentDrawerEditType.set(editType);
     }
   }
+
+  const options = [
+    {
+      label: t('dye.mixDye'),
+      value: 'mixDye',
+    },
+    {
+      label: t('dye.prism'),
+      value: 'hsvAdjust',
+    },
+  ];
 
   return (
     <SimpleToggleGroup

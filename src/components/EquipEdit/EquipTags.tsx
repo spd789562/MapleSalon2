@@ -1,4 +1,5 @@
 import { Show } from 'solid-js';
+import { useTranslate } from '@/context/i18n';
 
 import type { EquipItem } from '@/store/string';
 
@@ -9,18 +10,19 @@ export interface EquipTagsProps {
   info?: EquipItem;
 }
 export const EquipTags = (props: EquipTagsProps) => {
+  const t = useTranslate();
   return (
     <Show when={props.info}>
       {(info) => (
         <HStack gap="1" ml="1" display="inline-flex">
           <Show when={info().isCash}>
-            <Kbd size="sm">現金</Kbd>
+            <Kbd size="sm">{t('common.equipCash')}</Kbd>
           </Show>
           <Show when={info().isDyeable}>
-            <Kbd size="sm">染色</Kbd>
+            <Kbd size="sm">{t('common.equipDyeable')}</Kbd>
           </Show>
           <Show when={info().hasEffect}>
-            <Kbd size="sm">特效</Kbd>
+            <Kbd size="sm">{t('common.equipEffect')}</Kbd>
           </Show>
         </HStack>
       )}

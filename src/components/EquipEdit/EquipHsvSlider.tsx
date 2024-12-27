@@ -1,3 +1,5 @@
+import { useTranslate } from '@/context/i18n';
+
 import ResetIcon from 'lucide-solid/icons/rotate-ccw';
 import { Grid } from 'styled-system/jsx/grid';
 import { Slider } from '@/components/ui/slider';
@@ -33,6 +35,8 @@ export interface EquipHsvSliderProps {
   onValueChange: (value: number) => void;
 }
 export const EquipHsvSlider = (props: EquipHsvSliderProps) => {
+  const t = useTranslate();
+
   const propery = SliderProperyMap[props.property];
 
   return (
@@ -41,7 +45,7 @@ export const EquipHsvSlider = (props: EquipHsvSliderProps) => {
         <IconButton
           variant="outline"
           size="xs"
-          title={`重製${props.title}`}
+          title={`${t('common.reset')}${props.title}`}
           onClick={() => props.onValueChange(0)}
         >
           <ResetIcon />
@@ -52,7 +56,7 @@ export const EquipHsvSlider = (props: EquipHsvSliderProps) => {
           max={propery.max}
           step={propery.step}
           value={[props.value]}
-          title={`${props.title}調整`}
+          title={`${props.title}${t('dye.adjust')}`}
           onValueChange={(e) => props.onValueChange(e.value[0])}
         />
         <NumberInput

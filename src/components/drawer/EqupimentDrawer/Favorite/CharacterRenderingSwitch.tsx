@@ -1,4 +1,5 @@
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $equipmentDrawerExperimentCharacterRender } from '@/store/equipDrawer';
 
@@ -9,6 +10,7 @@ import { Switch, type ChangeDetails } from '@/components/ui/switch';
 import { SimpleTooltip } from '@/components/ui/tooltip';
 
 export const CharacterRenderingSwitch = () => {
+  const t = useTranslate();
   const checked = useStore($equipmentDrawerExperimentCharacterRender);
 
   function handleChange(detail: ChangeDetails) {
@@ -22,11 +24,8 @@ export const CharacterRenderingSwitch = () => {
       onCheckedChange={handleChange}
     >
       <HStack gap="1">
-        <Text size="sm">角色渲染</Text>
-        <SimpleTooltip
-          zIndex={1500}
-          tooltip="將髮型/臉型直接渲染成角色，可以有較佳的預覽體驗，但可能造成大量記憶體消耗"
-        >
+        <Text size="sm">{t('setting.characterRender')}</Text>
+        <SimpleTooltip zIndex={1500} tooltip={t('setting.characterRenderTip')}>
           <InfoIcon color="currentColor" size="16" />
         </SimpleTooltip>
       </HStack>

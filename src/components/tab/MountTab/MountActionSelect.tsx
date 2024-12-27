@@ -1,5 +1,6 @@
 import { createMemo } from 'solid-js';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $mountAction, setMountAction } from '@/store/mount';
 
@@ -9,17 +10,22 @@ import { SimpleSelect, type ValueChangeDetails } from '@/components/ui/select';
 import { CharacterActionNames } from '@/const/actions';
 
 export const MountActionSelect = () => {
+  const t = useTranslate();
   const [state, _] = useMountTab();
 
   const action = useStore($mountAction);
 
   const options = createMemo(() =>
-    state.mountActions.map((action) => ({
-      label:
-        CharacterActionNames[action as keyof typeof CharacterActionNames] ||
-        action,
-      value: action,
-    })),
+    state.mountActions.map((action) => {
+      const actionLabelHasTranslate =
+        CharacterActionNames[action as keyof typeof CharacterActionNames];
+      return {
+        label: actionLabelHasTranslate
+          ? (t(actionLabelHasTranslate) as string)
+          : action,
+        value: action,
+      };
+    }),
   );
 
   function handleActionChange(details: ValueChangeDetails) {
@@ -34,7 +40,7 @@ export const MountActionSelect = () => {
       items={options()}
       value={[action()]}
       onValueChange={handleActionChange}
-      groupTitle="坐騎動作"
+      groupTitle={t('character.mountActionTitle')}
       maxHeight="20rem"
     />
   );

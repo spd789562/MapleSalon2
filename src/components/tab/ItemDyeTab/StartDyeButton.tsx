@@ -1,5 +1,6 @@
 import { Show } from 'solid-js';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 import { styled } from 'styled-system/jsx/factory';
 
 import {
@@ -16,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { toaster } from '@/components/GlobalToast';
 
 export const StartDyeButton = () => {
+  const t = useTranslate();
   const isLoading = useStore($isRenderingDye);
 
   function handleClick() {
@@ -24,18 +26,18 @@ export const StartDyeButton = () => {
     }
     if ($selectedEquipSubCategory.get().length === 0) {
       toaster.error({
-        title: '請選擇想要預覽染色的裝備',
+        title: t('dye.emptyEquipSelection'),
       });
       return;
     }
     if (!$dyeTypeEnabled.get()) {
       toaster.error({
-        title: '請選擇想要預覽的染色類型',
+        title: t('dye.emptyTypeSelection'),
       });
     }
     if ($dyeResultCount.get() < 32) {
       toaster.error({
-        title: '請輸入染色數量',
+        title: t('dye.emptyDyeCount'),
       });
       return;
     }
@@ -50,7 +52,7 @@ export const StartDyeButton = () => {
           <LoaderCircle />
         </Loading>
       </Show>
-      產生染色表
+      {t('dye.generateDyeTable')}
     </Button>
   );
 };

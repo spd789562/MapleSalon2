@@ -1,7 +1,7 @@
 import { styled } from 'styled-system/jsx/factory';
+import { useTranslate } from '@/context/i18n';
 
 import { Stack } from 'styled-system/jsx/stack';
-
 import { HStack } from 'styled-system/jsx/hstack';
 import { Text } from '@/components/ui/text';
 import { Heading } from '@/components/ui/heading';
@@ -14,26 +14,27 @@ import { StartDyeButton } from './StartDyeButton';
 import { DyeResult } from './DyeResult';
 
 export const ItemDyeTab = () => {
+  const t = useTranslate();
   return (
     <Stack mb="4" overflow="auto">
       <CardContainer gap={4}>
         <ItemDyeTabTitle />
         <HStack>
-          <Heading width="7rem">欲染色裝備</Heading>
+          <Heading width="7rem">{t('dye.dyeEquipments')}</Heading>
           <NeedDyeItemToggleGroup />
         </HStack>
         <HStack>
-          <Heading width="7rem">染色類型</Heading>
+          <Heading width="7rem">{t('dye.dyeType')}</Heading>
           <DyeTypeRadioGroup />
         </HStack>
         <HStack>
-          <Heading width="7rem">其他設定</Heading>
+          <Heading width="7rem">{t('dye.otherSetting')}</Heading>
           <HStack>
-            <Text width="7rem">染色動作</Text>
+            <Text width="7rem">{t('dye.dyeAction')}</Text>
             <ResultActionSelect />
           </HStack>
           <HStack>
-            <Text>染色結果數量</Text>
+            <Text>{t('dye.dyeCount')}</Text>
             <ResultCountNumberInput />
           </HStack>
         </HStack>

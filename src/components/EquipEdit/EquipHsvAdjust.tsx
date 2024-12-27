@@ -1,5 +1,6 @@
 import { Show, createMemo } from 'solid-js';
 import { css } from 'styled-system/css';
+import { useTranslate } from '@/context/i18n';
 
 import {
   updateItemHsvInfo,
@@ -21,42 +22,12 @@ import { EquipHsvSlider } from './EquipHsvSlider';
 
 import { ColorRange } from '@/renderer/filter/hsvAdjustmentFilter';
 
-const ColorOtions = [
-  {
-    label: '整體色系',
-    value: ColorRange.All,
-  },
-  {
-    label: '紅色系',
-    value: ColorRange.Red,
-  },
-  {
-    label: '黃色系',
-    value: ColorRange.Yellow,
-  },
-  {
-    label: '綠色系',
-    value: ColorRange.Green,
-  },
-  {
-    label: '青綠色系',
-    value: ColorRange.Cyan,
-  },
-  {
-    label: '藍色系',
-    value: ColorRange.Blue,
-  },
-  {
-    label: '紫色系',
-    value: ColorRange.Purple,
-  },
-];
-
 export interface EquipHsvAdjustProps {
   id: number;
   hasRandom?: boolean;
 }
 export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
+  const t = useTranslate();
   const getItemChangeById = createMemo(() => createGetItemChangeById(props.id));
   const itemChange = useDynamicPureStore(getItemChangeById);
 
@@ -102,17 +73,48 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
   const handleSaturationChange = createItemChange('saturation');
   const handleBrightnessChange = createItemChange('brightness');
 
+  const ColorOtions = [
+    {
+      label: t('dye.colorRangeAll'),
+      value: ColorRange.All,
+    },
+    {
+      label: t('dye.colorRangeRed'),
+      value: ColorRange.Red,
+    },
+    {
+      label: t('dye.colorRangeYellow'),
+      value: ColorRange.Yellow,
+    },
+    {
+      label: t('dye.colorRangeGreen'),
+      value: ColorRange.Green,
+    },
+    {
+      label: t('dye.colorRangeCyan'),
+      value: ColorRange.Cyan,
+    },
+    {
+      label: t('dye.colorRangeBlue'),
+      value: ColorRange.Blue,
+    },
+    {
+      label: t('dye.colorRangePurple'),
+      value: ColorRange.Purple,
+    },
+  ];
+
   return (
     <Show when={itemChange()}>
       <VStack pt={1}>
         <HStack w="full" alignItems="center">
           <Button variant="outline" size="sm" onClick={handleResetAll}>
             <ResetIcon />
-            重置
+            {t('common.reset')}
           </Button>
           <Select
             width="[40%]"
-            placeholder="染色區間"
+            placeholder={t('dye.colorRange')}
             items={ColorOtions}
             positioning={{ sameWidth: true }}
             size="sm"
@@ -127,14 +129,14 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
               variant="outline"
               size="sm"
               onClick={handleRandomAll}
-              title="隨機染色"
+              title={t('dye.randomPrism')}
             >
               <RandomLineIcon />
             </IconButton>
           </Show>
         </HStack>
         <EquipHsvSlider
-          title="色相"
+          title={t('dye.hue')}
           property="hue"
           value={itemChange()?.item.hue || 0}
           onValueChange={handleHueChange}
@@ -145,7 +147,7 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
           })}
         />
         <EquipHsvSlider
-          title="飽和度"
+          title={t('dye.saturation')}
           property="saturation"
           value={itemChange()?.item.saturation || 0}
           onValueChange={handleSaturationChange}
@@ -156,7 +158,7 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
           })}
         />
         <EquipHsvSlider
-          title="亮度"
+          title={t('dye.brightness')}
           property="brightness"
           value={itemChange()?.item.brightness || 0}
           onValueChange={handleBrightnessChange}

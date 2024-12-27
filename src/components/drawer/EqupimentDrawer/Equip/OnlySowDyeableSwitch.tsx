@@ -1,4 +1,5 @@
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $equipmentDrawerOnlyShowDyeable } from '@/store/equipDrawer';
 
@@ -7,6 +8,7 @@ import { Text } from '@/components/ui/text';
 import { Switch, type ChangeDetails } from '@/components/ui/switch';
 
 export const OnlyShowDyeableSwitch = () => {
+  const t = useTranslate();
   const checked = useStore($equipmentDrawerOnlyShowDyeable);
 
   function handleChange(detail: ChangeDetails) {
@@ -22,7 +24,7 @@ export const OnlyShowDyeableSwitch = () => {
         onCheckedChange={handleChange}
       />
       <Text as="label" for="switch:OnlyShowDyeable:input" size="md">
-        僅顯示可染色道具
+        {t('setting.onlyShowDyeable')}
       </Text>
     </HStack>
   );

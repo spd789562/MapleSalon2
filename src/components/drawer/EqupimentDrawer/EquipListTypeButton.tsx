@@ -1,5 +1,6 @@
 import { Switch, Match } from 'solid-js';
 import { useStore } from '@nanostores/solid';
+import { type I18nKeys, useTranslate } from '@/context/i18n';
 
 import {
   $equipmentDrawerEquipListType,
@@ -10,13 +11,15 @@ import LayoutGridIcon from 'lucide-solid/icons/layout-grid';
 import LayoutListIcon from 'lucide-solid/icons/layout-list';
 import { IconButton } from '@/components/ui/icon-button';
 
-const TitleMap = {
-  [EquipListType.Icon]: '切換至清單',
-  [EquipListType.Row]: '切換至縮圖',
-  [EquipListType.Character]: '未實作',
+const TitleMap: Record<EquipListType, I18nKeys> = {
+  [EquipListType.Icon]: 'common.switchListTypeRow',
+  [EquipListType.Row]: 'common.switchListTypeGrid',
+  [EquipListType.Character]: 'common.switchListTypeUnknown',
 };
 
 export const EquipListTypeButton = () => {
+  const t = useTranslate();
+
   const listType = useStore($equipmentDrawerEquipListType);
 
   const title = () => TitleMap[listType()];
@@ -41,7 +44,7 @@ export const EquipListTypeButton = () => {
     <IconButton
       size="md"
       variant="outline"
-      title={title()}
+      title={t(title()) as string}
       onClick={handleListTypeChange}
     >
       <Switch>

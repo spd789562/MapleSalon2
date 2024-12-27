@@ -1,4 +1,5 @@
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $preserveOriginalDye } from '@/store/toolTab';
 
@@ -8,6 +9,7 @@ import { Switch, type ChangeDetails } from '@/components/ui/switch';
 import { IconTooltop, IconType } from '@/components/elements/IconTooltip';
 
 export const PreserveDyeSwitch = () => {
+  const t = useTranslate();
   const checked = useStore($preserveOriginalDye);
 
   function handleChange(details: ChangeDetails) {
@@ -17,10 +19,10 @@ export const PreserveDyeSwitch = () => {
   return (
     <Switch checked={checked()} onCheckedChange={handleChange}>
       <HStack gap="1">
-        <Text>保留裝備染色</Text>
+        <Text>{t('dye.preserveOriginalDye')}</Text>
         <IconTooltop
           type={IconType.Question}
-          tooltip="保留原裝備染色，關閉後將會重製所有染色才套用染色預覽"
+          tooltip={t('dye.preserveOriginalDyeTip')}
         />
       </HStack>
     </Switch>

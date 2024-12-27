@@ -1,3 +1,5 @@
+import type { I18nKeys } from '@/context/i18n';
+
 export enum CharacterAction {
   Stand1 = 'stand1',
   Stand2 = 'stand2',
@@ -72,28 +74,29 @@ const validAction = {
 
 export type CharacterSpecialAction = string;
 
-export const CharacterActionNames: Partial<Record<CharacterAction, string>> = {
-  [CharacterAction.Stand1]: '站立',
-  [CharacterAction.Stand2]: '站立(雙手)',
-  [CharacterAction.Sit]: '坐下',
-  [CharacterAction.Walk1]: '走路',
-  [CharacterAction.Walk2]: '走路(雙手)',
-  [CharacterAction.Jump]: '跳躍',
-  [CharacterAction.Fly]: '飛行/游泳',
-  [CharacterAction.Ladder]: '攀爬(梯子)',
-  [CharacterAction.Rope]: '攀爬(繩子)',
-  [CharacterAction.Alert]: '警戒',
-  [CharacterAction.Heal]: '施放',
-  [CharacterAction.Prone]: '趴下',
-  [CharacterAction.ProneStab]: '趴下攻擊',
-};
+export const CharacterActionNames: Partial<Record<CharacterAction, I18nKeys>> =
+  {
+    [CharacterAction.Stand1]: 'character.actionStand1',
+    [CharacterAction.Stand2]: 'character.actionStand2',
+    [CharacterAction.Sit]: 'character.actionSit',
+    [CharacterAction.Walk1]: 'character.actionWalk1',
+    [CharacterAction.Walk2]: 'character.actionWalk2',
+    [CharacterAction.Jump]: 'character.actionJump',
+    [CharacterAction.Fly]: 'character.actionFly',
+    [CharacterAction.Ladder]: 'character.actionLadder',
+    [CharacterAction.Rope]: 'character.actionRope',
+    [CharacterAction.Alert]: 'character.actionAlert',
+    [CharacterAction.Heal]: 'character.actionHeal',
+    [CharacterAction.Prone]: 'character.actionProne',
+    [CharacterAction.ProneStab]: 'character.actionProneStab',
+  };
 
 export const CharacterSpecialActionNames: Record<
   CharacterSpecialAction,
-  string
+  I18nKeys
 > = {
-  stand1_floating: '漂浮(單手)',
-  stand2_floating: '漂浮(雙手)',
+  stand1_floating: 'character.actionStand1Floading',
+  stand2_floating: 'character.actionStand2Floading',
 };
 
 export const GunActions: CharacterAction[] = [

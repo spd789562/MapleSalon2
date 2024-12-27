@@ -1,6 +1,7 @@
 import { Index, createMemo } from 'solid-js';
 
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import type { EquipCategorySelections } from '@/store/equipDrawer';
 import {
@@ -12,35 +13,10 @@ import { Grid } from 'styled-system/jsx/grid';
 import { Button } from '@/components/ui/button';
 import * as RadioButtonGroup from '@/components/ui/radioButtonGroup';
 import { CategoryIcon } from '@/components/elements/CategoryIcon';
-
-import { AllCategory } from '@/const/equipments';
-
-const options: {
-  id: EquipCategorySelections;
-  label: string;
-}[] = [
-  { id: AllCategory, label: '全部' },
-  { id: 'Hair', label: '髮型' },
-  { id: 'Face', label: '臉型' },
-  { id: 'Weapon', label: '武器' },
-  { id: 'CashWeapon', label: '時裝武器' },
-  { id: 'Cap', label: '帽子' },
-  { id: 'Overall', label: '套服' },
-  { id: 'Coat', label: '上衣' },
-  { id: 'Pants', label: '下衣' },
-  { id: 'Cape', label: '披風' },
-  { id: 'Glove', label: '手套' },
-  { id: 'Shoes', label: '鞋子' },
-  { id: 'Eye Decoration', label: '眼飾' },
-  { id: 'Face Accessory', label: '臉飾' },
-  { id: 'Earrings', label: '耳環' },
-  { id: 'Shield', label: '盾牌' },
-  { id: 'Skin', label: '膚色' },
-  { id: 'NameTag', label: '名牌' },
-  { id: 'ChatBalloon', label: '聊天戒指' },
-];
+import { EquipCategoryOptions } from '@/components/drawer/EqupimentDrawer/Equip/CategorySelection';
 
 export const CategorySelection = () => {
+  const t = useTranslate();
   const category = useStore($equipmentFavoriteEquipCategory);
 
   function handleChange(detail: RadioButtonGroup.ValueChangeDetails) {
@@ -53,14 +29,14 @@ export const CategorySelection = () => {
   return (
     <RadioButtonGroup.Root value={category()} onValueChange={handleChange}>
       <Grid columns={3} gap={2}>
-        <Index each={options}>
+        <Index each={EquipCategoryOptions}>
           {(option) => (
             <RadioButtonGroup.Item value={option().id}>
               <RadioButtonGroup.ItemControl />
               <RadioButtonGroup.ItemHiddenInput />
               <RadioButtonGroup.ItemText>
                 <CategoryIcon category={option().id} size={20} />
-                {option().label}
+                {t(option().label) as string}
               </RadioButtonGroup.ItemText>
             </RadioButtonGroup.Item>
           )}
@@ -71,11 +47,13 @@ export const CategorySelection = () => {
 };
 
 export const CategorySelectionToggle = () => {
+  const t = useTranslate();
   const category = useStore($equipmentFavoriteEquipCategory);
 
   const option = createMemo(
     () =>
-      options.find((o) => o.id === category()) || options[options.length - 1],
+      EquipCategoryOptions.find((o) => o.id === category()) ||
+      EquipCategoryOptions[EquipCategoryOptions.length - 1],
   );
 
   function handleClick(_: unknown) {
@@ -85,7 +63,7 @@ export const CategorySelectionToggle = () => {
   return (
     <Button variant="outline" w={32} onClick={handleClick}>
       <CategoryIcon category={option().id} size={20} />
-      {option().label}
+      {t(option().label) as string}
     </Button>
   );
 };

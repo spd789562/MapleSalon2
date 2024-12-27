@@ -1,5 +1,6 @@
 import { Show, createMemo } from 'solid-js';
 import { css } from 'styled-system/css';
+import { useTranslate } from '@/context/i18n';
 
 import { $currentItem, $currentItemChanges } from '@/store/character/store';
 import { createGetItemChangeById } from '@/store/character/selector';
@@ -33,6 +34,7 @@ export interface MixDyeAdjustProps {
   category: 'Hair' | 'Face';
 }
 export const MixDyeAdjust = (props: MixDyeAdjustProps) => {
+  const t = useTranslate();
   const getItemChangeById = createMemo(() => {
     return createGetItemChangeById(props.id);
   });
@@ -114,7 +116,7 @@ export const MixDyeAdjust = (props: MixDyeAdjustProps) => {
       {(item) => (
         <VStack pt={1} gap={1}>
           <Box alignSelf="flex-start" ml={2}>
-            顏色
+            {t('dye.color')}
           </Box>
           <MixDyeColorSelection
             value={item().item.id?.toString()}
@@ -122,7 +124,7 @@ export const MixDyeAdjust = (props: MixDyeAdjustProps) => {
             options={options()}
           />
           <HStack alignSelf="flex-start" alignItems="center" ml={2}>
-            混染
+            {t('dye.mixDye')}
             <Switch
               checked={isEnableDye()}
               onCheckedChange={handleToggleMixDye}
@@ -140,7 +142,7 @@ export const MixDyeAdjust = (props: MixDyeAdjustProps) => {
             disabled={!isEnableDye()}
           />
           <MixDyeAlphaSlider
-            title="混染"
+            title={t('dye.mixDye')}
             value={item().item.dye?.alpha ?? 50}
             onValueChange={handleMixDyeAlphaChange}
             class={css({ width: 'full', mt: 1 })}

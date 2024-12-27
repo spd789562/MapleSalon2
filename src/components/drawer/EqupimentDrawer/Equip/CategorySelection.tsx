@@ -1,6 +1,7 @@
 import { Index, Show, createMemo } from 'solid-js';
 
 import { useStore } from '@nanostores/solid';
+import { useTranslate, type I18nKeys } from '@/context/i18n';
 
 import {
   $equipmentDrawerEquipCategory,
@@ -16,33 +17,35 @@ import { CategoryIcon } from '@/components/elements/CategoryIcon';
 
 import { AllCategory } from '@/const/equipments';
 
-const options: {
+export const EquipCategoryOptions: {
   id: EquipCategorySelections;
-  label: string;
+  label: I18nKeys;
 }[] = [
-  { id: AllCategory, label: '全部' },
-  { id: 'Weapon', label: '武器' },
-  { id: 'CashWeapon', label: '時裝武器' },
-  { id: 'Cap', label: '帽子' },
-  { id: 'Overall', label: '套服' },
-  { id: 'Coat', label: '上衣' },
-  { id: 'Pants', label: '下衣' },
-  { id: 'Cape', label: '披風' },
-  { id: 'Glove', label: '手套' },
-  { id: 'Shoes', label: '鞋子' },
-  { id: 'Eye Decoration', label: '眼飾' },
-  { id: 'Face Accessory', label: '臉飾' },
-  { id: 'Earrings', label: '耳環' },
-  { id: 'Shield', label: '盾牌' },
-  { id: 'Skin', label: '膚色' },
-  { id: 'NameTag', label: '名牌' },
-  { id: 'ChatBalloon', label: '聊天戒指' },
-  { id: 'Effect', label: '商城特效' },
-  { id: 'RingEffect', label: '特效戒指' },
-  { id: 'NecklaceEffect', label: '特效項鍊' },
+  { id: AllCategory, label: 'character.equipAll' },
+  { id: 'Weapon', label: 'character.equipWeapon' },
+  { id: 'CashWeapon', label: 'character.equipCashWeapon' },
+  { id: 'Cap', label: 'character.equipCap' },
+  { id: 'Overall', label: 'character.equipOverall' },
+  { id: 'Coat', label: 'character.equipCoat' },
+  { id: 'Pants', label: 'character.equipPants' },
+  { id: 'Cape', label: 'character.equipCape' },
+  { id: 'Glove', label: 'character.equipGlove' },
+  { id: 'Shoes', label: 'character.equipShoes' },
+  { id: 'Eye Decoration', label: 'character.equipEyeDecoration' },
+  { id: 'Face Accessory', label: 'character.equipFaceAccessory' },
+  { id: 'Earrings', label: 'character.equipEarrings' },
+  { id: 'Shield', label: 'character.equipShield' },
+  { id: 'Skin', label: 'character.equipSkin' },
+  { id: 'NameTag', label: 'character.equipNameTag' },
+  { id: 'ChatBalloon', label: 'character.equipChatBalloon' },
+  { id: 'Effect', label: 'character.equipEffect' },
+  { id: 'RingEffect', label: 'character.equipRingEffect' },
+  { id: 'NecklaceEffect', label: 'character.equipNecklaceEffect' },
 ];
 
 export const CategorySelection = () => {
+  const t = useTranslate();
+
   const category = useStore($equipmentDrawerEquipCategory);
 
   function handleChange(detail: RadioButtonGroup.ValueChangeDetails) {
@@ -53,14 +56,14 @@ export const CategorySelection = () => {
   return (
     <RadioButtonGroup.Root value={category()} onValueChange={handleChange}>
       <Grid columns={3} gap={2}>
-        <Index each={options}>
+        <Index each={EquipCategoryOptions}>
           {(option) => (
             <RadioButtonGroup.Item value={option().id}>
               <RadioButtonGroup.ItemControl />
               <RadioButtonGroup.ItemHiddenInput />
               <RadioButtonGroup.ItemText>
                 <CategoryIcon category={option().id} size={20} />
-                {option().label}
+                {t(option().label) as string}
               </RadioButtonGroup.ItemText>
             </RadioButtonGroup.Item>
           )}
@@ -71,12 +74,14 @@ export const CategorySelection = () => {
 };
 
 export const CategorySelectionToggle = () => {
+  const t = useTranslate();
   const category = useStore($equipmentDrawerEquipCategory);
   const isShowing = useStore($isShowEquipCategorySelection);
 
   const option = createMemo(
     () =>
-      options.find((o) => o.id === category()) || options[options.length - 1],
+      EquipCategoryOptions.find((o) => o.id === category()) ||
+      EquipCategoryOptions[EquipCategoryOptions.length - 1],
   );
 
   function handleClick(_: unknown) {
@@ -87,7 +92,7 @@ export const CategorySelectionToggle = () => {
     <Show when={isShowing()}>
       <Button variant="outline" w={32} onClick={handleClick}>
         <CategoryIcon category={option().id} size={20} />
-        {option().label}
+        {t(option().label) as string}
       </Button>
     </Show>
   );

@@ -1,5 +1,6 @@
 import { Show, Switch, Match } from 'solid-js';
 import { css } from 'styled-system/css';
+import { useTranslate } from '@/context/i18n';
 
 import { HStack } from 'styled-system/jsx/hstack';
 
@@ -9,6 +10,7 @@ export interface EquipItemHSVInfoProps {
   value?: number;
 }
 export const EquipItemHSVInfo = (props: EquipItemHSVInfoProps) => {
+  const t = useTranslate();
   return (
     <HStack
       flex="1"
@@ -21,7 +23,7 @@ export const EquipItemHSVInfo = (props: EquipItemHSVInfoProps) => {
         {(value) => (
           <EquipItemHSVValueInfo
             backgroundGradient="hueConic"
-            title="色相"
+            title={t('dye.hue')}
             value={value()}
           />
         )}
@@ -30,7 +32,7 @@ export const EquipItemHSVInfo = (props: EquipItemHSVInfoProps) => {
         {(value) => (
           <EquipItemHSVValueInfo
             backgroundGradient="saturation"
-            title="飽和度"
+            title={t('dye.saturation')}
             value={value()}
           />
         )}
@@ -39,7 +41,7 @@ export const EquipItemHSVInfo = (props: EquipItemHSVInfoProps) => {
         {(value) => (
           <EquipItemHSVValueInfo
             backgroundGradient="brightness"
-            title="亮度"
+            title={t('dye.brightness')}
             value={value()}
           />
         )}

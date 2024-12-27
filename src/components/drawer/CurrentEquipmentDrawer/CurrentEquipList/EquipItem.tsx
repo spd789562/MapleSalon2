@@ -61,7 +61,7 @@ export const EquipItem = (props: EquipItemProps) => {
           <EquipItemIcon>
             <LoadableEquipIcon id={item().id} name={item().name} />
           </EquipItemIcon>
-          <EquipItemInfo>
+          <EquipItemInfo gap="4px">
             <EquipItemName>
               <Show when={item().name} fallback={item().id}>
                 <EllipsisText as="div" title={item().name}>

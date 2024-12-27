@@ -104,7 +104,7 @@ export const ActionSelect = (props: ActionSelectProps) => {
       items={_options}
       value={[props.value]}
       onValueChange={handleActionChange}
-      groupTitle="角色動作"
+      groupTitle={t('character.actionTitle')}
       maxHeight="20rem"
     />
   );

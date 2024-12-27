@@ -1,6 +1,7 @@
 import { Show } from 'solid-js';
 
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import {
   $equipmentDrawerExperimentCharacterRender,
@@ -14,6 +15,8 @@ import { Switch, type ChangeDetails } from '@/components/ui/switch';
 import { SimpleTooltip } from '@/components/ui/tooltip';
 
 export const CharacterRenderingSwitch = () => {
+  const t = useTranslate();
+
   const isShow = useStore($isShowExperimentCharacterRenderSwitch);
   const checked = useStore($equipmentDrawerExperimentCharacterRender);
 
@@ -26,11 +29,11 @@ export const CharacterRenderingSwitch = () => {
       <Flex flexDirection="column" textAlign="left">
         <Flex alignItems="center" gap={1}>
           <Text as="label" size="sm">
-            角色渲染
+            {t('setting.characterRender')}
           </Text>
           <SimpleTooltip
             zIndex={1500}
-            tooltip="將道具直接渲染成角色，可以有較佳的預覽體驗，但可能造成大量記憶體消耗"
+            tooltip={t('setting.characterRenderTip')}
           >
             <InfoIcon color="currentColor" size="16" />
           </SimpleTooltip>

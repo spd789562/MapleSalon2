@@ -61,6 +61,9 @@ export const dict = {
   experimentalUpscale: '實驗性高清預覽',
   experimentalUpscaleTip:
     '新增按鈕顯示高清化的角色預覽，開啟時顯示高清版(Anime4K)的角色預覽，此功能可能造成一些效能影響，請確認有足夠的電腦資源再使用',
+  characterRender: '角色渲染',
+  characterRenderTip:
+    '將髮型/臉型直接渲染成角色，可以有較佳的預覽體驗，但可能造成大量記憶體消耗',
   defaultCharacterRender: '預設角色渲染',
   defaultCharacterRenderTip:
     '於髮型及臉型列表時，將預設把道具直接渲染成角色，可以有較佳的預覽體驗，但可能造成大量記憶體消耗',
@@ -69,6 +72,7 @@ export const dict = {
     '提升或降低角色快照同時渲染數量，過多可能造成應用程式渲染緩慢',
   showItemGender: '顯示道具性別',
   showItemDyeable: '顯示染色標籤',
+  onlyShowDyeable: '僅顯示可染色道具',
 
   otherTitle: '其他設定',
   saveFolder: '存檔資料夾',

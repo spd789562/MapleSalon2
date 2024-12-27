@@ -1,5 +1,6 @@
 import { styled } from 'styled-system/jsx/factory';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $dyeTypeEnabled, toggleDyeConfigEnabled } from '@/store/toolTab';
 
@@ -8,6 +9,7 @@ import * as RadioGroup from '@/components/ui/radioGroup';
 import { DyeType } from '@/const/toolTab';
 
 export const DyeTypeRadioGroup = () => {
+  const t = useTranslate();
   const dyeTypeEnabled = useStore($dyeTypeEnabled);
 
   const handleValueChange = (value: RadioGroup.ValueChangeDetails) => {
@@ -24,7 +26,7 @@ export const DyeTypeRadioGroup = () => {
       <RadioGroup.Item value={DyeType.Hue}>
         <RadioGroup.ItemControl />
         <RadioGroup.ItemText>
-          色相
+          {t('dye.hue')}
           <ColorBlock backgroundGradient="hueConic" />
         </RadioGroup.ItemText>
         <RadioGroup.ItemHiddenInput />
@@ -32,7 +34,7 @@ export const DyeTypeRadioGroup = () => {
       <RadioGroup.Item value={DyeType.Saturation}>
         <RadioGroup.ItemControl />
         <RadioGroup.ItemText>
-          飽和度
+          {t('dye.saturation')}
           <ColorBlock backgroundGradient="saturation" />
         </RadioGroup.ItemText>
         <RadioGroup.ItemHiddenInput />
@@ -40,7 +42,7 @@ export const DyeTypeRadioGroup = () => {
       <RadioGroup.Item value={DyeType.Birghtness}>
         <RadioGroup.ItemControl />
         <RadioGroup.ItemText>
-          亮度
+          {t('dye.brightness')}
           <ColorBlock backgroundGradient="brightness" />
         </RadioGroup.ItemText>
         <RadioGroup.ItemHiddenInput />

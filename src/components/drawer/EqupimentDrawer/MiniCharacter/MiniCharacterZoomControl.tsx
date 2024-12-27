@@ -1,3 +1,5 @@
+import { useTranslate } from '@/context/i18n';
+
 import ResetIcon from 'lucide-solid/icons/rotate-ccw';
 import ViewIcon from 'lucide-solid/icons/view';
 import { HStack } from 'styled-system/jsx/hstack';
@@ -10,6 +12,8 @@ interface MiniCharacterZoomControlProps {
 export const MiniCharacterZoomControl = (
   props: MiniCharacterZoomControlProps,
 ) => {
+  const t = useTranslate();
+
   function handleResetZoom() {
     props.resetZoom();
   }
@@ -22,7 +26,7 @@ export const MiniCharacterZoomControl = (
       <IconButton
         variant="ghost"
         size="xs"
-        title="重製縮放"
+        title={t('scene.resetZoom')}
         onClick={handleResetZoom}
       >
         <ResetIcon />
@@ -30,7 +34,7 @@ export const MiniCharacterZoomControl = (
       <IconButton
         variant="ghost"
         size="xs"
-        title="重製角色位置"
+        title={t('scene.resetPosition')}
         onClick={handleResetCenter}
       >
         <ViewIcon />

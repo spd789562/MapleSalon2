@@ -1,4 +1,5 @@
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 import { styled } from 'styled-system/jsx/factory';
 
 import {
@@ -19,6 +20,7 @@ import { HStack } from 'styled-system/jsx/hstack';
 import { IconButton } from '@/components/ui/icon-button';
 
 export const ZoomControl = () => {
+  const t = useTranslate();
   const currentZoom = useStore($previewChairZoom);
 
   const percent = () => Math.round(currentZoom() * 100);
@@ -41,7 +43,7 @@ export const ZoomControl = () => {
       <IconButton
         variant="ghost"
         size="xs"
-        title="重製縮放"
+        title={t('scene.resetZoom')}
         onClick={handleResetZoom}
       >
         <ResetIcon />
@@ -49,7 +51,7 @@ export const ZoomControl = () => {
       <IconButton
         variant="ghost"
         size="xs"
-        title="縮小"
+        title={t('scene.zoomOut')}
         disabled={currentZoom() <= MIN_ZOOM}
         onClick={handleZoomOut}
       >
@@ -59,7 +61,7 @@ export const ZoomControl = () => {
       <IconButton
         variant="ghost"
         size="xs"
-        title="放大"
+        title={t('scene.zoomIn')}
         disabled={currentZoom() >= MAX_ZOOM}
         onClick={handleZoomIn}
       >
@@ -68,7 +70,7 @@ export const ZoomControl = () => {
       <IconButton
         variant="ghost"
         size="xs"
-        title="重製角色位置"
+        title={t('scene.resetPosition')}
         onClick={handleResetCenter}
       >
         <ViewIcon />

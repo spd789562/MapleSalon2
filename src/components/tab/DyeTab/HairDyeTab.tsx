@@ -54,12 +54,12 @@ export const HairDyeTab = () => {
     <VStack overflow="auto">
       <CardContainer>
         <HStack alignItems="flex-end" m="2">
-          <Heading size="2xl">髮色預覽</Heading>
+          <Heading size="2xl">{t('dye.hairColorPreview')}</Heading>
           <Switch
             checked={showFullCharacter()}
             onCheckedChange={handleSwitchChange}
           >
-            顯示完整腳色
+            {t('dye.showFullCharacter')}
           </Switch>
           <HStack marginLeft="auto">
             <ExportTableButton
@@ -84,7 +84,7 @@ export const HairDyeTab = () => {
         <TableContainer ref={bindScrollRef}>
           <Show
             when={hairItem()?.id}
-            fallback={<EmptyBlock>尚未選擇髮型</EmptyBlock>}
+            fallback={<EmptyBlock>{t('dye.hairUnselected')}</EmptyBlock>}
           >
             <AllColorTable
               category="Hair"
@@ -98,12 +98,12 @@ export const HairDyeTab = () => {
       </CardContainer>
       <CardContainer>
         <HStack alignItems="flex-end" m="2">
-          <Heading size="2xl">混染預覽</Heading>
+          <Heading size="2xl">{t('dye.mixDyePreview')}</Heading>
           <Switch
             checked={showFullCharacter()}
             onCheckedChange={handleSwitchChange}
           >
-            顯示完整腳色
+            {t('dye.showFullCharacter')}
           </Switch>
           <HStack marginLeft="auto">
             <ExportTableButton
@@ -130,7 +130,7 @@ export const HairDyeTab = () => {
         <TableContainer ref={bindScrollRef}>
           <Show
             when={hairItem()?.id}
-            fallback={<EmptyBlock>尚未選擇髮型</EmptyBlock>}
+            fallback={<EmptyBlock>{t('dye.hairUnselected')}</EmptyBlock>}
           >
             <MixDyeTable
               category="Hair"
