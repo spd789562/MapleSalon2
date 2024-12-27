@@ -21,6 +21,8 @@ export interface TagItem {
 /* [id, name, region] */
 type MapStringResponseItem = [string, string, string];
 
+const $mapFetch = atom<Promise<void> | null>(null);
+
 export const $isMapLoading = atom(false);
 export const $mapStrings = atom<MapItem[]>([]);
 export const $mapSearch = atom<string>('');
@@ -99,7 +101,7 @@ export const $disabledLayers = computed([$mapLayerTags], (tags) =>
 );
 
 /* actions */
-export async function prepareAndFetchMapStrings() {
+export async function fetchMapStrings() {
   const strings = await fetch(`${$apiHost.get()}/string/map`)
     .then((res) => res.json())
     .then((res: MapStringResponseItem[]) =>
@@ -114,6 +116,16 @@ export async function prepareAndFetchMapStrings() {
     );
 
   $mapStrings.set(strings);
+}
+export function prepareAndFetchMapStrings() {
+  const fetchPromise = $mapFetch.get();
+  if (fetchPromise) {
+    return fetchPromise;
+  }
+
+  const promise = fetchMapStrings();
+  $mapFetch.set(promise);
+  return promise;
 }
 export function submitMapSelection() {
   const map = $selectedMap.get();

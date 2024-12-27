@@ -11,6 +11,8 @@ export interface SkillItem {
 /* [id, folder, name] */
 type SkillStringResponseItem = [string, string, string];
 
+const $skillFetch = atom<Promise<void> | null>(null);
+
 export const $skillStrings = atom<SkillItem[]>([]);
 export const $skillSearch = atom<string>('');
 
@@ -26,7 +28,7 @@ export const $skillFilterdStrings = computed(
     if (search.includes(',')) {
       const ids = search
         .split(',')
-        .filter((id) => Number.isInteger(Number.parseInt(id)))
+        .filter((id) => Number.isInteger(Number.parseInt(id)));
       return strings.filter((item) => ids.includes(item.id));
     }
     const idSearch = Number.parseInt(search);
@@ -49,7 +51,7 @@ export const $isSkillUninitialized = computed(
 );
 
 /* actions */
-export async function prepareAndFetchSkillStrings() {
+export async function fetchSkillStrings() {
   const strings = await fetch(`${$apiHost.get()}/string/skill`)
     .then((res) => res.json())
     .then((res: SkillStringResponseItem[]) =>
@@ -64,6 +66,16 @@ export async function prepareAndFetchSkillStrings() {
     );
 
   $skillStrings.set(strings);
+}
+export function prepareAndFetchSkillStrings() {
+  const fetchPromise = $skillFetch.get();
+  if (fetchPromise) {
+    return fetchPromise;
+  }
+
+  const promise = fetchSkillStrings();
+  $skillFetch.set(promise);
+  return promise;
 }
 
 export function selectSkill(skill: SkillItem) {

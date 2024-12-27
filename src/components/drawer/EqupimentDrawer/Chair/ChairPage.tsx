@@ -1,16 +1,25 @@
-import { Show } from 'solid-js';
+import { Show, onMount } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 
-import { $isChairUninitialized } from '@/store/chair';
+import {
+  $isChairUninitialized,
+  prepareAndFetchChairStrings,
+} from '@/store/chair';
 
 import { Grid } from 'styled-system/jsx/grid';
 import { EquipListTypeButton } from '@/components/drawer/EqupimentDrawer/EquipListTypeButton';
+import { UninitializedModal } from '../UninitializedModal';
 import { ChairSearchInput } from './ChairSearchInput';
 import { ChairList } from './ChairList';
-import { ChairUninitializedModal } from './ChairUninitializedModal';
 
 export const ChairPage = () => {
   const isUninitialized = useStore($isChairUninitialized);
+
+  onMount(async () => {
+    if ($isChairUninitialized.get()) {
+      await prepareAndFetchChairStrings();
+    }
+  });
 
   return (
     <Grid
@@ -25,7 +34,7 @@ export const ChairPage = () => {
       </Grid>
       <ChairList />
       <Show when={isUninitialized()}>
-        <ChairUninitializedModal />
+        <UninitializedModal />
       </Show>
     </Grid>
   );

@@ -11,6 +11,8 @@ export interface MountItem {
 /* [id, name] */
 type MountStringResponseItem = [string, string];
 
+const $mountFetch = atom<Promise<void> | null>(null);
+
 export const $mountStrings = atom<MountItem[]>([]);
 export const $mountAction = atom<string>(CharacterAction.Stand1);
 export const $mountSearch = atom<string>('');
@@ -47,7 +49,7 @@ export const $isMountUninitialized = computed(
 );
 
 /* actions */
-export async function prepareAndFetchMountStrings() {
+async function fetchMountStrings() {
   const strings = await fetch(`${$apiHost.get()}/string/mount`)
     .then((res) => res.json())
     .then((res: MountStringResponseItem[]) =>
@@ -61,6 +63,16 @@ export async function prepareAndFetchMountStrings() {
     );
 
   $mountStrings.set(strings);
+}
+export function prepareAndFetchMountStrings() {
+  const fetchPromise = $mountFetch.get();
+  if (fetchPromise) {
+    return fetchPromise;
+  }
+
+  const promise = fetchMountStrings();
+  $mountFetch.set(promise);
+  return promise;
 }
 
 export function selectMount(mount: MountItem) {

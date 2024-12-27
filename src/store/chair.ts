@@ -14,6 +14,8 @@ export interface ChairItem {
 /* [id, folder, name] */
 type ChairStringResponseItem = [string, string, string];
 
+const $chairFetch = atom<Promise<void> | null>(null);
+
 export const $chairStrings = atom<ChairItem[]>([]);
 export const $chairSearch = atom<string>('');
 
@@ -67,7 +69,8 @@ export const $isChairUninitialized = computed(
 );
 
 /* actions */
-export async function prepareAndFetchChairStrings() {
+
+export async function fetchChairStrings() {
   const strings = await fetch(`${$apiHost.get()}/string/chair`)
     .then((res) => res.json())
     .then((res: ChairStringResponseItem[]) =>
@@ -82,6 +85,16 @@ export async function prepareAndFetchChairStrings() {
     );
 
   $chairStrings.set(strings);
+}
+export function prepareAndFetchChairStrings() {
+  const fetchPromise = $chairFetch.get();
+  if (fetchPromise) {
+    return fetchPromise;
+  }
+
+  const promise = fetchChairStrings();
+  $chairFetch.set(promise);
+  return promise;
 }
 
 export function selectChair(chair: ChairItem) {
