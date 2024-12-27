@@ -3,3 +3,6 @@ dist
 ## Panda
 styled-system
 styled-system-studio
+
+src-tauri/Microsoft.WebView2*
+add_command.exe
