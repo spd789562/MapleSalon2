@@ -1,5 +1,6 @@
 import { from, For, Show } from 'solid-js';
 import type { WritableAtom } from 'nanostores';
+import { useTranslate } from '@/context/i18n';
 
 import { type TagItem, toggleMapTag } from '@/store/mapleMap';
 
@@ -11,6 +12,7 @@ export interface MapToggleTagProps {
   target: WritableAtom<TagItem[]>;
 }
 export const MapToggleTag = (props: MapToggleTagProps) => {
+  const t = useTranslate();
   const tags = from(props.target);
 
   function handleToggle(tag: TagItem) {
@@ -32,7 +34,7 @@ export const MapToggleTag = (props: MapToggleTagProps) => {
         )}
       </For>
       <Show when={tags()?.length === 0}>
-        <Text size="sm">無標籤</Text>
+        <Text size="sm">{t('scene.mapTagEmpty')}</Text>
       </Show>
     </HStack>
   );

@@ -1,5 +1,6 @@
 import { For, from } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
+import { useTranslate } from '@/context/i18n';
 
 import {
   $userUploadedSceneImages,
@@ -13,6 +14,7 @@ import { PreviewScene } from '@/const/scene';
 const UPLOAD_HISTORY_COLUMNS = 8;
 
 export const UploadHistory = () => {
+  const t = useTranslate();
   const uploadedSceneImages = from($userUploadedSceneImages);
 
   function handleSelectScene(scene: string[]) {
@@ -27,7 +29,7 @@ export const UploadHistory = () => {
       <For each={uploadedSceneImages()}>
         {(scene) => (
           <SceneButton
-            title="選擇此背景"
+            title={t('scene.customSelectThis')}
             onClick={() => handleSelectScene(scene)}
             style={{ 'background-image': `url(${scene[1]})` }}
           />

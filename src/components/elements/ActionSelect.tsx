@@ -1,4 +1,4 @@
-import { useTranslate } from '@/context/i18n';
+import { useTranslate, type I18nKeys } from '@/context/i18n';
 import { SimpleSelect, type ValueChangeDetails } from '@/components/ui/select';
 
 import { CharacterAction } from '@/const/actions';
@@ -91,7 +91,7 @@ export const ActionSelect = (props: ActionSelectProps) => {
   const _options = options.map((option) => ({
     label:
       option.value !== option.label
-        ? (t(option.label) as string)
+        ? (t(option.label as I18nKeys) as string)
         : option.label,
     value: option.value,
   }));

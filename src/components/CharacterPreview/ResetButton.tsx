@@ -1,15 +1,17 @@
-import { resetCharacterChanges } from '@/store/character/action';
+import { useTranslate } from '@/context/i18n';
 
+import { resetCharacterChanges } from '@/store/character/action';
 import { openDialog, DialogType } from '@/store/confirmDialog';
 
 import { Button } from '@/components/ui/button';
 
 export const ResetButton = () => {
+  const t = useTranslate();
   function handleReset() {
     openDialog({
       type: DialogType.Confirm,
-      title: '取消變更',
-      description: '此操作無法返回，確定要取消變更？',
+      title: t('setting.cancelChanges'),
+      description: t('setting.cancelChangesDesc'),
       confirmButton: {
         onClick: () => resetCharacterChanges(),
       },
@@ -19,10 +21,10 @@ export const ResetButton = () => {
   return (
     <Button
       variant="outline"
-      title="取消任何角色變更至為儲存的樣子"
+      title={t('setting.cancelCharacterChanges')}
       onClick={handleReset}
     >
-      取消變更
+      {t('setting.cancelChanges')}
     </Button>
   );
 };

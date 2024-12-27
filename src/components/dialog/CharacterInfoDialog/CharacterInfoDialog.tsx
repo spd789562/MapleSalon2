@@ -1,6 +1,7 @@
 import { type JSX, createContext, useContext, createSignal } from 'solid-js';
 import { Portal, Show } from 'solid-js/web';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $characterInfoDialogOpen } from '@/store/trigger';
 import { clearCurrentCharacterInfo } from '@/store/characterInfo';
@@ -18,6 +19,8 @@ export interface CharacterInfoDialogProps {
   children?: JSX.Element;
 }
 export const CharacterInfoDialog = (props: CharacterInfoDialogProps) => {
+  const t = useTranslate();
+
   let contentRef!: HTMLDivElement;
   const [isExporting, setIsExporting] = createSignal(false);
   const isOpen = useStore($characterInfoDialogOpen);
@@ -64,7 +67,8 @@ export const CharacterInfoDialog = (props: CharacterInfoDialogProps) => {
                   asChild={(closeTriggerProps) => (
                     <IconButton
                       {...closeTriggerProps()}
-                      aria-label="關閉視窗"
+                      aria-label={t('common.closeDialog')}
+                      title={t('common.closeDialog')}
                       variant="ghost"
                       size="sm"
                       position="absolute"

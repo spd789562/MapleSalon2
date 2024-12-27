@@ -1,6 +1,7 @@
 import { splitProps, createSignal, Show } from 'solid-js';
 import type { WritableAtom } from 'nanostores';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import PinIcon from 'lucide-solid/icons/pin';
 import UnpinIcon from 'lucide-solid/icons/pin-off';
@@ -11,6 +12,8 @@ export interface PinButtonProps extends IconButtonProps {
   store: WritableAtom<boolean>;
 }
 export const PinIconButton = (props: PinButtonProps) => {
+  const t = useTranslate();
+
   const [isHovered, setHovered] = createSignal(false);
   const [localProps, buttonProps] = splitProps(props, ['store']);
   const isPinned = useStore(localProps.store);
@@ -27,7 +30,7 @@ export const PinIconButton = (props: PinButtonProps) => {
 
   return (
     <IconButton
-      title={isPinned() ? '取消釘選' : '釘選'}
+      title={isPinned() ? t('common.unpin') : t('common.pin')}
       {...buttonProps}
       onClick={handleClick}
       onMouseOver={handleHover}

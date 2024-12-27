@@ -1,5 +1,6 @@
 import { Show } from 'solid-js';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import {
   $equipmentDrawerSearch,
@@ -15,6 +16,7 @@ import { IconButton } from '@/components/ui/icon-button';
 import { debounce } from 'throttle-debounce';
 
 export const EquipSearchInput = () => {
+  const t = useTranslate();
   const search = useStore($currentEquipmentDrawerSearch);
 
   const handleSearch = debounce(300, (value: string) => {
@@ -31,7 +33,7 @@ export const EquipSearchInput = () => {
   return (
     <Flex align="center" position="relative">
       <Input
-        placeholder="Search..."
+        placeholder={t('common.equipmentSearchPlaceholder')}
         value={search()}
         onInput={(e) => handleSearch(e.target.value)}
         minWidth={6}
@@ -39,6 +41,8 @@ export const EquipSearchInput = () => {
       />
       <Show when={!!search()}>
         <IconButton
+          aria-lable={t('common.clearSearch')}
+          title={t('common.clearSearch')}
           variant="ghost"
           position="absolute"
           right="1"

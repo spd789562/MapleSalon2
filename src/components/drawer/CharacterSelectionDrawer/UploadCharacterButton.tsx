@@ -1,3 +1,5 @@
+import { useTranslate } from '@/context/i18n';
+
 import UploadIcon from 'lucide-solid/icons/upload';
 import { Button } from '@/components/ui/button';
 
@@ -14,6 +16,8 @@ import { toaster } from '@/components/GlobalToast';
 import { getHeadIdFromBodyId, isBodyId } from '@/utils/itemId';
 
 export const UploadCharacterButton = () => {
+  const t = useTranslate();
+
   const handleUpload = (event: Event) => {
     const target = event.target as HTMLInputElement;
     if (!target.files) {
@@ -55,8 +59,8 @@ export const UploadCharacterButton = () => {
       } catch (error) {
         console.error(error);
         toaster.error({
-          title: '上傳失敗',
-          description: '檔案格式錯誤',
+          title: t('setting.uploadFailed'),
+          description: t('setting.fileFormatError'),
         });
       } finally {
         target.value = '';
@@ -66,7 +70,7 @@ export const UploadCharacterButton = () => {
   };
 
   return (
-    <Button as="label" title="上傳角色" size="xs">
+    <Button as="label" title={t('setting.uploadCharacter')} size="xs">
       <input
         id="uploadCharacter"
         type="file"
@@ -74,7 +78,7 @@ export const UploadCharacterButton = () => {
         style={{ display: 'none' }}
         onChange={handleUpload}
       />
-      上傳
+      {t('setting.upload')}
       <UploadIcon />
     </Button>
   );

@@ -1,3 +1,5 @@
+import { useTranslate } from '@/context/i18n';
+
 import UploadIcon from 'lucide-solid/icons/upload';
 import { Button } from '@/components/ui/button';
 
@@ -8,6 +10,7 @@ import { toaster } from '@/components/GlobalToast';
 const DATA_URL_PREFIX_REG = /^data:image\/(png|jpg|jpeg|webp);base64,/;
 
 export const UploadBackgroundButton = () => {
+  const t = useTranslate();
   const handleUpload = (event: Event) => {
     const target = event.target as HTMLInputElement;
     if (!target.files) {
@@ -27,8 +30,8 @@ export const UploadBackgroundButton = () => {
       }
       if (!DATA_URL_PREFIX_REG.test(result)) {
         toaster.error({
-          title: '上傳失敗',
-          description: '檔案格式錯誤',
+          title: t('setting.uploadFailed'),
+          description: t('setting.fileFormatError'),
         });
         return;
       }
@@ -46,7 +49,7 @@ export const UploadBackgroundButton = () => {
         style={{ display: 'none' }}
         onChange={handleUpload}
       />
-      上傳背景圖
+      {t('scene.uploadBackground')}
       <UploadIcon />
     </Button>
   );

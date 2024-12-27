@@ -1,6 +1,7 @@
 import { Show } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 import { styled } from 'styled-system/jsx/factory';
+import { useTranslate } from '@/context/i18n';
 
 import { $selectedMap } from '@/store/mapleMap';
 
@@ -10,18 +11,19 @@ import { SimpleTextClipboard } from '@/components/ui/clipboard';
 import { MinimapImage } from './MinimapImage';
 
 export const SelectedInfo = () => {
+  const t = useTranslate();
   const selectedMap = useStore($selectedMap);
 
   return (
     <VStack width="full" gap="1" alignItems="flex-start">
       <Show
         when={selectedMap()}
-        fallback={<EmptyBlock>尚未選擇地圖</EmptyBlock>}
+        fallback={<EmptyBlock>{t('scene.mapUnselected')}</EmptyBlock>}
       >
         {(info) => (
           <>
             <Heading as="h4" size="lg">
-              小地圖預覽:
+              {t('scene.minimapPreview')}:
             </Heading>
             <MinimapImage
               id={info().id}
@@ -29,15 +31,15 @@ export const SelectedInfo = () => {
               region={info().region}
             />
             <Heading as="h4" size="lg">
-              地圖區域:
+              {t('scene.mapRegion')}:
             </Heading>
             <SimpleTextClipboard value={info().region} />
             <Heading as="h4" size="lg">
-              地圖名稱:
+              {t('scene.mapName')}:
             </Heading>
             <SimpleTextClipboard value={info().name} />
             <Heading as="h5" size="lg">
-              地圖 ID:
+              {t('scene.mapId')}:
             </Heading>
             <SimpleTextClipboard value={info().id} />
           </>

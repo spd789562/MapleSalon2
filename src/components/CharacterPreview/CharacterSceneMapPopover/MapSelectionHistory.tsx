@@ -1,5 +1,6 @@
 import { For, Show } from 'solid-js';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import {
   $selectMapHistory,
@@ -12,6 +13,7 @@ import { Link } from '@/components/ui/link';
 import { Text } from '@/components/ui/text';
 
 export const MapSelectionHistory = () => {
+  const t = useTranslate();
   const history = useStore($selectMapHistory);
 
   function handleSelect(map: MapItem) {
@@ -24,7 +26,7 @@ export const MapSelectionHistory = () => {
         {(map) => (
           <Link
             onClick={() => handleSelect(map)}
-            title={`點擊更換地圖為 ${map.name}`}
+            title={t('scene.mapChangeMapTo', { name: map.name })}
           >
             {map.name}
             <ArrowLeftRightIcon size={12} />
@@ -32,7 +34,7 @@ export const MapSelectionHistory = () => {
         )}
       </For>
       <Show when={history().length === 0}>
-        <Text size="sm">尚無選擇紀錄</Text>
+        <Text size="sm">{t('scene.mapEmptySelection')}</Text>
       </Show>
     </>
   );

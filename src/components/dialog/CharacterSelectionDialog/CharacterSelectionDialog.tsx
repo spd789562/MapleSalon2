@@ -1,5 +1,7 @@
 import type { JSX } from 'solid-js';
 import { Portal } from 'solid-js/web';
+import { useTranslate } from '@/context/i18n';
+
 import CloseIcon from 'lucide-solid/icons/x';
 import * as Dialog from '@/components/ui/dialog';
 import { IconButton } from '@/components/ui/icon-button';
@@ -10,6 +12,7 @@ export interface CharacterSelectionDialogProps extends Dialog.RootProps {
 export const CharacterSelectionDialog = (
   props: CharacterSelectionDialogProps,
 ) => {
+  const t = useTranslate();
   return (
     <Dialog.Root {...props}>
       <Portal>
@@ -21,7 +24,8 @@ export const CharacterSelectionDialog = (
               asChild={(closeTriggerProps) => (
                 <IconButton
                   {...closeTriggerProps()}
-                  aria-label="關閉視窗"
+                  aria-label={t('common.closeDialog')}
+                  title={t('common.closeDialog')}
                   variant="ghost"
                   size="sm"
                   position="absolute"

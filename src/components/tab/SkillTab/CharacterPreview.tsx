@@ -7,6 +7,7 @@ import {
   Show,
 } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
+import { useTranslate } from '@/context/i18n';
 
 import {
   $isGlobalRendererInitialized,
@@ -46,6 +47,8 @@ export interface CharacterPreviewViewProps {
   target: string;
 }
 export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
+  const t = useTranslate();
+
   const zoomInfo = usePureStore($previewChairZoomInfo);
   const characterData = from($previewCharacter);
   const skillData = usePureStore($currentSkill);
@@ -73,8 +76,8 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     function onEquipLoadError(payload: CharacterItemInfo[]) {
       const names = payload.map((item) => item.name || item.id).join(', ');
       toaster.error({
-        title: '裝備載入失敗',
-        description: `下列裝備載入失敗：${names}`,
+        title: t('error.equipmentLoadFailed'),
+        description: t('error.equipmentLoadFailedDesc', { errorNames: names }),
       });
     },
   );

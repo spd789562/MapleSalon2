@@ -33,6 +33,8 @@ export const dict = {
   actionNotLoaded: '動作尚未全部載入完畢',
   success: '匯出成功',
   error: '匯出時發生未知錯誤',
+  copySuccess: '複製成功',
+  copyError: '複製時發生未知錯誤',
   errorFileTooBig: '匯出時發生未知錯誤，檔案可能過大',
   errorCanvas: '匯出失敗，無法建立 Canvas',
   errorBlob: '匯出失敗，無法建立 Blob',

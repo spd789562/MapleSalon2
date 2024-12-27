@@ -32,7 +32,7 @@ export const OpenPathButton = (props: OpenPathButtonProps) => {
       }
     } catch (_) {
       toaster.error({
-        title: '檔案或路徑已不存在',
+        title: t('initial.fileOrPathNotExist'),
       });
     }
     /* D:/what/ever/Data/Base/Base.wz to D:/what/ever/Data/Base */
@@ -41,7 +41,7 @@ export const OpenPathButton = (props: OpenPathButtonProps) => {
       await open(folder);
     } catch (_) {
       toaster.error({
-        title: '開啟路徑時發生錯誤',
+        title: t('initial.openPathError'),
       });
     }
   }

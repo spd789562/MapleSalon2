@@ -1,5 +1,6 @@
 import { createContext, useContext, type JSX } from 'solid-js';
 import { useMenu, type UseMenuReturn } from '@ark-ui/solid';
+import { useTranslate } from '@/context/i18n';
 
 import {
   $itemContextMenuTargetInfo,
@@ -14,6 +15,7 @@ export const ItemContextMenuContext = createContext<UseMenuReturn>();
 export function ItemContextMenuProvider(props: {
   children: JSX.Element;
 }) {
+  const t = useTranslate();
   const menu = useMenu({
     positioning: {
       strategy: 'fixed',
@@ -36,11 +38,11 @@ export function ItemContextMenuProvider(props: {
           image && (await copyImage(image));
         }
         toaster.success({
-          title: '已複製',
+          title: t('export.copied'),
         });
       } catch (e) {
         toaster.error({
-          title: '複製發生錯誤',
+          title: t('export.copyError'),
         });
       }
     },

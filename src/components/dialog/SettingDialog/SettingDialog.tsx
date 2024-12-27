@@ -1,6 +1,7 @@
 import type { JSX } from 'solid-js';
 import { Portal } from 'solid-js/web';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $settingDialogOpen } from '@/store/trigger';
 import { saveSetting } from '@/store/settingDialog';
@@ -13,6 +14,7 @@ export interface SettingDialogProps {
   children?: JSX.Element;
 }
 export const SettingDialog = (props: SettingDialogProps) => {
+  const t = useTranslate();
   const isOpen = useStore($settingDialogOpen);
 
   function handleClose() {
@@ -39,7 +41,8 @@ export const SettingDialog = (props: SettingDialogProps) => {
               asChild={(closeTriggerProps) => (
                 <IconButton
                   {...closeTriggerProps()}
-                  aria-label="關閉視窗"
+                  aria-label={t('common.closeDialog')}
+                  title={t('common.closeDialog')}
                   variant="ghost"
                   size="sm"
                   position="absolute"

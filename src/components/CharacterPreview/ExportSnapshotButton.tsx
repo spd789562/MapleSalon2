@@ -1,3 +1,5 @@
+import { useTranslate } from '@/context/i18n';
+
 import { $globalRenderer } from '@/store/renderer';
 
 import { useCharacterPreview } from './CharacterPreviewContext';
@@ -8,6 +10,7 @@ import { exportCharacterSnapshot } from './ExportAnimationButton';
 import { toaster } from '@/components/GlobalToast';
 
 export const ExportSnapshotButton = () => {
+  const t = useTranslate();
   const [state] = useCharacterPreview();
 
   function handleClick() {
@@ -18,21 +21,21 @@ export const ExportSnapshotButton = () => {
     const app = $globalRenderer.get();
     if (!(app && state.characterRef)) {
       toaster.error({
-        title: '尚未載入完畢',
+        title: t('export.notLoaded'),
       });
       return;
     }
-    exportCharacterSnapshot(state.characterRef);
+    exportCharacterSnapshot(t, state.characterRef);
   }
 
   return (
     <Button
       variant="outline"
-      title="匯出當前快照"
+      title={t('export.currentSnapshot')}
       onClick={handleClick}
       disabled={state.isExporting}
     >
-      匯出快照
+      {t('export.snapshot')}
     </Button>
   );
 };

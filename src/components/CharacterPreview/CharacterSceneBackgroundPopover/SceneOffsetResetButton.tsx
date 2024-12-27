@@ -16,7 +16,7 @@ export const SceneOffsetResetButton = (props: MixDyeAlphaSliderProps) => {
     <IconButton
       variant="outline"
       size="xs"
-      title={`重製${props.title}`}
+      title={`${props.title}`}
       onClick={handleClick}
     >
       <ResetIcon />

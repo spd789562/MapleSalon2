@@ -1,5 +1,6 @@
 import { Index } from 'solid-js';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { css } from 'styled-system/css';
 
@@ -40,6 +41,7 @@ const options = [
 ];
 
 export const CharacterSceneRadioGroup = () => {
+  const t = useTranslate();
   const scene = useStore($currentScene);
   const customColor = useStore($sceneCustomColor);
 
@@ -58,7 +60,7 @@ export const CharacterSceneRadioGroup = () => {
               height="6"
               padding="unset"
               minWidth="0"
-              title={option().label}
+              title={t(option().label) as string}
               borderWidth={2}
               class={css(option().colorBlockStyle)}
             >
@@ -74,7 +76,7 @@ export const CharacterSceneRadioGroup = () => {
             height="6"
             padding="unset"
             minWidth="0"
-            title={PreviewSceneNames.color}
+            title={t(PreviewSceneNames.color) as string}
             borderWidth={2}
             transition-property="border-color, color, box-shadow"
             style={{
@@ -92,7 +94,7 @@ export const CharacterSceneRadioGroup = () => {
             height="6"
             padding="unset"
             minWidth="0"
-            title={PreviewSceneNames.custom}
+            title={t(PreviewSceneNames.custom) as string}
             backgroundColor="bg.default"
             borderWidth={2}
             color="fg.subtle"
@@ -110,7 +112,7 @@ export const CharacterSceneRadioGroup = () => {
             height="6"
             padding="unset"
             minWidth="0"
-            title={PreviewSceneNames.mapleMap}
+            title={t(PreviewSceneNames.mapleMap) as string}
             backgroundColor="bg.default"
             borderWidth={2}
             color="fg.subtle"

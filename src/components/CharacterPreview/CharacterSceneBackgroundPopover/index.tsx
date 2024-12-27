@@ -1,5 +1,6 @@
 import { type JSX, createSignal } from 'solid-js';
 import { Portal } from 'solid-js/web';
+import { useTranslate } from '@/context/i18n';
 
 import {
   $sceneOffsetX,
@@ -29,6 +30,7 @@ export interface CharacterSceneBackgroundPopoverProps {
 export const CharacterSceneBackgroundPopover = (
   props: CharacterSceneBackgroundPopoverProps,
 ) => {
+  const t = useTranslate();
   let hoverTimer: number | null = null;
   const [isOpen, setIsOpen] = createSignal(false);
   const handleHoverTrigger = () => {
@@ -69,30 +71,43 @@ export const CharacterSceneBackgroundPopover = (
               <Popover.ArrowTip />
             </Popover.Arrow>
             <Stack gap="2">
-              <Popover.Title>自訂背景</Popover.Title>
+              <Popover.Title>{t('scene.customTitle')}</Popover.Title>
               <UploadBackgroundButton />
               <HStack gap="2">
-                <Text>X 位移</Text>
+                <Text>{t('scene.xOffset')}</Text>
                 <SceneOffsetNumberInput target={$sceneOffsetX} />
-                <SceneOffsetResetButton title="X 位移" target={$sceneOffsetX} />
+                <SceneOffsetResetButton
+                  title={t('scene.resetxOffset')}
+                  target={$sceneOffsetX}
+                />
               </HStack>
               <HStack gap="2">
-                <Text>Y 位移</Text>
+                <Text>{t('scene.yOffset')}</Text>
                 <SceneOffsetNumberInput target={$sceneOffsetY} />
-                <SceneOffsetResetButton title="Y 位移" target={$sceneOffsetY} />
+                <SceneOffsetResetButton
+                  title={t('scene.resetyOffset')}
+                  target={$sceneOffsetY}
+                />
               </HStack>
               <HStack gap="2">
-                <SceneRepeatSwitch title="重複 X" target={$sceneRepeatX} />
-                <SceneRepeatSwitch title="重複 Y" target={$sceneRepeatY} />
+                <SceneRepeatSwitch
+                  title={t('scene.repeatX')}
+                  target={$sceneRepeatX}
+                />
+                <SceneRepeatSwitch
+                  title={t('scene.repeatY')}
+                  target={$sceneRepeatY}
+                />
               </HStack>
-              <Text>上傳紀錄</Text>
+              <Text>{t('scene.customUploadHistory')}</Text>
               <UploadHistory />
             </Stack>
             <Box position="absolute" top="1" right="1">
               <Popover.CloseTrigger
                 asChild={(closeProps) => (
                   <IconButton
-                    aria-label="Close Scene Select"
+                    aria-label={t('scene.closeCustom')}
+                    title={t('scene.closeCustom')}
                     variant="ghost"
                     size="sm"
                     {...closeProps()}

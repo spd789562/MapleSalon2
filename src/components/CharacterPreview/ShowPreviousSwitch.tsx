@@ -1,10 +1,12 @@
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $showPreviousCharacter } from '@/store/trigger';
 
 import { Switch, type ChangeDetails } from '@/components/ui/switch';
 
 export const ShowPreviousSwitch = () => {
+  const t = useTranslate();
   const isShow = useStore($showPreviousCharacter);
 
   function handleChange(details: ChangeDetails) {
@@ -13,7 +15,7 @@ export const ShowPreviousSwitch = () => {
 
   return (
     <Switch checked={isShow()} onCheckedChange={handleChange}>
-      顯示比對
+      {t('setting.showCompare')}
     </Switch>
   );
 };

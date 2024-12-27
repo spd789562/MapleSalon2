@@ -1,4 +1,5 @@
 import { createSignal } from 'solid-js';
+import { useTranslate } from '@/context/i18n';
 
 import { Box } from 'styled-system/jsx/box';
 import { saveCurrentCharacter } from '@/store/characterDrawer';
@@ -11,6 +12,7 @@ import { IconButton } from '@/components/ui/icon-button';
 import { toaster } from '../GlobalToast';
 
 export const SaveButton = () => {
+  const t = useTranslate();
   const [isLoading, setIsLoading] = createSignal(false);
 
   async function handleSave() {
@@ -19,8 +21,8 @@ export const SaveButton = () => {
     applyCharacterChanges();
     setIsLoading(false);
     toaster.success({
-      title: '儲存成功',
-      description: '角色已儲存',
+      title: t('setting.saveSuccess'),
+      description: t('setting.saveCharacterSuccess'),
     });
   }
 
@@ -30,8 +32,8 @@ export const SaveButton = () => {
     applyCharacterChanges();
     setIsLoading(false);
     toaster.success({
-      title: '儲存成功',
-      description: '以另存為新角色',
+      title: t('setting.saveSuccess'),
+      description: t('setting.saveAsNewCharacterSuccess'),
     });
   }
 
@@ -43,13 +45,13 @@ export const SaveButton = () => {
         disabled={isLoading()}
         borderRightRadius="0"
       >
-        儲存
+        {t('setting.save')}
       </Button>
       <IconButton
         variant="outline"
         onClick={handleSaveNewCharacter}
         disabled={isLoading()}
-        title="另存為新角色"
+        title={t('setting.saveAsNew')}
         borderLeftRadius="0"
       >
         <UserRoundPlusIcon />

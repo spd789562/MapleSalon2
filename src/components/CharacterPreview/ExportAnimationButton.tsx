@@ -4,7 +4,7 @@ import { $exportType, $addBlackBgWhenExportGif } from '@/store/settingDialog';
 import { $interactionLock } from '@/store/trigger';
 
 import { useCharacterPreview } from './CharacterPreviewContext';
-import { useTranslate } from '@/context/i18n';
+import { type AppTranslator, useTranslate } from '@/context/i18n';
 
 import type { Character } from '@/renderer/character/character';
 
@@ -23,13 +23,14 @@ import { extractCanvas } from '@/utils/extract';
 import { ActionExportType, ActionExportTypeExtensions } from '@/const/toolTab';
 
 export function exportCharacterSnapshot(
+  t: AppTranslator,
   character?: Character,
   filename?: string,
 ) {
   const app = $globalRenderer.get();
   if (!(app && character)) {
     toaster.error({
-      title: '尚未載入完畢',
+      title: t('export.notLoaded'),
     });
     return;
   }
@@ -52,7 +53,7 @@ export const ExportAnimationButton = () => {
       return;
     }
     if (!$isAnimating.get()) {
-      return exportCharacterSnapshot(state.characterRef);
+      return exportCharacterSnapshot(t, state.characterRef, undefined);
     }
 
     try {

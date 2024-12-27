@@ -1,4 +1,5 @@
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $mapTargetLayer } from '@/store/mapleMap';
 
@@ -11,6 +12,7 @@ import {
 import { IconCssTooltip, IconType } from '@/components/elements/IconTooltip';
 
 export const TargetLayerNumberInput = () => {
+  const t = useTranslate();
   const count = useStore($mapTargetLayer);
 
   function handleCountChange(details: ValueChangeDetails) {
@@ -19,9 +21,9 @@ export const TargetLayerNumberInput = () => {
 
   return (
     <HStack>
-      <Text>物體圖層</Text>
+      <Text>{t('scene.mapTargetLayer')}</Text>
       <IconCssTooltip
-        tooltip="變更物體所在的圖層，避免地圖物件遮擋"
+        tooltip={t('scene.mapTargetLayerTip')}
         type={IconType.Question}
       />
       <NumberInput

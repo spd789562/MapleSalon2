@@ -8,6 +8,7 @@ import {
   Show,
 } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
+import { useTranslate } from '@/context/i18n';
 
 import {
   $isGlobalRendererInitialized,
@@ -51,6 +52,8 @@ export interface CharacterPreviewViewProps {
   target: string;
 }
 export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
+  const t = useTranslate();
+
   const zoomInfo = usePureStore($previewChairZoomInfo);
   const characterData = from($previewCharacter);
   const chairData = usePureStore($currentChair);
@@ -88,8 +91,8 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     function onEquipLoadError(payload: CharacterItemInfo[]) {
       const names = payload.map((item) => item.name || item.id).join(', ');
       toaster.error({
-        title: '裝備載入失敗',
-        description: `下列裝備載入失敗：${names}`,
+        title: t('error.equipmentLoadFailed'),
+        description: t('error.equipmentLoadFailedDesc', { errorNames: names }),
       });
     },
   );
@@ -184,8 +187,8 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
       await chair.load();
     } catch (_) {
       toaster.error({
-        title: '椅子載入失敗',
-        description: '此椅子可能檔案不完全或尚未支援',
+        title: t('error.chairLoadFailed'),
+        description: t('error.chairLoadFailedDesc'),
       });
       chair.destroy();
       return;

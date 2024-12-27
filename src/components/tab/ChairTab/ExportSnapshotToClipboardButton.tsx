@@ -1,3 +1,5 @@
+import { useTranslate } from '@/context/i18n';
+
 import { $globalRenderer } from '@/store/renderer';
 
 import { useChairTab } from './ChairTabContext';
@@ -9,6 +11,8 @@ import { extractCanvas } from '@/utils/extract';
 import { copyCanvas } from '@/utils/clipboard';
 
 export const ExportSnapshotToClipboardButton = () => {
+  const t = useTranslate();
+
   const [state] = useChairTab();
 
   async function handleClick() {
@@ -19,7 +23,7 @@ export const ExportSnapshotToClipboardButton = () => {
     const app = $globalRenderer.get();
     if (!(app && state.chairRef)) {
       toaster.error({
-        title: '尚未載入完畢',
+        title: t('export.notLoaded'),
       });
       return;
     }
@@ -30,11 +34,11 @@ export const ExportSnapshotToClipboardButton = () => {
     try {
       await copyCanvas(frame);
       toaster.success({
-        title: '複製成功',
+        title: t('export.copySuccess'),
       });
     } catch (_) {
       toaster.error({
-        title: '複製時發生未知錯誤',
+        title: t('export.copyError'),
       });
     }
   }
@@ -42,11 +46,11 @@ export const ExportSnapshotToClipboardButton = () => {
   return (
     <Button
       variant="outline"
-      title="複製當前快照至剪貼簿"
+      title={t('export.copyCurrentSnapshot')}
       onClick={handleClick}
       disabled={state.isExporting}
     >
-      複製快照
+      {t('export.copySnapshot')}
     </Button>
   );
 };

@@ -1,5 +1,6 @@
 import type { JSX } from 'solid-js';
 import { Portal } from 'solid-js/web';
+import { useTranslate } from '@/context/i18n';
 
 import { useHoverTrigger } from '@/hook/hoverTrigger';
 
@@ -17,6 +18,7 @@ export interface CharacterSceneMapPopoverProps {
 export const CharacterSceneMapPopover = (
   props: CharacterSceneMapPopoverProps,
 ) => {
+  const t = useTranslate();
   const {
     isOpen,
     onHover: handleHoverTrigger,
@@ -54,7 +56,8 @@ export const CharacterSceneMapPopover = (
               <Popover.CloseTrigger
                 asChild={(closeProps) => (
                   <IconButton
-                    aria-label="Close Scene Select"
+                    aria-label={t('scene.closeMap')}
+                    title={t('scene.closeMap')}
                     variant="ghost"
                     size="sm"
                     {...closeProps()}

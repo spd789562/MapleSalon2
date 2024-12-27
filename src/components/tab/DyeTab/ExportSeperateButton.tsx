@@ -1,4 +1,5 @@
 import { type JSX, createSignal } from 'solid-js';
+import { useTranslate } from '@/context/i18n';
 
 import { Button } from '@/components/ui/button';
 
@@ -15,6 +16,7 @@ export interface ExportSeperateButtonProps {
   disabled?: boolean;
 }
 export const ExportSeperateButton = (props: ExportSeperateButtonProps) => {
+  const t = useTranslate();
   const [isExporting, setIsExporting] = createSignal(false);
 
   async function handleClick() {
@@ -25,7 +27,7 @@ export const ExportSeperateButton = (props: ExportSeperateButtonProps) => {
     const isAllImagesLoaded = validImageCounts === props.imageCounts;
     if (!isAllImagesLoaded) {
       toaster.error({
-        title: '圖片尚未載入完畢',
+        title: t('export.notLoaded'),
       });
       return;
     }

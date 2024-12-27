@@ -1,6 +1,7 @@
 import { createSignal } from 'solid-js';
 import { Portal, Show } from 'solid-js/web';
 import { styled } from 'styled-system/jsx/factory';
+import { useTranslate } from '@/context/i18n';
 
 import { usePureStore } from '@/store';
 import {
@@ -21,6 +22,8 @@ import { IconButton } from '@/components/ui/icon-button';
 import { Button } from '@/components/ui/button';
 
 export const GlobalConfirmDialog = () => {
+  const t = useTranslate();
+
   const [isLoading, setIsLoading] = createSignal(false);
   const [loadTarget, setLoadTarget] = createSignal<'confirm' | 'cancel' | null>(
     null,
@@ -109,7 +112,7 @@ export const GlobalConfirmDialog = () => {
                           </Loading>
                         </Show>
                         {(data() as ConfirmDialogData).cancelButton?.text ??
-                          '取消'}
+                          t('common.cancel')}
                       </Button>
                     </Show>
                     <Button
@@ -125,7 +128,7 @@ export const GlobalConfirmDialog = () => {
                           <LoaderCircle />
                         </Loading>
                       </Show>
-                      {data().confirmButton?.text ?? '確認'}
+                      {data().confirmButton?.text ?? t('common.confirm')}
                     </Button>
                   </HStack>
                 </Stack>
@@ -146,12 +149,14 @@ const Loading = styled('div', {
 });
 
 const DialogCloseButton = () => {
+  const t = useTranslate();
   return (
     <Dialog.CloseTrigger
       asChild={(closeTriggerProps) => (
         <IconButton
           {...closeTriggerProps()}
-          aria-label="關閉確認視窗"
+          aria-label={t('common.closeConfirm')}
+          title={t('common.closeConfirm')}
           variant="ghost"
           size="sm"
           position="absolute"

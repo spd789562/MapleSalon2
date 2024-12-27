@@ -1,6 +1,7 @@
 import { Index, type JSX, createSignal } from 'solid-js';
 import { Portal } from 'solid-js/web';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $sceneCustomColor } from '@/store/scene';
 
@@ -29,6 +30,7 @@ export interface CharacterSceneColorPickerProps {
 export const CharacterSceneColorPicker = (
   props: CharacterSceneColorPickerProps,
 ) => {
+  const t = useTranslate();
   let hoverTimer: number | null = null;
   const color = useStore($sceneCustomColor);
   const [isOpen, setIsOpen] = createSignal(false);
@@ -84,7 +86,8 @@ export const CharacterSceneColorPicker = (
                     <IconButton
                       size="xs"
                       variant="outline"
-                      aria-label="顏色選擇器"
+                      aria-label={t('scene.colorPicker')}
+                      title={t('scene.colorPicker')}
                       {...props()}
                     >
                       <PipetteIcon />
@@ -114,7 +117,7 @@ export const CharacterSceneColorPicker = (
               </HStack>
               <Stack gap="1.5">
                 <Text size="xs" fontWeight="medium" color="fg.default">
-                  預設顏色
+                  {t('scene.defaultColor')}
                 </Text>
                 <ColorPicker.SwatchGroup>
                   <Index each={presets}>

@@ -1,5 +1,6 @@
 import { Show, createEffect } from 'solid-js';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 
 import { $mapSelectionDialogOpen } from '@/store/trigger';
 import {
@@ -22,6 +23,7 @@ import { MapList } from './MapList';
 import { SelectedInfo } from './SelectedInfo';
 
 export const MapSelectionDialog = () => {
+  const t = useTranslate();
   const isOpen = useStore($mapSelectionDialogOpen);
   const isUninitialized = useStore($isMapListUninitialized);
   const mapSubmitDisabled = useStore($isMapSubmitDisabled);
@@ -54,7 +56,7 @@ export const MapSelectionDialog = () => {
         height="100%"
         padding="4"
       >
-        <Title>選擇地圖</Title>
+        <Title>{t('scene.mapDialogTitle')}</Title>
         <Box width="50%">
           <MapSearchInput />
         </Box>
@@ -73,7 +75,7 @@ export const MapSelectionDialog = () => {
               marginLeft="auto"
               onClick={handleSubmit}
             >
-              確認
+              {t('common.confirm')}
             </Button>
           </VStack>
         </HStack>

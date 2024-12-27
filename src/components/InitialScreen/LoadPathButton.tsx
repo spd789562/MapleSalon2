@@ -27,7 +27,7 @@ export const LoadPathButton = (props: LoadPathButtonProps) => {
     const isExist = await exists(props.path);
     if (!isExist) {
       toaster.error({
-        title: '檔案或路徑已不存在',
+        title: t('initial.fileOrPathNotExist'),
       });
       return;
     }

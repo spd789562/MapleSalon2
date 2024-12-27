@@ -1,4 +1,5 @@
 import type { SystemStyleObject } from 'styled-system/types';
+import type { I18nKeys } from '@/context/i18n';
 import { css } from 'styled-system/css';
 
 export enum PreviewScene {
@@ -10,13 +11,13 @@ export enum PreviewScene {
   MapleMap = 'mapleMap',
 }
 
-export const PreviewSceneNames: Record<PreviewScene, string> = {
-  [PreviewScene.Alpha]: '透明背景',
-  [PreviewScene.Grid]: '灰網格背景',
-  [PreviewScene.Color]: '純色背景',
-  [PreviewScene.Henesys]: '弓箭手村背景',
-  [PreviewScene.Custom]: '自訂背景',
-  [PreviewScene.MapleMap]: '地圖背景',
+export const PreviewSceneNames: Record<PreviewScene, I18nKeys> = {
+  [PreviewScene.Alpha]: 'scene.sceneAlpha',
+  [PreviewScene.Grid]: 'scene.sceneGrid',
+  [PreviewScene.Color]: 'scene.sceneColor',
+  [PreviewScene.Henesys]: 'scene.sceneHenesys',
+  [PreviewScene.Custom]: 'scene.sceneCustom',
+  [PreviewScene.MapleMap]: 'scene.sceneMapleMap',
 };
 
 export const PreviewSceneBackground: Record<PreviewScene, SystemStyleObject> = {

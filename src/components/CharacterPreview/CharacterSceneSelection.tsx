@@ -1,5 +1,6 @@
 import { Switch, Match } from 'solid-js';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 import { styled } from 'styled-system/jsx/factory';
 
 import { $sceneCustomStyle, $currentScene } from '@/store/scene';
@@ -17,6 +18,7 @@ import {
 } from '@/const/scene';
 
 export const CharacterSceneSelection = () => {
+  const t = useTranslate();
   const scene = useStore($currentScene);
   const customColorStyle = useStore($sceneCustomStyle);
   const isOpen = useStore($sceneSelectionOpen);
@@ -29,7 +31,7 @@ export const CharacterSceneSelection = () => {
     <Positioner>
       <SelectionContainer data-state={isOpen() ? 'closed' : 'open'}>
         <SelectionToggleButton
-          title="收合場景選擇列表"
+          title={t('scene.toggleSceneSelection')}
           data-state={isOpen() ? 'closed' : 'open'}
           onClick={handleToggle}
         >
@@ -39,7 +41,7 @@ export const CharacterSceneSelection = () => {
       </SelectionContainer>
       <BlockContainer onClick={handleToggle}>
         <BackgroundBlock
-          title={PreviewSceneNames[scene()]}
+          title={t(PreviewSceneNames[scene()]) as string}
           bgType={scene()}
           style={customColorStyle()}
         >

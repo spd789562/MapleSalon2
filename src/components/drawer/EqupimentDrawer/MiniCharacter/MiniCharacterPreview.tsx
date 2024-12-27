@@ -1,5 +1,6 @@
 import { onCleanup, createEffect, createSignal, from } from 'solid-js';
 import type { ReadableAtom } from 'nanostores';
+import { useTranslate } from '@/context/i18n';
 
 import {
   $isGlobalRendererInitialized,
@@ -28,6 +29,8 @@ export interface MiniCharacterPreviewProps {
   store: ReadableAtom<CharacterData>;
 }
 export const MiniCharacterPreview = (props: MiniCharacterPreviewProps) => {
+  const t = useTranslate();
+
   const characterData = from(props.store);
   const isRendererInitialized = usePureStore($isGlobalRendererInitialized);
   const [isInit, setIsInit] = createSignal<boolean>(false);
@@ -43,8 +46,8 @@ export const MiniCharacterPreview = (props: MiniCharacterPreviewProps) => {
     function onEquipLoadError(payload: CharacterItemInfo[]) {
       const names = payload.map((item) => item.name || item.id).join(', ');
       toaster.error({
-        title: '裝備載入失敗',
-        description: `下列裝備載入失敗：${names}`,
+        title: t('error.equipmentLoadFailed'),
+        description: t('error.equipmentLoadFailedDesc', { errorNames: names }),
       });
     },
   );

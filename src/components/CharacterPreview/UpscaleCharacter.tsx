@@ -1,4 +1,5 @@
 import { onMount, onCleanup, createEffect, createSignal } from 'solid-js';
+import { useTranslate } from '@/context/i18n';
 
 import { $upscaleSource } from '@/store/expirement/upscale';
 import { usePureStore } from '@/store';
@@ -15,6 +16,7 @@ import {
 import { toaster } from '@/components/GlobalToast';
 
 export const UpscaleCharacter = () => {
+  const t = useTranslate();
   const source = usePureStore($upscaleSource);
   const [isInit, setIsInit] = createSignal<boolean>(false);
   let canvasRef!: HTMLCanvasElement;
@@ -54,8 +56,8 @@ export const UpscaleCharacter = () => {
     } catch (e) {
       console.error(e);
       toaster.error({
-        title: '無法初始化 WebGPU',
-        description: '請確保您的 Webview 版本支援 WebGPU。',
+        title: t('error.gpuInitializeError'),
+        description: t('error.gpuInitializeDesc'),
       });
     }
   });
