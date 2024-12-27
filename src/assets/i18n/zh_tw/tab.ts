@@ -11,4 +11,11 @@ export const dict = {
   currentEquipment: '當前裝備',
   characterSetting: '角色設定',
   characterList: '角色選單',
+
+  equipment: '裝備',
+  hair: '髮型',
+  face: '臉型',
+  equipHistory: '近期使用',
+  equipCategory: '裝備類別',
+  saved: '收藏',
 };

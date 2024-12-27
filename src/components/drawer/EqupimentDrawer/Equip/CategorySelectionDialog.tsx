@@ -1,5 +1,6 @@
 import type { JSX } from 'solid-js';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 import { css } from 'styled-system/css';
 
 import { $equipmentDrawerEquipCategorySelectionOpen } from '@/store/equipDrawer';
@@ -46,6 +47,7 @@ interface CategorySelectionDialogProps {
 export const CategorySelectionDialog = (
   props: CategorySelectionDialogProps,
 ) => {
+  const t = useTranslate();
   const isOpen = useStore($equipmentDrawerEquipCategorySelectionOpen);
 
   function handleClose(_: unknown) {
@@ -76,6 +78,8 @@ export const CategorySelectionDialog = (
       <Dialog.Positioner class={overlayStyle} mx="auto" alignItems="flex-start">
         <Dialog.Content class={contentStyle}>
           <IconButton
+            aria-label={t('common.close')}
+            title={t('common.close')}
             variant="ghost"
             position="absolute"
             top="1"
@@ -85,7 +89,7 @@ export const CategorySelectionDialog = (
             <CloseIcon />
           </IconButton>
           <Dialog.Title mb={2}>
-            裝備分類
+            {t('tab.equipCategory')}
             <OnlyShowDyeableSwitch />
           </Dialog.Title>
           {props.children}
