@@ -1,8 +1,9 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::sync::Arc;
-use tauri::{async_runtime, AppHandle, Manager};
+use std::sync::{Arc, Mutex};
+use tauri::{async_runtime, webview::PageLoadEvent, AppHandle, Manager};
+use tauri_plugin_store::StoreBuilder;
 use wz_reader::WzNode;
 
 mod commands;
@@ -28,6 +29,11 @@ fn main() {
     let string_dict = StringDict::default();
 
     let root_node = WzNode::empty().into_lock();
+
+    let default_lang = Arc::new(Mutex::new(
+        sys_locale::get_locale().unwrap_or_else(|| String::from("en-US")),
+    ));
+    let setup_lang = Arc::clone(&default_lang);
 
     async_runtime::spawn(server::app(
         Arc::clone(&root_node),
@@ -62,6 +68,26 @@ fn main() {
             commands::get_childs_info,
             commands::encode_webp,
         ])
+        .setup(move |app| {
+            let store = StoreBuilder::new(app.handle(), "setting.bin").build();
+
+            // seens we need to read the saved the lang setting, need to do in setup to access the plugin store
+            let setting_lang = store.map(|s| {
+                s.get("setting.lang")
+                    .and_then(|v| v.as_str().map(String::from))
+            });
+
+            if let Ok(Some(lang)) = setting_lang {
+                *default_lang.lock().unwrap() = lang;
+            }
+            Ok(())
+        })
+        .on_page_load(move |webview, payload| {
+            if payload.event() == PageLoadEvent::Started {
+                let script = format!("window.__LANG__ = '{}'", setup_lang.lock().unwrap());
+                let _ = webview.eval(&script);
+            }
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
