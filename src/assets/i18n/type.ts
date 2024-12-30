@@ -1,5 +1,5 @@
 import type { Flatten } from '@solid-primitives/i18n';
-import type { dict } from './zh_tw';
+import type { dict } from './zh-TW';
 
 export type RawDictionary = typeof dict;
 export type InitialDictionary = RawDictionary['initial'];
@@ -15,4 +15,4 @@ export type ErrorDictionary = RawDictionary['error'];
 export type Dictionary = Flatten<RawDictionary>;
 export type I18nKeys = keyof Dictionary;
 
-export type Locale = 'zh_tw' | 'en_us';
+export type Locale = 'zh-TW' | 'en-US';
