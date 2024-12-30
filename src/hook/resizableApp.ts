@@ -12,10 +12,9 @@ export function useResizableApp(props: ResizableAppProps) {
   function handleCanvasResize() {
     const app = $globalRenderer.get();
     const container = props.container();
-    app.renderer.resize(
-      Math.floor(container.clientWidth),
-      Math.floor(container.clientHeight),
-    );
+    const w = Math.floor(container.clientWidth);
+    const h = Math.floor(container.clientHeight);
+    app.renderer.resize(w % 2 === 0 ? w : w + 1, h % 2 === 0 ? h : h + 1);
     props.viewport?.resizeScreen(app.screen.width, app.screen.height);
   }
 
