@@ -1,9 +1,9 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 use tauri::{async_runtime, webview::PageLoadEvent, AppHandle, Manager};
-use tauri_plugin_store::StoreBuilder;
+use tauri_plugin_store::StoreExt;
 use wz_reader::WzNode;
 
 mod commands;
@@ -30,10 +30,7 @@ fn main() {
 
     let root_node = WzNode::empty().into_lock();
 
-    let default_lang = Arc::new(Mutex::new(
-        sys_locale::get_locale().unwrap_or_else(|| String::from("en-US")),
-    ));
-    let setup_lang = Arc::clone(&default_lang);
+    let default_lang = Arc::new(sys_locale::get_locale().unwrap_or_else(|| String::from("en-US")));
 
     async_runtime::spawn(server::app(
         Arc::clone(&root_node),
@@ -69,22 +66,22 @@ fn main() {
             commands::encode_webp,
         ])
         .setup(move |app| {
-            let store = StoreBuilder::new(app.handle(), "setting.bin").build();
-
-            // seens we need to read the saved the lang setting, need to do in setup to access the plugin store
-            let setting_lang = store.map(|s| {
-                s.get("setting.lang")
-                    .and_then(|v| v.as_str().map(String::from))
-            });
-
-            if let Ok(Some(lang)) = setting_lang {
-                *default_lang.lock().unwrap() = lang;
-            }
+            // ensure the store file is created
+            let _ = app.store("setting.bin");
             Ok(())
         })
         .on_page_load(move |webview, payload| {
             if payload.event() == PageLoadEvent::Started {
-                let script = format!("window.__LANG__ = '{}'", setup_lang.lock().unwrap());
+                let setting = webview.app_handle().get_store("setting.bin");
+                let setting_lang = setting
+                    .map(|s| {
+                        s.get("setting")
+                            .and_then(|v| v.get("lang").and_then(|v| v.as_str().map(String::from)))
+                    })
+                    .flatten()
+                    .unwrap_or(String::clone(&default_lang));
+
+                let script = format!("window.__LANG__ = '{}'", setting_lang);
                 let _ = webview.eval(&script);
             }
         })
