@@ -22,6 +22,10 @@ export const dict = {
 
   open: '開啟設定視窗',
   title: '設定',
+
+  language: '語言',
+  selectLanguage: '選擇語言',
+
   windowTitle: '視窗設定',
   freeResize: '自由調整視窗大小',
   resolution: '解析度',

@@ -3,6 +3,7 @@ import { useTranslate } from '@/context/i18n';
 import { Stack } from 'styled-system/jsx/stack';
 import { Title } from '@/components/ui/dialog';
 import { SettingDialog as Dialog } from './SettingDialog';
+import { LanguageSelect } from './LanguageSelect';
 import { WindowSetting } from './WindowSetting';
 import { ThemeSetting } from './ThemeSetting';
 import { RenderSetting } from './RenderSetting';
@@ -16,6 +17,7 @@ export const SettingDialog = () => {
     <Dialog>
       <Stack gap="3" p="6">
         <Title fontSize="xl">{t('setting.title')}</Title>
+        <LanguageSelect />
         <WindowSetting />
         <ThemeSetting />
         <ExportSetting />

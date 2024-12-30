@@ -2,11 +2,13 @@ import { styled } from 'styled-system/jsx/factory';
 
 import { useTranslate } from '@/context/i18n';
 
+import TranslateIcon from 'mingcute_icon/svg/editor/translate_2_line.svg';
 import { Box } from 'styled-system/jsx/box';
 import { VStack } from 'styled-system/jsx/vstack';
 import { HStack } from 'styled-system/jsx/hstack';
 import { Heading } from '@/components/ui/heading';
 import { Text } from '@/components/ui/text';
+import { LocaleSelect } from '@/components/elements/LocaleSelect';
 import { LoadText } from './LoadText';
 import { SelectWzButton } from './SelectWzButton';
 import { SelectHistoryTable } from './SelectHistoryTable';
@@ -17,11 +19,17 @@ export const InitialScreen = () => {
   return (
     <ScreenPositioner>
       <LoadText />
+      <LangSelectBox>
+        <div title={t('setting.language')}>
+          <TranslateIcon width="32" height="32" />
+        </div>
+        <LocaleSelect />
+      </LangSelectBox>
       <InitialScreenContainer>
         <HStack w="full">
           <Heading size="lg">{t('initial.selectWzTitle')}</Heading>
           <HStack ml="auto">
-            <span>{t('initial.loadNewBaseWz')}</span>
+            <span>{t('initial.selectNewFile')}</span>
             <SelectWzButton />
           </HStack>
         </HStack>
@@ -39,7 +47,7 @@ export const InitialScreen = () => {
 
 const ScreenPositioner = styled(VStack, {
   base: {
-    mt: 8,
+    pt: 8,
     mx: 'auto',
     width: '100%',
     maxWidth: 'xl',
@@ -54,5 +62,13 @@ const InitialScreenContainer = styled(VStack, {
     bg: 'bg.default',
     borderRadius: 'md',
     boxShadow: 'md',
+  },
+});
+
+const LangSelectBox = styled(HStack, {
+  base: {
+    maxWidth: '12rem',
+    width: '100%',
+    justifyContent: 'center',
   },
 });

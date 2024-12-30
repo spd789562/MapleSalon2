@@ -11,4 +11,9 @@ declare module 'dom-to-image-more' {
   export = domToImage;
 }
 
+/* fix window */
+declare interface Window {
+  __LANG__: string;
+}
+
 /// <reference path="./renderer/filter/anime4k/Anime4kSyetem.d.ts" />

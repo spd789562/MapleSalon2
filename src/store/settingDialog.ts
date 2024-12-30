@@ -27,6 +27,7 @@ import {
   syncColorMode,
 } from '@/const/setting/colorMode';
 import { ActionExportType, isValidExportType } from '@/const/toolTab';
+import { isValidLocale } from '@/context/i18n';
 
 const SAVE_FILENAME = 'setting.bin';
 
@@ -57,6 +58,8 @@ export interface AppSetting extends Record<string, unknown> {
   exportType: ActionExportType;
   padWhiteSpaceWhenExportFrame: boolean;
   addBlackBgWhenExportGif: boolean;
+  /* other */
+  lang: string;
 }
 
 const DEFAULT_SETTING: AppSetting = {
@@ -71,10 +74,11 @@ const DEFAULT_SETTING: AppSetting = {
   defaultLoadItem: true,
   enableExperimentalUpscale: false,
   preferRenderer: 'webgpu',
-  preferScaleMode: 'linear',
+  preferScaleMode: 'nearest',
   exportType: ActionExportType.Webp,
   padWhiteSpaceWhenExportFrame: true,
   addBlackBgWhenExportGif: false,
+  lang: window.__LANG__,
 };
 
 export const $appSetting = deepMap<AppSetting>(DEFAULT_SETTING);
@@ -204,6 +208,10 @@ export async function initializeSavedSetting() {
         'addBlackBgWhenExportGif',
         !!setting.addBlackBgWhenExportGif,
       );
+      /* other */
+      if (isValidLocale(setting.lang)) {
+        $appSetting.setKey('lang', setting.lang);
+      }
     }
   } catch (e) {
     console.error(e);
@@ -263,4 +271,7 @@ export function setAddBlackBgWhenExportGif(value: boolean) {
 export function setPreferScaleMode(value: 'linear' | 'nearest') {
   $appSetting.setKey('preferScaleMode', value);
   TextureStyle.defaultOptions.scaleMode = value;
+}
+export function setLang(value: string) {
+  $appSetting.setKey('lang', value);
 }

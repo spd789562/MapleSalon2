@@ -16,3 +16,9 @@ export type Dictionary = Flatten<RawDictionary>;
 export type I18nKeys = keyof Dictionary;
 
 export type Locale = 'zh-TW' | 'en-US';
+export const DEFAULT_LOCALE: Locale = 'en-US';
+export const LOCALES: Locale[] = ['zh-TW', 'en-US'];
+export const LOCALE_NAMES: Record<Locale, string> = {
+  'zh-TW': '繁體中文',
+  'en-US': 'English',
+};

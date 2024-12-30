@@ -12,13 +12,14 @@ import {
   resolveTemplate,
   type Translator,
 } from '@solid-primitives/i18n';
-import { dict as zhTwDict } from '@/assets/i18n/zh_tw';
+import { dict as zhTwDict } from '@/assets/i18n/zh-TW';
 import type {
   RawDictionary,
   Dictionary,
   Locale,
   I18nKeys,
 } from '@/assets/i18n/type';
+import { DEFAULT_LOCALE, LOCALES } from '@/assets/i18n/type';
 
 export type AppTranslator = Translator<Dictionary>;
 
@@ -40,7 +41,9 @@ async function fetchDictionary(locale: Locale): Promise<Dictionary> {
 export function I18nProvider(props: {
   children: JSX.Element;
 }) {
-  const [locale, setLocale] = createSignal<Locale>('zh_tw');
+  const [locale, setLocale] = createSignal<Locale>(
+    (window.__LANG__ as Locale) || DEFAULT_LOCALE,
+  );
   const [dict] = createResource(locale, fetchDictionary, {
     initialValue: flatten(zhTwDict),
   });
@@ -89,10 +92,11 @@ export function useLocale() {
 
 export function useSetLocale() {
   const { locale, setLocale } = useI18n();
-  return {
-    locale,
-    setLocale,
-  };
+  return [locale, setLocale] as const;
+}
+
+export function isValidLocale(locale: string): locale is Locale {
+  return LOCALES.includes(locale as Locale);
 }
 
 export type { I18nKeys };

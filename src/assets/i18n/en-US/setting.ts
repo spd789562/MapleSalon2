@@ -25,6 +25,10 @@ export const dict: SettingDictionary = {
 
   open: 'Open Setting',
   title: 'Setting',
+
+  language: 'Language',
+  selectLanguage: 'Select Language',
+
   windowTitle: 'Window Setting',
   freeResize: 'Free Resize Window',
   resolution: 'Resolution',
