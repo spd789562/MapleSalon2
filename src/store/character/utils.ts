@@ -40,6 +40,9 @@ export function copyHsvInfo(info: ItemInfo) {
   if (info.brightness) {
     copyInfo.brightness = info.brightness;
   }
+  if (info.alpha) {
+    copyInfo.alpha = info.alpha;
+  }
 
   return copyInfo;
 }

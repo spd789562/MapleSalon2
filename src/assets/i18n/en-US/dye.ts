@@ -20,6 +20,7 @@ export const dict: DyeDictionary = {
   hue: 'Hue',
   saturation: 'Saturation',
   brightness: 'Brightness',
+  alpha: 'Alpha',
 
   hairColorPreview: 'Hair Colors',
   faceColorPreview: 'Face Colors',

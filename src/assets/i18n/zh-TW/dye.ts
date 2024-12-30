@@ -18,6 +18,7 @@ export const dict = {
   hue: '色相',
   saturation: '飽和度',
   brightness: '亮度',
+  alpha: '透明度',
 
   hairColorPreview: '髮色預覽',
   faceColorPreview: '顏色預覽',

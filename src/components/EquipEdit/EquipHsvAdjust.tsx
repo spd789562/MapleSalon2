@@ -32,7 +32,7 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
   const itemChange = useDynamicPureStore(getItemChangeById);
 
   const createItemChange =
-    (property: 'colorRange' | 'hue' | 'saturation' | 'brightness') =>
+    (property: 'colorRange' | 'hue' | 'saturation' | 'brightness' | 'alpha') =>
     (value: number) => {
       const category = itemChange()?.category;
       if (category === 'Head') {
@@ -72,6 +72,7 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
   const handleHueChange = createItemChange('hue');
   const handleSaturationChange = createItemChange('saturation');
   const handleBrightnessChange = createItemChange('brightness');
+  const handleAlphaChange = createItemChange('alpha');
 
   const ColorOtions = [
     {
@@ -104,6 +105,9 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
     },
   ];
 
+  const alphaBackgroundProperty =
+    'linear-gradient(90deg, transparent, #fff), conic-gradient(white 90deg, #999 90deg, #999 180deg, white 180deg, white 270deg, #999 270deg, #999 360deg, white 360deg) 0% 0% / 8px 8px repeat';
+
   return (
     <Show when={itemChange()}>
       <VStack pt={1}>
@@ -135,39 +139,52 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
             </IconButton>
           </Show>
         </HStack>
-        <EquipHsvSlider
-          title={t('dye.hue')}
-          property="hue"
-          value={itemChange()?.item.hue || 0}
-          onValueChange={handleHueChange}
-          class={css({
-            '--ui-slider-track-background': 'gradients.hue',
-            '--ui-slider-range-background': 'trasparent',
-            w: 'full',
-          })}
-        />
-        <EquipHsvSlider
-          title={t('dye.saturation')}
-          property="saturation"
-          value={itemChange()?.item.saturation || 0}
-          onValueChange={handleSaturationChange}
-          class={css({
-            '--ui-slider-track-background': 'gradients.saturation',
-            '--ui-slider-range-background': 'transparent',
-            w: 'full',
-          })}
-        />
-        <EquipHsvSlider
-          title={t('dye.brightness')}
-          property="brightness"
-          value={itemChange()?.item.brightness || 0}
-          onValueChange={handleBrightnessChange}
-          class={css({
-            '--ui-slider-track-background': 'gradients.brightness',
-            '--ui-slider-range-background': 'transparent',
-            w: 'full',
-          })}
-        />
+        <VStack gap="0.5" w="full">
+          <EquipHsvSlider
+            title={t('dye.hue')}
+            property="hue"
+            value={itemChange()?.item.hue || 0}
+            onValueChange={handleHueChange}
+            class={css({
+              '--ui-slider-track-background': 'gradients.hue',
+              '--ui-slider-range-background': 'trasparent',
+              w: 'full',
+            })}
+          />
+          <EquipHsvSlider
+            title={t('dye.saturation')}
+            property="saturation"
+            value={itemChange()?.item.saturation || 0}
+            onValueChange={handleSaturationChange}
+            class={css({
+              '--ui-slider-track-background': 'gradients.saturation',
+              '--ui-slider-range-background': 'transparent',
+              w: 'full',
+            })}
+          />
+          <EquipHsvSlider
+            title={t('dye.brightness')}
+            property="brightness"
+            value={itemChange()?.item.brightness || 0}
+            onValueChange={handleBrightnessChange}
+            class={css({
+              '--ui-slider-track-background': 'gradients.brightness',
+              '--ui-slider-range-background': 'transparent',
+              w: 'full',
+            })}
+          />
+          <EquipHsvSlider
+            title={t('dye.alpha')}
+            property="alpha"
+            value={itemChange()?.item.alpha ?? 100}
+            onValueChange={handleAlphaChange}
+            class={css({
+              '--ui-slider-track-background': alphaBackgroundProperty,
+              '--ui-slider-range-background': 'transparent',
+              w: 'full',
+            })}
+          />
+        </VStack>
       </VStack>
     </Show>
   );

@@ -341,7 +341,7 @@ export function selectNewItem(
 
 export function updateItemHsvInfo(
   category: EquipSubCategory,
-  field: 'colorRange' | 'hue' | 'saturation' | 'brightness',
+  field: 'colorRange' | 'hue' | 'saturation' | 'brightness' | 'alpha',
   value: number,
 ) {
   const hasChanges = $currentItemChanges.get()[category];
@@ -365,7 +365,9 @@ export function updateItemHsvInfo(
 }
 export function batchUpdateItemHsvInfo(
   category: EquipSubCategory,
-  fields: Partial<Record<'hue' | 'saturation' | 'brightness', number>>,
+  fields: Partial<
+    Record<'hue' | 'saturation' | 'brightness' | 'alpha', number>
+  >,
 ) {
   const changesData = $currentItemChanges.get()[category];
   if (changesData) {
@@ -398,6 +400,7 @@ export function resetItemHsvInfo(category: EquipSubCategory) {
         hue: 0,
         saturation: 0,
         brightness: 0,
+        alpha: 1,
       }),
     );
   }

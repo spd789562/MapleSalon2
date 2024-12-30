@@ -25,12 +25,18 @@ const SliderProperyMap = {
     max: 100,
     step: 1,
   },
+  alpha: {
+    label: 'Alpha',
+    min: 0,
+    max: 100,
+    step: 1,
+  },
 };
 
 export interface EquipHsvSliderProps {
   class?: string;
   title: string;
-  property: 'hue' | 'saturation' | 'brightness';
+  property: 'hue' | 'saturation' | 'brightness' | 'alpha';
   value: number;
   onValueChange: (value: number) => void;
 }
@@ -43,7 +49,7 @@ export const EquipHsvSlider = (props: EquipHsvSliderProps) => {
     <div class={props.class}>
       <Grid gridTemplateColumns="auto 1fr 4.5rem" alignItems="center">
         <IconButton
-          variant="outline"
+          variant="ghost"
           size="xs"
           title={`${t('common.reset')}${props.title}`}
           onClick={() => props.onValueChange(0)}

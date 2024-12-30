@@ -37,7 +37,7 @@ export const EquipEdit = () => {
   const isHairOrFace = () => isHair() || isFace();
 
   return (
-    <Box h="52" position="relative">
+    <Box h="13.5rem" position="relative">
       <Show when={item()}>
         {(item) => (
           <>
