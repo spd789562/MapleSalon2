@@ -43,6 +43,11 @@ export interface HsvAdjustmentFilterOptions {
    */
   lightness: number;
   /**
+   * The alpha value of the color(0 to 1)
+   * @default 1
+   */
+  alpha: number;
+  /**
    * The filter effect range
    * @default ColorRange.All
    */
@@ -63,6 +68,7 @@ export class HsvAdjustmentFilter extends Filter {
     hue: 0,
     saturation: 0,
     lightness: 0,
+    alpha: 1,
     colorRange: ColorRange.All,
   };
 
@@ -107,6 +113,7 @@ export class HsvAdjustmentFilter extends Filter {
       resources: {
         hsvUniforms: {
           uHsv: { value: new Float32Array(3), type: 'vec3<f32>' },
+          uAlpha: { value: localOption.alpha, type: 'f32' },
           uColorStart: { value: range[0], type: 'f32' },
           uColorEnd: { value: range[1], type: 'f32' },
         },
@@ -149,6 +156,18 @@ export class HsvAdjustmentFilter extends Filter {
   }
   set lightness(value: number) {
     this.resources.hsvUniforms.uniforms.uHsv[2] = value;
+  }
+
+  /**
+   * The alpha value of the color(0 to 1)
+   * @default 1
+   */
+  get alpha(): number {
+    return this.resources.hsvUniforms.uniforms.uAlpha;
+  }
+  set alpha(value: number) {
+    console.log('alpha', value);
+    this.resources.hsvUniforms.uniforms.uAlpha = value;
   }
 
   get colorRange(): ColorRange {

@@ -3,6 +3,7 @@ out vec4 finalColor;
 
 uniform sampler2D uTexture;
 uniform vec3 uHsv;
+uniform float uAlpha;
 uniform float uColorStart;
 uniform float uColorEnd;
 
@@ -123,5 +124,5 @@ void main() {
         resultRGB = hsv2rgb(tohsv);
     }
   
-    finalColor = mix(color, vec4(resultRGB, color.a), 1.0);
+    finalColor = mix(color, vec4(resultRGB, color.a), 1.) * uAlpha;
 }

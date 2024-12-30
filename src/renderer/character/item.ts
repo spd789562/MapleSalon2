@@ -351,7 +351,8 @@ export class CharacterItem implements RenderItemInfo {
     const hasAnyDye =
       this.info.hue !== undefined ||
       this.info.saturation !== undefined ||
-      this.info.brightness !== undefined;
+      this.info.brightness !== undefined ||
+      this.info.alpha !== undefined;
 
     if (!hasAnyDye) {
       this.filters.length = 0;
@@ -376,6 +377,7 @@ export class CharacterItem implements RenderItemInfo {
     } else if (hsvFilter.hue !== 0) {
       hsvFilter.hue = 0;
     }
+    // current not accurate
     if (this.info.saturation !== undefined) {
       // convert -99 ~ 99 to -1 ~ 1
       const saturation = this.info.saturation / 100;
@@ -383,13 +385,18 @@ export class CharacterItem implements RenderItemInfo {
     } else if (hsvFilter.saturation !== 0) {
       hsvFilter.saturation = 0;
     }
-    // current not working
+    // current not accurate
     if (this.info.brightness !== undefined) {
       // convert -99 ~ 99 to -1 ~ 1
       const brightness = this.info.brightness / 100;
       hsvFilter.lightness = brightness;
     } else if (hsvFilter.lightness !== 0) {
       hsvFilter.lightness = 0;
+    }
+    if (this.info.alpha !== undefined) {
+      hsvFilter.alpha = this.info.alpha / 100;
+    } else if (hsvFilter.alpha !== 1) {
+      hsvFilter.alpha = 1;
     }
   }
 

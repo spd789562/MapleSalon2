@@ -1,5 +1,6 @@
 struct HsvUniforms {
     uHsv:vec3<f32>,
+    uAlpha:f32,
     uColorStart:f32,
     uColorEnd:f32,
 };
@@ -64,7 +65,7 @@ fn mainFragment(
         resultRGB = hsv2rgb(tohsv);
     }
 
-    return mix(color, vec4<f32>(resultRGB, color.a), 1.0);
+    return mix(color, vec4<f32>(resultRGB, color.a), 1) * hsvUniforms.uAlpha;
 }
 
 // https://gist.github.com/mairod/a75e7b44f68110e1576d77419d608786?permalink_comment_id=3195243#gistcomment-3195243
