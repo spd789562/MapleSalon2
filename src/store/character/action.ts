@@ -270,6 +270,7 @@ export function addItemToChanges(
 
 export function selectNewItem(
   item: {
+    category: EquipCategory;
     id: number;
     name: string;
     hasEffect?: boolean;
@@ -279,17 +280,21 @@ export function selectNewItem(
   },
   addToHistory = true,
 ) {
-  if (item.isNameTag || item.isChatBalloon) {
+  if (item.category === EquipCategory.NameTag) {
     appendHistory({
-      category: EquipCategory.Unknown,
+      category: item.category,
       id: item.id,
       name: item.name,
-      isNameTag: item.isNameTag,
-      isChatBalloon: item.isChatBalloon,
     });
-    return item.isNameTag
-      ? setCharacterNameTag(item.id)
-      : setCharacterChatBalloon(item.id);
+    return setCharacterNameTag(item.id);
+  }
+  if (item.category === EquipCategory.ChatBalloon) {
+    appendHistory({
+      category: item.category,
+      id: item.id,
+      name: item.name,
+    });
+    return setCharacterChatBalloon(item.id);
   }
 
   let category = getSubCategory(item.id);
@@ -304,7 +309,7 @@ export function selectNewItem(
   if (addToHistory) {
     /* append to history */
     appendHistory({
-      category: EquipCategory.Unknown,
+      category: item.category,
       id: item.id,
       name: item.name,
       hasEffect: item.hasEffect ?? false,

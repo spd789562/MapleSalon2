@@ -6,12 +6,12 @@ use wz_reader::{
 };
 
 use super::item::{
-    get_is_cash_item, get_is_chat_balloon, get_is_colorvar, get_is_name_tag, get_item_info_node,
-    get_item_node_from_category,
+    get_is_cash_item, get_is_chat_balloon, get_is_colorvar, get_is_medal, get_is_name_tag,
+    get_is_nick_tag, get_item_info_node, get_item_node_from_category,
 };
 use super::path::{
     CASH_EFFECT_PATH, CASH_EFFECT_STRING_PATH, CHARACTER_ITEM_PATH, EQUIP_EFFECT_PATH,
-    EQUIP_STRING_PATH,
+    EQUIP_STRING_PATH, NICKTAG_PATH, NICKTAG_STRING_PATH,
 };
 
 use serde::Serialize;
@@ -64,6 +64,10 @@ pub enum EquipCategory {
     Unknown,
     RingEffect,
     NecklessEffect,
+    Medal,
+    NickTag,
+    NameTag,
+    ChatBalloon,
     Effect, // for cash
 }
 
@@ -97,6 +101,10 @@ impl std::fmt::Display for EquipCategory {
             EquipCategory::Effect => 25,
             EquipCategory::RingEffect => 26,
             EquipCategory::NecklessEffect => 27,
+            EquipCategory::Medal => 28,
+            EquipCategory::NickTag => 29,
+            EquipCategory::NameTag => 30,
+            EquipCategory::ChatBalloon => 31,
         };
 
         write!(f, "{}", repr_number)
@@ -194,8 +202,6 @@ pub fn resolve_equip_string_by_category(category_string_node: &WzNodeArc) -> Str
                         false, // is cash
                         false, // has colorvar
                         false, // has effect
-                        false, // is name tag
-                        false, // is chat balloon
                     ));
                 }
 
@@ -246,8 +252,48 @@ pub fn resolve_cash_effect_string(root: &WzNodeArc) -> Option<StringDictInner> {
             true,  // is cash
             false, // has colorvar
             true,  // has effect
-            false, // is name tag
-            false, // is chat balloon
+        ));
+    }
+
+    result.sort_by(|a, b| a.1.cmp(&b.1));
+
+    Some(result)
+}
+
+pub fn get_nicktag_node(root: &WzNodeArc) -> Option<WzNodeArc> {
+    let node = root.read().unwrap().at_path(NICKTAG_PATH)?;
+    node_util::parse_node(&node).ok()?;
+    Some(node)
+}
+
+pub fn resolve_nicktag_string(root: &WzNodeArc) -> Option<StringDictInner> {
+    let mut result = Vec::new();
+
+    let nicktag_node = get_nicktag_node(root)?;
+    let nicktag_string_node = root.read().unwrap().at_path(NICKTAG_STRING_PATH)?;
+
+    node_util::parse_node(&nicktag_string_node).ok()?;
+
+    let nicktag_string_read = nicktag_string_node.read().unwrap();
+
+    for (full_id, nicktag_node) in nicktag_node.read().unwrap().children.iter() {
+        if !get_is_nick_tag(&nicktag_node.read().unwrap()) {
+            continue;
+        }
+
+        let id = full_id.trim_start_matches('0');
+        let name = nicktag_string_read
+            .at_path(&format!("{}/name", id))
+            .and_then(|node| resolve_string_from_node(&node).ok())
+            .unwrap_or(String::from("null"));
+
+        result.push((
+            EquipCategory::NickTag,
+            id.to_string(),
+            name,
+            false,
+            false,
+            false,
         ));
     }
 
@@ -306,8 +352,6 @@ pub fn resolve_equip_string(
                     false, // is cash
                     false, // has colorvar
                     false, // has effect
-                    false, // is name tag
-                    false, // is chat balloon
                 ))
             })
             .collect::<Vec<_>>();
@@ -327,8 +371,15 @@ pub fn resolve_equip_string(
                     let info_node = info_node.read().unwrap();
                     item.3 = get_is_cash_item(&info_node);
                     item.4 = get_is_colorvar(&info_node);
-                    item.6 = get_is_name_tag(&info_node);
-                    item.7 = get_is_chat_balloon(&info_node);
+                    if get_is_name_tag(&info_node) {
+                        item.0 = EquipCategory::NameTag;
+                    }
+                    if get_is_chat_balloon(&info_node) {
+                        item.0 = EquipCategory::ChatBalloon;
+                    }
+                    if get_is_medal(&info_node) {
+                        item.0 = EquipCategory::Medal;
+                    }
                 }
                 // item has effect
                 if effect_node
@@ -353,6 +404,10 @@ pub fn resolve_equip_string(
 
         result.extend(category_result);
     }
+    // nicktag
+    if let Some(list) = resolve_nicktag_string(root) {
+        result.extend(list);
+    }
 
     // skins
     if let Some(skin_string_node) = string_node.at("Skin") {
@@ -362,6 +417,7 @@ pub fn resolve_equip_string(
         result.extend(category_result);
     }
 
+    // cash effect
     if let Some(list) = resolve_cash_effect_string(root) {
         result.extend(list);
     }

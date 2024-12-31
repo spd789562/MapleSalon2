@@ -17,14 +17,7 @@ export interface EquipItemButtonProps {
 }
 export const EquipItemButton = (props: EquipItemButtonProps) => {
   function handleClick() {
-    selectNewItem({
-      id: props.item.id,
-      name: props.item.name,
-      hasEffect: props.item.hasEffect,
-      isDyeable: props.item.isDyeable,
-      isNameTag: props.item.isNameTag,
-      isChatBalloon: props.item.isChatBalloon,
-    });
+    selectNewItem({ ...props.item });
   }
 
   return (

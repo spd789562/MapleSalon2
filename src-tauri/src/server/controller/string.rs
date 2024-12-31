@@ -56,20 +56,16 @@ pub async fn get_equip(State((_, string_dict)): State<AppState>) -> Result<impl 
         .read()
         .unwrap()
         .iter()
-        .map(
-            |(category, id, name, cash, colorvar, effect, name_tag, chat_balloon)| {
-                Value::Array(vec![
-                    Value::String(category.to_string()),
-                    Value::String(id.to_string()),
-                    Value::String(name.to_string()),
-                    Value::from(*cash),
-                    Value::from(*colorvar),
-                    Value::from(*effect),
-                    Value::from(*name_tag),
-                    Value::from(*chat_balloon),
-                ])
-            },
-        )
+        .map(|(category, id, name, cash, colorvar, effect)| {
+            Value::Array(vec![
+                Value::String(category.to_string()),
+                Value::String(id.to_string()),
+                Value::String(name.to_string()),
+                Value::from(*cash),
+                Value::from(*colorvar),
+                Value::from(*effect),
+            ])
+        })
         .collect::<Value>();
 
     Ok((

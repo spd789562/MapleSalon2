@@ -65,13 +65,13 @@ function validateEquipItem(item: EquipItem) {
   if (item.isDyeable) {
     returnItem.isDyeable = !!item.isDyeable;
   }
+  returnItem.category = returnItem.category ?? EquipCategory.Unknown;
   if (item.isNameTag) {
-    returnItem.isNameTag = !!item.isNameTag;
+    returnItem.category = EquipCategory.NameTag;
   }
   if (item.isChatBalloon) {
-    returnItem.isChatBalloon = !!item.isChatBalloon;
+    returnItem.category = EquipCategory.ChatBalloon;
   }
-  returnItem.category = EquipCategory.Unknown;
 
   return returnItem;
 }

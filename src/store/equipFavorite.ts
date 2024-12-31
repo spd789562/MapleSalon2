@@ -83,14 +83,14 @@ function validateEquipItem(item: EquipItem) {
   if (item.isDyeable) {
     returnItem.isDyeable = !!item.isDyeable;
   }
-  if (item.isNameTag) {
-    returnItem.isNameTag = !!item.isNameTag;
-  }
-  if (item.isChatBalloon) {
-    returnItem.isChatBalloon = !!item.isChatBalloon;
-  }
   if (item.category) {
     returnItem.category = item.category;
+  }
+  if (item.isNameTag) {
+    returnItem.category = EquipCategory.NameTag;
+  }
+  if (item.isChatBalloon) {
+    returnItem.category = EquipCategory.ChatBalloon;
   }
 
   return returnItem;
@@ -105,12 +105,14 @@ export const $currentEquipmentFavoriteSearch = computed(
 export const $categoryFilteredString = computed(
   [$equipmentFavoriteEquipCategory, $equipmentFavorite],
   (category, strings) => {
-    if (category === 'NameTag') {
-      return strings.filter((item) => item.isNameTag);
-    }
-
-    if (category === 'ChatBalloon') {
-      return strings.filter((item) => item.isChatBalloon);
+    if (
+      category === 'NameTag' ||
+      category === 'ChatBalloon' ||
+      category === 'NickTag' ||
+      category === 'Medal'
+    ) {
+      const mainCategory = getCategoryBySubCategory(category);
+      return strings.filter((item) => item.category === mainCategory);
     }
 
     let filteredStrings = strings;

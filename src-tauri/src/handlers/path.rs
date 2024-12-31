@@ -7,6 +7,9 @@ pub const EQUIP_EFFECT_PATH: &'static str = "Effect/ItemEff.img";
 pub const CASH_EFFECT_PATH: &'static str = "Item/Cash/0501.img";
 pub const CASH_EFFECT_STRING_PATH: &'static str = "String/Cash.img"; // start with 0501
 
+pub const NICKTAG_PATH: &'static str = "Item/Install/0370.img";
+pub const NICKTAG_STRING_PATH: &'static str = "String/Ins.img";
+
 // don't know why it nameing TamingMob
 pub const MOUNT_PATH: &'static str = "Character/TamingMob";
 pub const MOUNT_STRING_PATH: &'static str = "String/Eqp.img/Eqp/Taming";

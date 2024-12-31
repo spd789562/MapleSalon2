@@ -132,13 +132,14 @@ export const $categoryFilteredString = computed(
     }
 
     if (category === 'NameTag') {
-      return strings.filter((item) => item.isNameTag);
+      return strings.filter((item) => item.category === EquipCategory.NameTag);
     }
 
     if (category === 'ChatBalloon') {
-      return strings.filter((item) => item.isChatBalloon);
+      return strings.filter(
+        (item) => item.category === EquipCategory.ChatBalloon,
+      );
     }
-
     let filteredStrings = strings;
 
     if (category !== AllCategory) {

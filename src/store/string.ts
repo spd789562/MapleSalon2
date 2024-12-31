@@ -3,7 +3,7 @@ import { atom } from 'nanostores';
 import { $apiHost } from './const';
 import { $initLoadProgress, InitLoadProgress } from './initialize';
 
-import type { EquipCategory } from '@/const/equipments';
+import { EquipCategory } from '@/const/equipments';
 import type { Gender } from '@/utils/itemId';
 import { nextTick } from '@/utils/eventLoop';
 
@@ -31,8 +31,6 @@ type EquipStringResponseItem = [
   EquipCategory,
   string,
   string,
-  boolean,
-  boolean,
   boolean,
   boolean,
   boolean,
@@ -71,18 +69,22 @@ export async function prepareAndFetchEquipStrings() {
           isCash,
           isDyeable,
           hasEffect,
-          isNameTag,
-          isChatBalloon,
+          /* @deprecated */
+          isNameTag = false,
+          /* @deprecated */
+          isChatBalloon = false,
         ]) =>
           ({
-            category,
+            category: isNameTag
+              ? EquipCategory.NameTag
+              : isChatBalloon
+                ? EquipCategory.ChatBalloon
+                : category,
             id: Number.parseInt(id),
             name,
             isCash,
             isDyeable,
             hasEffect,
-            isNameTag,
-            isChatBalloon,
           }) as EquipItem,
       ),
     );

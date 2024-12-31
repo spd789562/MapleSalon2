@@ -98,6 +98,10 @@ export function isCashEffectId(id: number): boolean {
   return id >= 5010000 && id < 5020000;
 }
 
+export function isNickTagId(id: number): boolean {
+  return Math.floor(id / 10000) === 370;
+}
+
 export function getFaceOrHairGender(id: number): Gender {
   const tag = Math.floor(id / 1000) % 10;
   switch (tag) {
@@ -187,6 +191,8 @@ export function getSubCategory(id: number): EquipSubCategory | null {
       return 'RingEffect';
     case 112:
       return 'NecklaceEffect';
+    case 370:
+      return 'NameTag';
     case 501: // CashEffect
       return 'Effect';
     case 170:
@@ -241,6 +247,14 @@ export function getCategoryBySubCategory(
       return EquipCategory.NecklaceEffect;
     case 'Effect':
       return EquipCategory.Effect;
+    case 'NameTag':
+      return EquipCategory.NameTag;
+    case 'ChatBalloon':
+      return EquipCategory.ChatBalloon;
+    case 'NickTag':
+      return EquipCategory.NickTag;
+    case 'Medal':
+      return EquipCategory.Medal;
     default:
       break;
   }
@@ -265,6 +279,10 @@ export function getIconPath(id: number, folder?: string) {
 
   if (isCashEffectId(id)) {
     return `${$apiHost.get()}/node/image_unparsed/Item/Cash/0501.img/${id.toString().padStart(8, '0')}/${iconPath}`;
+  }
+
+  if (isNickTagId(id)) {
+    return `${$apiHost.get()}/node/image_unparsed/Item/Install/0370.img/${id.toString().padStart(8, '0')}/${iconPath}`;
   }
 
   if (getfolder === 'Face/') {
