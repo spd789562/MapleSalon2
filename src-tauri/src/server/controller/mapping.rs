@@ -41,12 +41,15 @@ pub async fn get_zmap(State(root): State<AppState>) -> Result<impl IntoResponse>
 pub async fn get_images(State(root): State<AppState>) -> Result<impl IntoResponse> {
     let mut nodes = Vec::new();
 
-    handlers::get_image_nodes(&root.0, &mut nodes);
+    if let Some(character_node) = root.0.read().unwrap().at("Character") {
+        handlers::get_image_nodes(&character_node, &mut nodes);
+    }
 
     if let Some(effect_nodes) = handlers::get_cash_effect_nodes(&root.0) {
-        for node in effect_nodes.read().unwrap().children.values() {
-            nodes.push(node.clone());
-        }
+        nodes.extend(effect_nodes.read().unwrap().children.values().cloned());
+    }
+    if let Some(nicktag_nodes) = handlers::get_nicktag_node(&root.0) {
+        nodes.extend(nicktag_nodes.read().unwrap().children.values().cloned());
     }
 
     let json_array: Value = nodes
