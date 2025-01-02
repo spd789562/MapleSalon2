@@ -20,7 +20,7 @@ export const ActionTabTitle = (props: ActionTabTitleProps) => {
   return (
     <TitleContainer>
       <VStack alignItems="flex-start">
-        <Heading size="xl">動作預覽</Heading>
+        <Heading size="xl">{t('tab.actionPreview')}</Heading>
       </VStack>
       <HStack marginLeft="auto">
         <ForceExportEffectSwitch />

@@ -9,6 +9,7 @@ export const dict: TabDictionary = {
   chairPreview: 'Chair',
   mountPreview: 'Mount',
   skillPreview: 'Skill',
+  actionPreview: 'Action Preview',
 
   currentEquipment: 'Equip',
   characterSetting: 'Setting',

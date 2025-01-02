@@ -7,6 +7,7 @@ export const dict = {
   chairPreview: '椅子預覽',
   mountPreview: '坐騎預覽',
   skillPreview: '技能預覽',
+  actionPreview: '動作預覽',
 
   currentEquipment: '當前裝備',
   characterSetting: '角色設定',
