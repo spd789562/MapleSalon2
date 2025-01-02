@@ -38,6 +38,8 @@ export const EquipCategoryOptions: {
   { id: 'Skin', label: 'character.equipSkin' },
   { id: 'NameTag', label: 'character.equipNameTag' },
   { id: 'ChatBalloon', label: 'character.equipChatBalloon' },
+  { id: 'Medal', label: 'character.equipMedal' },
+  { id: 'NickTag', label: 'character.equipNickTag' },
   { id: 'Effect', label: 'character.equipEffect' },
   { id: 'RingEffect', label: 'character.equipRingEffect' },
   { id: 'NecklaceEffect', label: 'character.equipNecklaceEffect' },

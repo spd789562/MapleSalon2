@@ -87,6 +87,8 @@ export const CharacterItem = (props: CharacterItemProps) => {
                 handType={character().handType}
                 showNameTag={character().showNameTag}
                 nameTagId={character().nameTagId}
+                medalId={character().medalId}
+                nickTagId={character().nickTagId}
                 noMaxWidth={true}
                 useOffset={true}
               />

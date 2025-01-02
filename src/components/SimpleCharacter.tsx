@@ -140,6 +140,9 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
         handType: props.handType || CharacterHandType.SingleHand,
         nameTagId: props.nameTagId,
         showNameTag: !!props.showNameTag,
+        showChatBalloon: !!props.showChatBalloon,
+        medalId: props.medalId,
+        nickTagId: props.nickTagId,
         items: totalItems(),
       };
       const hash = makeCharacterHash(characterData);

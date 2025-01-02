@@ -57,6 +57,8 @@ export const $showChatBalloon = computed(
   $totalInfo,
   (info) => !!info.showChatBalloon,
 );
+export const $currentMedalId = computed($totalInfo, (info) => info.medalId);
+export const $currentNickTagId = computed($totalInfo, (info) => info.nickTagId);
 
 export const $currentCharacter = batched(
   [$currentCharacterItems, $currentCharacterInfo],

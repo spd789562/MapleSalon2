@@ -72,6 +72,16 @@ export function changeCurrentCharacter(character: Partial<CharacterData>) {
     } else {
       updateInfo.chatBalloonId = undefined;
     }
+    if (character.medalId) {
+      updateInfo.medalId = character.medalId;
+    } else {
+      updateInfo.medalId = undefined;
+    }
+    if (character.nickTagId) {
+      updateInfo.nickTagId = character.nickTagId;
+    } else {
+      updateInfo.nickTagId = undefined;
+    }
     $currentCharacterInfo.set(updateInfo);
 
     $currentItem.set(undefined);
@@ -296,6 +306,22 @@ export function selectNewItem(
     });
     return setCharacterChatBalloon(item.id);
   }
+  if (item.category === EquipCategory.Medal) {
+    appendHistory({
+      category: item.category,
+      id: item.id,
+      name: item.name,
+    });
+    return setCharacterMedal(item.id);
+  }
+  if (item.category === EquipCategory.NickTag) {
+    appendHistory({
+      category: item.category,
+      id: item.id,
+      name: item.name,
+    });
+    return setCharacterNickTag(item.id);
+  }
 
   let category = getSubCategory(item.id);
   if (!category) {
@@ -440,4 +466,10 @@ export function setCharacterChatBalloon(id: number | undefined) {
 }
 export function setCharacterName(name: string) {
   $currentInfoChanges.setKey('name', name);
+}
+export function setCharacterMedal(id: number | undefined) {
+  $currentInfoChanges.setKey('medalId', id);
+}
+export function setCharacterNickTag(id: number | undefined) {
+  $currentInfoChanges.setKey('nickTagId', id);
 }

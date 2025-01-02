@@ -84,4 +84,6 @@ export const dict = {
   equipEffect: '商城特效',
   equipRingEffect: '特效戒指',
   equipNecklaceEffect: '特效項鍊',
+  equipMedal: '勳章',
+  equipNickTag: '稱號',
 };

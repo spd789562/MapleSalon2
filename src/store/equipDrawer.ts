@@ -131,15 +131,16 @@ export const $categoryFilteredString = computed(
       });
     }
 
-    if (category === 'NameTag') {
-      return strings.filter((item) => item.category === EquipCategory.NameTag);
+    if (
+      category === 'NameTag' ||
+      category === 'ChatBalloon' ||
+      category === 'NickTag' ||
+      category === 'Medal'
+    ) {
+      const mainCategory = getCategoryBySubCategory(category);
+      return strings.filter((item) => item.category === mainCategory);
     }
 
-    if (category === 'ChatBalloon') {
-      return strings.filter(
-        (item) => item.category === EquipCategory.ChatBalloon,
-      );
-    }
     let filteredStrings = strings;
 
     if (category !== AllCategory) {

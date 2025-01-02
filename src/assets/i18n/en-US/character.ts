@@ -86,4 +86,6 @@ export const dict: CharacterDictionary = {
   equipEffect: 'Effect',
   equipRingEffect: 'Ring',
   equipNecklaceEffect: 'Necklace',
+  equipMedal: 'Medal',
+  equipNickTag: 'Title',
 };

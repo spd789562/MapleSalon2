@@ -51,6 +51,12 @@ export function openNameTagSelection() {
 export function openChatBalloonSelection() {
   openCertainCategory('ChatBalloon');
 }
+export function openMedalSelection() {
+  openCertainCategory('Medal');
+}
+export function openNickTagSelection() {
+  openCertainCategory('NickTag');
+}
 
 export function editCurrentItem(data: {
   id: number;

@@ -21,6 +21,8 @@ export const Character = () => {
             handType={currentCharacterInfo()?.handType}
             showNameTag={currentCharacterInfo()?.showNameTag}
             nameTagId={currentCharacterInfo()?.nameTagId}
+            medalId={currentCharacterInfo()?.medalId}
+            nickTagId={currentCharacterInfo()?.nickTagId}
           />
         )}
       </Show>

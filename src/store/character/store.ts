@@ -23,6 +23,8 @@ export interface CharacterInfo {
   chatBalloonId?: number;
   showNameTag: boolean;
   showChatBalloon: boolean;
+  medalId?: number;
+  nickTagId?: number;
   frame: number;
   isAnimating: boolean;
   action: CharacterAction;

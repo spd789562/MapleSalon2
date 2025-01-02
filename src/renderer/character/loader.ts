@@ -7,7 +7,7 @@ import type { WzNameTag } from '../nameTag/wz';
 import type { WzChatBalloon } from '../chatBalloon/wz';
 
 import { getItemFolderFromId } from '@/utils/itemFolder';
-import { isCashEffectId } from '@/utils/itemId';
+import { isCashEffectId, isNickTagId } from '@/utils/itemId';
 
 class Loader {
   zmap?: Zmap = [];
@@ -69,14 +69,9 @@ class Loader {
   }
   async loadWzImageFolder() {
     this.wzImageFolder = new Set(
-      await fetch(`${this.apiHost}/mapping/images?cache=14400`)
-        .then((res) => res.json())
-        .then((data: string[]) =>
-          data.filter(
-            (path) =>
-              path.startsWith('Character') || path.startsWith('Item/Cash'),
-          ),
-        ),
+      await fetch(`${this.apiHost}/mapping/images?cache=14400`).then((res) =>
+        res.json(),
+      ),
     );
   }
   async loadInstructionMap() {
@@ -124,9 +119,12 @@ class Loader {
     if (existPath) {
       return existPath;
     }
+    const padId = id.toString().padStart(8, '0');
     const path = isCashEffectId(id)
-      ? `Item/Cash/0501.img/${id.toString().padStart(8, '0')}`
-      : `Character/${getfolder}${id.toString().padStart(8, '0')}.img`;
+      ? `Item/Cash/0501.img/${padId}`
+      : isNickTagId(id)
+        ? `Item/Install/0370.img/${padId}`
+        : `Character/${getfolder}${padId}.img`;
 
     const exists = this.wzImageFolder.has(path);
     this.pathExistCache.set(id, exists ? path : '');

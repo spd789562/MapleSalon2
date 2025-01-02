@@ -45,6 +45,8 @@ export interface SaveCharacterInfo {
   handType: CharacterHandType;
   nameTagId?: number;
   chatBalloonId?: number;
+  medalId?: number;
+  nickTagId?: number;
   showNameTag: boolean;
 }
 
@@ -189,6 +191,8 @@ export function saveCurrentCharacter(newId?: boolean) {
     showNameTag: currentCharacter.showNameTag,
     nameTagId: currentCharacter.nameTagId,
     chatBalloonId: currentCharacter.chatBalloonId,
+    medalId: currentCharacter.medalId,
+    nickTagId: currentCharacter.nickTagId,
     items: deepCloneCharacterItems(currentCharacter.items),
   };
   return saveCharacter(data);

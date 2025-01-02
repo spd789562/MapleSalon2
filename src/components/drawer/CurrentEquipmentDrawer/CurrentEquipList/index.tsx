@@ -3,6 +3,8 @@ import { VStack } from 'styled-system/jsx/vstack';
 import { EquipItem } from './EquipItem';
 import { NameTagItem } from './NameTagItem';
 import { ChatBalloonItem } from './ChatBalloonItem';
+import { MedalItem } from './MedalItem';
+import { NickTagItem } from './NickTagItem';
 import type { EquipSubCategory } from '@/const/equipments';
 
 const CategoryList = [
@@ -32,8 +34,10 @@ export const CurrentEquipList = () => {
       <Index each={CategoryList}>
         {(category) => <EquipItem category={category()} />}
       </Index>
-      <NameTagItem />
       <ChatBalloonItem />
+      <NickTagItem />
+      <NameTagItem />
+      <MedalItem />
     </VStack>
   );
 };
