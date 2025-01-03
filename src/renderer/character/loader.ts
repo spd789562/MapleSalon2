@@ -6,6 +6,7 @@ import type { WzItem, WzEffectItem, WzActionInstruction } from './const/wz';
 import type { WzNameTag } from '../nameTag/wz';
 import type { WzChatBalloon } from '../chatBalloon/wz';
 import type { WzMedal } from '../medal/wz';
+import type { WzNickTag } from '../nickTag/wz';
 
 import { getItemFolderFromId } from '@/utils/itemFolder';
 import { isCashEffectId, isNickTagId } from '@/utils/itemId';
@@ -206,9 +207,9 @@ class Loader {
     const path = `UI/NameTag.img/medal/${id}`;
     return await this.getPieceWzByPath<WzMedal>(path);
   }
-  async getNickTagWz(id: number): Promise<WzChatBalloon | null> {
+  async getNickTagWz(id: number): Promise<WzNickTag | null> {
     const path = `UI/NameTag.img/nick/${id}`;
-    return await this.getPieceWzByPath<WzChatBalloon>(path);
+    return await this.getPieceWzByPath<WzNickTag>(path);
   }
 
   getPieceUrl(path: string) {
