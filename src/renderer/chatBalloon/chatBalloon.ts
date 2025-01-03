@@ -5,6 +5,8 @@ import type { WzChatBalloon } from './wz';
 
 import { ChatBalloonBackground } from './chatBalloonBackground';
 
+import { getWzClrColor } from '@/utils/wzUtil';
+
 export class ChatBalloon extends Container {
   id?: number;
   _text: string;
@@ -45,14 +47,6 @@ export class ChatBalloon extends Container {
     this._text = text;
     this.textNode.text = text;
   }
-
-  /**
-   * get name tag color from clr, which is from wz data
-   * @param clr color value need to munus from white
-   */
-  private getChatBalloonColor(clr: number) {
-    return 0xffffff + 1 + clr;
-  }
   async getChatBalloonId(itemId: number) {
     if (!itemId) {
       return 0;
@@ -76,15 +70,7 @@ export class ChatBalloon extends Container {
     this.background.updatePiece(this.wz);
     await this.background.prepareResource();
 
-    const clr = this.wz.clr || -1;
-    if (typeof clr === 'string') {
-      const parsed = Number.parseInt(clr);
-      this.textColor = this.getChatBalloonColor(
-        Number.isNaN(parsed) ? -1 : parsed,
-      );
-    } else {
-      this.textColor = this.getChatBalloonColor(clr);
-    }
+    this.textColor = getWzClrColor(this.wz.clr);
   }
   async load() {
     const result = await this.loadWz();

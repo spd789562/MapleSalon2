@@ -86,6 +86,7 @@ export function changeCurrentCharacter(character: Partial<CharacterData>) {
 
     $currentItem.set(undefined);
     $currentItemChanges.set({});
+    $currentInfoChanges.set({});
   }
 }
 

@@ -7,6 +7,8 @@ import {
   type DestroyOptions,
 } from 'pixi.js';
 
+import { getEquipById } from '@/store/string';
+
 import type { CharacterData } from '@/store/character/store';
 import type { ItemInfo, PieceSlot, Vec2, Zmap } from './const/data';
 import type { PieceIslot } from './const/slot';
@@ -26,6 +28,7 @@ import { CharacterEarType } from '@/const/ears';
 import { CharacterHandType } from '@/const/hand';
 import { BaseNameTag } from '../nameTag/baseNameTag';
 import { ChatBalloon } from '../chatBalloon/chatBalloon';
+import { BaseMedal } from '../medal/baseMedal';
 import { Skill } from '../skill/skill';
 
 type AnyCategorizedItem = CategorizedItem<string>;
@@ -58,6 +61,7 @@ export class Character extends Container {
   name = '';
   nameTag: BaseNameTag;
   chatBalloon: ChatBalloon;
+  medal?: BaseMedal;
   skill?: Skill;
   idItems = new Map<number, CharacterItem>();
 
@@ -232,6 +236,9 @@ export class Character extends Container {
     } else {
       this.chatBalloon.visible = false;
     }
+    if (characterData.medalId !== this.medal?.id) {
+      await this.updateMedal(characterData.medalId);
+    }
 
     if (
       hasAttributeChanged ||
@@ -246,6 +253,27 @@ export class Character extends Container {
     } else {
       this.isLoading = false;
       this.loadEvent.emit('loaded');
+    }
+  }
+
+  async updateMedal(id?: number) {
+    if (this.medal) {
+      this.medal && this.removeChild(this.medal);
+      this.medal?.destroy({
+        children: true,
+      });
+    }
+    if (!id) {
+      this.medal = undefined;
+      return;
+    }
+    const data = getEquipById(id);
+    if (data) {
+      this.medal = new BaseMedal(data.name, id);
+      this.medal.position.set(0, 30);
+      this.medal.zIndex = 2;
+      await this.medal.load();
+      this.addChild(this.medal);
     }
   }
 

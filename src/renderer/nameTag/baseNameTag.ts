@@ -8,6 +8,8 @@ import { NameTagStaticBackground } from './nameTagStaticBackground';
 import { NameTagAnimatedBackground } from './nameTagAnimatedBackground';
 import { NameTagColorBackground } from './nameTagColorBackground';
 
+import { getWzClrColor } from '@/utils/wzUtil';
+
 /* TODO: fix position, it currently some name tag will too high */
 export class BaseNameTag extends Container {
   id?: number;
@@ -66,14 +68,6 @@ export class BaseNameTag extends Container {
       this.background.stop();
     }
   }
-
-  /**
-   * get name tag color from clr, which is from wz data
-   * @param clr color value need to munus from white
-   */
-  private getNameTageColor(clr: number) {
-    return 0xffffff + 1 + clr;
-  }
   async loadWz() {
     const id = this.id as number;
     this.itemWz = await CharacterLoader.getPieceWz(id);
@@ -107,15 +101,7 @@ export class BaseNameTag extends Container {
     /* @ts-ignore */
     this.background.updatePiece(this.tagWz);
 
-    const clr = this.tagWz.clr || -1;
-    if (typeof clr === 'string') {
-      const parsed = Number.parseInt(clr);
-      this.textColor = this.getNameTageColor(
-        Number.isNaN(parsed) ? -1 : parsed,
-      );
-    } else {
-      this.textColor = this.getNameTageColor(clr);
-    }
+    this.textColor = getWzClrColor(this.tagWz.clr);
 
     return this.background.prepareResource();
   }

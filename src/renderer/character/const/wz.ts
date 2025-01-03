@@ -13,6 +13,8 @@ export interface WzItemInfo {
   royalSpecial: boolean;
   nameTag?: number;
   chatBalloon?: number;
+  medalTag?: number;
+  nickTag?: number;
   invisibleFace?: number;
 }
 

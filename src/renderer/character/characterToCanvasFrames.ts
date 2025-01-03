@@ -189,6 +189,12 @@ export function generateCharacterTimeline(character: Character) {
     character.nameTag.background.resetFrame();
     timelines.push(character.nameTag.background.timeline);
   }
+  /* reset medal frame */
+  if (character.medal?.animation) {
+    character.medal.animation.resetFrame();
+    timelines.push(character.medal.animation.timeline);
+  }
+
   let duractionMs = timelines.reduce((acc, timeline) => {
     return Math.max(acc, timeline[timeline.length - 1]);
   }, 0);
