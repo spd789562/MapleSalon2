@@ -9,6 +9,11 @@ import { MedalAnimatedBackground } from './medalAnimatedBackground';
 
 import { getWzClrColor } from '@/utils/wzUtil';
 
+enum MedalType {
+  Medal = 'medal',
+  NickTag = 'nickTag',
+}
+
 export class BaseMedal extends Container {
   id: number;
   _name: string;
@@ -18,7 +23,12 @@ export class BaseMedal extends Container {
   medalWz: WzMedal | null = null;
   background?: MedalStaticBackground;
   animation?: MedalAnimatedBackground;
-  constructor(name: string, id: number) {
+  type: MedalType;
+  constructor(
+    name: string,
+    id: number,
+    medalType: 'medal' | 'nickTag' = 'medal',
+  ) {
     super();
     this.sortableChildren = true;
     this._name = name;
@@ -33,6 +43,7 @@ export class BaseMedal extends Container {
       },
     });
     this.textNode.zIndex = 10;
+    this.type = medalType as MedalType;
     this.addChild(this.textNode);
   }
   get isAnimated() {
@@ -48,14 +59,27 @@ export class BaseMedal extends Container {
   async loadWz() {
     const id = this.id as number;
     this.itemWz = await CharacterLoader.getPieceWz(id);
-    if (this.itemWz?.info?.medalTag) {
-      const tagId = this.itemWz.info.medalTag as number;
-      this.medalWz = await CharacterLoader.getMedalWz(tagId);
+    if (this.type === MedalType.Medal) {
+      await this.loadMedalWz();
+    } else {
+      await this.loadNickTagWz();
     }
     if (!(this.itemWz && this.medalWz)) {
       return;
     }
     return true;
+  }
+  async loadMedalWz() {
+    if (this.itemWz?.info?.medalTag) {
+      const tagId = this.itemWz.info.medalTag as number;
+      this.medalWz = await CharacterLoader.getMedalWz(tagId);
+    }
+  }
+  async loadNickTagWz() {
+    if (this.itemWz?.info?.nickTag) {
+      const tagId = this.itemWz.info.nickTag as number;
+      this.medalWz = await CharacterLoader.getNickTagWz(tagId);
+    }
   }
   updateBackground() {
     if (!this.medalWz) {
@@ -93,6 +117,9 @@ export class BaseMedal extends Container {
   renderMedal() {
     if (this.background) {
       this.background.renderBackground();
+      if (this.type === MedalType.NickTag) {
+        this.background.pivot.y = this.background.topOffset;
+      }
     }
     if (this.animation) {
       this.animation.renderBackground();
@@ -100,8 +127,8 @@ export class BaseMedal extends Container {
     this.textNode.pivot.x = this.textNode.width / 2;
     this.textNode.style.fill = this.textColor;
     if (this.animation && this.background) {
-      this.animation.position.y = -this.background.center.pivot.y;
-      this.animation.position.x = -this.background.pivot.x;
+      this.animation.pivot.y = this.background.center.pivot.y;
+      this.animation.pivot.x = this.background.pivot.x;
     }
     this.pivot.y = -(this.background?.topOffset || 0);
   }

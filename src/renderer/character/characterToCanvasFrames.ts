@@ -194,6 +194,11 @@ export function generateCharacterTimeline(character: Character) {
     character.medal.animation.resetFrame();
     timelines.push(character.medal.animation.timeline);
   }
+  /* reset nickTag frame */
+  if (character.nickTag?.animation) {
+    character.nickTag.animation.resetFrame();
+    timelines.push(character.nickTag.animation.timeline);
+  }
 
   let duractionMs = timelines.reduce((acc, timeline) => {
     return Math.max(acc, timeline[timeline.length - 1]);

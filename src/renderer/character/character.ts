@@ -29,7 +29,7 @@ import { CharacterHandType } from '@/const/hand';
 import { BaseNameTag } from '../nameTag/baseNameTag';
 import { ChatBalloon } from '../chatBalloon/chatBalloon';
 import { BaseMedal } from '../medal/baseMedal';
-import { NickTag } from '../nickTag/nickTag';
+// import { NickTag } from '../nickTag/nickTag';
 import { Skill } from '../skill/skill';
 
 type AnyCategorizedItem = CategorizedItem<string>;
@@ -63,7 +63,7 @@ export class Character extends Container {
   nameTag: BaseNameTag;
   chatBalloon: ChatBalloon;
   medal?: BaseMedal;
-  nickTag?: NickTag;
+  nickTag?: BaseMedal;
   skill?: Skill;
   idItems = new Map<number, CharacterItem>();
 
@@ -294,7 +294,7 @@ export class Character extends Container {
     }
     const data = getEquipById(id);
     if (data) {
-      this.nickTag = new NickTag(data.name, id);
+      this.nickTag = new BaseMedal(data.name, id, 'nickTag');
       this.nickTag.position.set(0, -110);
       this.nickTag.zIndex = 2;
       await this.nickTag.load();

@@ -1,4 +1,5 @@
 import type { Renderer, Container } from 'pixi.js';
+import { Bounds } from 'pixi.js';
 
 import { extractCanvas } from '@/utils/extract';
 
@@ -33,12 +34,7 @@ export async function makeFrames(
 ): Promise<CanvasFramesData> {
   const unprocessedFrames: UniversalFrame[] = [];
 
-  const bound = {
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  };
+  const bound = new Bounds();
 
   for (let i = 0; i < count; i++) {
     options.beforeMakeFrame?.(i);
@@ -54,11 +50,7 @@ export async function makeFrames(
       top: frameBound.top,
     };
     unprocessedFrames.push(frameData);
-
-    bound.left = Math.min(bound.left, frameBound.left);
-    bound.top = Math.min(bound.top, frameBound.top);
-    bound.right = Math.max(bound.right, frameBound.right);
-    bound.bottom = Math.max(bound.bottom, frameBound.bottom);
+    bound.addBounds(frameBound);
 
     options.afterMakeFrame?.(i);
 
