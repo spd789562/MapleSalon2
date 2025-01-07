@@ -42,9 +42,9 @@ export const dict = {
   frameRemainSpace: '匯出分鏡時填補空白',
   frameRemainSpaceTip:
     '分鏡將會統一角色圖片大小，以利播放，若取消勾選時，匯出的 zip 將會含有每張分鏡角色定位的 json 檔',
-  gifWithBackground: '匯出 Gif 時自動填補黑色',
+  gifWithBackground: 'Gif 背景色',
   gitWithBackgroundTip:
-    '此設定將會使匯出的 Gif 有黑色背景，改善部分裝備為半透明時會導致匯出時黑時白的問題',
+    '此設定將會使匯出的 Gif 有背景色，改善部分裝備為半透明時會導致匯出時黑時白的問題',
 
   renderTitle: '渲染設定',
   renderer: '渲染器',

@@ -1,5 +1,5 @@
 import { $globalRenderer } from '@/store/renderer';
-import { $exportType, $addBlackBgWhenExportGif } from '@/store/settingDialog';
+import { $exportType, $exportBackgroundColor } from '@/store/settingDialog';
 import { $interactionLock } from '@/store/trigger';
 
 import { useMountTab } from './MountTabContext';
@@ -32,10 +32,7 @@ export const ExportAnimationButton = () => {
       $interactionLock.set(true);
       await nextTick();
       const exportType = $exportType.get() || ActionExportType.Webp;
-      const backgroundColor =
-        $addBlackBgWhenExportGif.get() && exportType === 'gif'
-          ? '#000000'
-          : undefined;
+      const backgroundColor = $exportBackgroundColor.get();
       const data = await tamingMobToCanvasFrames(state.mountRef, app.renderer, {
         backgroundColor,
         onProgress: updateExportProgress,

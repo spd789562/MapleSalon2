@@ -58,6 +58,7 @@ export interface AppSetting extends Record<string, unknown> {
   exportType: ActionExportType;
   padWhiteSpaceWhenExportFrame: boolean;
   addBlackBgWhenExportGif: boolean;
+  gifBackgroundColor: string;
   /* other */
   lang: string;
 }
@@ -78,6 +79,7 @@ const DEFAULT_SETTING: AppSetting = {
   exportType: ActionExportType.Webp,
   padWhiteSpaceWhenExportFrame: true,
   addBlackBgWhenExportGif: false,
+  gifBackgroundColor: '#000000',
   lang: window.__LANG__,
 };
 
@@ -138,6 +140,19 @@ export const $defaultLoadItem = computed(
   $appSetting,
   (setting) => setting.defaultLoadItem,
 );
+export const $gifBackgroundColor = computed(
+  $appSetting,
+  (setting) => setting.gifBackgroundColor,
+);
+export const $exportBackgroundColor = computed(
+  [$exportType, $addBlackBgWhenExportGif, $gifBackgroundColor],
+  (exportType, addBlackBgWhenExportGif, gifBackgroundColor) => {
+    if (exportType === ActionExportType.Gif && addBlackBgWhenExportGif) {
+      return gifBackgroundColor;
+    }
+    return undefined;
+  },
+);
 
 /* action */
 export async function initializeSavedSetting() {
@@ -173,6 +188,9 @@ export async function initializeSavedSetting() {
         if (setting.preferScaleMode === 'nearest') {
           TextureStyle.defaultOptions.scaleMode = 'nearest';
         }
+      } else {
+        // make default is nearest
+        TextureStyle.defaultOptions.scaleMode = 'nearest';
       }
       if (isValidResolution(setting.windowResolution)) {
         $appSetting.setKey('windowResolution', setting.windowResolution);
@@ -274,4 +292,7 @@ export function setPreferScaleMode(value: 'linear' | 'nearest') {
 }
 export function setLang(value: string) {
   $appSetting.setKey('lang', value);
+}
+export function setGifBackgroundColor(value: string) {
+  $appSetting.setKey('gifBackgroundColor', value);
 }

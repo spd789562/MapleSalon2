@@ -1,7 +1,11 @@
 import { createSignal, Show } from 'solid-js';
 
+import { computed } from 'nanostores';
 import { $actionExportType, $forceExportEffect } from '@/store/toolTab';
-import { $addBlackBgWhenExportGif } from '@/store/settingDialog';
+import {
+  $addBlackBgWhenExportGif,
+  $gifBackgroundColor,
+} from '@/store/settingDialog';
 import { $globalRenderer } from '@/store/renderer';
 
 import { useActionTab } from './ActionTabContext';
@@ -20,6 +24,16 @@ import { getAnimatedCharacterBlob, getCharacterFilenameSuffix } from './helper';
 import { makeBlobsZipBlob } from '@/utils/exportImage/exportBlobToZip';
 import { downloadBlob } from '@/utils/download';
 import { nextTick } from '@/utils/eventLoop';
+
+export const $exportBackgroundColor = computed(
+  [$actionExportType, $addBlackBgWhenExportGif, $gifBackgroundColor],
+  (exportType, addBlackBgWhenExportGif, gifBackgroundColor) => {
+    if (exportType === 'gif' && addBlackBgWhenExportGif) {
+      return gifBackgroundColor;
+    }
+    return undefined;
+  },
+);
 
 export interface ExportAnimateButtonProps {
   characterRefs: ActionCharacterRef[];
@@ -68,10 +82,7 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
 
     try {
       const files: [Blob, string][] = [];
-      const backgroundColor =
-        $addBlackBgWhenExportGif.get() && exportType === 'gif'
-          ? '#000000'
-          : undefined;
+      const backgroundColor = $exportBackgroundColor.get();
       if (props.characterRefs.length === 1) {
         const characterRef = props.characterRefs[0];
         const frameData = await characterRef.makeCharacterFrames({

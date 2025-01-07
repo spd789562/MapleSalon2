@@ -45,9 +45,9 @@ export const dict: SettingDictionary = {
   frameRemainSpace: 'Padding Space',
   frameRemainSpaceTip:
     'The frame will be unified to the same size, if uncheck this, the exported zip will contain json files for each frame',
-  gifWithBackground: 'Gif with Black Background',
+  gifWithBackground: 'Gif Background',
   gitWithBackgroundTip:
-    'This setting will make the exported Gif have a black background, improving the problem of black and white when exporting some equipment as semi-transparent',
+    'This setting will make the exported Gif have background color, improving the problem of black and white when exporting some equipment as semi-transparent',
 
   renderTitle: 'Render Setting',
   renderer: 'Renderer',
