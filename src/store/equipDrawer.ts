@@ -3,7 +3,12 @@ import { atom, map, computed, onSet } from 'nanostores';
 import { $equipmentStrings } from './string';
 import { $equipmentHistory, saveHistory } from './equipHistory';
 
-import { getCategoryBySubCategory, getSubCategory } from '@/utils/itemId';
+import {
+  getCategoryBySubCategory,
+  getSubCategory,
+  Gender,
+  getGender,
+} from '@/utils/itemId';
 import { getFaceColorId, getHairColorId } from '@/utils/mixDye';
 
 import {
@@ -37,6 +42,7 @@ export const $equipmentDrawerEquipListType = atom<EquipListType>(
 export const $equipmentDrawerEquipCategory =
   atom<EquipCategorySelections>(AllCategory);
 export const $equipmentDrawerOnlyShowDyeable = atom(false);
+export const $equipmentDrawerGender = atom<Gender>(Gender.All);
 export const $equipmentDrawerHairColor = atom<HairColor>(HairColor.Black);
 export const $equipmentDrawerFaceColor = atom<FaceColor>(FaceColor.Black);
 export const $equipmentDrawerEquipCategorySelectionOpen = atom(true);
@@ -162,15 +168,24 @@ export const $categoryFilteredString = computed(
 );
 
 export const $equipmentDrawerEquipFilteredString = computed(
-  [$categoryFilteredString, $currentEquipmentDrawerSearch],
-  (strings, searchKey) => {
+  [
+    $categoryFilteredString,
+    $currentEquipmentDrawerSearch,
+    $equipmentDrawerGender,
+  ],
+  (strings, searchKey, gender) => {
+    const genderFilterd =
+      gender === Gender.All
+        ? strings
+        : strings.filter((item) => getGender(item.id) === gender);
+
     if (searchKey) {
-      return strings.filter((item) => {
+      return genderFilterd.filter((item) => {
         const isMatch =
           item.name.includes(searchKey) || item.id.toString() === searchKey;
         return isMatch;
       });
     }
-    return strings;
+    return genderFilterd;
   },
 );

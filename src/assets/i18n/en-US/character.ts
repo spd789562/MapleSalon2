@@ -14,6 +14,12 @@ export const dict: CharacterDictionary = {
 
   animated: 'Animated',
 
+  gender: 'Gender',
+  genderAll: 'All',
+  genderMale: 'Male',
+  genderFemale: 'Female',
+  genderShare: 'Share',
+
   handType: 'Hand Type',
   handTypeNormal: 'Normal',
   handTypeSingle: 'One',

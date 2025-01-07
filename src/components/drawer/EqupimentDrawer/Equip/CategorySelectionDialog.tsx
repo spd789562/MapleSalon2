@@ -14,8 +14,10 @@ import {
   type OpenChangeDetails,
 } from '@/components/ui/dialog';
 import CloseIcon from 'lucide-solid/icons/x';
+import { HStack } from 'styled-system/jsx/hstack';
 import { IconButton } from '@/components/ui/icon-button';
 import { OnlyShowDyeableSwitch } from './OnlySowDyeableSwitch';
+import { GenderSelect } from './GenderSelect';
 
 const Dialog = {
   Root,
@@ -90,7 +92,10 @@ export const CategorySelectionDialog = (
           </IconButton>
           <Dialog.Title mb={2}>
             {t('tab.equipCategory')}
-            <OnlyShowDyeableSwitch />
+            <HStack>
+              <OnlyShowDyeableSwitch />
+              <GenderSelect />
+            </HStack>
           </Dialog.Title>
           {props.children}
         </Dialog.Content>

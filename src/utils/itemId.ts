@@ -6,6 +6,7 @@ export enum Gender {
   Male = 0,
   Female = 1,
   Share = 2,
+  All = 3,
 }
 
 export function getBodyId(id: number): number {

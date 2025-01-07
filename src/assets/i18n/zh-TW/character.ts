@@ -12,6 +12,12 @@ export const dict = {
 
   animated: '動畫',
 
+  gender: '性別',
+  genderAll: '全部',
+  genderMale: '男性',
+  genderFemale: '女性',
+  genderShare: '共用',
+
   handType: '手勢',
   handTypeNormal: '一般',
   handTypeSingle: '單手',

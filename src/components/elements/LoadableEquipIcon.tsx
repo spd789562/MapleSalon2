@@ -111,6 +111,9 @@ const IconContainer = styled(Flex, {
       2: {
         backgroundColor: 'transparent',
       },
+      3: {
+        backgroundColor: 'transparent',
+      },
     },
   },
 });

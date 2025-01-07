@@ -2,14 +2,18 @@ import { atom, map, computed } from 'nanostores';
 
 import type { EquipItem } from './string';
 import { fileStore } from './equipHistory';
-import type { EquipCategorySelections } from './equipDrawer';
-
 import {
-  AllCategory,
-  EquipCategory,
-  type EquipSubCategory,
-} from '@/const/equipments';
-import { getCategoryBySubCategory, getSubCategory } from '@/utils/itemId';
+  type EquipCategorySelections,
+  $equipmentDrawerGender,
+} from './equipDrawer';
+
+import { AllCategory, EquipCategory } from '@/const/equipments';
+import {
+  getCategoryBySubCategory,
+  getSubCategory,
+  Gender,
+  getGender,
+} from '@/utils/itemId';
 
 const SAVE_KEY = 'favorite';
 
@@ -132,15 +136,23 @@ export const $categoryFilteredString = computed(
 );
 
 export const $equipmentFavoriteEquipFilteredString = computed(
-  [$categoryFilteredString, $currentEquipmentFavoriteSearch],
-  (strings, searchKey) => {
+  [
+    $categoryFilteredString,
+    $currentEquipmentFavoriteSearch,
+    $equipmentDrawerGender,
+  ],
+  (strings, searchKey, gender) => {
+    const genderFilterd =
+      gender === Gender.All
+        ? strings
+        : strings.filter((item) => getGender(item.id) === gender);
     if (searchKey) {
-      return strings.filter((item) => {
+      return genderFilterd.filter((item) => {
         const isMatch =
           item.name.includes(searchKey) || item.id.toString() === searchKey;
         return isMatch;
       });
     }
-    return strings;
+    return genderFilterd;
   },
 );
