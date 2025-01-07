@@ -1,4 +1,4 @@
-import { Show } from 'solid-js';
+import { Show, type JSX } from 'solid-js';
 
 import { useStore } from '@nanostores/solid';
 import { useTranslate } from '@/context/i18n';
@@ -8,16 +8,14 @@ import {
   $isShowExperimentCharacterRenderSwitch,
 } from '@/store/equipDrawer';
 
-import InfoIcon from 'lucide-solid/icons/info';
 import { Flex } from 'styled-system/jsx/flex';
 import { Text } from '@/components/ui/text';
 import { Switch, type ChangeDetails } from '@/components/ui/switch';
-import { SimpleTooltip } from '@/components/ui/tooltip';
+import { IconCssTooltip, IconType } from '@/components/elements/IconTooltip';
 
-export const CharacterRenderingSwitch = () => {
+export const BaseCharacterRenderingSwitch = () => {
   const t = useTranslate();
 
-  const isShow = useStore($isShowExperimentCharacterRenderSwitch);
   const checked = useStore($equipmentDrawerExperimentCharacterRender);
 
   function handleChange(detail: ChangeDetails) {
@@ -25,26 +23,35 @@ export const CharacterRenderingSwitch = () => {
   }
 
   return (
-    <Show when={isShow()}>
-      <Flex flexDirection="column" textAlign="left">
-        <Flex alignItems="center" gap={1}>
-          <Text as="label" size="sm">
-            {t('setting.characterRender')}
-          </Text>
-          <SimpleTooltip
-            zIndex={1500}
-            tooltip={t('setting.characterRenderTip')}
-          >
-            <InfoIcon color="currentColor" size="16" />
-          </SimpleTooltip>
-        </Flex>
-        <Switch
-          id="CharacterRenderingSwitch"
-          checked={checked()}
-          onCheckedChange={handleChange}
-          width="2.4rem"
+    <Flex flexDirection="row" gap={2} textAlign="left">
+      <Flex alignItems="center" gap={1}>
+        <Text as="label" size="sm">
+          {t('setting.characterRender')}
+        </Text>
+        <IconCssTooltip
+          tooltip={t('setting.characterRenderTip')}
+          type={IconType.Info}
         />
       </Flex>
-    </Show>
+      <Switch
+        id="CharacterRenderingSwitch"
+        checked={checked()}
+        onCheckedChange={handleChange}
+        width="2.4rem"
+      />
+    </Flex>
+  );
+};
+
+export const ShowOnHairOrFace = (props: { children: JSX.Element }) => {
+  const isShow = useStore($isShowExperimentCharacterRenderSwitch);
+  return <Show when={isShow()}>{props.children}</Show>;
+};
+
+export const CharacterRenderingSwitch = () => {
+  return (
+    <ShowOnHairOrFace>
+      <BaseCharacterRenderingSwitch />
+    </ShowOnHairOrFace>
   );
 };

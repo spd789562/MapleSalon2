@@ -92,7 +92,7 @@ export const CategorySelectionDialog = (
           </IconButton>
           <Dialog.Title mb={2}>
             {t('tab.equipCategory')}
-            <HStack>
+            <HStack justify="space-between">
               <OnlyShowDyeableSwitch />
               <GenderSelect />
             </HStack>

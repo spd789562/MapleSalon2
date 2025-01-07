@@ -1,5 +1,6 @@
 import type { JSX } from 'solid-js';
 import { useStore } from '@nanostores/solid';
+import { useTranslate } from '@/context/i18n';
 import { css } from 'styled-system/css';
 
 import { $equipmentFavoriteEquipCategorySelectionOpen } from '@/store/equipFavorite';
@@ -12,9 +13,11 @@ import {
   Title,
   type OpenChangeDetails,
 } from '@/components/ui/dialog';
+import { HStack } from 'styled-system/jsx/hstack';
 import CloseIcon from 'lucide-solid/icons/x';
 import { IconButton } from '@/components/ui/icon-button';
 import { CharacterRenderingSwitch } from './CharacterRenderingSwitch';
+import { GenderSelect } from '@/components/drawer/EqupimentDrawer/Equip/GenderSelect';
 
 const Dialog = {
   Root,
@@ -46,6 +49,7 @@ interface CategorySelectionDialogProps {
 export const CategorySelectionDialog = (
   props: CategorySelectionDialogProps,
 ) => {
+  const t = useTranslate();
   const isOpen = useStore($equipmentFavoriteEquipCategorySelectionOpen);
 
   function handleClose(_: unknown) {
@@ -85,8 +89,11 @@ export const CategorySelectionDialog = (
             <CloseIcon />
           </IconButton>
           <Dialog.Title mb={2}>
-            裝備分類
-            <CharacterRenderingSwitch />
+            {t('tab.equipCategory')}
+            <HStack justify="space-between">
+              <CharacterRenderingSwitch />
+              <GenderSelect />
+            </HStack>
           </Dialog.Title>
           {props.children}
         </Dialog.Content>

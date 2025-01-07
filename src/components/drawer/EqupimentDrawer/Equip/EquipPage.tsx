@@ -13,7 +13,8 @@ import {
   CategorySelection,
   CategorySelectionToggle,
 } from './CategorySelection';
-import { CharacterRenderingSwitch } from './CharacterRenderingSwitch';
+import { ShowOnHairOrFace } from './CharacterRenderingSwitch';
+import { SettingPopover } from './SettingPopover';
 import { HideOnHistoryTab } from './HideOnHistoryTab';
 import { FavoritePage } from '../Favorite/FavoritePage';
 
@@ -27,7 +28,9 @@ export const EquipPage = () => {
         <Grid position="relative" overflow="auto" gridTemplateRows="auto 1fr">
           <Grid gridTemplateColumns="auto auto 1fr" p={1}>
             <CategorySelectionToggle />
-            <CharacterRenderingSwitch />
+            <ShowOnHairOrFace>
+              <SettingPopover />
+            </ShowOnHairOrFace>
             <HideOnHistoryTab>
               <EquipSearchInput />
             </HideOnHistoryTab>
