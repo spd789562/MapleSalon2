@@ -2,6 +2,7 @@ import { atom } from 'nanostores';
 
 import { $apiHost } from './const';
 import { $initLoadProgress, InitLoadProgress } from './initialize';
+import { updateExtraPartStatus } from './character/action';
 
 import { EquipCategory } from '@/const/equipments';
 import type { Gender } from '@/utils/itemId';
@@ -89,5 +90,8 @@ export async function prepareAndFetchEquipStrings() {
       ),
     );
 
+  updateExtraPartStatus(
+    strings.filter((e) => e.category === EquipCategory.Effect).map((e) => e.id),
+  );
   $equipmentStrings.set(strings);
 }

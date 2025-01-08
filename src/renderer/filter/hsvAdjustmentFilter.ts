@@ -166,7 +166,6 @@ export class HsvAdjustmentFilter extends Filter {
     return this.resources.hsvUniforms.uniforms.uAlpha;
   }
   set alpha(value: number) {
-    console.log('alpha', value);
     this.resources.hsvUniforms.uniforms.uAlpha = value;
   }
 

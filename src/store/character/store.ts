@@ -6,6 +6,7 @@ import { CharacterAction } from '@/const/actions';
 import { CharacterExpressions } from '@/const/emotions';
 import { CharacterEarType } from '@/const/ears';
 import { CharacterHandType } from '@/const/hand';
+import type { CharacterExtraPart } from '@/const/extraParts';
 
 export type CharacterItemInfo = ItemInfo &
   Partial<{
@@ -32,6 +33,7 @@ export interface CharacterInfo {
   earType: CharacterEarType;
   handType: CharacterHandType;
   skillId?: string;
+  extraParts: CharacterExtraPart[];
 }
 
 export interface CharacterData extends Record<string, unknown>, CharacterInfo {
@@ -123,6 +125,7 @@ export const $currentCharacterInfo = deepMap<
   earType: CharacterEarType.HumanEar,
   handType: CharacterHandType.SingleHand,
   skillId: undefined,
+  extraParts: [],
 });
 
 export const $currentItem = atom<
@@ -142,3 +145,10 @@ export const $currentItemChanges = deepMap<
 export const $currentInfoChanges = deepMap<Partial<CharacterInfo>>({});
 
 export const $chatBalloonContent = atom<string>('');
+
+export const $characterExtraParts = atom<
+  {
+    part: CharacterExtraPart;
+    disabled: boolean;
+  }[]
+>([]);

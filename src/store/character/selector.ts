@@ -24,6 +24,10 @@ export const $totalInfo = batched(
   (info, changes) => ({
     ...info,
     ...changes,
+    extraParts:
+      changes.extraParts && changes.extraParts.length > 0
+        ? changes.extraParts
+        : info.extraParts,
   }),
 );
 

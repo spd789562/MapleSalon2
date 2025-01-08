@@ -5,6 +5,7 @@ import {
   $currentCharacterInfo,
   $currentItemChanges,
   $currentInfoChanges,
+  $characterExtraParts,
 } from './store';
 import {
   $totalItems,
@@ -35,6 +36,10 @@ import type { CharacterAction } from '@/const/actions';
 import type { CharacterExpressions } from '@/const/emotions';
 import type { CharacterEarType } from '@/const/ears';
 import type { CharacterHandType } from '@/const/hand';
+import {
+  type CharacterExtraPart,
+  CharacterExtraPartIdToPartMap,
+} from '@/const/extraParts';
 
 export function changeCurrentCharacter(character: Partial<CharacterData>) {
   if (character.items) {
@@ -81,6 +86,11 @@ export function changeCurrentCharacter(character: Partial<CharacterData>) {
       updateInfo.nickTagId = character.nickTagId;
     } else {
       updateInfo.nickTagId = undefined;
+    }
+    if (character.extraParts && character.extraParts.length > 0) {
+      updateInfo.extraParts = character.extraParts;
+    } else {
+      updateInfo.extraParts = [];
     }
     $currentCharacterInfo.set(updateInfo);
 
@@ -473,4 +483,34 @@ export function setCharacterMedal(id: number | undefined) {
 }
 export function setCharacterNickTag(id: number | undefined) {
   $currentInfoChanges.setKey('nickTagId', id);
+}
+export function toggleExtraPart(part: CharacterExtraPart) {
+  let currentCharacterInfo = $currentInfoChanges.get().extraParts || [];
+  if (currentCharacterInfo.length === 0) {
+    currentCharacterInfo = $currentCharacterInfo.get().extraParts || [];
+  }
+  if (currentCharacterInfo.findIndex((item) => item === part) === -1) {
+    $currentInfoChanges.setKey('extraParts', [...currentCharacterInfo, part]);
+  } else {
+    $currentInfoChanges.setKey(
+      'extraParts',
+      currentCharacterInfo.filter((item) => item !== part),
+    );
+  }
+}
+
+export function updateExtraPartStatus(effectIds: number[]) {
+  const initialMap = Object.entries(CharacterExtraPartIdToPartMap).reduce(
+    (acc, inc) => {
+      acc[inc[0]] = { part: inc[1], disabled: true };
+      return acc;
+    },
+    {} as Record<string, { part: CharacterExtraPart; disabled: boolean }>,
+  );
+  for (const effectId of effectIds) {
+    if (initialMap[effectId]) {
+      initialMap[effectId].disabled = false;
+    }
+  }
+  $characterExtraParts.set(Object.values(initialMap));
 }

@@ -1,6 +1,6 @@
 import type { I18nKeys } from '@/context/i18n';
 
-export enum ExtraPart {
+export enum CharacterExtraPart {
   DemonSlayerWing = 'DemonSlayerWing',
   DemonSlayerBigWing = 'DemonSlayerBigWing',
   DemonSlayer5thWing = 'DemonSlayer5thWing',
@@ -34,75 +34,112 @@ export enum ExtraPart {
   LaraHorn = 'LaraHorn',
 }
 
-export const ExtraPartNames: Record<ExtraPart, I18nKeys> = {
-  [ExtraPart.DemonSlayerWing]: 'character.partDemonSlayerWing',
-  [ExtraPart.DemonSlayerBigWing]: 'character.partDemonSlayerBigWing',
-  [ExtraPart.DemonSlayer5thWing]: 'character.partDemonSlayer5thWing',
+export const CharacterExtraPartNames: Record<CharacterExtraPart, I18nKeys> = {
+  [CharacterExtraPart.DemonSlayerWing]: 'character.partDemonSlayerWing',
+  [CharacterExtraPart.DemonSlayerBigWing]: 'character.partDemonSlayerBigWing',
+  [CharacterExtraPart.DemonSlayer5thWing]: 'character.partDemonSlayer5thWing',
 
-  [ExtraPart.KaiserWing]: 'character.partKaiserWing',
-  [ExtraPart.KaiserTail]: 'character.partKaiserTail',
-  [ExtraPart.KaiserWing2]: 'character.partKaiserWing2',
-  [ExtraPart.KaiserTail2]: 'character.partKaiserTail2',
-  [ExtraPart.KaiserWing3]: 'character.partKaiserWing3',
-  [ExtraPart.KaiserTail3]: 'character.partKaiserTail3',
+  [CharacterExtraPart.KaiserWing]: 'character.partKaiserWing',
+  [CharacterExtraPart.KaiserTail]: 'character.partKaiserTail',
+  [CharacterExtraPart.KaiserWing2]: 'character.partKaiserWing2',
+  [CharacterExtraPart.KaiserTail2]: 'character.partKaiserTail2',
+  [CharacterExtraPart.KaiserWing3]: 'character.partKaiserWing3',
+  [CharacterExtraPart.KaiserTail3]: 'character.partKaiserTail3',
 
-  [ExtraPart.AngelicBusterWing]: 'character.partAngelicBusterWing',
-  [ExtraPart.AngelicBusterTransformWing]:
+  [CharacterExtraPart.AngelicBusterWing]: 'character.partAngelicBusterWing',
+  [CharacterExtraPart.AngelicBusterTransformWing]:
     'character.partAngelicBusterTransformWing',
 
-  [ExtraPart.BeastTamerBrownEar]: 'character.partBeastTamerBrownEar',
-  [ExtraPart.BeastTamerBrownTail]: 'character.partBeastTamerBrownTail',
-  [ExtraPart.BeastTamerWhiteEar]: 'character.partBeastTamerWhiteEar',
-  [ExtraPart.BeastTamerWhiteTail]: 'character.partBeastTamerWhiteTail',
-  [ExtraPart.BeastTamerBlackEar]: 'character.partBeastTamerBlackEar',
-  [ExtraPart.BeastTamerBlackTail]: 'character.partBeastTamerBlackTail',
+  [CharacterExtraPart.BeastTamerBrownEar]: 'character.partBeastTamerBrownEar',
+  [CharacterExtraPart.BeastTamerBrownTail]: 'character.partBeastTamerBrownTail',
+  [CharacterExtraPart.BeastTamerWhiteEar]: 'character.partBeastTamerWhiteEar',
+  [CharacterExtraPart.BeastTamerWhiteTail]: 'character.partBeastTamerWhiteTail',
+  [CharacterExtraPart.BeastTamerBlackEar]: 'character.partBeastTamerBlackEar',
+  [CharacterExtraPart.BeastTamerBlackTail]: 'character.partBeastTamerBlackTail',
 
-  [ExtraPart.Illium0thWing]: 'character.partIllium0thWing',
-  [ExtraPart.Illium1stWing]: 'character.partIllium1stWing',
-  [ExtraPart.Illium2ndWing]: 'character.partIllium2ndWing',
-  [ExtraPart.Illium3rdWing]: 'character.partIllium3rdWing',
-  [ExtraPart.IlliumVortexWing]: 'character.partIlliumVortexWing',
+  [CharacterExtraPart.Illium0thWing]: 'character.partIllium0thWing',
+  [CharacterExtraPart.Illium1stWing]: 'character.partIllium1stWing',
+  [CharacterExtraPart.Illium2ndWing]: 'character.partIllium2ndWing',
+  [CharacterExtraPart.Illium3rdWing]: 'character.partIllium3rdWing',
+  [CharacterExtraPart.IlliumVortexWing]: 'character.partIlliumVortexWing',
 
-  [ExtraPart.HoyoungEars]: 'character.partHoyoungEars',
-  [ExtraPart.HoyoungTail]: 'character.partHoyoungTail',
+  [CharacterExtraPart.HoyoungEars]: 'character.partHoyoungEars',
+  [CharacterExtraPart.HoyoungTail]: 'character.partHoyoungTail',
 
-  [ExtraPart.LaraHorn]: 'character.partLaraHorn',
+  [CharacterExtraPart.LaraHorn]: 'character.partLaraHorn',
 };
 
-export const ExtraPartIdMap: Record<ExtraPart, number> = {
-  [ExtraPart.DemonSlayerWing]: 5010084,
-  [ExtraPart.DemonSlayerBigWing]: 5010085,
-  [ExtraPart.DemonSlayer5thWing]: 5010152,
+export const CharacterExtraPartIdMap: Record<CharacterExtraPart, number> = {
+  [CharacterExtraPart.DemonSlayerWing]: 5010084,
+  [CharacterExtraPart.DemonSlayerBigWing]: 5010085,
+  [CharacterExtraPart.DemonSlayer5thWing]: 5010152,
 
-  [ExtraPart.KaiserWing]: 5010087,
-  [ExtraPart.KaiserTail]: 5010090,
-  [ExtraPart.KaiserWing2]: 5010088,
-  [ExtraPart.KaiserTail2]: 5010091,
-  [ExtraPart.KaiserWing3]: 5010089,
-  [ExtraPart.KaiserTail3]: 5010092,
+  [CharacterExtraPart.KaiserWing]: 5010087,
+  [CharacterExtraPart.KaiserTail]: 5010090,
+  [CharacterExtraPart.KaiserWing2]: 5010088,
+  [CharacterExtraPart.KaiserTail2]: 5010091,
+  [CharacterExtraPart.KaiserWing3]: 5010089,
+  [CharacterExtraPart.KaiserTail3]: 5010092,
 
-  [ExtraPart.AngelicBusterWing]: 5010093,
-  [ExtraPart.AngelicBusterTransformWing]: 5010094,
+  [CharacterExtraPart.AngelicBusterWing]: 5010093,
+  [CharacterExtraPart.AngelicBusterTransformWing]: 5010094,
 
-  [ExtraPart.BeastTamerBrownEar]: 5010116,
-  [ExtraPart.BeastTamerBrownTail]: 5010119,
-  [ExtraPart.BeastTamerWhiteEar]: 5010117,
-  [ExtraPart.BeastTamerWhiteTail]: 5010116,
-  [ExtraPart.BeastTamerBlackEar]: 5010120,
-  [ExtraPart.BeastTamerBlackTail]: 5010121,
+  [CharacterExtraPart.BeastTamerBrownEar]: 5010116,
+  [CharacterExtraPart.BeastTamerBrownTail]: 5010119,
+  [CharacterExtraPart.BeastTamerWhiteEar]: 5010117,
+  [CharacterExtraPart.BeastTamerWhiteTail]: 5010120,
+  [CharacterExtraPart.BeastTamerBlackEar]: 5010118,
+  [CharacterExtraPart.BeastTamerBlackTail]: 5010121,
 
-  [ExtraPart.Illium0thWing]: 5010160,
-  [ExtraPart.Illium1stWing]: 5010161,
-  [ExtraPart.Illium2ndWing]: 5010162,
-  [ExtraPart.Illium3rdWing]: 5010163,
-  [ExtraPart.IlliumVortexWing]: 5010164,
+  [CharacterExtraPart.Illium0thWing]: 5010160,
+  [CharacterExtraPart.Illium1stWing]: 5010161,
+  [CharacterExtraPart.Illium2ndWing]: 5010162,
+  [CharacterExtraPart.Illium3rdWing]: 5010163,
+  [CharacterExtraPart.IlliumVortexWing]: 5010164,
 
-  [ExtraPart.HoyoungEars]: 5010176,
-  [ExtraPart.HoyoungTail]: 5010177,
+  [CharacterExtraPart.HoyoungEars]: 5010176,
+  [CharacterExtraPart.HoyoungTail]: 5010177,
 
-  [ExtraPart.LaraHorn]: 5010193,
+  [CharacterExtraPart.LaraHorn]: 5010193,
 };
 
-export function isValidPart(part: string): part is ExtraPart {
-  return part in ExtraPartIdMap;
+export const CharacterExtraPartIdToPartMap: Record<string, CharacterExtraPart> =
+  {
+    [5010084]: CharacterExtraPart.DemonSlayerWing,
+    [5010085]: CharacterExtraPart.DemonSlayerBigWing,
+    [5010152]: CharacterExtraPart.DemonSlayer5thWing,
+
+    [5010087]: CharacterExtraPart.KaiserWing,
+    [5010090]: CharacterExtraPart.KaiserTail,
+    [5010088]: CharacterExtraPart.KaiserWing2,
+    [5010091]: CharacterExtraPart.KaiserTail2,
+    [5010089]: CharacterExtraPart.KaiserWing3,
+    [5010092]: CharacterExtraPart.KaiserTail3,
+
+    [5010093]: CharacterExtraPart.AngelicBusterWing,
+    [5010094]: CharacterExtraPart.AngelicBusterTransformWing,
+
+    [5010116]: CharacterExtraPart.BeastTamerBrownEar,
+    [5010119]: CharacterExtraPart.BeastTamerBrownTail,
+    [5010117]: CharacterExtraPart.BeastTamerWhiteEar,
+    [5010120]: CharacterExtraPart.BeastTamerWhiteTail,
+    [5010118]: CharacterExtraPart.BeastTamerBlackEar,
+    [5010121]: CharacterExtraPart.BeastTamerBlackTail,
+
+    [5010160]: CharacterExtraPart.Illium0thWing,
+    [5010161]: CharacterExtraPart.Illium1stWing,
+    [5010162]: CharacterExtraPart.Illium2ndWing,
+    [5010163]: CharacterExtraPart.Illium3rdWing,
+    [5010164]: CharacterExtraPart.IlliumVortexWing,
+
+    [5010176]: CharacterExtraPart.HoyoungEars,
+    [5010177]: CharacterExtraPart.HoyoungTail,
+
+    [5010193]: CharacterExtraPart.LaraHorn,
+  };
+
+export function isValidCharacterExtraPart(
+  part: string,
+): part is CharacterExtraPart {
+  return part in CharacterExtraPartIdMap;
 }
