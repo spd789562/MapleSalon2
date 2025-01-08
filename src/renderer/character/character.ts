@@ -26,6 +26,7 @@ import { CharacterAction } from '@/const/actions';
 import { CharacterExpressions } from '@/const/emotions';
 import { CharacterEarType } from '@/const/ears';
 import { CharacterHandType } from '@/const/hand';
+import { CharacterExtraPartIdMap } from '@/const/extraParts';
 import { BaseNameTag } from '../nameTag/baseNameTag';
 import { ChatBalloon } from '../chatBalloon/chatBalloon';
 import { BaseMedal } from '../medal/baseMedal';
@@ -219,7 +220,15 @@ export class Character extends Container {
     const hasSkillChanged = await this.updateSkill(characterData);
     const hasAttributeChanged = this.updateAttribute(characterData);
     const hasAddAnyItem = await this.updateItems(
-      Object.values(characterData.items),
+      Object.values(characterData.items).concat(
+        (characterData.extraParts || []).map(
+          (part) =>
+            ({
+              id: CharacterExtraPartIdMap[part],
+              enableEffect: true,
+            }) as ItemInfo,
+        ),
+      ),
     );
 
     if (characterData.showNameTag) {
@@ -250,6 +259,7 @@ export class Character extends Container {
       hasAddAnyItem ||
       hasSkillChanged ||
       isStopToPlay ||
+      (!this.isAnimating && characterData.frame !== 0) ||
       this.customInstructions.length > 0
     ) {
       await this.loadItems(renderId);

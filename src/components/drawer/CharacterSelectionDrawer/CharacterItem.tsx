@@ -89,6 +89,7 @@ export const CharacterItem = (props: CharacterItemProps) => {
                 nameTagId={character().nameTagId}
                 medalId={character().medalId}
                 nickTagId={character().nickTagId}
+                extraParts={character().extraParts}
                 noMaxWidth={true}
                 useOffset={true}
               />

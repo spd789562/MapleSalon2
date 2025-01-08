@@ -23,6 +23,7 @@ export const Character = () => {
             nameTagId={currentCharacterInfo()?.nameTagId}
             medalId={currentCharacterInfo()?.medalId}
             nickTagId={currentCharacterInfo()?.nickTagId}
+            extraParts={currentCharacterInfo()?.extraParts}
           />
         )}
       </Show>

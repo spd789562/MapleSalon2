@@ -143,6 +143,7 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
         showChatBalloon: !!props.showChatBalloon,
         medalId: props.medalId,
         nickTagId: props.nickTagId,
+        extraParts: props.extraParts,
         items: totalItems(),
       };
       const hash = makeCharacterHash(characterData);

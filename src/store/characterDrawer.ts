@@ -13,6 +13,10 @@ import { CharacterHandType } from '@/const/hand';
 import { isValidEquipSubCategory } from '@/const/equipments';
 import { isValidEarType } from '@/const/ears';
 import { isValidHandType } from '@/const/hand';
+import {
+  type CharacterExtraPart,
+  isValidCharacterExtraPart,
+} from '@/const/extraParts';
 
 const SAVE_FILENAME = 'character.bin';
 
@@ -47,6 +51,7 @@ export interface SaveCharacterInfo {
   chatBalloonId?: number;
   medalId?: number;
   nickTagId?: number;
+  extraParts?: CharacterExtraPart[];
   showNameTag: boolean;
 }
 
@@ -99,6 +104,11 @@ export async function initializeSavedCharacter() {
       for (const [key, value] of Object.entries(datas)) {
         const index = Number.parseInt(key);
         if (!Number.isNaN(index) && verifySaveCharacterData(value)) {
+          if (value.extraParts) {
+            value.extraParts = value.extraParts.filter((p) =>
+              isValidCharacterExtraPart(p),
+            );
+          }
           validCharacters.push(value);
         }
       }
@@ -193,6 +203,7 @@ export function saveCurrentCharacter(newId?: boolean) {
     chatBalloonId: currentCharacter.chatBalloonId,
     medalId: currentCharacter.medalId,
     nickTagId: currentCharacter.nickTagId,
+    extraParts: currentCharacter.extraParts,
     items: deepCloneCharacterItems(currentCharacter.items),
   };
   return saveCharacter(data);

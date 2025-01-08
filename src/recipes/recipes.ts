@@ -22,6 +22,10 @@ export const slotRecipes: Record<string, Partial<SlotRecipeConfig>> = {
   clipboard: {
     jsx: ['Clipboard', /.*Clipboard$/],
   },
+  checkbox: {
+    jsx: ['Checkbox', /.*CheckBox$/],
+    staticCss: ['*'],
+  },
   progress: {
     jsx: ['Progress', /.*Progress$/],
     staticCss: ['*'],

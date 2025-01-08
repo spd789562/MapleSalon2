@@ -1,11 +1,13 @@
-import { type Assign, Checkbox } from '@ark-ui/solid';
-import type { ComponentProps } from 'solid-js';
+import { type Assign, Checkbox, CheckboxHiddenInput } from '@ark-ui/solid';
+import { type ComponentProps, Show, children } from 'solid-js';
 import {
   type CheckboxVariantProps,
   checkbox,
 } from 'styled-system/recipes/checkbox';
 import type { HTMLStyledProps } from 'styled-system/types';
 import { createStyleContext } from '@/utils/create-style-context';
+import CheckIcon from 'lucide-solid/icons/check';
+import MinusIcon from 'lucide-solid/icons/minus';
 
 const { withProvider, withContext } = createStyleContext(checkbox);
 
@@ -46,3 +48,25 @@ export {
   CheckboxHiddenInput as HiddenInput,
   type CheckboxCheckedChangeDetails as CheckedChangeDetails,
 } from '@ark-ui/solid';
+
+export interface SimpleCheckboxProps extends RootProps {}
+export const SimpleCheckbox = (props: SimpleCheckboxProps) => {
+  const getChildren = children(() => props.children);
+
+  return (
+    <Root {...props}>
+      <Control>
+        <Indicator>
+          <CheckIcon />
+        </Indicator>
+        <Indicator indeterminate={true}>
+          <MinusIcon />
+        </Indicator>
+      </Control>
+      <Show when={getChildren()}>
+        <Label>{getChildren()}</Label>
+      </Show>
+      <CheckboxHiddenInput />
+    </Root>
+  );
+};

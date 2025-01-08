@@ -485,9 +485,12 @@ export function setCharacterNickTag(id: number | undefined) {
   $currentInfoChanges.setKey('nickTagId', id);
 }
 export function toggleExtraPart(part: CharacterExtraPart) {
-  let currentCharacterInfo = $currentInfoChanges.get().extraParts || [];
-  if (currentCharacterInfo.length === 0) {
+  let currentCharacterInfo = $currentInfoChanges.get().extraParts;
+  if (!currentCharacterInfo) {
     currentCharacterInfo = $currentCharacterInfo.get().extraParts || [];
+  }
+  if (!currentCharacterInfo) {
+    currentCharacterInfo = [];
   }
   if (currentCharacterInfo.findIndex((item) => item === part) === -1) {
     $currentInfoChanges.setKey('extraParts', [...currentCharacterInfo, part]);

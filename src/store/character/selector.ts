@@ -24,10 +24,7 @@ export const $totalInfo = batched(
   (info, changes) => ({
     ...info,
     ...changes,
-    extraParts:
-      changes.extraParts && changes.extraParts.length > 0
-        ? changes.extraParts
-        : info.extraParts,
+    extraParts: changes.extraParts ?? info.extraParts ?? [],
   }),
 );
 
@@ -63,6 +60,10 @@ export const $showChatBalloon = computed(
 );
 export const $currentMedalId = computed($totalInfo, (info) => info.medalId);
 export const $currentNickTagId = computed($totalInfo, (info) => info.nickTagId);
+export const $currentExtraParts = computed(
+  $totalInfo,
+  (info) => info.extraParts,
+);
 
 export const $currentCharacter = batched(
   [$currentCharacterItems, $currentCharacterInfo],

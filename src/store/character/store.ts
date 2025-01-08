@@ -33,7 +33,7 @@ export interface CharacterInfo {
   earType: CharacterEarType;
   handType: CharacterHandType;
   skillId?: string;
-  extraParts: CharacterExtraPart[];
+  extraParts?: CharacterExtraPart[];
 }
 
 export interface CharacterData extends Record<string, unknown>, CharacterInfo {
@@ -125,7 +125,10 @@ export const $currentCharacterInfo = deepMap<
   earType: CharacterEarType.HumanEar,
   handType: CharacterHandType.SingleHand,
   skillId: undefined,
-  extraParts: [],
+  extraParts: [
+    'BeastTamerBrownEar',
+    'BeastTamerBrownTail',
+  ] as CharacterExtraPart[],
 });
 
 export const $currentItem = atom<

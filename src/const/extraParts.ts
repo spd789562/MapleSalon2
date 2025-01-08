@@ -97,8 +97,8 @@ export const CharacterExtraPartIdMap: Record<CharacterExtraPart, number> = {
   [CharacterExtraPart.Illium3rdWing]: 5010163,
   [CharacterExtraPart.IlliumVortexWing]: 5010164,
 
-  [CharacterExtraPart.HoyoungEars]: 5010176,
-  [CharacterExtraPart.HoyoungTail]: 5010177,
+  [CharacterExtraPart.HoyoungEars]: 5010177,
+  [CharacterExtraPart.HoyoungTail]: 5010176,
 
   [CharacterExtraPart.LaraHorn]: 5010193,
 };
@@ -132,8 +132,8 @@ export const CharacterExtraPartIdToPartMap: Record<string, CharacterExtraPart> =
     [5010163]: CharacterExtraPart.Illium3rdWing,
     [5010164]: CharacterExtraPart.IlliumVortexWing,
 
-    [5010176]: CharacterExtraPart.HoyoungEars,
-    [5010177]: CharacterExtraPart.HoyoungTail,
+    [5010177]: CharacterExtraPart.HoyoungEars,
+    [5010176]: CharacterExtraPart.HoyoungTail,
 
     [5010193]: CharacterExtraPart.LaraHorn,
   };

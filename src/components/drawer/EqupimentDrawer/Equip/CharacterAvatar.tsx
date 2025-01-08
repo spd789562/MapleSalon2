@@ -93,6 +93,9 @@ const CharacterContainer = styled('div', {
       2: {
         backgroundColor: 'transparent',
       },
+      3: {
+        backgroundColor: 'transparent',
+      },
     },
   },
 });
