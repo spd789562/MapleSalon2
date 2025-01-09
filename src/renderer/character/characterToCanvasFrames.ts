@@ -32,34 +32,64 @@ export async function characterToCanvasFrames(
 ) {
   const isOriginalAnimating = character.isAnimating;
   character.stop();
-  /* hide effect except weapons effect */
   character.renderCharacter();
-  character.toggleEffectVisibility(true);
+  /* not hide the effect for now, it a little werid effect not get export even it has different frame count */
+  // character.toggleEffectVisibility(true);
   await nextTick();
 
   if (!character.currentInstructions) {
     throw new Error('Character body not found');
   }
 
+  /* reset character frame */
+  character.instructionFrame = 0;
+  character.currentDelta = 0;
+  character.playBodyFrame();
+
+  Ticker.shared.stop();
+  const current = performance.now();
+  Ticker.shared.update(current);
+
+  /* reset effects frame */
+  if (!character.isHideAllEffect) {
+    for (const effect of character.allEffectPieces) {
+      effect.currentFrame = 0;
+      /* @ts-ignore */
+      effect._currentTime = 0;
+    }
+  }
+
+  const instructions = character.currentInstructions;
+
+  const timeline = instructions.reduce((acc, frame) => {
+    const prev = acc.length > 0 ? acc[acc.length - 1] : 0;
+    acc.push(prev + (frame.delay ?? 100) * character.speed);
+    return acc;
+  }, [] as number[]);
+
   const totalFrameCount = character.currentInstructions.length;
+
+  let add = 0;
 
   const resultData = await makeFrames(character, renderer, totalFrameCount, {
     backgroundColor: options?.backgroundColor,
     padWhiteSpace: options?.padWhiteSpace,
-    getFrameDelay: (_) => character.currentInstruction?.delay || 100,
-    beforeMakeFrame: (index) => {
-      character.instructionFrame = index;
-      character.playBodyFrame();
+    getFrameDelay: (i) => instructions[i]?.delay ?? 100,
+    nextFrame: async (index) => {
+      while (add < timeline[index]) {
+        add += 10;
+        Ticker.shared.update(current + add);
+        // await nextTick();
+      }
     },
-    nextFrame: nextTick,
   });
 
   if (!isOriginalAnimating) {
     character.play();
   }
 
-  character.toggleEffectVisibility(false);
   await nextTick();
+  Ticker.shared.start();
 
   return resultData;
 }

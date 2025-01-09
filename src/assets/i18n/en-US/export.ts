@@ -16,7 +16,7 @@ export const dict: ExportDictionary = {
   animatFormat: 'Format',
   forceExportEffect: 'Force Export Effect',
   forceExportEffectTip:
-    'The animation and frames will have effects (like some cape), but the animation will not loop seamlessly',
+    'The animation and frames will have all effects frame (like some cape), but the animation will not loop seamlessly',
   animationWithEffect: 'Export Animation including effects',
   currentFrames: 'Export Current Frames',
   snapshot: 'Export Snapshot',

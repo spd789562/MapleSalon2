@@ -514,6 +514,8 @@ export class Character extends Container {
       this.currentTicker = undefined;
     }
     this.nameTag.stop();
+    this.nickTag?.stop();
+    this.medal?.stop();
   }
   stopEffect() {
     for (const effectPieces of this.allEffectPieces) {

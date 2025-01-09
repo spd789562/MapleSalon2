@@ -14,7 +14,7 @@ export const dict = {
   animatFormat: '動圖格式',
   forceExportEffect: '強制匯出特效',
   forceExportEffectTip:
-    '動畫及分鏡將會帶有特效(如披風)，但動圖將會無法無縫循環播放',
+    '動畫及分鏡將會有完整的特效呈現(如披風)，但動圖將會無法無縫循環播放',
   animationWithEffect: '匯出含特效的完整動畫',
   currentFrames: '匯出當前分鏡',
   snapshot: '匯出快照',

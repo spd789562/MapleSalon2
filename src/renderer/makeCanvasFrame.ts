@@ -68,6 +68,7 @@ export async function makeFrames(
   const exportFrames = unprocessedFrames.map((frame) => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    ctx.imageSmoothingEnabled = false;
     const needPad =
       options.padWhiteSpace || options.padWhiteSpace === undefined;
 
