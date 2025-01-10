@@ -1,12 +1,14 @@
-import { type Renderer, Ticker } from 'pixi.js';
+import { type Renderer, Ticker, Bounds, type Container } from 'pixi.js';
 
 import type { Character } from './character';
-import { makeFrames } from '../makeCanvasFrame';
+import { makeFrames, toPaddedFrames } from '../makeCanvasFrame';
 
 import { createMergedTimeline } from '@/utils/timline';
 import { nextTick } from '@/utils/eventLoop';
+import { extractCanvas } from '@/utils/extract';
 
 interface UnprocessedFrame {
+  name?: string;
   width: number;
   height: number;
   left: number;
@@ -17,7 +19,7 @@ interface UnprocessedFrame {
 
 export type UniversalFrame = UnprocessedFrame;
 export interface CanvasFramesData {
-  frames: UniversalFrame[];
+  frames: UniversalFrame[] | UniversalFrame[][];
   width: number;
   height: number;
 }
@@ -28,6 +30,7 @@ export async function characterToCanvasFrames(
   options?: {
     backgroundColor?: string;
     padWhiteSpace?: boolean;
+    exportParts?: boolean;
   },
 ) {
   const isOriginalAnimating = character.isAnimating;
@@ -71,18 +74,25 @@ export async function characterToCanvasFrames(
 
   let add = 0;
 
-  const resultData = await makeFrames(character, renderer, totalFrameCount, {
-    backgroundColor: options?.backgroundColor,
-    padWhiteSpace: options?.padWhiteSpace,
-    getFrameDelay: (i) => instructions[i]?.delay ?? 100,
-    nextFrame: async (index) => {
-      while (add < timeline[index]) {
-        add += 10;
-        Ticker.shared.update(current + add);
-        // await nextTick();
-      }
-    },
-  });
+  const getFrameDelay = (index: number) => instructions[index]?.delay ?? 100;
+  const nextFrameTicker = async (index: number) => {
+    while (add < timeline[index]) {
+      add += 10;
+      Ticker.shared.update(current + add);
+    }
+  };
+
+  const resultData = options?.exportParts
+    ? await makePartsFrames(character, renderer, totalFrameCount, {
+        getFrameDelay,
+        nextFrame: nextFrameTicker,
+      })
+    : await makeFrames(character, renderer, totalFrameCount, {
+        backgroundColor: options?.backgroundColor,
+        padWhiteSpace: options?.padWhiteSpace,
+        getFrameDelay,
+        nextFrame: nextFrameTicker,
+      });
 
   if (!isOriginalAnimating) {
     character.play();
@@ -103,6 +113,7 @@ export async function characterToCanvasFramesWithEffects(
     frameRate?: number;
     duractionMs?: number;
     maxDurationMs?: number;
+    exportParts?: boolean;
     onProgress?: (progress: number, total: number) => void;
   },
 ) {
@@ -162,22 +173,31 @@ export async function characterToCanvasFramesWithEffects(
   const time = performance.now();
   let add = 0;
 
-  const resultData = await makeFrames(character, renderer, totalFrameCount, {
-    backgroundColor: options?.backgroundColor,
-    padWhiteSpace: options?.padWhiteSpace,
-    getFrameDelay: (i) =>
-      mergedTimeline[i] - (i === 0 ? 0 : mergedTimeline[i - 1]),
-    afterMakeFrame: (i) => {
-      options?.onProgress?.(i + 1, totalFrameCount);
-    },
-    nextFrame: async (index) => {
-      while (add < mergedTimeline[index]) {
-        add += 16.66667;
-        Ticker.shared.update(time + add);
-        await nextTick();
-      }
-    },
-  });
+  const getFrameDelay = (index: number) =>
+    mergedTimeline[index] - (index === 0 ? 0 : mergedTimeline[index - 1]);
+  const afterMakeFrame = (index: number) => {
+    options?.onProgress?.(index + 1, totalFrameCount);
+  };
+  const nextFrame = async (index: number) => {
+    while (add < mergedTimeline[index]) {
+      add += 16.66667;
+      Ticker.shared.update(time + add);
+      await nextTick();
+    }
+  };
+  const resultData = options?.exportParts
+    ? await makePartsFrames(character, renderer, totalFrameCount, {
+        getFrameDelay,
+        afterMakeFrame,
+        nextFrame,
+      })
+    : await makeFrames(character, renderer, totalFrameCount, {
+        backgroundColor: options?.backgroundColor,
+        padWhiteSpace: options?.padWhiteSpace,
+        getFrameDelay,
+        afterMakeFrame,
+        nextFrame,
+      });
 
   if (!isOriginalAnimating) {
     character.play();
@@ -245,4 +265,99 @@ export function generateCharacterTimeline(character: Character) {
     timelines.push(...skillTimelines);
   }
   return { timelines, duractionMs };
+}
+
+export async function makePartsFrames(
+  character: Character,
+  renderer: Renderer,
+  count: number,
+  options: {
+    getFrameDelay?: (index: number) => number;
+    beforeMakeFrame?: (index: number) => void;
+    afterMakeFrame?: (index: number) => void;
+    nextFrame: (index: number) => Promise<void>;
+  },
+): Promise<CanvasFramesData> {
+  const unprocessedFrames: UniversalFrame[][] = [];
+
+  const bound = new Bounds();
+
+  for (let i = 0; i < count; i++) {
+    options.beforeMakeFrame?.(i);
+    const delay = options.getFrameDelay?.(i) || 100;
+    const frameBound = character.getLocalBounds();
+    bound.addBounds(frameBound);
+
+    unprocessedFrames.push(generatePartsFrame(character, renderer, { delay }));
+
+    options.afterMakeFrame?.(i);
+
+    await options.nextFrame(i);
+  }
+
+  const maxWidth = bound.right - bound.left;
+  const maxHeight = bound.bottom - bound.top;
+
+  const exportFrames = unprocessedFrames.map(
+    (frames) => toPaddedFrames(frames, bound).frames,
+  );
+
+  return {
+    frames: exportFrames,
+    width: maxWidth,
+    height: maxHeight,
+  };
+}
+
+export function generatePartsFrame(
+  character: Character,
+  renderer: Renderer,
+  options?: {
+    delay?: number;
+  },
+): UniversalFrame[] {
+  const frameParts: UniversalFrame[] = [];
+  const delay = options?.delay ?? 100;
+  for (const layer of character.bodyFrame.children) {
+    if (!layer.visible || layer.children.length === 0) {
+      continue;
+    }
+    const bound = layer.getLocalBounds();
+    const canvas = extractCanvas(layer, renderer) as HTMLCanvasElement;
+    const frameData: UniversalFrame = {
+      name: layer.name ?? 'effect',
+      canvas,
+      delay,
+      width: canvas.width,
+      height: canvas.height,
+      left: -(bound.left - character.bodyFrame.pivot.x),
+      top: -(bound.top - character.bodyFrame.pivot.y),
+    };
+    frameParts.push(frameData);
+  }
+  const others = [
+    [character.nameTag, 'nameTag'],
+    [character.chatBalloon, 'chatBalloon'],
+    [character.medal, 'medal'],
+    [character.nickTag, 'nickTag'],
+  ] as [Container, string][];
+  for (const [part, name] of others) {
+    if (!part || !part.visible) {
+      continue;
+    }
+    const bound = part.getLocalBounds();
+    const canvas = extractCanvas(part, renderer) as HTMLCanvasElement;
+    const frameData: UniversalFrame = {
+      name,
+      canvas,
+      delay,
+      width: canvas.width,
+      height: canvas.height,
+      left: -(bound.left + part.position.x - part.pivot.x),
+      top: -(bound.top + part.position.y - part.pivot.y),
+    };
+    frameParts.push(frameData);
+  }
+
+  return frameParts;
 }

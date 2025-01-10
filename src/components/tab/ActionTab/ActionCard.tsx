@@ -9,6 +9,7 @@ import { Heading } from '@/components/ui/heading';
 import type { ActionCharacterRef } from './ActionCharacter';
 import { ExportAnimateButton } from './ExportAnimateButton';
 import { ExportFrameButton } from './ExportFrameButton';
+import { ExportPartsButton } from './ExportPartsButton';
 
 import {
   CharacterActionNames,
@@ -44,6 +45,12 @@ export const ActionCard = (props: ActionCardProps) => {
           </Switch>
         </Heading>
         <HStack marginLeft="auto">
+          <ExportPartsButton
+            size="xs"
+            variant="outline"
+            characterRefs={[props.ref()]}
+            isIcon={true}
+          />
           <ExportAnimateButton
             size="xs"
             variant="outline"

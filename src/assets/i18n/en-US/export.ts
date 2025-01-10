@@ -8,6 +8,8 @@ export const dict: ExportDictionary = {
   animation: 'Export Ani',
   frames: 'Export Frames',
   animationFrames: 'Export animation frames',
+  parts: 'Export Layered',
+  partsDesc: 'Export Layerd SpriteShee, need PDN Plugin(ZIP Archive) to use it',
   assets: 'Export Assets',
   skillAssets: 'Export character and skill assets seperately',
   zip: 'Export (.zip)',

@@ -5,8 +5,12 @@ import type {
   UniversalFrame,
   CanvasFramesData,
 } from '@/renderer/makeCanvasFrame';
+import { toPaddedFrames } from '@/renderer/makeCanvasFrame';
 import { getCharacterFilenameSuffix } from './helper';
-import { generateCharacterTimeline } from '@/renderer/character/characterToCanvasFrames';
+import {
+  generateCharacterTimeline,
+  generatePartsFrame,
+} from '@/renderer/character/characterToCanvasFrames';
 import { extractCanvas } from '@/utils/extract';
 import { createMergedTimeline } from '@/utils/timline';
 import { nextTick } from '@/utils/eventLoop';
@@ -14,7 +18,7 @@ import { nextTick } from '@/utils/eventLoop';
 interface CharacterExportData {
   character: Character;
   timeline: number[];
-  data: UniversalFrame[];
+  data: UniversalFrame[] | UniversalFrame[][];
   bound: Bounds;
   nextFrameIndex: number;
   maxFrame: number;
@@ -26,13 +30,16 @@ export async function batchExportCharacterFrames(
   options?: {
     backgroundColor?: string;
     padWhiteSpace?: boolean;
+    simple?: boolean;
   },
 ) {
   Ticker.shared.stop();
   const current = performance.now();
   Ticker.shared.update(current);
 
-  const characterSet = createCharacterDataSet(characters);
+  const characterSet = options?.simple
+    ? createSimpleCharacterDataSet(characters)
+    : createCharacterDataSet(characters);
   const useCharactersData = Array.from(characterSet.values());
   await nextTick();
   const totalTimeline = createMergedTimeline(
@@ -46,7 +53,7 @@ export async function batchExportCharacterFrames(
     for (const character of useCharactersData) {
       if (
         frame <= character.maxFrame &&
-        // some frame might still be miss when add 16.666
+        // some frame might still be miss
         frame >= character.timeline[character.nextFrameIndex]
       ) {
         extractAndPutToData(character, renderer);
@@ -58,14 +65,91 @@ export async function batchExportCharacterFrames(
       while (add < totalTimeline[i + 1]) {
         add += 10.0;
         Ticker.shared.update(current + add);
-        await nextTick();
       }
     }
+    await nextTick();
   }
   const exportCharacterData: [Character, CanvasFramesData][] = [];
 
   for (const [_, data] of characterSet) {
-    exportCharacterData.push([data.character, makeCanvasFrame(data, options)]);
+    exportCharacterData.push([
+      data.character,
+      options?.padWhiteSpace
+        ? toPaddedFrames(data.data as UniversalFrame[], data.bound, options)
+        : {
+            frames: data.data,
+            width: data.bound.width,
+            height: data.bound.height,
+          },
+    ]);
+  }
+
+  Ticker.shared.start();
+
+  return exportCharacterData;
+}
+
+export async function batchExportCharacterPart(
+  characters: Character[],
+  renderer: Renderer,
+  options?: {
+    simple?: boolean;
+  },
+) {
+  Ticker.shared.stop();
+  const current = performance.now();
+  Ticker.shared.update(current);
+
+  const characterSet = options?.simple
+    ? createSimpleCharacterDataSet(characters)
+    : createCharacterDataSet(characters);
+  const useCharactersData = Array.from(characterSet.values());
+  await nextTick();
+  const totalTimeline = createMergedTimeline(
+    Array.from(characterSet.values()).map((v) => v.timeline),
+  );
+
+  let add = 0;
+  const totalFrameCount = totalTimeline.length;
+  for (let i = 0; i < totalFrameCount; i++) {
+    const frame = totalTimeline[i];
+    for (const character of useCharactersData) {
+      if (
+        frame <= character.maxFrame &&
+        // some frame might still be miss
+        frame >= character.timeline[character.nextFrameIndex]
+      ) {
+        extractPartsAndPutToData(character, renderer);
+      }
+    }
+    // keep tick until next frame
+    if (i < totalFrameCount - 1) {
+      while (add < totalTimeline[i + 1]) {
+        add += 10.0;
+        Ticker.shared.update(current + add);
+      }
+    }
+    console.log('export batch', totalFrameCount, i);
+    await nextTick();
+  }
+  const exportCharacterData: [Character, CanvasFramesData][] = [];
+
+  for (const [_, data] of characterSet) {
+    const maxWidth = data.bound.right - data.bound.left;
+    const maxHeight = data.bound.bottom - data.bound.top;
+
+    const exportFrames = (data.data as UniversalFrame[][]).map(
+      (frames) => toPaddedFrames(frames, data.bound).frames,
+    );
+
+    exportCharacterData.push([
+      data.character,
+      {
+        frames: exportFrames,
+        width: maxWidth,
+        height: maxHeight,
+      },
+    ]);
   }
 
   Ticker.shared.start();
@@ -97,6 +181,40 @@ function createCharacterDataSet(characters: Character[]) {
   return characterSet;
 }
 
+function createSimpleCharacterDataSet(characters: Character[]) {
+  const characterSet = new Map<string, CharacterExportData>();
+
+  for (const character of characters) {
+    /* reset character frame */
+    character.instructionFrame = 0;
+    character.currentDelta = 0;
+    character.playBodyFrame();
+
+    const suffix = getCharacterFilenameSuffix(character);
+    const timeline = character.currentInstructions.reduce((acc, frame) => {
+      const prev = acc.length > 0 ? acc[acc.length - 1] : 0;
+      acc.push(prev + (frame.delay ?? 100) * character.speed);
+      return acc;
+    }, [] as number[]);
+    if (!character.isHideAllEffect) {
+      for (const effect of character.allEffectPieces) {
+        effect.currentFrame = 0;
+        /* @ts-ignore */
+        effect._currentTime = 0;
+      }
+    }
+    characterSet.set(suffix, {
+      character,
+      timeline,
+      data: [],
+      bound: new Bounds(),
+      nextFrameIndex: 0,
+      maxFrame: timeline[timeline.length - 1],
+    });
+  }
+  return characterSet;
+}
+
 function extractAndPutToData(data: CharacterExportData, renderer: Renderer) {
   const canvas = extractCanvas(data.character, renderer) as HTMLCanvasElement;
   const frameBound = data.character.getLocalBounds();
@@ -110,62 +228,28 @@ function extractAndPutToData(data: CharacterExportData, renderer: Renderer) {
     delay,
     width: canvas.width,
     height: canvas.height,
-    left: frameBound.left,
-    top: frameBound.top,
+    left: -frameBound.left,
+    top: -frameBound.top,
   };
   data.bound.addBounds(frameBound);
 
-  data.data.push(frameData);
+  (data.data as UniversalFrame[]).push(frameData);
   data.nextFrameIndex += 1;
 }
-
-function makeCanvasFrame(
+function extractPartsAndPutToData(
   data: CharacterExportData,
-  options?: { padWhiteSpace?: boolean; backgroundColor?: string },
+  renderer: Renderer,
 ) {
-  const { minX, minY, width, height } = data.bound;
-  const exportFrames = data.data.map((frame) => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-    const needPad =
-      options?.padWhiteSpace || options?.padWhiteSpace === undefined;
-    const top = needPad ? -minY + frame.top : -frame.top;
-    const left = needPad ? -minX + frame.left : -frame.left;
+  const frameBound = data.character.getLocalBounds();
+  const delay =
+    data.nextFrameIndex === 0
+      ? data.timeline[0]
+      : data.timeline[data.nextFrameIndex] -
+        data.timeline[data.nextFrameIndex - 1];
+  data.bound.addBounds(frameBound);
 
-    if (needPad) {
-      canvas.width = width;
-      canvas.height = height;
-    } else {
-      canvas.width = frame.width;
-      canvas.height = frame.height;
-    }
-
-    if (options?.backgroundColor) {
-      ctx.fillStyle = options?.backgroundColor;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-
-    if (needPad) {
-      ctx.drawImage(frame.canvas, left, top);
-    } else {
-      ctx.drawImage(frame.canvas, 0, 0);
-    }
-
-    frame.canvas.remove();
-
-    return {
-      canvas,
-      top,
-      left,
-      delay: frame.delay,
-      width: canvas.width,
-      height: canvas.height,
-    };
-  });
-
-  return {
-    frames: exportFrames,
-    width,
-    height,
-  };
+  (data.data as UniversalFrame[][]).push(
+    generatePartsFrame(data.character, renderer, { delay }),
+  );
+  data.nextFrameIndex += 1;
 }

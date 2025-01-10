@@ -10,12 +10,13 @@ interface UnprocessedFrame {
   top: number;
   delay: number;
   canvas: HTMLCanvasElement;
+  name?: string;
 }
 
 export type UniversalFrame = UnprocessedFrame;
 
 export interface CanvasFramesData {
-  frames: UniversalFrame[];
+  frames: UniversalFrame[] | UniversalFrame[][];
   width: number;
   height: number;
 }
@@ -46,8 +47,8 @@ export async function makeFrames(
       delay: options.getFrameDelay?.(i) || 100,
       width: canvas.width,
       height: canvas.height,
-      left: frameBound.left,
-      top: frameBound.top,
+      left: -frameBound.left,
+      top: -frameBound.top,
     };
     unprocessedFrames.push(frameData);
     bound.addBounds(frameBound);
@@ -60,46 +61,55 @@ export async function makeFrames(
   const maxWidth = bound.right - bound.left;
   const maxHeight = bound.bottom - bound.top;
 
-  /* add padding to canvas */
-  const basePos = {
-    x: -bound.left,
-    y: -bound.top,
+  if (options.padWhiteSpace) {
+    return toPaddedFrames(unprocessedFrames, bound, {
+      backgroundColor: options.backgroundColor,
+    });
+  }
+
+  return {
+    frames: unprocessedFrames,
+    width: maxWidth,
+    height: maxHeight,
   };
-  const exportFrames = unprocessedFrames.map((frame) => {
+}
+
+export function toPaddedFrames(
+  frames: UniversalFrame[],
+  bounds: Bounds,
+  options?: {
+    backgroundColor?: string;
+  },
+) {
+  const maxWidth = bounds.right - bounds.left;
+  const maxHeight = bounds.bottom - bounds.top;
+
+  const exportFrames = frames.map((frame) => {
     const canvas = document.createElement('canvas');
+    canvas.width = maxWidth;
+    canvas.height = maxHeight;
+
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     ctx.imageSmoothingEnabled = false;
-    const needPad =
-      options.padWhiteSpace || options.padWhiteSpace === undefined;
+    const top = -bounds.top - frame.top;
+    const left = -bounds.left - frame.left;
 
-    const top = needPad ? basePos.y + frame.top : -frame.top;
-    const left = needPad ? basePos.x + frame.left : -frame.left;
-
-    if (needPad) {
-      canvas.width = maxWidth;
-      canvas.height = maxHeight;
-    } else {
-      canvas.width = frame.width;
-      canvas.height = frame.height;
-    }
-
-    if (options.backgroundColor) {
+    if (options?.backgroundColor) {
       ctx.fillStyle = options.backgroundColor;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
-    if (needPad) {
-      ctx.drawImage(frame.canvas, left, top);
-    } else {
-      ctx.drawImage(frame.canvas, 0, 0);
-    }
+    ctx.drawImage(frame.canvas, left, top);
 
+    frame.canvas.width = 0;
+    frame.canvas.height = 0;
     frame.canvas.remove();
 
     return {
       canvas,
       top,
       left,
+      name: frame.name,
       delay: frame.delay,
       width: canvas.width,
       height: canvas.height,

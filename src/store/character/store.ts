@@ -125,10 +125,7 @@ export const $currentCharacterInfo = deepMap<
   earType: CharacterEarType.HumanEar,
   handType: CharacterHandType.SingleHand,
   skillId: undefined,
-  extraParts: [
-    'BeastTamerBrownEar',
-    'BeastTamerBrownTail',
-  ] as CharacterExtraPart[],
+  extraParts: [] as CharacterExtraPart[],
 });
 
 export const $currentItem = atom<

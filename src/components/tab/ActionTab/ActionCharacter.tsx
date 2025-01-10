@@ -29,6 +29,7 @@ export interface ActionCharacterRef {
   makeCharacterFrames: (options?: {
     padWhiteSpace?: boolean;
     backgroundColor?: string;
+    exportParts?: boolean;
   }) => Promise<CanvasFramesData>;
 }
 export interface ActionCharacterProps {
@@ -50,6 +51,7 @@ export const ActionCharacter = (props: ActionCharacterProps) => {
   function makeCharacterFrames(options?: {
     padWhiteSpace?: boolean;
     backgroundColor?: string;
+    exportParts?: boolean;
   }) {
     if (canvasFrameCache.current) {
       return Promise.resolve(canvasFrameCache.current);
@@ -60,6 +62,7 @@ export const ActionCharacter = (props: ActionCharacterProps) => {
       {
         backgroundColor: options?.backgroundColor,
         padWhiteSpace: options?.padWhiteSpace,
+        exportParts: options?.exportParts,
       },
     ] as const;
     if ($forceExportEffect.get()) {

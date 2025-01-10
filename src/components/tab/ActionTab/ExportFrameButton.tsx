@@ -19,13 +19,13 @@ import { makeBlobsZipBlob } from '@/utils/exportImage/exportBlobToZip';
 import { downloadBlob } from '@/utils/download';
 import { nextTick } from '@/utils/eventLoop';
 
-export interface ExportAnimateButtonProps {
+export interface ExportFrameButtonProps {
   characterRefs: ActionCharacterRef[];
   size?: ButtonProps['size'];
   variant?: ButtonProps['variant'];
   isIcon?: boolean;
 }
-export const ExportFrameButton = (props: ExportAnimateButtonProps) => {
+export const ExportFrameButton = (props: ExportFrameButtonProps) => {
   const t = useTranslate();
   const [state, { startExport, finishExport }] = useActionTab();
   const [isExporting, setIsExporting] = createSignal(false);
@@ -87,15 +87,14 @@ export const ExportFrameButton = (props: ExportAnimateButtonProps) => {
           const frameData = await characterRef.makeCharacterFrames({
             padWhiteSpace,
           });
-          files.push(
-            ...(await getCharacterFrameBlobs(
-              frameData,
-              characterRef.character,
-              {
-                includeMoveJson: padWhiteSpace === false,
-              },
-            )),
+          const fileBlobs = await getCharacterFrameBlobs(
+            frameData,
+            characterRef.character,
+            {
+              includeMoveJson: padWhiteSpace === false,
+            },
           );
+          files.push(...fileBlobs);
         }
       }
       if (files.length === 1) {

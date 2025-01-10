@@ -6,6 +6,8 @@ export const dict = {
   animation: '匯出動畫',
   frames: '匯出分鏡',
   animationFrames: '匯出動畫分鏡',
+  parts: '匯出圖層部件',
+  partsDesc: '匯出所有圖層部件，可配合 Paint.NET 使用',
   assets: '匯出素材',
   skillAssets: '個別匯出角色及技能素材',
   zip: '匯出(.zip)',

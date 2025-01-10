@@ -1,47 +1,29 @@
 import { createSignal, Show } from 'solid-js';
 
-import { computed } from 'nanostores';
-import { $actionExportType, $forceExportEffect } from '@/store/toolTab';
-import {
-  $addBlackBgWhenExportGif,
-  $gifBackgroundColor,
-} from '@/store/settingDialog';
-import { $globalRenderer } from '@/store/renderer';
-
 import { useActionTab } from './ActionTabContext';
 import { useTranslate } from '@/context/i18n';
 
-import ImagePlay from 'lucide-solid/icons/image-play';
+import { $forceExportEffect } from '@/store/toolTab';
+import { $globalRenderer } from '@/store/renderer';
+
+import PluginLineIcon from 'mingcute_icon/svg/device/plugin_2_line.svg';
 import { Button, type ButtonProps } from '@/components/ui/button';
 import type { ActionCharacterRef } from './ActionCharacter';
 import { SpinLoading } from '@/components/elements/SpinLoading';
-
-import { ActionExportTypeExtensions } from '@/const/toolTab';
-
 import { toaster } from '@/components/GlobalToast';
-import { batchExportCharacterFrames } from './batchExportCharacterFrames';
-import { getAnimatedCharacterBlob, getCharacterFilenameSuffix } from './helper';
+import { getCharacterPartsBlobs } from './helper';
+import { batchExportCharacterPart } from './batchExportCharacterFrames';
 import { makeBlobsZipBlob } from '@/utils/exportImage/exportBlobToZip';
 import { downloadBlob } from '@/utils/download';
 import { nextTick } from '@/utils/eventLoop';
 
-export const $exportBackgroundColor = computed(
-  [$actionExportType, $addBlackBgWhenExportGif, $gifBackgroundColor],
-  (exportType, addBlackBgWhenExportGif, gifBackgroundColor) => {
-    if (exportType === 'gif' && addBlackBgWhenExportGif) {
-      return gifBackgroundColor;
-    }
-    return undefined;
-  },
-);
-
-export interface ExportAnimateButtonProps {
+export interface ExportPartsButtonProps {
   characterRefs: ActionCharacterRef[];
   size?: ButtonProps['size'];
   variant?: ButtonProps['variant'];
   isIcon?: boolean;
 }
-export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
+export const ExportPartsButton = (props: ExportPartsButtonProps) => {
   const t = useTranslate();
   const [state, { startExport, finishExport }] = useActionTab();
   const [isExporting, setIsExporting] = createSignal(false);
@@ -63,7 +45,7 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
     const isAllLoaded =
       props.characterRefs.every(
         (characterRef) => !characterRef.character.isLoading,
-      ) && props.characterRefs.length >= 0;
+      ) && props.characterRefs.length !== 0;
     if (!isAllLoaded) {
       toaster.error({
         title: t('export.actionNotLoaded'),
@@ -73,45 +55,44 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
     startExport();
     setIsExporting(true);
     await nextTick();
-    const exportType = $actionExportType.get();
-    const exportExt = ActionExportTypeExtensions[exportType];
 
-    if (props.characterRefs.length > 5) {
+    if (props.characterRefs.length > 1) {
       tooManyImageWarning();
     }
 
     try {
       const files: [Blob, string][] = [];
-      const backgroundColor = $exportBackgroundColor.get();
       if (props.characterRefs.length === 1) {
         const characterRef = props.characterRefs[0];
         const frameData = await characterRef.makeCharacterFrames({
-          backgroundColor,
+          padWhiteSpace: true,
+          exportParts: true,
         });
-        const blob = await getAnimatedCharacterBlob(frameData, exportType);
-        const fileNameSuffix = getCharacterFilenameSuffix(
+        const fileBlobs = await getCharacterPartsBlobs(
+          frameData,
           characterRef.character,
         );
-        downloadBlob(blob, `${fileNameSuffix}${exportExt}`);
+        files.push(...fileBlobs);
       } else {
-        const exportCharacterData = await batchExportCharacterFrames(
+        const exportCharacterData = await batchExportCharacterPart(
           props.characterRefs.map((ref) => ref.character),
           $globalRenderer.get().renderer,
           {
-            padWhiteSpace: true,
-            backgroundColor,
             simple: !$forceExportEffect.get(),
           },
         );
-        await Promise.all(
-          exportCharacterData.map(async ([character, data]) => {
-            const blob = await getAnimatedCharacterBlob(data, exportType);
-            const fileNameSuffix = getCharacterFilenameSuffix(character);
-            files.push([blob, `${fileNameSuffix}${exportExt}`]);
-          }),
-        );
+        // this process is heavy, don't do it concurrently
+        for await (const [character, data] of exportCharacterData) {
+          const blob = await getCharacterPartsBlobs(data, character);
+          files.push(...blob);
+        }
+      }
+      if (files.length === 1) {
+        const file = files[0];
+        downloadBlob(file[0], file[1]);
+      } else {
         const zipBlob = await makeBlobsZipBlob(files);
-        const fileName = 'character-action.zip';
+        const fileName = 'character-layered-frame.zip';
         downloadBlob(zipBlob, fileName);
       }
       toaster.success({
@@ -131,12 +112,12 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
     <Button
       size={props.size}
       variant={props.variant}
+      title={t('export.partsDesc')}
       onClick={handleClick}
       disabled={isExporting() || state.isExporting}
-      title={t('export.animation')}
     >
-      <Show when={props.isIcon} fallback={t('export.animation')}>
-        <ImagePlay />
+      <Show when={props.isIcon} fallback={t('export.parts')}>
+        <PluginLineIcon width="20" height="20" />
       </Show>
       <Show when={isExporting()}>
         <SpinLoading size={16} />

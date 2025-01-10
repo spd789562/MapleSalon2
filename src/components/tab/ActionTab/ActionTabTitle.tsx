@@ -9,6 +9,7 @@ import { ExportTypeToggleGroup } from './ExportTypeToggleGroup';
 import { ExportHandTypeToggleGroup } from './ExportHandTypeToggleGroup';
 import { ExportAnimateButton } from './ExportAnimateButton';
 import { ExportFrameButton } from './ExportFrameButton';
+import { ExportPartsButton } from './ExportPartsButton';
 import { ForceExportEffectSwitch } from './ForceExportEffectSwitch';
 import type { ActionCharacterRef } from './ActionCharacter';
 
@@ -22,20 +23,25 @@ export const ActionTabTitle = (props: ActionTabTitleProps) => {
       <VStack alignItems="flex-start">
         <Heading size="xl">{t('tab.actionPreview')}</Heading>
       </VStack>
-      <HStack marginLeft="auto">
-        <ForceExportEffectSwitch />
-        <Divider height="2rem" orientation="vertical" />
+      <HStack marginLeft="auto" justify="flex-end" flexWrap="wrap">
         <HStack>
-          <div>{t('character.handType')}</div>
-          <ExportHandTypeToggleGroup />
+          <ForceExportEffectSwitch />
+          <Divider height="2rem" orientation="vertical" />
+          <HStack>
+            <div>{t('character.handType')}</div>
+            <ExportHandTypeToggleGroup />
+          </HStack>
+          <Divider height="2rem" orientation="vertical" />
+          <HStack>
+            <div>{t('export.animatFormat')}</div>
+            <ExportTypeToggleGroup />
+          </HStack>
         </HStack>
-        <Divider height="2rem" orientation="vertical" />
         <HStack>
-          <div>{t('export.animatFormat')}</div>
-          <ExportTypeToggleGroup />
+          <ExportPartsButton characterRefs={props.characterRefs} />
+          <ExportAnimateButton characterRefs={props.characterRefs} />
+          <ExportFrameButton characterRefs={props.characterRefs} />
         </HStack>
-        <ExportAnimateButton characterRefs={props.characterRefs} />
-        <ExportFrameButton characterRefs={props.characterRefs} />
       </HStack>
     </TitleContainer>
   );
