@@ -73,17 +73,20 @@ export const CharacterSceneMapPopover = (
   );
 };
 
-const TargetPositionTitle = () => (
-  <HStack gap="1" alignItems="center">
-    <Heading size="md" as="h4">
-      物體位置
-    </Heading>
-    <CssTooltip data-tooltip-content="於範圍內拖曳，或點擊拖曳點使用方向鍵移動">
-      <HStack gap="1" alignItems="center" color="gray.10">
-        <MousePointerClickIcon size={14} />
-        <span>/</span>
-        <MoveIcon size={14} />
-      </HStack>
-    </CssTooltip>
-  </HStack>
-);
+const TargetPositionTitle = () => {
+  const t = useTranslate();
+  return (
+    <HStack gap="1" alignItems="center">
+      <Heading size="md" as="h4">
+        {t('scene.mapTargetPos')}
+      </Heading>
+      <CssTooltip data-tooltip-content={t('scene.mapTargetPosTip')}>
+        <HStack gap="1" alignItems="center" color="gray.10">
+          <MousePointerClickIcon size={14} />
+          <span>/</span>
+          <MoveIcon size={14} />
+        </HStack>
+      </CssTooltip>
+    </HStack>
+  );
+};

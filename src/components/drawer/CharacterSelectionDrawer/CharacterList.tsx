@@ -1,5 +1,5 @@
 import { For } from 'solid-js';
-
+import { useTranslate } from '@/context/i18n';
 import { usePureStore } from '@/store';
 
 import {
@@ -14,6 +14,7 @@ import { HStack } from 'styled-system/jsx/hstack';
 import { CharacterItem } from './CharacterItem';
 
 export const CharacterList = () => {
+  const t = useTranslate();
   let scrollContainerRef!: HTMLDivElement;
   const characterIds = usePureStore($getCharacterIds);
 
@@ -28,13 +29,12 @@ export const CharacterList = () => {
   function handleSelect(data: SaveCharacterData) {
     const hasChanges = getHasAnyChanges();
     if (hasChanges) {
-      /* do something like popup */
       openDialog({
         type: DialogType.Confirm,
-        title: '確認捨棄變更',
-        description: '當前變更尚未儲存，是否捨棄變更？',
+        title: t('setting.abandonCharacterChangesTitle'),
+        description: t('setting.abandonCharacterChangesDesc'),
         confirmButton: {
-          text: '捨棄變更',
+          text: t('setting.abandonCharacterChanges'),
           onClick: () => selectCharacter(data),
         },
       });

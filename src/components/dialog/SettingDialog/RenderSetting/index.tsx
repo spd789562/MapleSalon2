@@ -30,7 +30,7 @@ export const RenderSetting = () => {
       <HStack gap="7">
         <HStack gap="2">
           <Text>{t('setting.scaleMode')}</Text>
-          <SettingTooltip tooltip="預設為平滑，更改至點陣將於縮放時保留點陣效果。此設定變更後須重整頁面" />
+          <SettingTooltip tooltip={t('setting.scaleModeTip')} />
           <PreferScaleModeToggleGroup />
         </HStack>
       </HStack>

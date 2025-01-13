@@ -11,6 +11,10 @@ export const dict: SettingDictionary = {
   cancelChangesDesc:
     'This operation cannot be undone, are you sure you want to cancel the changes?',
   cancelCharacterChanges: 'Cancel any character changes',
+  abandonCharacterChanges: 'Yes',
+  abandonCharacterChangesDesc:
+    'The current character changes have not been save, are your sure want change chaaracter anyway?',
+  abandonCharacterChangesTitle: 'Character changes not saved',
   upload: 'Upload',
   uploadFailed: 'Upload failed',
   uploadCharacter: 'Upload character',
