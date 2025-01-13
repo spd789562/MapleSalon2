@@ -5,6 +5,7 @@ import {
   type Texture,
   type ExtractSystem,
   type Renderer,
+  type ICanvas,
 } from 'pixi.js';
 
 type ExtractTarget = Parameters<ExtractSystem['texture']>[0];
@@ -20,11 +21,17 @@ export function getBlobFromCanvas(canvas: HTMLCanvasElement) {
 export function extractCanvas(target: ExtractTarget, renderer: Renderer) {
   const texture = renderer.extract.texture(target);
 
+  let canvas: ICanvas;
+
   if (renderer.texture instanceof GlTextureSystem) {
     // the webgl currently doesn't support unpremultiplyAlpha, so do it manually
-    return webGLGenerateCanvas(texture, renderer.texture);
+    canvas = webGLGenerateCanvas(texture, renderer.texture);
   }
-  return renderer.texture.generateCanvas(texture);
+  canvas = renderer.texture.generateCanvas(texture);
+
+  texture.destroy(true);
+
+  return canvas;
 }
 
 export function webGLGenerateCanvas(

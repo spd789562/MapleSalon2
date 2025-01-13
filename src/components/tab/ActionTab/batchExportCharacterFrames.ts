@@ -129,7 +129,6 @@ export async function batchExportCharacterPart(
         Ticker.shared.update(current + add);
       }
     }
-    console.log('export batch', totalFrameCount, i);
     await nextTick();
   }
   const exportCharacterData: [Character, CanvasFramesData][] = [];
