@@ -11,11 +11,13 @@ export class CharacterZmapContainer extends Container {
   name: PieceSlot;
   character: Character;
   requireLocks: PieceSlot[];
+  _originzIndex: number;
 
   constructor(name: PieceSlot, index: number, character: Character) {
     super();
     this.name = name;
     this.zIndex = index;
+    this._originzIndex = CharacterLoader.zmapIndex.get(name) || 0;
     this.character = character;
     this.requireLocks = [];
 

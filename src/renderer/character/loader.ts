@@ -13,6 +13,7 @@ import { isCashEffectId, isNickTagId } from '@/utils/itemId';
 class Loader {
   zmap?: Zmap = [];
   smap?: Smap;
+  zmapIndex = new Map<string, number>();
   wzImageFolder = new Set<string>();
   loadingMap = new Map<string, Promise<unknown>>();
   pathExistCache = new Map<number, string>();
@@ -42,6 +43,10 @@ class Loader {
     if (!this.zmap) {
       return;
     }
+    for (let i = 0; i < this.zmap.length; i++) {
+      this.zmapIndex.set(this.zmap[i], i);
+    }
+
     this.zmap.reverse();
     // manually add capBelowHead, wtf?
     const armBelowHeadIndex = this.zmap.indexOf('armBelowHead');
@@ -51,6 +56,10 @@ class Loader {
         'capBelowHead',
         ...this.zmap.slice(armBelowHeadIndex),
       ];
+      this.zmapIndex.set(
+        'capBelowHead',
+        this.zmapIndex.get('armBelowHead') || 0,
+      );
     }
     // also fix capBelowHair
     const hairBelowBodyIndex = this.zmap.indexOf('hairBelowBody');
@@ -60,8 +69,13 @@ class Loader {
         'capBelowHair',
         ...this.zmap.slice(hairBelowBodyIndex),
       ];
+      this.zmapIndex.set(
+        'capBelowHair',
+        this.zmapIndex.get('hairBelowBody') || 0,
+      );
     }
     this.zmap.push('effect');
+    this.zmapIndex.set('effect', this.zmap.length - 1);
   }
   async loadSmap() {
     this.smap = await fetch(`${this.apiHost}/mapping/smap`).then((res) =>

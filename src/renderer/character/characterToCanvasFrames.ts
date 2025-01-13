@@ -1,6 +1,7 @@
 import { type Renderer, Ticker, Bounds, type Container } from 'pixi.js';
 
 import type { Character } from './character';
+import type { CharacterZmapContainer } from './characterZmapContainer';
 import { makeFrames, toPaddedFrames } from '../makeCanvasFrame';
 
 import { createMergedTimeline } from '@/utils/timline';
@@ -325,7 +326,9 @@ export function generatePartsFrame(
     const bound = layer.getLocalBounds();
     const canvas = extractCanvas(layer, renderer) as HTMLCanvasElement;
     const frameData: UniversalFrame = {
-      name: layer.name ?? 'effect',
+      name: layer.name
+        ? `${layer.name}_${(layer as CharacterZmapContainer)._originzIndex}`
+        : 'effect',
       canvas,
       delay,
       width: canvas.width,
