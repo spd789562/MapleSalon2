@@ -19,7 +19,7 @@ import { SkillTabProvider } from './SkillTabContext';
 export const SkillTab = () => {
   return (
     <SkillTabProvider>
-      <SkillTabCard>
+      <SkillTabCard gridTemplateRows="auto 1fr auto">
         <HStack justify="center" mb="2">
           <Box width="32">
             <ExpressionSelect />
@@ -53,5 +53,6 @@ const SkillTabCard = styled('div', {
     bg: 'bg.default',
     position: 'relative',
     overflow: 'hidden',
+    display: 'grid',
   },
 });

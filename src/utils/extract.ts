@@ -26,8 +26,9 @@ export function extractCanvas(target: ExtractTarget, renderer: Renderer) {
   if (renderer.texture instanceof GlTextureSystem) {
     // the webgl currently doesn't support unpremultiplyAlpha, so do it manually
     canvas = webGLGenerateCanvas(texture, renderer.texture);
+  } else {
+    canvas = renderer.texture.generateCanvas(texture);
   }
-  canvas = renderer.texture.generateCanvas(texture);
 
   texture.destroy(true);
 

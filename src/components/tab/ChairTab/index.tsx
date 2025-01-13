@@ -23,7 +23,7 @@ import { ChairTabProvider } from './ChairTabContext';
 export const ChairTab = () => {
   return (
     <ChairTabProvider>
-      <ChairTabCard>
+      <ChairTabCard gridTemplateRows="auto 1fr auto">
         <HStack justify="center" mb="2">
           <Box width="32">
             <ExpressionSelect />
@@ -58,5 +58,6 @@ const ChairTabCard = styled('div', {
     bg: 'bg.default',
     position: 'relative',
     overflow: 'hidden',
+    display: 'grid',
   },
 });

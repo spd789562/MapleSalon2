@@ -21,7 +21,7 @@ import { MountTabProvider } from './MountTabContext';
 export const MountTab = () => {
   return (
     <MountTabProvider>
-      <MountTabCard>
+      <MountTabCard gridTemplateRows="auto 1fr auto">
         <HStack justify="center" mb="2">
           <Box width="48">
             <MountActionSelect />
@@ -59,5 +59,6 @@ const MountTabCard = styled('div', {
     bg: 'bg.default',
     position: 'relative',
     overflow: 'hidden',
+    display: 'grid',
   },
 });
