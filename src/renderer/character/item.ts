@@ -157,7 +157,7 @@ export class CharacterItem implements RenderItemInfo {
       this.isCleanedWz = true;
     }
   }
-  private loadAction(wz: WzItem) {
+  private loadAction(wz: WzItem, force = false) {
     const actionNeedToBuild = Object.values(CharacterAction);
     const actions = Object.keys(wz).filter((key) =>
       actionNeedToBuild.includes(key as CharacterAction),
@@ -166,7 +166,7 @@ export class CharacterItem implements RenderItemInfo {
     for (const action of actions) {
       const actionWz = wz[action];
 
-      if (!actionWz || this.actionPieces.has(action)) {
+      if (!actionWz || (this.actionPieces.has(action) && !force)) {
         continue;
       }
 
@@ -221,12 +221,12 @@ export class CharacterItem implements RenderItemInfo {
 
     /* gun's use 49 code */
     if (isGunHand && GunWz?.[this.character.useAction]) {
-      return this.loadAction(GunWz);
+      return this.loadAction(GunWz, true);
     }
 
     /* if has 30, just use 30 */
     if (baseWz?.[this.character.useAction]) {
-      return this.loadAction(baseWz);
+      return this.loadAction(baseWz, true);
     }
     const idIncurrment = isSingleHand ? -1 : 1;
     const [start, end] = isSingleHand ? [69, 29] : [30, 70];
@@ -236,7 +236,7 @@ export class CharacterItem implements RenderItemInfo {
       const weaponWz = wz[id] as unknown as WzItem;
       /* make sure the current weapon id has current action */
       if (weaponWz?.[this.character.useAction]) {
-        this.loadAction(weaponWz as unknown as WzItem);
+        this.loadAction(weaponWz as unknown as WzItem, true);
         return;
       }
     }
