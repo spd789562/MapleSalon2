@@ -1,4 +1,5 @@
-import { useTranslate, type I18nKeys } from '@/context/i18n';
+import { createMemo } from 'solid-js';
+import { useTranslate, useLocale, type I18nKeys } from '@/context/i18n';
 import { SimpleSelect, type ValueChangeDetails } from '@/components/ui/select';
 
 import { CharacterAction } from '@/const/actions';
@@ -81,6 +82,7 @@ export interface ActionSelectProps {
   onValueChange: (value: CharacterAction | undefined) => void;
 }
 export const ActionSelect = (props: ActionSelectProps) => {
+  const locale = useLocale();
   const t = useTranslate();
 
   function handleActionChange(details: ValueChangeDetails) {
@@ -88,20 +90,23 @@ export const ActionSelect = (props: ActionSelectProps) => {
     props.onValueChange(firstItem);
   }
 
-  const _options = options.map((option) => ({
-    label:
-      option.value !== option.label
-        ? (t(option.label as I18nKeys) as string)
-        : option.label,
-    value: option.value,
-  }));
+  const _options = createMemo(() => {
+    const _ = locale();
+    return options.map((option) => ({
+      label:
+        option.value !== option.label
+          ? (t(option.label as I18nKeys) as string)
+          : option.label,
+      value: option.value,
+    }));
+  });
 
   return (
     <SimpleSelect
       positioning={{
         sameWidth: true,
       }}
-      items={_options}
+      items={_options()}
       value={[props.value]}
       onValueChange={handleActionChange}
       groupTitle={t('character.actionTitle')}
