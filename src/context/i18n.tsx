@@ -41,9 +41,17 @@ async function fetchDictionary(locale: Locale): Promise<Dictionary> {
 export function I18nProvider(props: {
   children: JSX.Element;
 }) {
-  const [locale, setLocale] = createSignal<Locale>(
-    (window.__LANG__ as Locale) || DEFAULT_LOCALE,
-  );
+  let _locale =
+    (window.__LANG__ as Locale) || window.navigator.language || DEFAULT_LOCALE;
+  if (!LOCALES.includes(_locale)) {
+    if (_locale.startsWith('zh')) {
+      _locale = 'zh-TW';
+    } else {
+      _locale = DEFAULT_LOCALE;
+    }
+  }
+
+  const [locale, setLocale] = createSignal<Locale>(_locale);
   const [dict] = createResource(locale, fetchDictionary, {
     initialValue: flatten(zhTwDict),
   });

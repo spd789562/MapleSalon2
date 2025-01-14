@@ -37,8 +37,10 @@ export const CharacterPreview = () => {
           <Box width="32">
             <ActionSelect />
           </Box>
-          <AnimatingSwitch />
-          <ActionFrameNumberInput />
+          <HStack>
+            <AnimatingSwitch />
+            <ActionFrameNumberInput />
+          </HStack>
         </HStack>
         <CharacterScene />
         <HStack mt="2" pl="2" flexWrap="wrap">
