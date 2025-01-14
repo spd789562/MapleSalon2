@@ -9,22 +9,26 @@ import { HStack } from 'styled-system/jsx/hstack';
 import { Heading } from '@/components/ui/heading';
 import { Text } from '@/components/ui/text';
 import { LocaleSelect } from '@/components/elements/LocaleSelect';
+import { ColorModeToggleGroup } from '@/components/dialog/SettingDialog/ThemeSetting/ColorModeToggleGroup';
+
 import { LoadText } from './LoadText';
 import { SelectWzButton } from './SelectWzButton';
 import { SelectHistoryTable } from './SelectHistoryTable';
 
 export const InitialScreen = () => {
   const t = useTranslate();
-
   return (
     <ScreenPositioner>
       <LoadText />
-      <LangSelectBox>
-        <div title={t('setting.language')}>
-          <TranslateIcon width="32" height="32" />
-        </div>
-        <LocaleSelect />
-      </LangSelectBox>
+      <TopSetting>
+        <LangSelectBox>
+          <div title={t('setting.language')}>
+            <TranslateIcon width="32" height="32" />
+          </div>
+          <LocaleSelect />
+        </LangSelectBox>
+        <ColorModeToggleGroup />
+      </TopSetting>
       <InitialScreenContainer>
         <HStack w="full">
           <Heading size="lg">{t('initial.selectWzTitle')}</Heading>
@@ -65,10 +69,14 @@ const InitialScreenContainer = styled(VStack, {
   },
 });
 
-const LangSelectBox = styled(HStack, {
+const TopSetting = styled(HStack, {
   base: {
-    maxWidth: '12rem',
     width: '100%',
     justifyContent: 'center',
+  },
+});
+const LangSelectBox = styled(HStack, {
+  base: {
+    width: '12rem',
   },
 });
