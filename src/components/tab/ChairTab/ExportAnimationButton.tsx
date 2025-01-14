@@ -35,6 +35,7 @@ export const ExportAnimationButton = () => {
       const backgroundColor = $exportBackgroundColor.get();
       const data = await chairToCanvasFrames(state.chairRef, app.renderer, {
         backgroundColor,
+        padWhiteSpace: true,
         onProgress: updateExportProgress,
       });
       if (data.frames.length === 1) {
@@ -58,7 +59,7 @@ export const ExportAnimationButton = () => {
       });
       $interactionLock.set(false);
       finishExport();
-    } catch (_) {
+    } catch (e) {
       toaster.error({
         title: t('export.error'),
       });

@@ -38,6 +38,7 @@ export const ExportAnimationButton = () => {
         app.renderer,
         {
           backgroundColor,
+          padWhiteSpace: true,
           onProgress: updateExportProgress,
         },
       );

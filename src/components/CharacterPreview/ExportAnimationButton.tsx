@@ -66,6 +66,7 @@ export const ExportAnimationButton = () => {
         state.characterRef,
         app.renderer,
         {
+          padWhiteSpace: true,
           backgroundColor,
           onProgress: updateExportProgress,
         },

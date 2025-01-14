@@ -35,6 +35,7 @@ export const ExportAnimationButton = () => {
       const backgroundColor = $exportBackgroundColor.get();
       const data = await tamingMobToCanvasFrames(state.mountRef, app.renderer, {
         backgroundColor,
+        padWhiteSpace: true,
         onProgress: updateExportProgress,
       });
       if (data.frames.length === 1) {
