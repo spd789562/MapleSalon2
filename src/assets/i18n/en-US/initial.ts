@@ -4,7 +4,7 @@ export const dict: InitialDictionary = {
   selectWzTitle: 'Load New Base.wz',
   selectNewFile: 'New File',
   wzPositionTip:
-    'Base.wz usually exist in {path of maplestory}/Data/Base/Base.wz',
+    'Base.wz usually exist in {path of maplestory.exe}/Data/Base/Base.wz, note that you still need the complete game files to use this app not just Base.wz',
   loadNewBaseWz: 'Select Base.wz',
 
   loadPorgressSaveFile: 'Initialize and load saving...',

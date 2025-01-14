@@ -1,7 +1,8 @@
 export const dict = {
   selectWzTitle: '選擇需載入的 Base.wz 檔案',
   selectNewFile: '選擇新檔',
-  wzPositionTip: 'Base.wz 通常存在於 {楓之谷資料夾路徑}/Data/Base/Base.wz',
+  wzPositionTip:
+    'Base.wz 通常存在於 {楓之谷資料夾路徑}/Data/Base/Base.wz，注意此檔案僅為遊戲資料進入點，仍需足夠完整的遊戲檔案才可正常使用本應用',
   loadNewBaseWz: '載入新 Base.wz',
 
   loadPorgressSaveFile: '初始化並載入存檔...',
