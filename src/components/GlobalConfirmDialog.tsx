@@ -78,7 +78,7 @@ export const GlobalConfirmDialog = () => {
       <Portal>
         <Dialog.Backdrop zIndex="confirmOverlay" />
         <Dialog.Positioner zIndex="confirmModal">
-          <Dialog.Content>
+          <Dialog.Content maxWidth="2xs">
             <Show when={dialogData()}>
               {(data) => (
                 <Stack gap="8" p="6">
