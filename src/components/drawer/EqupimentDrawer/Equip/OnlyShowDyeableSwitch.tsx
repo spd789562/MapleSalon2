@@ -22,9 +22,10 @@ export const OnlyShowDyeableSwitch = () => {
         size="sm"
         checked={checked()}
         onCheckedChange={handleChange}
+        title={t('setting.onlyShowDyeable')}
       />
-      <Text as="label" for="switch:OnlyShowDyeable:input" size="md">
-        {t('setting.onlyShowDyeable')}
+      <Text as="label" for="switch:OnlyShowDyeable:input" size="sm">
+        {t('common.equipDyeable')}
       </Text>
     </HStack>
   );

@@ -19,6 +19,7 @@ export const dict = {
   equipCash: '現金',
   equipDyeable: '染色',
   equipEffect: '特效',
+  onlyShowCash: '僅顯示現金裝備',
 
   // search list related
   equipmentSearchPlaceholder: '裝備名稱、id',

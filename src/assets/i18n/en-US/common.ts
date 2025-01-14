@@ -21,6 +21,7 @@ export const dict: CommonDictionary = {
   equipCash: 'Cash',
   equipDyeable: 'Dyeable',
   equipEffect: 'Effect',
+  onlyShowCash: 'Only show cash equipment',
 
   // search list related
   equipmentSearchPlaceholder: 'name、id',

@@ -35,7 +35,7 @@ export const dict: DyeDictionary = {
   dyeAction: 'Action',
   dyeFrame: 'Frame',
   dyeCount: 'Count',
-  onlyShowDyeable: 'Only Show Dyeable',
+  onlyShowDyeable: 'Only show dyeable',
   preserveOriginalDye: 'Preserve Dye',
   preserveOriginalDyeTip:
     'Preserve original dye, so dye will not beening reset',

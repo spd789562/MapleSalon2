@@ -42,6 +42,7 @@ export const $equipmentDrawerEquipListType = atom<EquipListType>(
 export const $equipmentDrawerEquipCategory =
   atom<EquipCategorySelections>(AllCategory);
 export const $equipmentDrawerOnlyShowDyeable = atom(false);
+export const $equipmentDrawerOnlyShowCash = atom(false);
 export const $equipmentDrawerGender = atom<Gender>(Gender.All);
 export const $equipmentDrawerHairColor = atom<HairColor>(HairColor.Black);
 export const $equipmentDrawerFaceColor = atom<FaceColor>(FaceColor.Black);
@@ -112,8 +113,9 @@ export const $categoryFilteredString = computed(
     $currentEquipmentDrawerCategory,
     $equipmentStrings,
     $equipmentDrawerOnlyShowDyeable,
+    $equipmentDrawerOnlyShowCash,
   ],
-  (tab, category, strings, onlyShowDyeable) => {
+  (tab, category, strings, onlyShowDyeable, onlyShowCash) => {
     if (tab === EquipTab.History) {
       /* not subscribe $equipmentHistory here */
       return $equipmentHistory.get();
@@ -159,11 +161,15 @@ export const $categoryFilteredString = computed(
       });
     }
 
-    if (!onlyShowDyeable) {
-      return filteredStrings;
+    if (onlyShowDyeable) {
+      filteredStrings = filteredStrings.filter(({ isDyeable }) => isDyeable);
     }
 
-    return filteredStrings.filter(({ isDyeable }) => isDyeable);
+    if (onlyShowCash) {
+      filteredStrings = filteredStrings.filter(({ isCash }) => isCash);
+    }
+
+    return filteredStrings;
   },
 );
 
