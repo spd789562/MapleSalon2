@@ -12,6 +12,7 @@ import { EarTypeToggleGroup } from '@/components/CharacterPreview/EarTypeToggleG
 import { ExpressionSelect } from '@/components/CharacterPreview/ExpressionSelect';
 import { ActionSelect } from '@/components/CharacterPreview/ActionSelect';
 import { AnimatingSwitch } from '@/components/CharacterPreview/AnimatingSwitch';
+import { ActionFrameNumberInput } from '@/components/CharacterPreview/ActionFrameNumberInput';
 
 export const CharacterSetting = () => {
   const t = useTranslate();
@@ -23,6 +24,9 @@ export const CharacterSetting = () => {
       <ChatBalloonInput id="setting-chat" />
       <ChatBalloonSwitch />
       <AnimatingSwitch />
+      <SimpleField label={t('character.frame')} width="40">
+        <ActionFrameNumberInput />
+      </SimpleField>
       <ExtraPartsPopover />
       <SimpleField label={t('character.handType')}>
         <HandTypeToggleGroup />
