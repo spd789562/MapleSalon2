@@ -166,7 +166,7 @@ export class CharacterItem implements RenderItemInfo {
     for (const action of actions) {
       const actionWz = wz[action];
 
-      if (!actionWz) {
+      if (!actionWz || this.actionPieces.has(action)) {
         continue;
       }
 
@@ -177,6 +177,7 @@ export class CharacterItem implements RenderItemInfo {
         actionWz,
         this,
         effectWz,
+        this.effectWz?.z,
       );
 
       this.actionPieces.set(action, actionItem);
@@ -196,8 +197,17 @@ export class CharacterItem implements RenderItemInfo {
 
     for (const action of actionNeedToBuild) {
       const effectWz = wz[action] || wz.default;
+      if (!effectWz || this.actionPieces.has(action)) {
+        continue;
+      }
 
-      const actionItem = new CharacterActionItem(action, {}, this, effectWz);
+      const actionItem = new CharacterActionItem(
+        action,
+        {},
+        this,
+        effectWz,
+        wz.z,
+      );
 
       this.actionPieces.set(action, actionItem);
     }
@@ -345,6 +355,14 @@ export class CharacterItem implements RenderItemInfo {
       return currentAnchers;
     }
     return item.tryBuildAncherByFrame(currentAnchers, frame);
+  }
+  resetAncherByFrame(
+    action: CharacterAction | CharacterExpressions,
+    frame: number,
+  ) {
+    const item: CharacterActionItem | CharacterFaceItem | undefined =
+      this.actionPieces.get(action);
+    item?.resetAncherByFrame(frame);
   }
 
   updateFilter() {

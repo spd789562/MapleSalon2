@@ -91,6 +91,42 @@ export const CharacterActionNames: Partial<Record<CharacterAction, I18nKeys>> =
     [CharacterAction.ProneStab]: 'character.actionProneStab',
   };
 
+export const ActionFrameMap: Record<CharacterAction, number> = {
+  [CharacterAction.Stand1]: 4,
+  [CharacterAction.Stand2]: 4,
+  [CharacterAction.Walk1]: 4,
+  [CharacterAction.Walk2]: 4,
+  [CharacterAction.Alert]: 4,
+  [CharacterAction.Fly]: 2,
+  [CharacterAction.Heal]: 4,
+  [CharacterAction.Jump]: 1,
+  [CharacterAction.Ladder]: 2,
+  [CharacterAction.Rope]: 2,
+  [CharacterAction.Prone]: 1,
+  [CharacterAction.ProneStab]: 2,
+  [CharacterAction.Shoot1]: 3,
+  [CharacterAction.Shoot2]: 5,
+  [CharacterAction.ShootF]: 3,
+  [CharacterAction.Sit]: 1,
+  [CharacterAction.StabO1]: 2,
+  [CharacterAction.StabO2]: 2,
+  [CharacterAction.StabOF]: 3,
+  [CharacterAction.StabT1]: 3,
+  [CharacterAction.StabT2]: 3,
+  [CharacterAction.StabTF]: 4,
+  [CharacterAction.SwingO1]: 3,
+  [CharacterAction.SwingO2]: 3,
+  [CharacterAction.SwingO3]: 3,
+  [CharacterAction.SwingOF]: 4,
+  [CharacterAction.SwingP1]: 3,
+  [CharacterAction.SwingP2]: 3,
+  [CharacterAction.SwingPF]: 4,
+  [CharacterAction.SwingT1]: 3,
+  [CharacterAction.SwingT2]: 3,
+  [CharacterAction.SwingT3]: 3,
+  [CharacterAction.SwingTF]: 4,
+};
+
 export const CharacterSpecialActionNames: Record<
   CharacterSpecialAction,
   I18nKeys

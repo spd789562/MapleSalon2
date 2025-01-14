@@ -66,6 +66,8 @@ export function changeCurrentCharacter(character: Partial<CharacterData>) {
     }
     if (character.showNameTag !== undefined) {
       updateInfo.showNameTag = character.showNameTag;
+    } else {
+      updateInfo.showNameTag = false;
     }
     if (character.nameTagId) {
       updateInfo.nameTagId = character.nameTagId;
@@ -453,12 +455,16 @@ export function toggleIsAnimating(isAnimating: boolean) {
 }
 export function setCharacterAction(action: CharacterAction) {
   $currentCharacterInfo.setKey('action', action);
+  setCharacterFrame(0);
 }
 export function setCharacterExpression(expression: CharacterExpressions) {
   $currentCharacterInfo.setKey('expression', expression);
 }
 export function toggleShowChatBalloon(isShow: boolean) {
   $currentCharacterInfo.setKey('showChatBalloon', isShow);
+}
+export function setCharacterFrame(frame: number) {
+  $currentCharacterInfo.setKey('frame', frame);
 }
 export function setCharacterEarType(earType: CharacterEarType) {
   $currentInfoChanges.setKey('earType', earType);

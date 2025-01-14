@@ -6,6 +6,7 @@ export const dict: CharacterDictionary = {
   show: 'Display Character',
   showEffect: 'Display Effect',
   showNameTag: 'NameTag',
+  frame: 'Frame',
 
   chatBalloon: 'Chat',
   chatBalloonPlaceholder: 'Enter chat content',

@@ -11,6 +11,7 @@ import {
   $preserveOriginalDye,
   $dyeTypeEnabled,
   $dyeAction,
+  $dyeCharacterFrameIndex,
   $dyeResultColumnCount,
 } from '@/store/toolTab';
 import { getEquipById } from '@/store/string';
@@ -120,7 +121,7 @@ export function DyeResultTable(props: DyeResultTableProps) {
       const app = $globalRenderer.get();
       const currentCharacterInfo = $currentCharacterInfo.get();
       const characterData = {
-        frame: 0,
+        frame: $dyeCharacterFrameIndex.get() ?? 0,
         isAnimating: false,
         showNameTag: false,
         showChatBalloon: false,

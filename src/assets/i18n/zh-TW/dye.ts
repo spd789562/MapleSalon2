@@ -31,6 +31,7 @@ export const dict = {
   dyeType: '染色類型',
   otherSetting: '其他設定',
   dyeAction: '染色動作',
+  dyeFrame: '動作順序',
   dyeCount: '染色結果數量',
   onlyShowDyeable: '僅顯示可染色裝備',
   preserveOriginalDye: '保留原裝備染色',

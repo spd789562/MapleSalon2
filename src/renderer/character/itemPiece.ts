@@ -174,6 +174,7 @@ class CharacterEmptyPiece implements AnimatableFrame {
   delay = 100;
   baseAncherName: AncherName = 'navel';
   isAncherBuilt = true;
+  noAncher = true;
   zIndex = -1;
   group = 'empty';
 

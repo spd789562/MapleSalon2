@@ -34,6 +34,11 @@ export class CharacterBodyFrame {
   clearAncher() {
     this.anchers.clear();
     this.anchers.set('navel', defaultAncher.navel);
+    for (const item of this.character.idItems.values()) {
+      if (!item.isUseExpressionItem) {
+        item.resetAncherByFrame(this.action, this.frame);
+      }
+    }
   }
 
   buildAncher() {
@@ -109,7 +114,10 @@ export class CharacterBodyFrame {
         const ancherName = piece.frameData.baseAncherName;
 
         /* body hiding check */
-        if (this.character.isHideBody && (ancherName === 'navel' || layer === 'hairBelowBody')) {
+        if (
+          this.character.isHideBody &&
+          (ancherName === 'navel' || layer === 'hairBelowBody')
+        ) {
           continue;
         }
 

@@ -23,7 +23,9 @@ export type WzPieceFrame = Record<PieceName, WzPieceInfo> & {
 };
 
 export type WzEffectItem = Record<string, string> &
-  Record<string, WzEffectActionItem>;
+  Record<string, WzEffectActionItem> & {
+    z?: number;
+  };
 
 export type WzEffectActionItem = Record<
   number,

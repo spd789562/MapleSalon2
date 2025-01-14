@@ -20,6 +20,8 @@ import { ExpressionsHasEye } from '@/const/emotions';
 import { defaultAncher, handMoveDefaultAnchers } from './const/ancher';
 import { isMixDyeableId } from '@/utils/itemId';
 
+const EarReg = /ear$/i;
+
 export abstract class CategorizedItem<Name extends string> {
   name: Name;
 
@@ -40,6 +42,7 @@ export abstract class CategorizedItem<Name extends string> {
     wz: Record<number, WzPieceFrame>,
     mainItem: CharacterItem,
     effectWz?: WzEffectActionItem,
+    defaultEffectZ?: number,
   ) {
     this.name = name;
     this.wz = wz;
@@ -48,6 +51,9 @@ export abstract class CategorizedItem<Name extends string> {
     this.items = new Map();
     this.animatableItems = new Map();
     this.unresolvedItems = new Map();
+    if (effectWz && effectWz.z === undefined) {
+      effectWz.z = defaultEffectZ ?? -1;
+    }
     const keys = Object.keys(wz).map((key) => Number.parseInt(key, 10) || 0);
     if (this.name === 'default' && keys.length === 0) {
       this.frameCount = 1;
@@ -125,11 +131,22 @@ export abstract class CategorizedItem<Name extends string> {
     this.ancherSetup(currentAncher, frame);
     for (const item of this.getPiecesByFrame(frame)) {
       const piece = item.frameData;
+      /* seems if filter piece.isAncherBuilt will causing */
       if (piece && !piece.isAncherBuilt) {
         piece.buildAncher?.(currentAncher);
       }
     }
     return currentAncher;
+  }
+
+  resetAncherByFrame(frame: number) {
+    for (const item of this.getPiecesByFrame(frame)) {
+      const piece = item.frameData;
+      /* seems if filter piece.isAncherBuilt will causing */
+      if (piece && !piece.noAncher) {
+        piece.isAncherBuilt = false;
+      }
+    }
   }
 
   /** get piece name that validate in Zmap.img */
@@ -228,7 +245,7 @@ export abstract class CategorizedItem<Name extends string> {
         }
 
         /* some thing like capeArm also has ear... so only do end with here */
-        const isEar = pieceName.match(/ear$/i);
+        const isEar = pieceName.match(EarReg);
 
         const name = isEar
           ? pieceName
@@ -333,10 +350,11 @@ export abstract class CategorizedItem<Name extends string> {
           existItems[pieceIndex] = new CharacterAnimatablePart(
             this.mainItem,
             frames,
-            this.effectWz?.z,
+            this.effectWz?.z ?? -1,
           );
         }
       }
+      // this.animatableItems.set(pieceName as PieceName, existItems);
     }
   }
   prepareResoureceByFrame(index: number) {
@@ -451,7 +469,7 @@ export abstract class CategorizedItem<Name extends string> {
             new CharacterAnimatablePart(
               this.mainItem,
               itemPieces,
-              this.effectWz?.z,
+              this.effectWz?.z ?? -1,
             ),
           ],
           'animatableItems',

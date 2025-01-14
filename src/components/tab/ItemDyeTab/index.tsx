@@ -10,6 +10,7 @@ import { NeedDyeItemToggleGroup } from './NeedDyeItemToggleGroup';
 import { DyeTypeRadioGroup } from './DyeTypeRadioGroup';
 import { ResultCountNumberInput } from './ResultCountNumberInput';
 import { ResultActionSelect } from './ResultActionSelect';
+import { ResultActionFrameNumberInput } from './ResultActionFrameNumberInput';
 import { StartDyeButton } from './StartDyeButton';
 import { DyeResult } from './DyeResult';
 
@@ -32,6 +33,10 @@ export const ItemDyeTab = () => {
           <HStack>
             <Text width="7rem">{t('dye.dyeAction')}</Text>
             <ResultActionSelect />
+          </HStack>
+          <HStack>
+            <Text>{t('dye.dyeFrame')}</Text>
+            <ResultActionFrameNumberInput />
           </HStack>
           <HStack>
             <Text>{t('dye.dyeCount')}</Text>

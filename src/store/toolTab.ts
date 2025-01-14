@@ -26,6 +26,7 @@ export const $preserveOriginalDye = atom<boolean>(true);
 export const $selectedEquipSubCategory = atom<EquipSubCategory[]>([]);
 export const $dyeResultCount = atom<number>(72);
 export const $dyeAction = atom<CharacterAction>(CharacterAction.Stand1);
+export const $dyeCharacterFrameIndex = atom<number>(0);
 
 export const $dyeRenderId = atom<string | undefined>(undefined);
 export const $isRenderingDye = atom<boolean>(false);
@@ -124,4 +125,5 @@ export function setDyeResultCount(count: number) {
 }
 export function setDyeAction(action: CharacterAction) {
   $dyeAction.set(action);
+  $dyeCharacterFrameIndex.set(0);
 }

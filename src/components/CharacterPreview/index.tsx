@@ -8,6 +8,7 @@ import { EarTypeToggleGroup } from './EarTypeToggleGroup';
 import { ExpressionSelect } from './ExpressionSelect';
 import { ActionSelect } from './ActionSelect';
 import { AnimatingSwitch } from './AnimatingSwitch';
+import { ActionFrameNumberInput } from './ActionFrameNumberInput';
 import { CharacterScene } from './CharacterScene';
 import { NameInput } from './NameInput';
 import { NameTagSwitch } from './NameTagSwitch';
@@ -37,6 +38,7 @@ export const CharacterPreview = () => {
             <ActionSelect />
           </Box>
           <AnimatingSwitch />
+          <ActionFrameNumberInput />
         </HStack>
         <CharacterScene />
         <HStack mt="2" pl="2" flexWrap="wrap">

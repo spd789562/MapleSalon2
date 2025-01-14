@@ -44,6 +44,10 @@ export const $isAnimating = computed(
   $currentCharacterInfo,
   (info) => info.isAnimating,
 );
+export const $currentFrame = computed(
+  $currentCharacterInfo,
+  (info) => info.frame,
+);
 /* those it change and savable need to be merged */
 export const $currentEarType = computed($totalInfo, (info) => info.earType);
 export const $currentHandType = computed($totalInfo, (info) => info.handType);

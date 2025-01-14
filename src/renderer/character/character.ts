@@ -211,8 +211,12 @@ export class Character extends Container {
   async update(characterData: CharacterData) {
     const isPlayingChanged = this.isAnimating !== characterData.isAnimating;
     const isStopToPlay = !this.isAnimating && characterData.isAnimating;
+    let frameChanged = false;
     if (!characterData.isAnimating) {
-      this.instructionFrame = characterData.frame || 0;
+      if (this.instructionFrame !== characterData.frame) {
+        frameChanged = true;
+        this.instructionFrame = characterData.frame || 0;
+      }
       this.stop();
     }
     this.isAnimating = characterData.isAnimating;
@@ -259,7 +263,7 @@ export class Character extends Container {
       hasAddAnyItem ||
       hasSkillChanged ||
       isStopToPlay ||
-      (!this.isAnimating && characterData.frame !== 0) ||
+      (!this.isAnimating && frameChanged) ||
       this.customInstructions.length > 0
     ) {
       await this.loadItems(renderId);
@@ -678,12 +682,12 @@ export class Character extends Container {
     }
 
     this.isLoading = true;
-    // only show loading after 100ms
+    // only show loading after 500ms
     this.loadFlashTimer = setTimeout(() => {
       if (this.isLoading) {
         this.loadEvent.emit('loading');
       }
-    }, 50);
+    }, 500);
     return renderId;
   }
 
@@ -715,9 +719,12 @@ export class Character extends Container {
       );
     }
 
-    if (!this.isAnimating) {
-      this.currentInstructions = this.currentInstructions.slice(0, 1);
-    }
+    // if (!this.isAnimating) {
+    //   this.currentInstructions = this.currentInstructions.slice(
+    //     this.instructionFrame,
+    //     this.instructionFrame + 1,
+    //   );
+    // }
   }
 
   async loadItems(renderId?: string) {
@@ -839,6 +846,7 @@ export class Character extends Container {
   }
   createBodyFramesWhenNotExist() {
     const set = new Set<CharacterBodyFrame>();
+    let i = 0;
     for (const instruction of this.currentInstructions) {
       const action =
         (instruction.action as unknown as string) === 'hideBody'
@@ -852,12 +860,14 @@ export class Character extends Container {
       }
       if (
         this.isAnimating ||
-        set.size === 0 ||
+        (!this.isAnimating && this.instructionFrame === i) ||
         this.customInstructions.length > 0
       ) {
         set.add(bodyFrame);
       }
+      i += 1;
     }
+
     return Array.from(set);
   }
   createFaceFramesWhenNotExist() {

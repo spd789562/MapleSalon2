@@ -4,6 +4,7 @@ export const dict = {
   show: '顯示角色',
   showEffect: '顯示角色特效',
   showNameTag: '顯示名牌',
+  frame: '動作順序',
 
   chatBalloon: '聊天文字',
   chatBalloonPlaceholder: '輸入聊天泡泡內容',
