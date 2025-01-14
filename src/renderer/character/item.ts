@@ -311,8 +311,8 @@ export class CharacterItem implements RenderItemInfo {
       return;
     }
     await actionItem.loadResource();
-    actionItem.prepareResourece();
     actionItem.prepareAnimatableResourece();
+    actionItem.prepareResourece();
   }
   async prepareActionResourceByFrame(
     name: CharacterAction | CharacterExpressions,

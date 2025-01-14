@@ -456,6 +456,9 @@ export abstract class CategorizedItem<Name extends string> {
     this.unresolvedItems.clear();
   }
   prepareAnimatableResourece() {
+    if (this.animatableItems.size > 0) {
+      return;
+    }
     for (const [pieceName, pieces] of this.unresolvedItems) {
       const isEffect = pieceName === 'effect' && this.effectWz !== undefined;
       if (!isEffect) {
