@@ -25,9 +25,13 @@ export function makeCharacterHash(character: CharacterData) {
       item.brightness,
       item.dye?.color,
       item.dye?.alpha,
+      item.alpha,
     ]
       .filter((e) => !!e)
       .join(',');
+  }
+  if (character.extraParts) {
+    baseHash += `,${character.extraParts.join(',')}`;
   }
 
   return baseHash;
