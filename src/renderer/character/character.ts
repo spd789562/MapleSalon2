@@ -354,6 +354,15 @@ export class Character extends Container {
       return false;
     }
     if (this.skill?.id === skillId) {
+      const instruction = this.skill.isNormalAction
+        ? undefined
+        : this.skill.action;
+      const action = (
+        this.skill.isNormalAction ? this.skill.action : characterData.action
+      ) as CharacterAction;
+      characterData.action = action;
+      characterData.instruction = instruction;
+      this.bodyFrame.position.set(0, 0);
       return false;
     }
     this.skill?.destroy();
