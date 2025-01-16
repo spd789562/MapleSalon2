@@ -13,6 +13,11 @@ export const dict: InitialDictionary = {
   loadPorgressInitItem: 'Processing chair data...',
   loadPorgressDone: 'Almost there...',
 
+  loadOption: 'Load Option',
+  clearCache: 'Clear Cache',
+  clearCacheTip:
+    'Clear the cache before loading data to avoid problems when switching versions or upgrad the application',
+
   historyTitle: 'Load History',
   emptyHistoryText: 'No history',
   historyPathTitle: 'Path',

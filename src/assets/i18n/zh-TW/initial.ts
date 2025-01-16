@@ -11,6 +11,11 @@ export const dict = {
   loadPorgressInitItem: '預處理椅子資料...',
   loadPorgressDone: '即將完成',
 
+  loadOption: '載入選項',
+  clearCache: '清除快取',
+  clearCacheTip:
+    '於載入資料前清除快取，可避免版本切換或程式升級時未獲取資料的問題',
+
   historyTitle: '歷史紀錄',
   emptyHistoryText: '尚無選擇紀錄',
   historyPathTitle: '路徑',

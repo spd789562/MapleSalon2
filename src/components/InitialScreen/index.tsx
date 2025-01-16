@@ -14,6 +14,7 @@ import { ColorModeToggleGroup } from '@/components/dialog/SettingDialog/ThemeSet
 import { LoadText } from './LoadText';
 import { SelectWzButton } from './SelectWzButton';
 import { SelectHistoryTable } from './SelectHistoryTable';
+import { ClearCacheSwitch } from './ClearCacheSwitch';
 
 export const InitialScreen = () => {
   const t = useTranslate();
@@ -40,6 +41,10 @@ export const InitialScreen = () => {
         <Text color="fg.subtle" size="sm">
           {t('initial.wzPositionTip')}
         </Text>
+        <Heading size="md">{t('initial.loadOption')}</Heading>
+        <HStack>
+          <ClearCacheSwitch />
+        </HStack>
         <Heading size="md">{t('initial.historyTitle')}</Heading>
         <Box w="full" maxHeight="70vh" overflow="auto">
           <SelectHistoryTable />

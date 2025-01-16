@@ -61,6 +61,7 @@ export interface AppSetting extends Record<string, unknown> {
   gifBackgroundColor: string;
   /* other */
   lang: string;
+  clearCacheWhenLoad: boolean;
 }
 
 const DEFAULT_SETTING: AppSetting = {
@@ -81,6 +82,7 @@ const DEFAULT_SETTING: AppSetting = {
   addBlackBgWhenExportGif: false,
   gifBackgroundColor: '#000000',
   lang: window.__LANG__,
+  clearCacheWhenLoad: false,
 };
 
 export const $appSetting = deepMap<AppSetting>(DEFAULT_SETTING);
@@ -152,6 +154,11 @@ export const $exportBackgroundColor = computed(
     }
     return undefined;
   },
+);
+export const $lang = computed($appSetting, (setting) => setting.lang);
+export const $clearCacheWhenLoad = computed(
+  $appSetting,
+  (setting) => setting.clearCacheWhenLoad,
 );
 
 /* action */
@@ -230,6 +237,11 @@ export async function initializeSavedSetting() {
       if (isValidLocale(setting.lang)) {
         $appSetting.setKey('lang', setting.lang);
       }
+      if (setting.clearCacheWhenLoad !== undefined) {
+        $appSetting.setKey('clearCacheWhenLoad', !!setting.clearCacheWhenLoad);
+      } else {
+        $appSetting.setKey('clearCacheWhenLoad', true);
+      }
     }
   } catch (e) {
     console.error(e);
@@ -295,4 +307,7 @@ export function setLang(value: string) {
 }
 export function setGifBackgroundColor(value: string) {
   $appSetting.setKey('gifBackgroundColor', value);
+}
+export function setClearCacheWhenLoad(value: boolean) {
+  $appSetting.setKey('clearCacheWhenLoad', value);
 }

@@ -16,6 +16,7 @@ import {
 import {
   initializeSavedSetting,
   $defaultLoadItem,
+  $clearCacheWhenLoad,
 } from '@/store/settingDialog';
 import { initializeSavedEquipmentHistory } from '@/store/equipHistory';
 import { initializeSavedEquipmentFavorite } from '@/store/equipFavorite';
@@ -106,12 +107,13 @@ export async function initByWzBase(path: string, t: AppTranslator) {
 
   const pathHash = `${path}#${version}`;
   const lastPath = await getLastSelectedPath();
+  let isNeedClearCache = $clearCacheWhenLoad.get();
   if (lastPath !== pathHash) {
     await setLastSelectedPath(pathHash);
-    if (lastPath !== undefined || lastPath !== null || lastPath !== '') {
-      const webview = getCurrentWebview();
-      await webview.clearAllBrowsingData();
-    }
+    isNeedClearCache = !!lastPath;
+  }
+  if (isNeedClearCache) {
+    await getCurrentWebview().clearAllBrowsingData();
   }
 
   const isSuccess = await initStringAndRenderer(

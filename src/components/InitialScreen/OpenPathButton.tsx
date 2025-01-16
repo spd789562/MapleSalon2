@@ -28,12 +28,13 @@ export const OpenPathButton = (props: OpenPathButtonProps) => {
     try {
       const isExist = await exists(path);
       if (!isExist) {
-        throw new Error('檔案或路徑已不存在');
+        throw new Error('path not exist');
       }
     } catch (_) {
       toaster.error({
         title: t('initial.fileOrPathNotExist'),
       });
+      return;
     }
     /* D:/what/ever/Data/Base/Base.wz to D:/what/ever/Data/Base */
     const folder = path.replace(/\\/g, '/').replace(FilePathReg, '');
