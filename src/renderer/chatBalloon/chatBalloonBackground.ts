@@ -1,4 +1,4 @@
-import { Assets, Container, Sprite, Texture } from 'pixi.js';
+import { Assets, Container, Sprite, Texture, TilingSprite } from 'pixi.js';
 
 import type {
   WzChatBalloon,
@@ -108,18 +108,21 @@ export class ChatBalloonBackground extends Container {
     this.addSpriteWithPos(2, x, y);
     x = 0;
     y += this.assets[0].height - this.topOffset;
+
+    const leftOffset = this.assets[3].width - (this.pieces[3]?.origin.x || 0);
+
+    this.addCenterTile(
+      leftOffset,
+      y,
+      this.colWidth * colCount,
+      this.colHeight * rowCount,
+    );
     // middle
     for (let i = 0; i < rowCount; i++) {
       this.addSpriteWithPos(3, x, y);
-      x = this.assets[3].width - (this.pieces[3]?.origin.x || 0);
-      for (let j = 0; j < colCount; j++) {
-        this.addSpriteWithPos(4, x, y);
-        x += this.colWidth;
-      }
-      x -= xOffsetByArrow;
-      this.addSpriteWithPos(5, x, y);
+      const rightX = leftOffset + this.colWidth * colCount - xOffsetByArrow;
+      this.addSpriteWithPos(5, rightX, y);
       y += this.colHeight;
-      x = 0;
     }
     // bottom
     this.addSpriteWithPos(6, x, y);
@@ -149,6 +152,12 @@ export class ChatBalloonBackground extends Container {
       offset.x === -1 && xOffsetByArrow === 0 ? 0 : offset.x,
       offset.y,
     );
+    this.addChild(sprite);
+  }
+  addCenterTile(x: number, y: number, width: number, height: number) {
+    const sprite = TilingSprite.from(this.assets[4]);
+    sprite.setSize(width, height);
+    sprite.position.set(x, y);
     this.addChild(sprite);
   }
 }
