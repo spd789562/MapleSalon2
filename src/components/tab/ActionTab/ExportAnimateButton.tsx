@@ -86,6 +86,7 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
       if (props.characterRefs.length === 1) {
         const characterRef = props.characterRefs[0];
         const frameData = await characterRef.makeCharacterFrames({
+          padWhiteSpace: true,
           backgroundColor,
         });
         const blob = await getAnimatedCharacterBlob(frameData, exportType);
