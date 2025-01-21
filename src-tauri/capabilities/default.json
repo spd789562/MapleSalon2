@@ -11,6 +11,8 @@
     "core:window:default",
     "core:window:allow-set-resizable",
     "core:window:allow-set-size",
+    "core:window:allow-scale-factor",
+    "core:webview:allow-set-webview-zoom",
     "core:app:default",
     "core:image:default",
     "core:resources:default",

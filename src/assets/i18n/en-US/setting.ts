@@ -36,6 +36,7 @@ export const dict: SettingDictionary = {
   windowTitle: 'Window Setting',
   freeResize: 'Free Resize Window',
   resolution: 'Resolution',
+  scale: 'Scale',
   apply: 'Apply',
 
   themeTitle: 'Theme Setting',
