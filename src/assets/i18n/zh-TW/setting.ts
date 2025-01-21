@@ -32,6 +32,7 @@ export const dict = {
   windowTitle: '視窗設定',
   freeResize: '自由調整視窗大小',
   resolution: '解析度',
+  scale: '縮放',
   apply: '套用',
 
   themeTitle: '主題設定',

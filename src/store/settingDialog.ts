@@ -26,6 +26,11 @@ import {
   isValidColorMode,
   syncColorMode,
 } from '@/const/setting/colorMode';
+import {
+  isValidWindowScale,
+  setWindowZoom,
+  DefaultWindowScale,
+} from '@/const/setting/scale';
 import { ActionExportType, isValidExportType } from '@/const/toolTab';
 import { isValidLocale } from '@/context/i18n';
 
@@ -40,6 +45,7 @@ export interface AppSetting extends Record<string, unknown> {
   /* window */
   windowResizable: boolean;
   windowResolution: Resolution;
+  windowScale: number;
   /* theme */
   theme: Theme;
   colorMode: ColorMode;
@@ -67,6 +73,7 @@ export interface AppSetting extends Record<string, unknown> {
 const DEFAULT_SETTING: AppSetting = {
   windowResizable: true,
   windowResolution: WindowResolutions[0].name,
+  windowScale: DefaultWindowScale,
   theme: Theme.Iris,
   colorMode: ColorMode.System,
   simpleCharacterConcurrency: DEFAULT_CONCURRENCY,
@@ -95,6 +102,10 @@ export const $windowResizable = computed(
 export const $windowResolution = computed(
   $appSetting,
   (setting) => setting.windowResolution,
+);
+export const $windowScale = computed(
+  $appSetting,
+  (setting) => setting.windowScale,
 );
 export const $theme = computed($appSetting, (setting) => setting.theme);
 export const $colorMode = computed($appSetting, (setting) => setting.colorMode);
@@ -175,6 +186,10 @@ export async function initializeSavedSetting() {
       );
       $appSetting.setKey('defaultLoadItem', !!setting.defaultLoadItem);
       const defaultCharacterRendering = !!setting.defaultCharacterRendering;
+      if (setting.windowScale && isValidWindowScale(setting.windowScale)) {
+        $appSetting.setKey('windowScale', setting.windowScale);
+        await setWindowZoom(setting.windowScale);
+      }
       if (defaultCharacterRendering) {
         $appSetting.setKey('defaultCharacterRendering', true);
         $equipmentDrawerExperimentCharacterRender.set(true);
@@ -259,6 +274,9 @@ export function setWindowResizable(value: boolean) {
 }
 export function setWindowResolution(value: Resolution) {
   $appSetting.setKey('windowResolution', value);
+}
+export function setWindowScale(value: number) {
+  $appSetting.setKey('windowScale', value);
 }
 export function setTheme(value: Theme) {
   $appSetting.setKey('theme', value);

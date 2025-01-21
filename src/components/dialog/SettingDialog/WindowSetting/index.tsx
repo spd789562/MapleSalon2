@@ -5,6 +5,7 @@ import { HStack } from 'styled-system/jsx/hstack';
 import { Heading } from '@/components/ui/heading';
 import { ResizableSwitch } from './ResizableSwitch';
 import { ResolutionSelect } from './ResolutionSelect';
+import { WindowScaleSelect } from './WindowScaleSelect';
 
 export const WindowSetting = () => {
   const t = useTranslate();
@@ -14,6 +15,9 @@ export const WindowSetting = () => {
       <HStack justify="space-between">
         <ResizableSwitch />
         <ResolutionSelect />
+      </HStack>
+      <HStack justify="flex-start">
+        <WindowScaleSelect />
       </HStack>
     </Stack>
   );
