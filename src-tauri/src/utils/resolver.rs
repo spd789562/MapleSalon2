@@ -3,7 +3,10 @@ use std::path::Path;
 use std::sync::Arc;
 use tokio::fs::{self, DirEntry};
 
-use wz_reader::{version::WzMapleVersion, SharedWzMutableKey, WzNode, WzNodeArc, WzNodeCast};
+use wz_reader::{
+    util::maple_crypto_constants, version::WzMapleVersion, SharedWzMutableKey, WzNode, WzNodeArc,
+    WzNodeCast,
+};
 
 use super::{block_parse, block_parse_with_parent};
 use crate::{Error, Result};
@@ -18,6 +21,15 @@ const WZ_ROOT_FOLDER_NEED_LOAD: [&str; 8] = [
     "Map",
     "Item",
 ];
+
+fn iv_to_version(iv: &[u8; 4]) -> Option<WzMapleVersion> {
+    match iv {
+        &maple_crypto_constants::WZ_GMSIV => Some(WzMapleVersion::GMS),
+        &maple_crypto_constants::WZ_MSEAIV => Some(WzMapleVersion::EMS),
+        &[0, 0, 0, 0] => Some(WzMapleVersion::BMS),
+        _ => None,
+    }
+}
 
 pub async fn get_root_wz_file_path(dir: &DirEntry) -> Option<String> {
     let dir_name = dir.file_name();
@@ -73,13 +85,15 @@ pub fn resolve_root_wz_file_dir<'a>(
                             Some(Arc::clone(&root_node)),
                             default_keys.clone(),
                         )
-                        .await?;
+                        .await;
 
-                        /* replace the original one */
-                        let mut root_node_write = root_node.write().unwrap();
-                        root_node_write
-                            .children
-                            .insert(name.to_str().unwrap().into(), dir_node);
+                        if let Ok(dir_node) = dir_node {
+                            /* replace the original one */
+                            let mut root_node_write = root_node.write().unwrap();
+                            root_node_write
+                                .children
+                                .insert(name.to_str().unwrap().into(), dir_node);
+                        }
                     }
                 } else if file_type.is_file() {
                     //  check is XXX_nnn.wz
@@ -102,9 +116,13 @@ pub fn resolve_root_wz_file_dir<'a>(
                         patch_version,
                         None,
                         default_keys.as_ref(),
-                    )
-                    .unwrap()
-                    .into_lock();
+                    );
+
+                    if node.is_err() {
+                        continue;
+                    }
+
+                    let node = node.unwrap().into_lock();
 
                     if block_parse_with_parent(&node, &root_node).await.is_ok() {
                         let mut node_write = node.write().unwrap();
@@ -126,7 +144,7 @@ pub fn resolve_root_wz_file_dir<'a>(
 pub async fn load_wz_by_base(
     base_node: WzNodeArc,
     folders: &[&str],
-    version: Option<WzMapleVersion>,
+    _: Option<WzMapleVersion>,
     path: Option<&str>,
 ) -> Result<()> {
     let (patch_version, keys, path) = {
@@ -144,6 +162,7 @@ pub async fn load_wz_by_base(
             root_path,
         )
     };
+    let version = iv_to_version(&keys.read().unwrap().iv);
 
     let first_parent = Path::new(&path).parent().unwrap();
 
