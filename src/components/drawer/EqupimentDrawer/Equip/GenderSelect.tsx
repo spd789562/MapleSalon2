@@ -60,7 +60,7 @@ export const GenderSelect = () => {
         value={[gender().toString()]}
         onValueChange={handleChange}
         maxHeight="20rem"
-        width="4.5rem"
+        width="4.8rem"
         size="sm"
       />
     </HStack>
