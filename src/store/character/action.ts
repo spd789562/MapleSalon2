@@ -444,7 +444,7 @@ export function resetItemHsvInfo(category: EquipSubCategory) {
         hue: 0,
         saturation: 0,
         brightness: 0,
-        alpha: 1,
+        alpha: 100,
       }),
     );
   }
