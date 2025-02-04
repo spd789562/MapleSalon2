@@ -3,6 +3,7 @@ pub const SMAP_PATH: &'static str = "smap.img";
 pub const CHARACTER_ITEM_PATH: &'static str = "Character";
 pub const EQUIP_STRING_PATH: &'static str = "String/Eqp.img";
 pub const EQUIP_EFFECT_PATH: &'static str = "Effect/ItemEff.img";
+pub const EQUIP_SET_EFFECT_PATH: &'static str = "Effect/SetEff.img";
 
 pub const CASH_EFFECT_PATH: &'static str = "Item/Cash/0501.img";
 pub const CASH_EFFECT_STRING_PATH: &'static str = "String/Cash.img"; // start with 0501
