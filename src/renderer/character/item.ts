@@ -11,7 +11,12 @@ import type {
   Vec2,
   ItemDyeInfo,
 } from './const/data';
-import type { WzItem, WzEffectItem, WzPieceFrame } from './const/wz';
+import type {
+  WzItem,
+  WzEffectItem,
+  WzPieceFrame,
+  WzEffectActionItem,
+} from './const/wz';
 
 import {
   isFaceId,
@@ -23,7 +28,6 @@ import {
   isBodyId,
   isCapId,
   isShoesId,
-  isCashEffectId,
 } from '@/utils/itemId';
 import {
   gatFaceAvailableColorIds,
@@ -55,6 +59,7 @@ export class CharacterItem implements RenderItemInfo {
 
   wz: WzItem | null = null;
   effectWz: WzEffectItem | null = null;
+  setEffectWz: WzEffectItem | null = null;
   isCleanedWz = false;
   isOverrideFace = false;
 
@@ -172,12 +177,28 @@ export class CharacterItem implements RenderItemInfo {
 
       const effectWz = this.effectWz?.[action] || this.effectWz?.default;
 
+      if (effectWz !== undefined && effectWz.z === undefined) {
+        effectWz.z = this.effectWz?.z || -1;
+      }
+
+      const setEffectWz =
+        this.setEffectWz?.[action] ||
+        this.setEffectWz?.default ||
+        // the setEffect might not have any action/default folder of it
+        (this.setEffectWz?.[0]
+          ? (this.setEffectWz as unknown as WzEffectActionItem)
+          : undefined);
+
+      if (setEffectWz !== undefined && setEffectWz.z === undefined) {
+        setEffectWz.z = this.setEffectWz?.z || -1;
+      }
+
       const actionItem = new CharacterActionItem(
         action,
         actionWz,
         this,
         effectWz,
-        this.effectWz?.z,
+        setEffectWz,
       );
 
       this.actionPieces.set(action, actionItem);
@@ -201,13 +222,11 @@ export class CharacterItem implements RenderItemInfo {
         continue;
       }
 
-      const actionItem = new CharacterActionItem(
-        action,
-        {},
-        this,
-        effectWz,
-        wz.z,
-      );
+      if (effectWz.z === undefined) {
+        effectWz.z = wz.z || -1;
+      }
+
+      const actionItem = new CharacterActionItem(action, {}, this, effectWz);
 
       this.actionPieces.set(action, actionItem);
     }
@@ -247,6 +266,11 @@ export class CharacterItem implements RenderItemInfo {
       this.wz = await CharacterLoader.getPieceWz(this.info.id);
       if (this.info.enableEffect) {
         this.effectWz = await CharacterLoader.getPieceEffectWz(this.info.id);
+      }
+      if (CharacterLoader.setMap.has(this.info.id.toString())) {
+        this.setEffectWz = await CharacterLoader.getPieceSetEffectWz(
+          this.info.id,
+        );
       }
     }
 

@@ -15,6 +15,7 @@ class Loader {
   smap?: Smap;
   zmapIndex = new Map<string, number>();
   wzImageFolder = new Set<string>();
+  setMap = new Map<string, string>();
   loadingMap = new Map<string, Promise<unknown>>();
   pathExistCache = new Map<number, string>();
   instructionMap = new Map<string, WzActionInstruction[]>();
@@ -26,6 +27,7 @@ class Loader {
       this.loadSmap(),
       this.loadWzImageFolder(),
       this.loadEffect(),
+      this.loadSetMap(),
     ])
       .then(() => Promise.all([this.loadNameTag(), this.loadInstructionMap()]))
       .catch((e) => console.log(e));
@@ -88,6 +90,13 @@ class Loader {
         res.json(),
       ),
     );
+  }
+  async loadSetMap() {
+    // id -> setId
+    const setData = await fetch(`${this.apiHost}/mapping/seteffect`).then(
+      (res) => res.json(),
+    );
+    this.setMap = new Map(Object.entries(setData));
   }
   async loadInstructionMap() {
     const data = await this.getPieceWzByPath<
@@ -204,6 +213,23 @@ class Loader {
     }).catch(() => {
       this.noEffectMap.add(id);
       return null;
+    });
+
+    return data;
+  }
+  async getPieceSetEffectWz<T = WzEffectItem | null>(id: number) {
+    const setId = this.setMap.get(id.toString());
+
+    if (!setId) {
+      return null;
+    }
+
+    const alias = `Effect/SetEff.img/${setId}`;
+
+    const data = await Assets.load<T>({
+      alias,
+      loadParser: 'loadJson',
+      src: `${this.apiHost}/node/json/${alias}/effect?simple=true&cache=14400`,
     });
 
     return data;

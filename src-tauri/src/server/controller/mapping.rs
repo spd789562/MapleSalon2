@@ -62,3 +62,12 @@ pub async fn get_images(State(root): State<AppState>) -> Result<impl IntoRespons
         json_array.to_string(),
     ))
 }
+
+pub async fn get_set_effect(State(root): State<AppState>) -> Result<impl IntoResponse> {
+    let set_effect_map = handlers::get_set_effect_map(&root.0)?;
+
+    Ok((
+        [(header::CONTENT_TYPE, "application/json")],
+        serde_json::to_string(&set_effect_map)?,
+    ))
+}

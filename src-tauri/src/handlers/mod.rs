@@ -1,4 +1,5 @@
 mod chair;
+mod equip;
 mod image_map;
 mod item;
 pub mod json;
@@ -14,6 +15,7 @@ pub mod webp;
 mod zmap;
 
 pub use chair::*;
+pub use equip::*;
 pub use image_map::*;
 pub use map::*;
 pub use mount::*;

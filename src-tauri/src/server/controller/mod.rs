@@ -11,6 +11,7 @@ pub fn mapping_router() -> Router<AppState> {
         .route("/smap", get(mapping::get_smap))
         .route("/zmap", get(mapping::get_zmap))
         .route("/images", get(mapping::get_images))
+        .route("/seteffect", get(mapping::get_set_effect))
 }
 
 pub fn node_router() -> Router<AppState> {

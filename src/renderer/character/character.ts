@@ -318,9 +318,15 @@ export class Character extends Container {
 
   updateAttribute(attributes: Partial<CharacterAttributes>) {
     let hasChange = false;
-    if (attributes.action && attributes.action !== this.#_action) {
-      hasChange = true;
-      this.action = attributes.action;
+    if (attributes.action) {
+      const action = this.getActionByHandType(
+        attributes.handType ?? CharacterHandType.SingleHand,
+        attributes.action,
+      );
+      if (action !== this.#_action) {
+        hasChange = true;
+        this.action = action;
+      }
     }
     if (attributes.expression && attributes.expression !== this.#_expression) {
       hasChange = true;
@@ -909,25 +915,39 @@ export class Character extends Container {
     this.flip = actualFlip;
   }
 
+  private getActionByHandType(
+    handType: CharacterHandType,
+    action: CharacterAction,
+  ) {
+    if (handType === CharacterHandType.SingleHand) {
+      if (action === CharacterAction.Walk2) {
+        return CharacterAction.Walk1;
+      }
+      if (action === CharacterAction.Stand2) {
+        return CharacterAction.Stand1;
+      }
+    } else if (handType === CharacterHandType.DoubleHand) {
+      if (action === CharacterAction.Walk1) {
+        return CharacterAction.Walk2;
+      }
+      if (action === CharacterAction.Stand1) {
+        return CharacterAction.Stand2;
+      }
+    } else if (handType === CharacterHandType.Gun) {
+      if (action === CharacterAction.Walk2) {
+        return CharacterAction.Walk1;
+      }
+      if (action === CharacterAction.Stand2) {
+        return CharacterAction.Stand1;
+      }
+    }
+    return action;
+  }
   private updateActionByHandType() {
-    if (this.#_handType === CharacterHandType.SingleHand) {
-      if (this.action === CharacterAction.Walk2) {
-        this.#_action = CharacterAction.Walk1;
-      } else if (this.action === CharacterAction.Stand2) {
-        this.#_action = CharacterAction.Stand1;
-      }
-    } else if (this.#_handType === CharacterHandType.DoubleHand) {
-      if (this.action === CharacterAction.Walk1) {
-        this.#_action = CharacterAction.Walk2;
-      } else if (this.action === CharacterAction.Stand1) {
-        this.#_action = CharacterAction.Stand2;
-      }
-    } else if (this.#_handType === CharacterHandType.Gun) {
-      if (this.action === CharacterAction.Walk2) {
-        this.#_action = CharacterAction.Walk1;
-      } else if (this.action === CharacterAction.Stand2) {
-        this.#_action = CharacterAction.Stand1;
-      }
+    const action = this.getActionByHandType(this.#_handType, this.action);
+
+    if (this.#_action === action) {
+      return;
     }
   }
   private updateActionByWeapon() {

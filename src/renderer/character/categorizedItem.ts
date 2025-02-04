@@ -32,7 +32,7 @@ export abstract class CategorizedItem<Name extends string> {
   items: Map<PieceName, CharacterStaticPart[][]>;
 
   wz: Record<number, WzPieceFrame>;
-  effectWz: WzEffectActionItem | undefined = undefined;
+  effectWz: WzEffectActionItem[] = [];
   frameCount = 0;
 
   mainItem: CharacterItem;
@@ -42,18 +42,14 @@ export abstract class CategorizedItem<Name extends string> {
     wz: Record<number, WzPieceFrame>,
     mainItem: CharacterItem,
     effectWz?: WzEffectActionItem,
-    defaultEffectZ?: number,
+    setEffectWz?: WzEffectActionItem,
   ) {
     this.name = name;
     this.wz = wz;
-    this.effectWz = effectWz;
     this.mainItem = mainItem;
     this.items = new Map();
     this.animatableItems = new Map();
     this.unresolvedItems = new Map();
-    if (effectWz && effectWz.z === undefined) {
-      effectWz.z = defaultEffectZ ?? -1;
-    }
     const keys = Object.keys(wz).map((key) => Number.parseInt(key, 10) || 0);
     if (this.name === 'default' && keys.length === 0) {
       this.frameCount = 1;
@@ -63,7 +59,14 @@ export abstract class CategorizedItem<Name extends string> {
       this.frameCount = maxFrame;
     }
     this.resolveFrames();
-    this.resolveEffectFrames();
+    if (effectWz) {
+      this.effectWz.push(effectWz);
+      this.resolveEffectFrames(effectWz);
+    }
+    if (setEffectWz) {
+      this.effectWz.push(setEffectWz);
+      this.resolveEffectFrames(setEffectWz);
+    }
   }
 
   getPiecesByFrame(frame: number) {
@@ -85,12 +88,17 @@ export abstract class CategorizedItem<Name extends string> {
     return Array.from(this.animatableItems.values()).flat();
   }
 
-  get effectBasePos() {
+  /** do something before build ancher on each pieces */
+  abstract ancherSetup(ancherMap: Map<AncherName, Vec2>, frame: number): void;
+
+  abstract isDyeable(): boolean;
+
+  private getEffectPos(pos?: number) {
     const basePos = {
       x: 10,
       y: 50,
     };
-    const effectPos = this.effectWz?.pos ?? -1;
+    const effectPos = pos ?? -1;
 
     /* pos logic is from MapleNecrocer */
     if (effectPos === 0 || effectPos === 1) {
@@ -107,11 +115,6 @@ export abstract class CategorizedItem<Name extends string> {
 
     return basePos;
   }
-
-  /** do something before build ancher on each pieces */
-  abstract ancherSetup(ancherMap: Map<AncherName, Vec2>, frame: number): void;
-
-  abstract isDyeable(): boolean;
 
   tryBuildAncher(
     currentAnchers: Map<AncherName, Vec2>[],
@@ -165,24 +168,20 @@ export abstract class CategorizedItem<Name extends string> {
     return this.mainItem.islot[0];
   }
 
-  resolveEffectFrames() {
-    if (!this.effectWz) {
-      return;
-    }
-    const hasFirstFrame = this.effectWz[0];
+  resolveEffectFrames(wz: WzEffectActionItem) {
+    const hasFirstFrame = wz[0];
     if (!hasFirstFrame) {
       return;
     }
-    const maxFrame = Object.keys(this.effectWz).reduce(
+    const basePos = this.getEffectPos(wz.pos);
+    const maxFrame = Object.keys(wz).reduce(
       (a, b) => (Number.isNaN(Number(b)) ? a : Math.max(a, Number(b))),
       0,
     );
     const pieces: CharacterItemPiece[] = [];
 
-    const basePos = this.effectBasePos;
-
     for (let frame = 0; frame <= maxFrame; frame += 1) {
-      const piece = this.effectWz[frame];
+      const piece = wz[frame];
 
       if (!piece) {
         return;
@@ -267,8 +266,8 @@ export abstract class CategorizedItem<Name extends string> {
 
         if (!ancherMap) {
           /* some item has effect and it doesn't have ancher it self, try to use effect's ancher */
-          if (this.effectWz && !this.effectWz.pos) {
-            const effectPost = this.effectBasePos;
+          if (this.effectWz.length > 0 && !this.effectWz[0].pos) {
+            const effectPost = this.getEffectPos(this.effectWz[0].pos);
             ancherMap = {
               brow: {
                 x: -effectPost.x,
@@ -329,6 +328,7 @@ export abstract class CategorizedItem<Name extends string> {
         this.animatableItems.set(pieceName as PieceName, item);
         existItems = item;
       }
+      // 0 should be effect, if 1 exist, it should be setEffect
       for (let pieceIndex = 0; pieceIndex < pieces.length; pieceIndex += 1) {
         const itemPieces = pieces[pieceIndex];
         const existItem = existItems[pieceIndex];
@@ -350,7 +350,7 @@ export abstract class CategorizedItem<Name extends string> {
           existItems[pieceIndex] = new CharacterAnimatablePart(
             this.mainItem,
             frames,
-            this.effectWz?.z ?? -1,
+            this.effectWz[pieceIndex]?.z || -1,
           );
         }
       }
@@ -359,7 +359,7 @@ export abstract class CategorizedItem<Name extends string> {
   }
   prepareResoureceByFrame(index: number) {
     for (const [pieceName, pieces] of this.unresolvedItems) {
-      if (pieceName === 'effect' && this.effectWz !== undefined) {
+      if (pieceName === 'effect' && this.effectWz.length > 0) {
         continue;
       }
 
@@ -464,15 +464,15 @@ export abstract class CategorizedItem<Name extends string> {
       if (!isEffect) {
         continue;
       }
-      for (const itemPieces of pieces) {
+      for (let spriteIndex = 0; spriteIndex < pieces.length; spriteIndex += 1) {
         appendItems(
           this,
           pieceName,
           [
             new CharacterAnimatablePart(
               this.mainItem,
-              itemPieces,
-              this.effectWz?.z ?? -1,
+              pieces[spriteIndex],
+              this.effectWz[spriteIndex]?.z || -1,
             ),
           ],
           'animatableItems',
