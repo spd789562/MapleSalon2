@@ -11,24 +11,28 @@ const SliderProperyMap = {
     label: 'Hue',
     min: 0,
     max: 360,
+    initial: 0,
     step: 1,
   },
   saturation: {
     label: 'Saturation',
     min: -100,
     max: 100,
+    initial: 0,
     step: 1,
   },
   brightness: {
     label: 'Brightness',
     min: -100,
     max: 100,
+    initial: 0,
     step: 1,
   },
   alpha: {
     label: 'Alpha',
     min: 0,
     max: 100,
+    initial: 100,
     step: 1,
   },
 };
@@ -52,7 +56,7 @@ export const EquipHsvSlider = (props: EquipHsvSliderProps) => {
           variant="ghost"
           size="xs"
           title={`${t('common.reset')}${props.title}`}
-          onClick={() => props.onValueChange(0)}
+          onClick={() => props.onValueChange(propery.initial)}
         >
           <ResetIcon />
         </IconButton>
