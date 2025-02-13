@@ -103,6 +103,7 @@ export class CharacterFaceFrame {
     }
 
     let isOverrideFace = false;
+    const isBackAction = this.isBackAction;
     const isHideFace =
       (bodyFrame.action as string) === 'blink' ||
       (bodyFrame.action as string) === 'hide';
@@ -133,7 +134,11 @@ export class CharacterFaceFrame {
           piece.pivot?.copyFrom(pivot);
         }
 
-        container.addCharacterPart(piece);
+        if (isBackAction) {
+          piece.removeFromParent();
+        } else {
+          container.addCharacterPart(piece);
+        }
       }
 
       container.refreshLock();
@@ -144,6 +149,7 @@ export class CharacterFaceFrame {
       facePiece.visible = !isOverrideFace;
     }
 
+    // this line should be able to removed, but just keep it for now
     this.updateCharacterFaceVisibility(isHideFace);
   }
 
