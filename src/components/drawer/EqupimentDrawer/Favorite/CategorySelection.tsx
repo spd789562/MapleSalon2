@@ -1,7 +1,7 @@
 import { Index, createMemo } from 'solid-js';
 
 import { useStore } from '@nanostores/solid';
-import { useTranslate } from '@/context/i18n';
+import { useTranslate, type I18nKeys } from '@/context/i18n';
 
 import type { EquipCategorySelections } from '@/store/equipDrawer';
 import {
@@ -13,7 +13,38 @@ import { Grid } from 'styled-system/jsx/grid';
 import { Button } from '@/components/ui/button';
 import * as RadioButtonGroup from '@/components/ui/radioButtonGroup';
 import { CategoryIcon } from '@/components/elements/CategoryIcon';
-import { EquipCategoryOptions } from '@/components/drawer/EqupimentDrawer/Equip/CategorySelection';
+
+import { AllCategory } from '@/const/equipments';
+
+export const EquipCategoryOptions: {
+  id: EquipCategorySelections;
+  label: I18nKeys;
+}[] = [
+  { id: AllCategory, label: 'character.equipAll' },
+  { id: 'Hair', label: 'tab.hair' },
+  { id: 'Face', label: 'tab.face' },
+  { id: 'Weapon', label: 'character.equipWeapon' },
+  { id: 'CashWeapon', label: 'character.equipCashWeapon' },
+  { id: 'Cap', label: 'character.equipCap' },
+  { id: 'Overall', label: 'character.equipOverall' },
+  { id: 'Coat', label: 'character.equipCoat' },
+  { id: 'Pants', label: 'character.equipPants' },
+  { id: 'Cape', label: 'character.equipCape' },
+  { id: 'Glove', label: 'character.equipGlove' },
+  { id: 'Shoes', label: 'character.equipShoes' },
+  { id: 'Eye Decoration', label: 'character.equipEyeDecoration' },
+  { id: 'Face Accessory', label: 'character.equipFaceAccessory' },
+  { id: 'Earrings', label: 'character.equipEarrings' },
+  { id: 'Shield', label: 'character.equipShield' },
+  { id: 'Skin', label: 'character.equipSkin' },
+  { id: 'NameTag', label: 'character.equipNameTag' },
+  { id: 'ChatBalloon', label: 'character.equipChatBalloon' },
+  { id: 'Medal', label: 'character.equipMedal' },
+  { id: 'NickTag', label: 'character.equipNickTag' },
+  { id: 'Effect', label: 'character.equipEffect' },
+  { id: 'RingEffect', label: 'character.equipRingEffect' },
+  { id: 'NecklaceEffect', label: 'character.equipNecklaceEffect' },
+];
 
 export const CategorySelection = () => {
   const t = useTranslate();
