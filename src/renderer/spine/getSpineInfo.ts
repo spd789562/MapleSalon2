@@ -3,8 +3,10 @@ import { SpineType, SpineVersion, type SpineInfo } from './const/type';
 
 import { BinaryInput } from '@esotericsoftware/spine-core/dist/SkeletonBinary';
 
-export function getSpineInfo(wz: WzSpineData): SpineInfo | undefined {
-  const spinePrefix = wz.spine as string;
+export function getSpineInfo(
+  wz: WzSpineData,
+  spinePrefix = wz.spine as string,
+): SpineInfo | undefined {
   const normalAtlasName = `${spinePrefix}.atlas`;
   let atlasName = normalAtlasName;
   if (!wz[normalAtlasName] && wz.atlas) {

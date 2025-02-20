@@ -78,15 +78,23 @@ export class MapObjSet {
         if ((obj?.flow ?? 0) > 0 || obj?.hide === 1) {
           continue;
         }
-        const objData = wz[obj.oS]?.[obj.l0]?.[obj.l1]?.[
+        let objData = wz[obj.oS]?.[obj.l0]?.[obj.l1]?.[
           obj.l2
         ] as unknown as WzMapObjData;
+        const forceSpine = obj.l2.endsWith('.skel');
+        /* some of spineAnimation will directly point to .skel */
+        if (forceSpine) {
+          objData = wz[obj.oS]?.[obj.l0]?.[obj.l1] as unknown as WzMapObjData;
+        }
         if (!objData) {
           continue;
         }
-        if ('spineAni' in obj) {
+        /* maybe I should check atlas in objData instead */
+        if (forceSpine || objData?.spine || 'spineAni' in obj) {
           const mapObj = new MapObj(obj, objData, obj.id || 0);
-          const prefix = `Map/Obj/${obj.oS}.img/${obj.l0}/${obj.l1}/${obj.l2}`;
+          const prefix = forceSpine
+            ? `Map/Obj/${obj.oS}.img/${obj.l0}/${obj.l1}`
+            : `Map/Obj/${obj.oS}.img/${obj.l0}/${obj.l1}/${obj.l2}`;
           let dataPromise = awaitedSkeletonData.get(prefix);
           if (!dataPromise) {
             dataPromise = createSkeletonData(objData as WzSpineData, prefix);
