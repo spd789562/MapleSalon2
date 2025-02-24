@@ -26,7 +26,8 @@ export async function createSkeletonData(
   prefix: string,
   scale = 1,
 ) {
-  const spineInfo = getSpineInfo(wz);
+  const spinePrefix = wz.spine ? (wz.spine as string) : prefix.split('/').pop();
+  const spineInfo = getSpineInfo(wz, spinePrefix);
   if (!spineInfo) {
     return undefined;
   }

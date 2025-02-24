@@ -92,6 +92,9 @@ export const dict = {
   clearCacheConfirm: '確認是否清除暫存',
   clearCacheDesc:
     '若資料確定為舊版本資料時再使用此功能，點擊確認後將會清出暫存並重整頁面',
+  preservePinStatus: '保留釘選狀態',
+  preservePinStatusTip:
+    '保留當前裝備及裝備選擇的釘選狀態，下次開啟時不需要重新釘選',
 
   currentVersion: '當前版本',
   newVersion: '最新版本',

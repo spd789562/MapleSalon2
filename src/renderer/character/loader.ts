@@ -51,31 +51,13 @@ class Loader {
 
     this.zmap.reverse();
     // manually add capBelowHead, wtf?
-    const armBelowHeadIndex = this.zmap.indexOf('armBelowHead');
-    if (armBelowHeadIndex > -1) {
-      this.zmap = [
-        ...this.zmap.slice(0, armBelowHeadIndex),
-        'capBelowHead',
-        ...this.zmap.slice(armBelowHeadIndex),
-      ];
-      this.zmapIndex.set(
-        'capBelowHead',
-        this.zmapIndex.get('armBelowHead') || 0,
-      );
-    }
-    // also fix capBelowHair
-    const hairBelowBodyIndex = this.zmap.indexOf('hairBelowBody');
-    if (hairBelowBodyIndex > -1) {
-      this.zmap = [
-        ...this.zmap.slice(0, hairBelowBodyIndex),
-        'capBelowHair',
-        ...this.zmap.slice(hairBelowBodyIndex),
-      ];
-      this.zmapIndex.set(
-        'capBelowHair',
-        this.zmapIndex.get('hairBelowBody') || 0,
-      );
-    }
+    this.fixLayers([
+      ['capBelowHead', 'armBelowHead'],
+      ['capBelowHair', 'capBelowHair'],
+      // why is this keep going
+      ['capBackHair', 'capBackHair'],
+    ]);
+
     this.zmap.push('effect');
     this.zmapIndex.set('effect', this.zmap.length - 1);
   }
@@ -265,6 +247,26 @@ class Loader {
 
   getRaw(path: string) {
     return fetch(`${this.apiHost}/node/raw/${path}?force_parse=true`);
+  }
+
+  /**
+   * fix certain layer index with one exist layer when it not exist
+   */
+  private fixLayers(layers: [string, string][]) {
+    if (!this.zmap) {
+      return;
+    }
+    for (const [layer, alterLayer] of layers) {
+      const alterIndex = this.zmap.indexOf(alterLayer);
+      if (alterIndex > -1) {
+        this.zmap = [
+          ...this.zmap.slice(0, alterIndex),
+          layer,
+          ...this.zmap.slice(alterIndex),
+        ];
+        this.zmapIndex.set(layer, this.zmapIndex.get(alterLayer) || 0);
+      }
+    }
   }
 }
 

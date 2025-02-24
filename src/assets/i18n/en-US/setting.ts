@@ -96,6 +96,9 @@ export const dict: SettingDictionary = {
   clearCacheConfirm: 'Do you want to clear the cache?',
   clearCacheDesc:
     'If you surly seeing the old data or data missing, click confirm to clear the cache and refresh the page',
+  preservePinStatus: 'Preserve Pin Status',
+  preservePinStatusTip:
+    'Preserve the current equipment and equipment selection pin status so no need to re-pin next time',
 
   currentVersion: 'Current Version',
   newVersion: 'New Version',

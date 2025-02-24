@@ -6,6 +6,7 @@ import { Heading } from '@/components/ui/heading';
 import { ResizableSwitch } from './ResizableSwitch';
 import { ResolutionSelect } from './ResolutionSelect';
 import { WindowScaleSelect } from './WindowScaleSelect';
+import { PreservePinSwitch } from './PreservePinSwitch';
 
 export const WindowSetting = () => {
   const t = useTranslate();
@@ -18,6 +19,7 @@ export const WindowSetting = () => {
       </HStack>
       <HStack justify="flex-start">
         <WindowScaleSelect />
+        <PreservePinSwitch />
       </HStack>
     </Stack>
   );

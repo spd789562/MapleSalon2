@@ -1,10 +1,16 @@
-import { deepMap, computed } from 'nanostores';
+import { deepMap, computed, onSet } from 'nanostores';
 
 import { load } from '@tauri-apps/plugin-store';
 
 import { $equipmentDrawerExperimentCharacterRender } from './equipDrawer';
 import { $preferRenderer as $rendererPreference } from './renderer';
 import { $actionExportType } from './toolTab';
+import {
+  $currentEquipmentDrawerPin,
+  $currentEquipmentDrawerOpen,
+  $equpimentDrawerPin,
+  $equpimentDrawerOpen,
+} from './trigger';
 
 import { TextureStyle } from 'pixi.js';
 
@@ -68,6 +74,9 @@ export interface AppSetting extends Record<string, unknown> {
   /* other */
   lang: string;
   clearCacheWhenLoad: boolean;
+  preservePin: boolean;
+  currentEquipDrawerPin: boolean;
+  equipDrawerPin: boolean;
 }
 
 const DEFAULT_SETTING: AppSetting = {
@@ -89,7 +98,10 @@ const DEFAULT_SETTING: AppSetting = {
   addBlackBgWhenExportGif: false,
   gifBackgroundColor: '#000000',
   lang: window.__LANG__,
-  clearCacheWhenLoad: false,
+  clearCacheWhenLoad: true,
+  preservePin: true,
+  currentEquipDrawerPin: false,
+  equipDrawerPin: false,
 };
 
 export const $appSetting = deepMap<AppSetting>(DEFAULT_SETTING);
@@ -170,6 +182,10 @@ export const $lang = computed($appSetting, (setting) => setting.lang);
 export const $clearCacheWhenLoad = computed(
   $appSetting,
   (setting) => setting.clearCacheWhenLoad,
+);
+export const $preservePin = computed(
+  $appSetting,
+  (setting) => setting.preservePin,
 );
 
 /* action */
@@ -257,6 +273,18 @@ export async function initializeSavedSetting() {
       } else {
         $appSetting.setKey('clearCacheWhenLoad', true);
       }
+      const preservePin = setting.preservePin ?? true;
+      $appSetting.setKey('preservePin', preservePin);
+      if (preservePin) {
+        const equipDrawerPin = !!setting.equipDrawerPin;
+        const currentEquipDrawerPin = !!setting.currentEquipDrawerPin;
+        $appSetting.setKey('equipDrawerPin', equipDrawerPin);
+        $appSetting.setKey('currentEquipDrawerPin', currentEquipDrawerPin);
+        $equpimentDrawerPin.set(equipDrawerPin);
+        $equpimentDrawerOpen.set(equipDrawerPin);
+        $currentEquipmentDrawerPin.set(currentEquipDrawerPin);
+        $currentEquipmentDrawerOpen.set(currentEquipDrawerPin);
+      }
     }
   } catch (e) {
     console.error(e);
@@ -329,3 +357,24 @@ export function setGifBackgroundColor(value: string) {
 export function setClearCacheWhenLoad(value: boolean) {
   $appSetting.setKey('clearCacheWhenLoad', value);
 }
+export function setPreservePin(value: boolean) {
+  $appSetting.setKey('preservePin', value);
+}
+export function setEquipDrawerPin(value: boolean) {
+  $appSetting.setKey('equipDrawerPin', value);
+}
+export function setCurrentEquipDrawerPin(value: boolean) {
+  $appSetting.setKey('currentEquipDrawerPin', value);
+}
+
+/* effect for pin, so we don't get recrusively import */
+onSet($equpimentDrawerPin, ({ newValue }) => {
+  if ($preservePin.get()) {
+    $appSetting.setKey('equipDrawerPin', newValue);
+  }
+});
+onSet($currentEquipmentDrawerPin, ({ newValue }) => {
+  if ($preservePin.get()) {
+    $appSetting.setKey('currentEquipDrawerPin', newValue);
+  }
+});
