@@ -319,7 +319,7 @@ export abstract class CategorizedItem<Name extends string> {
   }
   prepareAnimatableResoureceByFrame(index: number) {
     for (const [pieceName, pieces] of this.unresolvedItems) {
-      if (!(pieceName === 'effect' && this.effectWz !== undefined)) {
+      if (!(pieceName === 'effect' && this.effectWz.length > 0)) {
         continue;
       }
       let existItems = this.animatableItems.get(pieceName as PieceName);
@@ -401,7 +401,7 @@ export abstract class CategorizedItem<Name extends string> {
     }
     const assets = new Set<UnresolvedAsset>();
     for (const [pieceName, items] of this.unresolvedItems) {
-      const isEffect = pieceName === 'effect' && this.effectWz !== undefined;
+      const isEffect = pieceName === 'effect' && this.effectWz.length > 0;
       if (!isEffect) {
         continue;
       }
@@ -460,7 +460,7 @@ export abstract class CategorizedItem<Name extends string> {
       return;
     }
     for (const [pieceName, pieces] of this.unresolvedItems) {
-      const isEffect = pieceName === 'effect' && this.effectWz !== undefined;
+      const isEffect = pieceName === 'effect' && this.effectWz.length > 0;
       if (!isEffect) {
         continue;
       }

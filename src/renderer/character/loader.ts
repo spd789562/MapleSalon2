@@ -258,7 +258,6 @@ class Loader {
     }
     for (const [layer, alterLayer] of layers) {
       const alterIndex = this.zmap.indexOf(alterLayer);
-      console.log('alterIndex', alterIndex, layer, alterLayer);
       if (alterIndex > -1) {
         this.zmap = [
           ...this.zmap.slice(0, alterIndex),
