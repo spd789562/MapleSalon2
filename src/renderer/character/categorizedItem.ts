@@ -33,6 +33,7 @@ export abstract class CategorizedItem<Name extends string> {
 
   wz: Record<number, WzPieceFrame>;
   effectWz: WzEffectActionItem[] = [];
+  effectPos = -1;
   frameCount = 0;
 
   mainItem: CharacterItem;
@@ -60,6 +61,7 @@ export abstract class CategorizedItem<Name extends string> {
     }
     this.resolveFrames();
     if (effectWz) {
+      this.effectPos = effectWz.pos || -1;
       this.effectWz.push(effectWz);
       this.resolveEffectFrames(effectWz);
     }
@@ -109,7 +111,7 @@ export abstract class CategorizedItem<Name extends string> {
     }
     // for job tails like kaiser and hoyoung
     if (effectPos === 4) {
-      basePos.y = 25;
+      basePos.y = 30;
       basePos.x = 0;
     }
 

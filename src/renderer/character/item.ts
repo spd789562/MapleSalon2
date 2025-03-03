@@ -54,9 +54,12 @@ export class CharacterItem implements RenderItemInfo {
     CharacterAction | CharacterExpressions,
     CharacterActionItem | CharacterFaceItem
   >;
+  effectPieces: Map<CharacterAction | 'default', CharacterActionItem>;
+  setEffectPieces: Map<CharacterAction | 'default', CharacterActionItem>;
 
   character: Character;
 
+  // sience wz will be parsed when loaded, it's might be not needed to store them
   wz: WzItem | null = null;
   effectWz: WzEffectItem | null = null;
   setEffectWz: WzEffectItem | null = null;
@@ -70,6 +73,8 @@ export class CharacterItem implements RenderItemInfo {
   constructor(info: ItemInfo, character: Character) {
     this.info = info;
     this.actionPieces = new Map();
+    this.effectPieces = new Map();
+    this.setEffectPieces = new Map();
     this.islot = [];
     this.vslot = [];
 
@@ -175,31 +180,7 @@ export class CharacterItem implements RenderItemInfo {
         continue;
       }
 
-      const effectWz = this.effectWz?.[action] || this.effectWz?.default;
-
-      if (effectWz !== undefined && effectWz.z === undefined) {
-        effectWz.z = this.effectWz?.z || -1;
-      }
-
-      const setEffectWz =
-        this.setEffectWz?.[action] ||
-        this.setEffectWz?.default ||
-        // the setEffect might not have any action/default folder of it
-        (this.setEffectWz?.[0]
-          ? (this.setEffectWz as unknown as WzEffectActionItem)
-          : undefined);
-
-      if (setEffectWz !== undefined && setEffectWz.z === undefined) {
-        setEffectWz.z = this.setEffectWz?.z || -1;
-      }
-
-      const actionItem = new CharacterActionItem(
-        action,
-        actionWz,
-        this,
-        effectWz,
-        setEffectWz,
-      );
+      const actionItem = new CharacterActionItem(action, actionWz, this);
 
       this.actionPieces.set(action, actionItem);
     }
@@ -213,12 +194,14 @@ export class CharacterItem implements RenderItemInfo {
       this.isCleanedWz = true;
     }
   }
-  private loadEffectOnlyAction(wz: WzEffectItem) {
-    const actionNeedToBuild = Object.values(CharacterAction);
+  private loadEffect(wz: WzEffectItem) {
+    const actionNeedToBuild = (
+      Object.values(CharacterAction) as (CharacterAction | 'default')[]
+    ).concat('default');
 
     for (const action of actionNeedToBuild) {
-      const effectWz = wz[action] || wz.default;
-      if (!effectWz || this.actionPieces.has(action)) {
+      const effectWz = wz[action];
+      if (!effectWz || this.effectPieces.has(action)) {
         continue;
       }
 
@@ -226,9 +209,50 @@ export class CharacterItem implements RenderItemInfo {
         effectWz.z = wz.z || -1;
       }
 
-      const actionItem = new CharacterActionItem(action, {}, this, effectWz);
+      const actionItem = new CharacterActionItem(
+        action === 'default' ? CharacterAction.Walk1 : action,
+        {},
+        this,
+        effectWz,
+      );
 
-      this.actionPieces.set(action, actionItem);
+      this.effectPieces.set(action, actionItem);
+    }
+  }
+  private loadSetEffect(wz: WzEffectItem) {
+    const actionNeedToBuild = (
+      Object.values(CharacterAction) as (CharacterAction | 'default')[]
+    ).concat('default');
+
+    for (const action of actionNeedToBuild) {
+      const setEffectWz =
+        wz[action] ||
+        wz.default ||
+        // the setEffect might not have any action/default folder of it
+        (wz[0]
+          ? (this.setEffectWz as unknown as WzEffectActionItem)
+          : undefined);
+
+      if (setEffectWz !== undefined && setEffectWz.z === undefined) {
+        setEffectWz.z = this.setEffectWz?.z || -1;
+      }
+
+      if (!setEffectWz || this.setEffectPieces.has(action)) {
+        continue;
+      }
+
+      if (setEffectWz.z === undefined) {
+        setEffectWz.z = wz.z || -1;
+      }
+
+      const actionItem = new CharacterActionItem(
+        action === 'default' ? CharacterAction.Walk1 : action,
+        {},
+        this,
+        setEffectWz,
+      );
+
+      this.setEffectPieces.set(action, actionItem);
     }
   }
   private loadWeapon(wz: WzItem) {
@@ -276,7 +300,7 @@ export class CharacterItem implements RenderItemInfo {
 
     if (this.wz === null) {
       if (this.effectWz) {
-        this.loadEffectOnlyAction(this.effectWz);
+        this.loadEffect(this.effectWz);
       }
       return;
     }
@@ -300,9 +324,14 @@ export class CharacterItem implements RenderItemInfo {
       this.avaliableDye = new Map(ids.map((id) => [getHairColorId(id), id]));
     }
 
+    if (this.effectWz) {
+      this.loadEffect(this.effectWz);
+    }
+    if (this.setEffectWz) {
+      this.loadSetEffect(this.setEffectWz);
+    }
     const baseKeys = Object.keys(this.wz);
-    if (baseKeys.length === 1 && baseKeys[0] === 'info' && this.effectWz) {
-      this.loadEffectOnlyAction(this.effectWz as WzEffectItem);
+    if (baseKeys.length === 1 && baseKeys[0] === 'info') {
       return;
     }
 
@@ -319,15 +348,17 @@ export class CharacterItem implements RenderItemInfo {
     }
   }
 
-  async prepareActionAnimatableResource(
-    name: CharacterAction | CharacterExpressions,
-  ) {
-    const actionItem = this.actionPieces.get(name);
-    if (!actionItem) {
-      return;
+  async prepareActionAnimatableResource(name: CharacterAction) {
+    const effectItem = this.getEffect(name);
+    if (effectItem) {
+      await effectItem.loadAnimatableResource();
+      effectItem.prepareAnimatableResourece();
     }
-    await actionItem.loadAnimatableResource();
-    actionItem.prepareAnimatableResourece();
+    const setEffectItem = this.getSetEffect(name);
+    if (setEffectItem) {
+      await setEffectItem.loadAnimatableResource();
+      setEffectItem.prepareAnimatableResourece();
+    }
   }
   async prepareActionResource(name: CharacterAction | CharacterExpressions) {
     const actionItem = this.actionPieces.get(name);
@@ -335,7 +366,6 @@ export class CharacterItem implements RenderItemInfo {
       return;
     }
     await actionItem.loadResource();
-    actionItem.prepareAnimatableResourece();
     actionItem.prepareResourece();
   }
   async prepareActionResourceByFrame(
@@ -344,12 +374,22 @@ export class CharacterItem implements RenderItemInfo {
   ) {
     const actionItem = this.actionPieces.get(name);
 
-    if (!actionItem) {
-      return;
+    if (actionItem) {
+      await actionItem.loadResourceByFrame(frame);
+      actionItem.prepareResoureceByFrame(frame);
     }
-    await actionItem.loadResourceByFrame(frame);
-    actionItem.prepareResoureceByFrame(frame);
-    actionItem.prepareAnimatableResoureceByFrame(frame);
+  }
+  async prepareAnimatableResourceByFrame(name: CharacterAction, frame: number) {
+    const effectItem = this.getEffect(name);
+    if (effectItem) {
+      await effectItem.loadResourceByFrame(frame);
+      effectItem.prepareAnimatableResoureceByFrame(frame);
+    }
+    const setEffectItem = this.getSetEffect(name);
+    if (setEffectItem) {
+      await setEffectItem.loadResourceByFrame(frame);
+      setEffectItem.prepareAnimatableResoureceByFrame(frame);
+    }
   }
 
   tryBuildAncher(
@@ -455,12 +495,40 @@ export class CharacterItem implements RenderItemInfo {
         }
       }
     }
+    const effectItems = [
+      ...this.effectPieces.values(),
+      ...this.setEffectPieces.values(),
+    ];
+    for (const actionItem of effectItems) {
+      for (const part of actionItem.allAnimatablePieces) {
+        if (part.filters !== this.filters) {
+          part.filters = this.filters;
+        }
+      }
+    }
+  }
+
+  getEffect(action: CharacterAction) {
+    return this.effectPieces.get(action) || this.effectPieces.get('default');
+  }
+  getSetEffect(action: CharacterAction) {
+    return (
+      this.setEffectPieces.get(action) || this.setEffectPieces.get('default')
+    );
   }
 
   destroy() {
     for (const actionItem of this.actionPieces.values()) {
       actionItem.destroy();
     }
+    for (const item of this.effectPieces.values()) {
+      item.destroy();
+    }
+    for (const item of this.setEffectPieces.values()) {
+      item.destroy();
+    }
     this.actionPieces.clear();
+    this.effectPieces.clear();
+    this.setEffectPieces.clear();
   }
 }
