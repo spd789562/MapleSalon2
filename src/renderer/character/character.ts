@@ -14,6 +14,7 @@ import type { ItemInfo, PieceSlot, Vec2, Zmap } from './const/data';
 import type { PieceIslot } from './const/slot';
 import type { WzActionInstruction } from './const/wz';
 import type { CategorizedItem, CharacterActionItem } from './categorizedItem';
+import type { CharacterAnimatablePart } from './characterAnimatablePart';
 import { CharacterLoader } from './loader';
 import { CharacterItem } from './item';
 import { CharacterBodyFrame } from './characterBodyFrame';
@@ -452,7 +453,14 @@ export class Character extends Container {
       .filter((item) => item) as AnyCategorizedItem[];
   }
   get allEffectPieces() {
-    return this.currentAllItem.flatMap((item) => item.allAnimatablePieces);
+    return Array.from(this.idItems.values()).flatMap((item) => {
+      const effectPiece = item.getEffect(this.useAction);
+      const setEffectPiece = item.getSetEffect(this.useAction);
+      return ([] as CharacterAnimatablePart[]).concat(
+        effectPiece?.allAnimatablePieces ?? [],
+        setEffectPiece?.allAnimatablePieces ?? [],
+      );
+    });
   }
 
   getOrCreatZmapLayer(zmap: Zmap, layer: PieceSlot) {
@@ -752,9 +760,7 @@ export class Character extends Container {
       try {
         await item.load();
         if (this.isAnimating) {
-          await item.prepareActionAnimatableResource(
-            item.isUseExpressionItem ? this.expression : this.useAction,
-          );
+          await item.prepareActionAnimatableResource(this.useAction);
         }
       } catch (_) {
         return item.info;

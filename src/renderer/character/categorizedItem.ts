@@ -109,7 +109,7 @@ export abstract class CategorizedItem<Name extends string> {
     }
     // for job tails like kaiser and hoyoung
     if (effectPos === 4) {
-      basePos.y = 25;
+      basePos.y = 0;
       basePos.x = 0;
     }
 
@@ -174,6 +174,8 @@ export abstract class CategorizedItem<Name extends string> {
       return;
     }
     const basePos = this.getEffectPos(wz.pos);
+    /* pos 4 usually tails, and those use body as ancher */
+    const defaultAncherName = wz.pos === 4 ? 'body' : 'brow';
     const maxFrame = Object.keys(wz).reduce(
       (a, b) => (Number.isNaN(Number(b)) ? a : Math.max(a, Number(b))),
       0,
@@ -207,7 +209,7 @@ export abstract class CategorizedItem<Name extends string> {
         this.mainItem,
         true,
       );
-      characterItemPiece.baseAncherName = 'brow';
+      characterItemPiece.baseAncherName = defaultAncherName;
       characterItemPiece.position = {
         x: -piece.origin.x + basePos.x,
         y: -piece.origin.y + basePos.y,
@@ -319,7 +321,7 @@ export abstract class CategorizedItem<Name extends string> {
   }
   prepareAnimatableResoureceByFrame(index: number) {
     for (const [pieceName, pieces] of this.unresolvedItems) {
-      if (!(pieceName === 'effect' && this.effectWz !== undefined)) {
+      if (!(pieceName === 'effect' && this.effectWz.length > 0)) {
         continue;
       }
       let existItems = this.animatableItems.get(pieceName as PieceName);
@@ -401,7 +403,7 @@ export abstract class CategorizedItem<Name extends string> {
     }
     const assets = new Set<UnresolvedAsset>();
     for (const [pieceName, items] of this.unresolvedItems) {
-      const isEffect = pieceName === 'effect' && this.effectWz !== undefined;
+      const isEffect = pieceName === 'effect' && this.effectWz.length > 0;
       if (!isEffect) {
         continue;
       }
@@ -460,7 +462,7 @@ export abstract class CategorizedItem<Name extends string> {
       return;
     }
     for (const [pieceName, pieces] of this.unresolvedItems) {
-      const isEffect = pieceName === 'effect' && this.effectWz !== undefined;
+      const isEffect = pieceName === 'effect' && this.effectWz.length > 0;
       if (!isEffect) {
         continue;
       }
@@ -510,14 +512,6 @@ export class CharacterActionItem extends CategorizedItem<CharacterAction> {
     return isMixDyeableId(this.mainItem.info.id);
   }
   getAvailableEar(earType: CharacterEarType) {
-    /* this logic seems not right */
-    /* if character's ear is humanEar, but it not exist in wzData, then use ear instead */
-    // if (
-    //   earType === CharacterEarType.HumanEar &&
-    //   !this.items.has(CharacterEarType.HumanEar)
-    // ) {
-    //   return this.items.get(CharacterEarType.Ear);
-    // }
     return this.items.get(earType);
   }
 }
