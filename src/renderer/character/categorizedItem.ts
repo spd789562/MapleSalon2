@@ -33,7 +33,6 @@ export abstract class CategorizedItem<Name extends string> {
 
   wz: Record<number, WzPieceFrame>;
   effectWz: WzEffectActionItem[] = [];
-  effectPos = -1;
   frameCount = 0;
 
   mainItem: CharacterItem;
@@ -61,7 +60,6 @@ export abstract class CategorizedItem<Name extends string> {
     }
     this.resolveFrames();
     if (effectWz) {
-      this.effectPos = effectWz.pos || -1;
       this.effectWz.push(effectWz);
       this.resolveEffectFrames(effectWz);
     }
@@ -111,7 +109,7 @@ export abstract class CategorizedItem<Name extends string> {
     }
     // for job tails like kaiser and hoyoung
     if (effectPos === 4) {
-      basePos.y = 30;
+      basePos.y = 0;
       basePos.x = 0;
     }
 
@@ -176,6 +174,8 @@ export abstract class CategorizedItem<Name extends string> {
       return;
     }
     const basePos = this.getEffectPos(wz.pos);
+    /* pos 4 usually tails, and those use body as ancher */
+    const defaultAncherName = wz.pos === 4 ? 'body' : 'brow';
     const maxFrame = Object.keys(wz).reduce(
       (a, b) => (Number.isNaN(Number(b)) ? a : Math.max(a, Number(b))),
       0,
@@ -209,7 +209,7 @@ export abstract class CategorizedItem<Name extends string> {
         this.mainItem,
         true,
       );
-      characterItemPiece.baseAncherName = 'brow';
+      characterItemPiece.baseAncherName = defaultAncherName;
       characterItemPiece.position = {
         x: -piece.origin.x + basePos.x,
         y: -piece.origin.y + basePos.y,
@@ -512,14 +512,6 @@ export class CharacterActionItem extends CategorizedItem<CharacterAction> {
     return isMixDyeableId(this.mainItem.info.id);
   }
   getAvailableEar(earType: CharacterEarType) {
-    /* this logic seems not right */
-    /* if character's ear is humanEar, but it not exist in wzData, then use ear instead */
-    // if (
-    //   earType === CharacterEarType.HumanEar &&
-    //   !this.items.has(CharacterEarType.HumanEar)
-    // ) {
-    //   return this.items.get(CharacterEarType.Ear);
-    // }
     return this.items.get(earType);
   }
 }
