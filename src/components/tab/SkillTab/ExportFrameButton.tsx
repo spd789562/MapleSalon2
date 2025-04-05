@@ -33,7 +33,6 @@ export const ExportFrameButton = () => {
       return;
     }
     startExport();
-    state.skillRef.visible = false;
 
     await nextTick();
     const padWhiteSpace = $padWhiteSpaceWhenExportFrame.get();
@@ -88,6 +87,10 @@ export const ExportFrameButton = () => {
       files.push(...skillTexture);
       files.push(...skillOriginJsons);
 
+      // double check the skill visibility
+      state.characterRef.frontSkillContainer.visible = false;
+      state.characterRef.backSkillContainer.visible = false;
+
       const frameData = await characterToCanvasFramesWithEffects(
         state.characterRef,
         app.renderer,
@@ -112,7 +115,8 @@ export const ExportFrameButton = () => {
         title: t('export.error'),
       });
     } finally {
-      state.skillRef.visible = true;
+      state.characterRef.frontSkillContainer.visible = true;
+      state.characterRef.backSkillContainer.visible = true;
       finishExport();
     }
   }
