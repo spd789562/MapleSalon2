@@ -56,6 +56,7 @@ class Loader {
       ['capBelowHair', 'hairBelowBody'],
       // why is this keep going
       ['capBackHair', 'hairBelowBody'],
+      ['capeBelowHair', 'hairBelowBody'],
     ]);
 
     this.zmap.push('effect');
