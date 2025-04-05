@@ -368,6 +368,15 @@ export class CharacterItem implements RenderItemInfo {
     await actionItem.loadResource();
     actionItem.prepareResourece();
   }
+  async prepareAllActionResource() {
+    const loadActionItems = Array.from(this.actionPieces.values())
+      .filter((item) => item.wz !== null && item.items.size === 0)
+      .map(async (item) => {
+        await item.loadResource();
+        item.prepareResourece();
+      });
+    return Promise.all(loadActionItems);
+  }
   async prepareActionResourceByFrame(
     name: CharacterAction | CharacterExpressions,
     frame: number,

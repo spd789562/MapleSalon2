@@ -11,7 +11,7 @@ import { Button, type ButtonProps } from '@/components/ui/button';
 import type { ActionCharacterRef } from './ActionCharacter';
 import { SpinLoading } from '@/components/elements/SpinLoading';
 import { toaster } from '@/components/GlobalToast';
-import { getCharacterPartsBlobs } from './helper';
+import { getCharacterPartsBlobs, getCharacterFacesBlobs } from './helper';
 import { batchExportCharacterPart } from './batchExportCharacterFrames';
 import { makeBlobsZipBlob } from '@/utils/exportImage/exportBlobToZip';
 import { downloadBlob } from '@/utils/download';
@@ -62,6 +62,14 @@ export const ExportPartsButton = (props: ExportPartsButtonProps) => {
 
     try {
       const files: [Blob, string][] = [];
+      const app = $globalRenderer.get();
+      await props.characterRefs[0].character.loadFaceAssets();
+      const faces = await getCharacterFacesBlobs(
+        props.characterRefs[0].character,
+        app.renderer,
+      );
+      files.push(...faces);
+
       if (props.characterRefs.length === 1) {
         const characterRef = props.characterRefs[0];
         const frameData = await characterRef.makeCharacterFrames({
@@ -76,7 +84,7 @@ export const ExportPartsButton = (props: ExportPartsButtonProps) => {
       } else {
         const exportCharacterData = await batchExportCharacterPart(
           props.characterRefs.map((ref) => ref.character),
-          $globalRenderer.get().renderer,
+          app.renderer,
           {
             simple: !$forceExportEffect.get(),
           },
