@@ -695,6 +695,11 @@ export class Character extends Container {
   get bodyItem() {
     return Array.from(this.idItems.values()).find((item) => item.isBody);
   }
+  get faceItems() {
+    return Array.from(this.idItems.values()).filter(
+      (item) => item.isUseExpressionItem,
+    );
+  }
   startLoad() {
     const renderId = createUniqueId();
     this.#_renderId = renderId;
@@ -821,6 +826,16 @@ export class Character extends Container {
     await Promise.all(mixDyeItems);
 
     this.renderCharacter();
+  }
+  async loadFaceAssets() {
+    for await (const item of this.faceItems) {
+      try {
+        await item.prepareAllActionResource();
+      } catch (_) {
+        console.error('some error when load face assets', item.info.id);
+        continue;
+      }
+    }
   }
 
   buildLock() {

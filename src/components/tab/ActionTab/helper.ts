@@ -1,3 +1,4 @@
+import type { Renderer } from 'pixi.js';
 import { ActionExportType, ActionExportTypeMimeType } from '@/const/toolTab';
 
 import type { Character } from '@/renderer/character/character';
@@ -10,6 +11,7 @@ import { characterFramesToGif } from '@/utils/exportImage/framesToGif';
 import { characterFramesToApng } from '@/utils/exportImage/framesToApng';
 import { characterFramesToWebp } from '@/utils/exportImage/framesToWebp';
 import { makeBlobsZipBlob } from '@/utils/exportImage/exportBlobToZip';
+import { extractCanvas, getBlobFromCanvas } from '@/utils/extract';
 
 /** return name-action or action */
 export function getCharacterFilenameSuffix(character: Character) {
@@ -110,6 +112,43 @@ export async function getCharacterPartsBlobs(
   }
   await Promise.all(addBlobs);
   return files;
+}
+
+export async function getCharacterFacesBlobs(
+  character: Character,
+  renderer: Renderer,
+) {
+  const faceItems = character.faceItems;
+  const mainFaceItem =
+    faceItems.length > 0
+      ? faceItems[0]
+      : faceItems.find((item) => item.isOverrideFace) || faceItems[0];
+  const faceBlobs: [Blob, string][] = [];
+  if (mainFaceItem) {
+    const facePair: [Promise<Blob>, string][] = [];
+    for (const [key, piece] of Array.from(
+      mainFaceItem.actionPieces.entries(),
+    )) {
+      facePair.push(
+        ...piece.allPieces.map((p) => {
+          const fileName = `faces/${key}_${p.frame}.png`;
+          const canvas = extractCanvas(
+            p.frameData.getRenderAble(),
+            renderer,
+          ) as HTMLCanvasElement;
+          return [getBlobFromCanvas(canvas), fileName] as [
+            Promise<Blob>,
+            string,
+          ];
+        }),
+      );
+    }
+    const faceBlob = (await Promise.all(
+      facePair.map(([blob, name]) => blob.then((b) => [b, name])),
+    )) as [Blob, string][];
+    faceBlobs.push(...faceBlob);
+  }
+  return faceBlobs;
 }
 
 async function createActionPartZipBlob(
