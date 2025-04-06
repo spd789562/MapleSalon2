@@ -50,13 +50,45 @@ class Loader {
     }
 
     this.zmap.reverse();
-    // manually add capBelowHead, wtf?
+    // manually add a lot of missing layer, wtf?
     this.fixLayers([
-      ['capBelowHead', 'armBelowHead'],
-      ['capBelowHair', 'hairBelowBody'],
-      // why is this keep going
-      ['capBackHair', 'hairBelowBody'],
-      ['capeBelowHair', 'hairBelowBody'],
+      ['accessoryFaceOverCap', 'accessoryEyeOverCap'], // 1012781
+      ['backBelowBody', 'backShieldBelowBody'], // 1402233
+      ['backCapAcssesary', 'backHairBelowCap'], // 1012418
+      ['backCapBelowHair', 'backCap'], // 1003169
+      ['backCapBelowHead', 'backMailChestOverPants'], // 1004482
+      ['backCapeBelowHead', 'backMailChestOverPants'], // 1103741
+      ['backWeaponBelowGlove', 'backWeaponOverGlove'], // 1472196 it a Knuckler wtf?
+      ['capBelowHair', 'hairBelowBody'], // 1004506
+      ['capBelowBody', 'hairBelowBody'], // 1004962
+      ['capBackHair', 'hairOverHead'], // 1006737
+      ['capBelowHead', 'armBelowHead'], // 1003975
+      ['capeArm', 'cape'], // 1103058
+      ['capeBelowHair', 'hairBelowBody'], // 1102682
+      ['capeBelowChest', 'mailChest'], // 1103098
+      ['capeBelowBodyOverPants', 'pants'], // 1052597 it a overall...
+      ['capeOverHeadOverCap', 'capAccessory'], // 1012032
+      ['capeUnderBody', 'capeBelowBody'], // 1102270
+      ['capeWeapon', 'weaponOverBody'], // 1702592
+      ['gloveBelowHair', 'hair'], // 1082738
+      ['hairBelowHead', 'mailArmBelowHead'], // 33525
+      ['mailChestBelowBody', 'weaponBelowBody'], // 1053813
+      ['shieldBelowArm', 'weaponBelowArm'], // 1092062
+      ['weapnBelowBody', 'weaponBelowBody'], // 1702891
+      ['weponBelowBody', 'weaponBelowBody'], // 1402235 what is this typo?
+      ['weaponBelowArmOverHead', 'head'], // 1332168
+      ['weaponBelowGlove', 'gloveWristOverBody'], // 1703541
+      ['weaponBelowHand', 'weaponOverArmBelowHead'], // 1702012
+      ['weaponBelowHandOverBody', 'weaponOverArmBelowHead'], // 1702288
+      ['weaponBelowHead', 'weaponOverArmBelowHead'], // Blaster's weapon
+      ['weaponBelowbody', 'weaponBelowBody'], // 1703234
+      ['weaponBodyBelow', 'weaponBelowBody'], // 1412004
+      ['weaponOverArmBelowBody', 'weaponOverArmBelowHead'], // 1342028
+      ['weaponOverBelowArm', 'weaponOverArmBelowHead'], // 1703029
+      ['weaponOverGloveBelowMailArm', 'mailArm'], // 1702443
+      ['weaponOverHead', 'hairOverHead'], // 1703236
+      ['weaponWrist', 'gloveWrist'], // 1472152
+      ['weaponback', 'backWeapon'], // 1702556
     ]);
 
     this.zmap.push('effect');
