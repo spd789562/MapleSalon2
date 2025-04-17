@@ -10,7 +10,7 @@ import { NameTagColorBackground } from './nameTagColorBackground';
 
 import { getWzClrColor } from '@/utils/wzUtil';
 
-enum NameTagPosition {
+export enum NameTagPosition {
   V1 = 'v1',
   V2 = 'v2',
 }
