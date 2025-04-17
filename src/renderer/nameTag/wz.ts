@@ -13,6 +13,7 @@ export type WzAnimatedNameTagData = Record<number, WzAnimatedNameTagLayer> & {
   bottomoffset: number;
   heightoffset: number;
   wz2_aniNameTag: string;
+  aniNameTag: string; // newer animated name tag
 };
 export type WzAnimatedNameTagLayer = WzPieceInfo[];
 

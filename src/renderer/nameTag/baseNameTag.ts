@@ -10,6 +10,11 @@ import { NameTagColorBackground } from './nameTagColorBackground';
 
 import { getWzClrColor } from '@/utils/wzUtil';
 
+enum NameTagPosition {
+  V1 = 'v1',
+  V2 = 'v2',
+}
+
 /* TODO: fix position, it currently some name tag will too high */
 export class BaseNameTag extends Container {
   id?: number;
@@ -22,7 +27,8 @@ export class BaseNameTag extends Container {
     | NameTagStaticBackground
     | NameTagAnimatedBackground
     | NameTagColorBackground;
-  constructor(name: string, id?: number) {
+  nameTagPosition: NameTagPosition;
+  constructor(name: string, id?: number, position = NameTagPosition.V2) {
     super();
     this.sortableChildren = true;
     this._name = name;
@@ -36,6 +42,7 @@ export class BaseNameTag extends Container {
         align: 'center',
       },
     });
+    this.nameTagPosition = position;
     this.textNode.zIndex = 10;
     this.addChild(this.textNode);
   }
@@ -47,7 +54,15 @@ export class BaseNameTag extends Container {
     this.textNode.text = name;
   }
   get isAnimated() {
-    return !!this.tagWz && 'wz2_aniNameTag' in this.tagWz;
+    return (
+      !!this.tagWz &&
+      ('wz2_aniNameTag' in this.tagWz ||
+        'aniNameTag' in this.tagWz ||
+        this.isAnimatedLike)
+    );
+  }
+  get isAnimatedLike() {
+    return !!this.tagWz && [0, 1, 2].every((key) => key in this.tagWz!);
   }
   isAnimatedBackground(
     background?:
@@ -111,8 +126,15 @@ export class BaseNameTag extends Container {
       result && (await this.updateBackground());
     }
   }
-  async updateNameTagData(name: string, id?: number) {
+  async updateNameTagData(
+    name: string,
+    id?: number,
+    position?: NameTagPosition,
+  ) {
     this.name = name;
+    if (position) {
+      this.nameTagPosition = position;
+    }
     if (id && id !== this.id) {
       this.id = id;
       await this.load();
@@ -127,16 +149,29 @@ export class BaseNameTag extends Container {
       this.renderNameTag();
     }
   }
+  private applyV1Position() {
+    this.textNode.pivot.y = -1;
+    if (this.background && this.background.type !== 'color') {
+      this.textNode.pivot.x = this.background.pivot.x;
+    }
+  }
+  private applyV2Position() {
+    this.textNode.pivot.set(this.textNode.width / 2, 0);
+  }
+  applyPosition() {
+    if (this.nameTagPosition === NameTagPosition.V1) {
+      this.applyV1Position();
+    } else if (this.nameTagPosition === NameTagPosition.V2) {
+      this.applyV2Position();
+    }
+  }
   renderNameTag() {
     this.textNode.pivot.x = this.textNode.width / 2;
-    this.textNode.pivot.y = -1;
     if (this.background) {
       this.background.nameWidth = this.textNode.width;
       this.background.renderBackground();
-      if (this.background.type !== 'color') {
-        this.textNode.pivot.x = this.background.pivot.x;
-      }
     }
+    this.applyPosition();
     this.textNode.style.fill = this.textColor;
     this.pivot.y = -(this.background?.topOffset || 0);
   }
