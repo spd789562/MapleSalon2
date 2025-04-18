@@ -192,7 +192,8 @@ export function getSubCategory(id: number): EquipSubCategory | null {
       return 'RingEffect';
     case 112:
       return 'NecklaceEffect';
-    // 113 belt
+    case 113:
+      return 'BeltEffect';
     case 114:
       return 'Medal';
     // 115 shoulder

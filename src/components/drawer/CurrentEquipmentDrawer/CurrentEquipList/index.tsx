@@ -25,6 +25,7 @@ const CategoryList = [
   'Earrings',
   'RingEffect',
   'NecklaceEffect',
+  'BeltEffect',
   'Effect',
 ] as EquipSubCategory[];
 
