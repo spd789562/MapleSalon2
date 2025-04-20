@@ -26,9 +26,9 @@ export const PreferRendererToggleGroup = () => {
   const renderer = useStore($preferRenderer);
 
   function handleChange(details: ValueChangeDetails) {
-    const changedColorMode = details.value as 'webgl' | 'webgpu';
-    if (changedColorMode) {
-      setPreferRenderer(changedColorMode);
+    const changedRenderer = details.value as 'webgl' | 'webgpu';
+    if (changedRenderer) {
+      setPreferRenderer(changedRenderer);
 
       openDialog({
         type: DialogType.Confirm,

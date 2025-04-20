@@ -4,7 +4,7 @@ export enum ColorMode {
   System = 'system',
 }
 
-function isSystemDarkMode() {
+export function isSystemDarkMode() {
   return window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
 

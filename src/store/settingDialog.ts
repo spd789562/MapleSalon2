@@ -5,6 +5,7 @@ import { load } from '@tauri-apps/plugin-store';
 import { $equipmentDrawerExperimentCharacterRender } from './equipDrawer';
 import { $preferRenderer as $rendererPreference } from './renderer';
 import { $actionExportType } from './toolTab';
+import { updateBackgroundColorBaseOnColorMode } from './scene';
 import {
   $currentEquipmentDrawerPin,
   $currentEquipmentDrawerOpen,
@@ -239,6 +240,7 @@ export async function initializeSavedSetting() {
       }
       if (isValidColorMode(setting.colorMode)) {
         syncColorMode(setting.colorMode);
+        updateBackgroundColorBaseOnColorMode(setting.colorMode);
         $appSetting.setKey('colorMode', setting.colorMode);
       } else {
         syncColorMode(ColorMode.System);
