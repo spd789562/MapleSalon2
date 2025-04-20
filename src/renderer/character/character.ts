@@ -28,9 +28,9 @@ import { CharacterExpressions } from '@/const/emotions';
 import { CharacterEarType } from '@/const/ears';
 import { CharacterHandType } from '@/const/hand';
 import { CharacterExtraPartIdMap } from '@/const/extraParts';
-import { BaseNameTag } from '../nameTag/baseNameTag';
+import { BaseNameTag, NameTagPosition } from '../nameTag/baseNameTag';
 import { ChatBalloon } from '../chatBalloon/chatBalloon';
-import { BaseMedal } from '../medal/baseMedal';
+import { BaseMedal, MedalPosition } from '../medal/baseMedal';
 // import { NickTag } from '../nickTag/nickTag';
 import { Skill } from '../skill/skill';
 
@@ -240,6 +240,7 @@ export class Character extends Container {
       await this.nameTag.updateNameTagData(
         characterData.name || '',
         characterData.nameTagId,
+        characterData.tagVersion as unknown as NameTagPosition,
       );
       this.name = characterData.name || '';
       this.nameTag.visible = true;
@@ -253,10 +254,16 @@ export class Character extends Container {
       this.chatBalloon.visible = false;
     }
     if (characterData.medalId !== this.medal?.id) {
-      await this.updateMedal(characterData.medalId);
+      await this.updateMedal(
+        characterData.medalId,
+        characterData.tagVersion as unknown as MedalPosition,
+      );
     }
     if (characterData.nickTagId !== this.nickTag?.id) {
-      await this.updateNickTag(characterData.nickTagId);
+      await this.updateNickTag(
+        characterData.nickTagId,
+        characterData.tagVersion as unknown as MedalPosition,
+      );
     }
 
     if (
@@ -276,7 +283,7 @@ export class Character extends Container {
     }
   }
 
-  async updateMedal(id?: number) {
+  async updateMedal(id?: number, position?: MedalPosition) {
     if (this.medal) {
       this.medal && this.removeChild(this.medal);
       this.medal?.destroy({
@@ -289,14 +296,14 @@ export class Character extends Container {
     }
     const data = getEquipById(id);
     if (data) {
-      this.medal = new BaseMedal(data.name, id);
+      this.medal = new BaseMedal(data.name, id, 'medal', position);
       this.medal.position.set(0, 30);
       this.medal.zIndex = 2;
       await this.medal.load();
       this.addChild(this.medal);
     }
   }
-  async updateNickTag(id?: number) {
+  async updateNickTag(id?: number, position?: MedalPosition) {
     if (this.nickTag) {
       this.nickTag && this.removeChild(this.nickTag);
       this.nickTag?.destroy({
@@ -309,7 +316,7 @@ export class Character extends Container {
     }
     const data = getEquipById(id);
     if (data) {
-      this.nickTag = new BaseMedal(data.name, id, 'nickTag');
+      this.nickTag = new BaseMedal(data.name, id, 'nickTag', position);
       this.nickTag.position.set(0, -110);
       this.nickTag.zIndex = 2;
       await this.nickTag.load();

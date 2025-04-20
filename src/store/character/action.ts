@@ -40,6 +40,7 @@ import {
   type CharacterExtraPart,
   CharacterExtraPartIdToPartMap,
 } from '@/const/extraParts';
+import { TagVersion } from '@/const/setting/tagVersion';
 
 export function changeCurrentCharacter(character: Partial<CharacterData>) {
   if (character.items) {
@@ -465,6 +466,9 @@ export function toggleShowChatBalloon(isShow: boolean) {
 }
 export function setCharacterFrame(frame: number) {
   $currentCharacterInfo.setKey('frame', frame);
+}
+export function setTagVersion(tagVersion: TagVersion) {
+  $currentCharacterInfo.setKey('tagVersion', tagVersion);
 }
 export function setCharacterEarType(earType: CharacterEarType) {
   $currentInfoChanges.setKey('earType', earType);

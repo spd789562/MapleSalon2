@@ -80,6 +80,9 @@ export const dict = {
   showItemGender: '顯示道具性別',
   showItemDyeable: '顯示染色標籤',
   onlyShowDyeable: '僅顯示可染色道具',
+  tagVersion: '標籤版本',
+  tagVersionTip:
+    '變更名牌、勳章及稱號的顯示邏輯，在不同遊戲版本中使用的邏輯不同，可嘗試切換版本以獲得適當的顯示效果',
 
   otherTitle: '其他設定',
   saveFolder: '存檔資料夾',

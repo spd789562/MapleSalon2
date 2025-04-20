@@ -84,6 +84,9 @@ export const dict: SettingDictionary = {
   showItemGender: 'Show Gender',
   showItemDyeable: 'Show Dyeable',
   onlyShowDyeable: 'Only Show Dyeable',
+  tagVersion: 'Tag Version',
+  tagVersionTip:
+    'The position of the name tag, medal and title display is different in verious game versions, try to switching versions to get the appropriate display',
 
   otherTitle: 'Other Setting',
   saveFolder: 'Save Folder',
