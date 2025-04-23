@@ -207,7 +207,7 @@ export class CharacterBodyFrame {
     const ears =
       headCategoryItem?.getAvailableEar(this.character.earType) || [];
 
-    return ears.map((item) => item[this.frame % 1] /* .clone() */);
+    return ears.map((item) => item[this.frame % item.length] /* .clone() */);
   }
 
   /** get current pieces in character layers */
