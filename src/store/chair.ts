@@ -39,17 +39,20 @@ export const $chairFilterdStrings = computed(
         .filter((id) => !Number.isNaN(id));
       return strings.filter((item) => ids.includes(item.id));
     }
+    const lowercasedSearch = search.toLowerCase();
     const idSearch = Number.parseInt(search);
     if (!Number.isNaN(idSearch)) {
       return strings.filter(
         (item) =>
           item.id === idSearch ||
-          item.name.includes(search) ||
+          item.name.toLowerCase().includes(lowercasedSearch) ||
           item.folder.includes(search),
       );
     }
 
-    return strings.filter((item) => item.name.includes(search));
+    return strings.filter((item) =>
+      item.name.toLowerCase().includes(lowercasedSearch),
+    );
   },
 );
 export const $otherCharacters = computed(

@@ -186,9 +186,11 @@ export const $equipmentDrawerEquipFilteredString = computed(
         : strings.filter((item) => getGender(item.id) === gender);
 
     if (searchKey) {
+      const lowerCaseSearchKey = searchKey.toLowerCase();
       return genderFilterd.filter((item) => {
         const isMatch =
-          item.name.includes(searchKey) || item.id.toString() === searchKey;
+          item.name.toLowerCase().includes(lowerCaseSearchKey) ||
+          item.id.toString() === searchKey;
         return isMatch;
       });
     }

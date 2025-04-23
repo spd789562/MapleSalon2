@@ -73,18 +73,21 @@ export const $mapFilterdStrings = computed(
         .filter((id) => !Number.isNaN(Number.parseInt(id)));
       return strings.filter((item) => ids.includes(item.id));
     }
+    const lowercasedSearch = search.toLowerCase();
     const idSearch = Number.parseInt(search);
     if (!Number.isNaN(idSearch)) {
       return strings.filter(
         (item) =>
           item.id.startsWith(search) ||
-          item.region.includes(search) ||
-          item.name.includes(search),
+          item.region.toLowerCase().includes(lowercasedSearch) ||
+          item.name.toLowerCase().includes(lowercasedSearch),
       );
     }
 
     return strings.filter(
-      (item) => item.region.includes(search) || item.name.includes(search),
+      (item) =>
+        item.region.toLowerCase().includes(lowercasedSearch) ||
+        item.name.toLowerCase().includes(lowercasedSearch),
     );
   },
 );

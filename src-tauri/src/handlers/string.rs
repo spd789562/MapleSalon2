@@ -64,6 +64,7 @@ pub enum EquipCategory {
     Unknown,
     RingEffect,
     NecklessEffect,
+    BeltEffect,
     Medal,
     NickTag,
     NameTag,
@@ -105,6 +106,7 @@ impl std::fmt::Display for EquipCategory {
             EquipCategory::NickTag => 29,
             EquipCategory::NameTag => 30,
             EquipCategory::ChatBalloon => 31,
+            EquipCategory::BeltEffect => 32,
         };
 
         write!(f, "{}", repr_number)
@@ -396,6 +398,9 @@ pub fn resolve_equip_string(
                 } else if item.0 == EquipCategory::Accessory && item.1.starts_with("112") && item.5
                 {
                     item.0 = EquipCategory::NecklessEffect;
+                } else if item.0 == EquipCategory::Accessory && item.1.starts_with("113") && item.5
+                {
+                    item.0 = EquipCategory::BeltEffect;
                 }
             });
         }

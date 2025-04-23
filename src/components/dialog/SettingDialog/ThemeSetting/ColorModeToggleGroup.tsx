@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/toggleGroup';
 
 import { ColorMode, syncColorMode } from '@/const/setting/colorMode';
+import { updateBackgroundColorBaseOnColorMode } from '@/store/scene';
 
 export const ColorModeToggleGroup = () => {
   const t = useTranslate();
@@ -23,6 +24,7 @@ export const ColorModeToggleGroup = () => {
     if (changedColorMode) {
       syncColorMode(changedColorMode);
       setColorMode(changedColorMode);
+      updateBackgroundColorBaseOnColorMode(changedColorMode);
     }
   }
   const options = [

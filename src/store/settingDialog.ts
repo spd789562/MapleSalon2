@@ -5,6 +5,7 @@ import { load } from '@tauri-apps/plugin-store';
 import { $equipmentDrawerExperimentCharacterRender } from './equipDrawer';
 import { $preferRenderer as $rendererPreference } from './renderer';
 import { $actionExportType } from './toolTab';
+import { updateBackgroundColorBaseOnColorMode } from './scene';
 import {
   $currentEquipmentDrawerPin,
   $currentEquipmentDrawerOpen,
@@ -38,6 +39,7 @@ import {
   DefaultWindowScale,
 } from '@/const/setting/scale';
 import { ActionExportType, isValidExportType } from '@/const/toolTab';
+import { isValidTagVersion, TagVersion } from '@/const/setting/tagVersion';
 import { isValidLocale } from '@/context/i18n';
 
 const SAVE_FILENAME = 'setting.bin';
@@ -60,6 +62,7 @@ export interface AppSetting extends Record<string, unknown> {
   preferScaleMode: 'linear' | 'nearest';
   simpleCharacterConcurrency: number;
   enableExperimentalUpscale: boolean;
+  tagVersion: TagVersion;
   /* list */
   defaultCharacterRendering: boolean;
   showItemGender: boolean;
@@ -91,6 +94,7 @@ const DEFAULT_SETTING: AppSetting = {
   showItemDyeable: true,
   defaultLoadItem: true,
   enableExperimentalUpscale: false,
+  tagVersion: TagVersion.V2,
   preferRenderer: 'webgpu',
   preferScaleMode: 'nearest',
   exportType: ActionExportType.Webp,
@@ -187,6 +191,10 @@ export const $preservePin = computed(
   $appSetting,
   (setting) => setting.preservePin,
 );
+export const $tagVersion = computed(
+  $appSetting,
+  (setting) => setting.tagVersion,
+);
 
 /* action */
 export async function initializeSavedSetting() {
@@ -239,6 +247,7 @@ export async function initializeSavedSetting() {
       }
       if (isValidColorMode(setting.colorMode)) {
         syncColorMode(setting.colorMode);
+        updateBackgroundColorBaseOnColorMode(setting.colorMode);
         $appSetting.setKey('colorMode', setting.colorMode);
       } else {
         syncColorMode(ColorMode.System);
@@ -250,6 +259,11 @@ export async function initializeSavedSetting() {
         );
         $appSetting.setKey('simpleCharacterConcurrency', concurrency);
         simpleCharacterLoadingQueue.concurrency = concurrency;
+      }
+      if (isValidTagVersion(setting.tagVersion)) {
+        $appSetting.setKey('tagVersion', setting.tagVersion);
+      } else {
+        $appSetting.setKey('tagVersion', TagVersion.V2);
       }
       /* export */
       if (isValidExportType(setting.exportType)) {
@@ -365,6 +379,9 @@ export function setEquipDrawerPin(value: boolean) {
 }
 export function setCurrentEquipDrawerPin(value: boolean) {
   $appSetting.setKey('currentEquipDrawerPin', value);
+}
+export function setTagVersion(value: TagVersion) {
+  $appSetting.setKey('tagVersion', value);
 }
 
 /* effect for pin, so we don't get recrusively import */

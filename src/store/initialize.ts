@@ -15,13 +15,11 @@ import {
 } from '@/store/fileSelectHistory';
 import {
   initializeSavedSetting,
-  $defaultLoadItem,
   $clearCacheWhenLoad,
 } from '@/store/settingDialog';
 import { initializeSavedEquipmentHistory } from '@/store/equipHistory';
 import { initializeSavedEquipmentFavorite } from '@/store/equipFavorite';
 import { prepareAndFetchEquipStrings } from '@/store/string';
-import { prepareAndFetchChairStrings } from '@/store/chair';
 import { initialGlobalRenderer } from '@/store/renderer';
 import { initialUserUploadedSceneImages } from '@/store/scene';
 
@@ -71,12 +69,12 @@ export async function initApp(t: AppTranslator) {
     return;
   }
   /* this should infailable */
-  const { url, is_initialized, is_load_items } = await getServerInfo();
+  const { url, is_initialized } = await getServerInfo();
 
   $apiHost.set(url);
 
   if (is_initialized) {
-    await initStringAndRenderer(!is_load_items, $defaultLoadItem.get(), t);
+    await initStringAndRenderer(t);
     $isInitialized.set(is_initialized);
   }
 
@@ -116,11 +114,7 @@ export async function initByWzBase(path: string, t: AppTranslator) {
     await getCurrentWebview().clearAllBrowsingData();
   }
 
-  const isSuccess = await initStringAndRenderer(
-    true,
-    $defaultLoadItem.get(),
-    t,
-  );
+  const isSuccess = await initStringAndRenderer(t);
 
   if (!isSuccess) {
     $isWzLoading.set(false);
@@ -135,11 +129,7 @@ export async function initByWzBase(path: string, t: AppTranslator) {
   return true;
 }
 
-export async function initStringAndRenderer(
-  needLoadItem: boolean,
-  needLoadChair: boolean,
-  t: AppTranslator,
-) {
+export async function initStringAndRenderer(t: AppTranslator) {
   try {
     await prepareAndFetchEquipStrings();
   } catch (_) {
@@ -150,19 +140,6 @@ export async function initStringAndRenderer(
     return false;
   }
 
-  if (needLoadChair) {
-    $initLoadProgress.set(InitLoadProgress.InitItem);
-    await nextTick();
-    try {
-      await prepareAndFetchChairStrings();
-    } catch (_) {
-      toaster.error({
-        title: t('error.initTitle'),
-        description: t('error.initChairError'),
-      });
-      return false;
-    }
-  }
   initialUserUploadedSceneImages();
 
   $initLoadProgress.set(InitLoadProgress.Done);

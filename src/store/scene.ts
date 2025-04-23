@@ -1,5 +1,6 @@
 import { atom, computed } from 'nanostores';
 import { PreviewScene } from '@/const/scene';
+import { ColorMode, isSystemDarkMode } from '@/const/setting/colorMode';
 
 const IMAGE_STORE_PREFIX = 'user-upload-store';
 export const IMAGE_STORE_MAX_SIZE = 16;
@@ -99,4 +100,19 @@ export function uploadSceneImage(url: string) {
     window.localStorage.removeItem(`${IMAGE_STORE_PREFIX}-${excludeKey}`);
   }
   refreshUploadSceneImageKeys();
+}
+
+export function updateBackgroundColorBaseOnColorMode(colorMode: ColorMode) {
+  const color = $sceneCustomColor.get();
+  const isDarkMode =
+    colorMode === ColorMode.Dark ||
+    (colorMode === ColorMode.System && isSystemDarkMode());
+  if (isDarkMode && color.toUpperCase() === '#FFFFFF') {
+    $sceneCustomColor.set('#000000');
+  } else if (
+    colorMode === ColorMode.Light &&
+    color.toUpperCase() === '#000000'
+  ) {
+    $sceneCustomColor.set('#FFFFFF');
+  }
 }

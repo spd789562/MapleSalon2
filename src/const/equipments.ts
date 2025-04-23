@@ -27,6 +27,7 @@ export enum EquipCategory {
   Effect = '25',
   RingEffect = '26',
   NecklaceEffect = '27',
+  Background = '32',
   Medal = '28',
   NickTag = '29',
   NameTag = '30', // ring
@@ -60,6 +61,7 @@ const ValidEquipSubCategory = [
   'NameTag',
   'RingEffect',
   'NecklaceEffect',
+  'BeltEffect',
   'Medal',
   'NickTag',
   'Effect',
@@ -102,6 +104,7 @@ export type EquipSubCategory =
   | 'ChatBalloon'
   | 'RingEffect'
   | 'NecklaceEffect'
+  | 'BeltEffect'
   | 'Medal'
   | 'NickTag'
   | 'Effect';

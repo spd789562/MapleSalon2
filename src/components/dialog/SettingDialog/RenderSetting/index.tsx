@@ -12,6 +12,7 @@ import { ItemEffectPreview } from './ItemEffectPreview';
 import { UpscaleSwitch } from './UpscaleSwitch';
 import { PreferRendererToggleGroup } from './PreferRendererToggleGroup';
 import { PreferScaleModeToggleGroup } from './PreferScaleModeToggleGroup';
+import { TagVersionSelect } from './TagVersionSelect';
 import { SettingTooltip } from '@/components/dialog/SettingDialog/SettingTooltip';
 
 export const RenderSetting = () => {
@@ -32,6 +33,11 @@ export const RenderSetting = () => {
           <Text>{t('setting.scaleMode')}</Text>
           <SettingTooltip tooltip={t('setting.scaleModeTip')} />
           <PreferScaleModeToggleGroup />
+        </HStack>
+        <HStack gap="2">
+          <Text wordBreak="keep-all">{t('setting.tagVersion')}</Text>
+          <SettingTooltip tooltip={t('setting.tagVersionTip')} />
+          <TagVersionSelect />
         </HStack>
       </HStack>
       <HStack justify="space-between">

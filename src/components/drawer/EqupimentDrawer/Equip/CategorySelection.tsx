@@ -43,6 +43,7 @@ export const EquipCategoryOptions: {
   { id: 'Effect', label: 'character.equipEffect' },
   { id: 'RingEffect', label: 'character.equipRingEffect' },
   { id: 'NecklaceEffect', label: 'character.equipNecklaceEffect' },
+  { id: 'BeltEffect', label: 'character.equipBeltEffect' },
 ];
 
 export const CategorySelection = () => {

@@ -14,6 +14,11 @@ enum MedalType {
   NickTag = 'nickTag',
 }
 
+export enum MedalPosition {
+  V1 = 'v1',
+  V2 = 'v2',
+}
+
 export class BaseMedal extends Container {
   id: number;
   _name: string;
@@ -24,10 +29,12 @@ export class BaseMedal extends Container {
   background?: MedalStaticBackground;
   animation?: MedalAnimatedBackground;
   type: MedalType;
+  medalPosition: MedalPosition;
   constructor(
     name: string,
     id: number,
     medalType: 'medal' | 'nickTag' = 'medal',
+    position = MedalPosition.V2,
   ) {
     super();
     this.sortableChildren = true;
@@ -44,6 +51,7 @@ export class BaseMedal extends Container {
     });
     this.textNode.zIndex = 10;
     this.type = medalType as MedalType;
+    this.medalPosition = position;
     this.addChild(this.textNode);
   }
   get isAnimated() {
@@ -114,22 +122,41 @@ export class BaseMedal extends Container {
     await this.updateBackground();
     this.renderMedal();
   }
-  renderMedal() {
-    if (this.background) {
-      this.background.renderBackground();
-      if (this.type === MedalType.NickTag) {
-        this.background.pivot.y = this.background.topOffset;
-      }
+  private applyPositionV1() {
+    if (this.background && this.type === MedalType.NickTag) {
+      this.background.pivot.y = this.background.topOffset;
     }
-    if (this.animation) {
-      this.animation.renderBackground();
-    }
-    this.textNode.pivot.x = this.textNode.width / 2;
-    this.textNode.style.fill = this.textColor;
     if (this.animation && this.background) {
       this.animation.pivot.y = this.background.center.pivot.y;
       this.animation.pivot.x = this.background.pivot.x;
     }
+  }
+  private applyPositionV2() {
+    if (this.background && this.type === MedalType.NickTag) {
+      this.background.pivot.y = 0;
+    }
+    if (this.animation && this.background) {
+      this.animation.pivot.y = -this.background.center.pivot.y;
+      this.animation.pivot.x = this.background.pivot.x;
+    }
+  }
+  applyPosition() {
+    if (this.medalPosition === MedalPosition.V1) {
+      this.applyPositionV1();
+    } else if (this.medalPosition === MedalPosition.V2) {
+      this.applyPositionV2();
+    }
+  }
+  renderMedal() {
+    if (this.background) {
+      this.background.renderBackground();
+    }
+    if (this.animation) {
+      this.animation.renderBackground();
+    }
+    this.applyPosition();
+    this.textNode.pivot.x = this.textNode.width / 2;
+    this.textNode.style.fill = this.textColor;
     this.pivot.y = -(this.background?.topOffset || 0);
   }
 }

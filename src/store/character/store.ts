@@ -7,6 +7,7 @@ import { CharacterExpressions } from '@/const/emotions';
 import { CharacterEarType } from '@/const/ears';
 import { CharacterHandType } from '@/const/hand';
 import type { CharacterExtraPart } from '@/const/extraParts';
+import { TagVersion } from '@/const/setting/tagVersion';
 
 export type CharacterItemInfo = ItemInfo &
   Partial<{
@@ -34,6 +35,7 @@ export interface CharacterInfo {
   handType: CharacterHandType;
   skillId?: string;
   extraParts?: CharacterExtraPart[];
+  tagVersion: TagVersion;
 }
 
 export interface CharacterData extends Record<string, unknown>, CharacterInfo {
@@ -126,6 +128,7 @@ export const $currentCharacterInfo = deepMap<
   handType: CharacterHandType.SingleHand,
   skillId: undefined,
   extraParts: [] as CharacterExtraPart[],
+  tagVersion: TagVersion.V2,
 });
 
 export const $currentItem = atom<

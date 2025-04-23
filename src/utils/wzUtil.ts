@@ -9,8 +9,10 @@ export function getWzClrColor(clr?: number | string) {
     if (!Number.isNaN(parsed)) {
       _clr = parsed;
     }
-  } else if (clr !== undefined) {
-    _clr = clr;
+  } else if (clr && Number.isInteger(clr)) {
+    _clr = clr === 0 ? -1 : clr;
+  } else {
+    _clr = -1;
   }
   return 0xffffff + 1 + _clr;
 }

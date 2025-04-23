@@ -68,6 +68,10 @@ export const $currentExtraParts = computed(
   $totalInfo,
   (info) => info.extraParts,
 );
+export const $currentTagVersion = computed(
+  $totalInfo,
+  (info) => info.tagVersion,
+);
 
 export const $currentCharacter = batched(
   [$currentCharacterItems, $currentCharacterInfo],

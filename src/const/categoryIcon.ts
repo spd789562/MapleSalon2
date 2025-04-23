@@ -15,6 +15,7 @@ import IdCardIcon from 'lucide-solid/icons/id-card';
 import MessageSquareMore from 'lucide-solid/icons/message-square-more';
 import DollarSignIcon from 'lucide-solid/icons/circle-dollar-sign';
 import AwardIcon from 'lucide-solid/icons/award';
+import GitCommitHorizontal from 'lucide-solid/icons/git-commit-horizontal';
 import NotepadTextIcon from 'lucide-solid/icons/notepad-text';
 import CoatLineIcon from 'mingcute_icon/svg/part/coat_line.svg';
 import HatLineIcon from 'mingcute_icon/svg/part/hat_line.svg';
@@ -58,6 +59,7 @@ export const CategoryIconMap: Partial<
   Effect: { type: IconType.Svg, icon: DollarSignIcon },
   RingEffect: { type: IconType.Svg, icon: StopCircleLineIcon },
   NecklaceEffect: { type: IconType.Svg, icon: LoadingIcon },
+  BeltEffect: { type: IconType.Svg, icon: GitCommitHorizontal },
   Medal: { type: IconType.Lucide, icon: AwardIcon },
   NickTag: { type: IconType.Lucide, icon: NotepadTextIcon },
   [AllCategory]: { type: IconType.Lucide, icon: LayoutGridIcon },
