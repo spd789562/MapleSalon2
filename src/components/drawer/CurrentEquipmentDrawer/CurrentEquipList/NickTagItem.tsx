@@ -13,7 +13,7 @@ export const NickTagItem = () => {
   }
 
   function handleDelete() {
-    setCharacterNickTag(undefined);
+    setCharacterNickTag(null);
   }
 
   return (

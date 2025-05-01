@@ -283,7 +283,7 @@ export class Character extends Container {
     }
   }
 
-  async updateMedal(id?: number, position?: MedalPosition) {
+  async updateMedal(id?: number | null, position?: MedalPosition) {
     if (this.medal) {
       this.medal && this.removeChild(this.medal);
       this.medal?.destroy({
@@ -303,7 +303,7 @@ export class Character extends Container {
       this.addChild(this.medal);
     }
   }
-  async updateNickTag(id?: number, position?: MedalPosition) {
+  async updateNickTag(id?: number | null, position?: MedalPosition) {
     if (this.nickTag) {
       this.nickTag && this.removeChild(this.nickTag);
       this.nickTag?.destroy({

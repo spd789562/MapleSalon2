@@ -14,7 +14,7 @@ import { EqipItemActions } from './EquipItemActions';
 import { ItemNotExistMask } from './ItemNotExistMask';
 
 export interface SimpleEquipItemProps {
-  id?: number;
+  id?: number | null;
   handleEdit?: () => void;
   handleDelete?: () => void;
 }

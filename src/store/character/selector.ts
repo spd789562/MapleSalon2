@@ -25,6 +25,12 @@ export const $totalInfo = batched(
     ...info,
     ...changes,
     extraParts: changes.extraParts ?? info.extraParts ?? [],
+    medalId:
+      changes.medalId === null ? undefined : (changes.medalId ?? info.medalId),
+    nickTagId:
+      changes.nickTagId === null
+        ? undefined
+        : (changes.nickTagId ?? info.nickTagId),
   }),
 );
 

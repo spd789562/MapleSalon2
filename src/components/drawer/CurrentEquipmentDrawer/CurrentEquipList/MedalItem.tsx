@@ -13,7 +13,7 @@ export const MedalItem = () => {
   }
 
   function handleDelete() {
-    setCharacterMedal(undefined);
+    setCharacterMedal(null);
   }
 
   return (

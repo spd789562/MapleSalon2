@@ -109,6 +109,7 @@ export function applyCharacterChanges() {
     ...$currentCharacterInfo.get(),
     ...$currentInfoChanges.get(),
   });
+  console.log($currentCharacterInfo.get());
   resetCharacterChanges();
 }
 export function resetCharacterChanges() {
@@ -488,10 +489,10 @@ export function setCharacterChatBalloon(id: number | undefined) {
 export function setCharacterName(name: string) {
   $currentInfoChanges.setKey('name', name);
 }
-export function setCharacterMedal(id: number | undefined) {
+export function setCharacterMedal(id: number | undefined | null) {
   $currentInfoChanges.setKey('medalId', id);
 }
-export function setCharacterNickTag(id: number | undefined) {
+export function setCharacterNickTag(id: number | undefined | null) {
   $currentInfoChanges.setKey('nickTagId', id);
 }
 export function toggleExtraPart(part: CharacterExtraPart) {
