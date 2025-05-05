@@ -56,6 +56,7 @@ export interface ItemInfo {
 
   enableEffect?: boolean;
   visible?: boolean;
+  visibleEffect?: boolean;
 
   alpha?: number;
 

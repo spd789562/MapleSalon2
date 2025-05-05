@@ -517,6 +517,16 @@ export class CharacterItem implements RenderItemInfo {
     }
   }
 
+  updateEffectVisibility() {
+    const visible = this.info.visibleEffect ?? true;
+    const allEffectItems = Array.from(this.effectPieces.values())
+      .concat(Array.from(this.setEffectPieces.values()))
+      .flatMap((item) => Array.from(item.animatableItems.values()).flat());
+    for (const animatableItem of allEffectItems) {
+      animatableItem.visible = visible;
+    }
+  }
+
   getEffect(action: CharacterAction) {
     return this.effectPieces.get(action) || this.effectPieces.get('default');
   }

@@ -18,6 +18,7 @@ export class CharacterAnimatablePart extends BaseAnimatablePart<CharacterItemPie
     this.updatePositionByFrame(0);
     this.onFrameChange = this.frameChanges.bind(this);
     this.filters = this.item.filters;
+    this.visible = item.info.visibleEffect ?? true;
   }
 
   updatePositionByFrame(currentFrame: number) {

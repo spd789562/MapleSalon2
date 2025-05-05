@@ -426,6 +426,7 @@ export class Character extends Container {
     }
     item.info = info;
     item.updateFilter();
+    item.updateEffectVisibility();
   }
   async updateMixDye(id: number, info: ItemInfo) {
     const item = this.idItems.get(id);

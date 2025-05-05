@@ -1,5 +1,9 @@
-import { Show } from 'solid-js';
+import { Show, createMemo } from 'solid-js';
 import { useTranslate } from '@/context/i18n';
+
+import { toggleItemEffectVisiblity } from '@/store/character/action';
+import { createGetItemChangeById } from '@/store/character/selector';
+import { useDynamicPureStore } from '@/store';
 
 import type { EquipItem } from '@/store/string';
 
@@ -11,6 +15,21 @@ export interface EquipTagsProps {
 }
 export const EquipTags = (props: EquipTagsProps) => {
   const t = useTranslate();
+  const getItemChangeById = createMemo(() =>
+    createGetItemChangeById(props.info!.id),
+  );
+  const itemChange = useDynamicPureStore(getItemChangeById);
+
+  function handleClickEffectTag() {
+    const category = itemChange()?.category;
+    if (category === 'Head') {
+      toggleItemEffectVisiblity('Head');
+      toggleItemEffectVisiblity('Body');
+    } else if (category) {
+      toggleItemEffectVisiblity(category);
+    }
+  }
+
   return (
     <Show when={props.info}>
       {(info) => (
@@ -22,7 +41,15 @@ export const EquipTags = (props: EquipTagsProps) => {
             <Kbd size="sm">{t('common.equipDyeable')}</Kbd>
           </Show>
           <Show when={info().hasEffect}>
-            <Kbd size="sm">{t('common.equipEffect')}</Kbd>
+            <Kbd
+              size="sm"
+              userSelect="none"
+              cursor="pointer"
+              opacity={(itemChange()?.item.visibleEffect ?? true) ? 1 : 0.6}
+              onClick={handleClickEffectTag}
+            >
+              {t('common.equipEffect')}
+            </Kbd>
           </Show>
         </HStack>
       )}
