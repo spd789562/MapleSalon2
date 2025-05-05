@@ -103,7 +103,7 @@ export function isNickTagId(id: number): boolean {
   return Math.floor(id / 10000) === 370;
 }
 
-export function getFaceOrHairGender(id: number): Gender {
+export function getHairGender(id: number): Gender {
   const tag = Math.floor(id / 1000) % 10;
   switch (tag) {
     case 0:
@@ -115,6 +115,25 @@ export function getFaceOrHairGender(id: number): Gender {
     case 1:
     case 4:
     case 7:
+    case 8: {
+      return Gender.Female;
+    }
+    default:
+      return Gender.Share;
+  }
+}
+export function getFaceGender(id: number): Gender {
+  const tag = Math.floor(id / 1000) % 10;
+  switch (tag) {
+    case 0:
+    case 3:
+    case 5:
+    case 7: {
+      return Gender.Male;
+    }
+    case 1:
+    case 4:
+    case 6:
     case 8: {
       return Gender.Female;
     }
@@ -140,7 +159,11 @@ export function getEquipGender(id: number): Gender {
 
 export function getGender(id: number): Gender {
   if (id < 100000) {
-    return getFaceOrHairGender(id);
+    if (isFaceId(id)) {
+      return getFaceGender(id);
+    }
+
+    return getHairGender(id);
   }
   /* ~~104xxxx ~ 106xxxx~~ is overall, coat, and pants, only those has gender restriction */
   /* I was wrong, seem cap(100xxxx), shoe(107xxx), glove(108xxx) and even up to weapons also has same rule of gender restriction */

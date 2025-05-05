@@ -109,6 +109,7 @@ export function applyCharacterChanges() {
     ...$currentCharacterInfo.get(),
     ...$currentInfoChanges.get(),
   });
+  console.log($currentCharacterInfo.get());
   resetCharacterChanges();
 }
 export function resetCharacterChanges() {
@@ -450,6 +451,29 @@ export function resetItemHsvInfo(category: EquipSubCategory) {
     );
   }
 }
+export function toggleItemEffectVisiblity(category: EquipSubCategory) {
+  const currentItem = $totalItems.get()[category];
+
+  if (!currentItem) {
+    return;
+  }
+
+  const currentChanges = $currentItemChanges.get()[category];
+  if (currentChanges) {
+    $currentItemChanges.setKey(
+      `${category}.visibleEffect`,
+      !(currentChanges.visibleEffect ?? currentItem.visibleEffect ?? true),
+    );
+  } else {
+    /* fill the changes first and then modify the visible */
+    $currentItemChanges.setKey(
+      category,
+      Object.assign({}, currentItem, {
+        visibleEffect: !(currentItem.visibleEffect ?? true),
+      }),
+    );
+  }
+}
 /* info actions */
 export function toggleIsAnimating(isAnimating: boolean) {
   $currentCharacterInfo.setKey('isAnimating', isAnimating);
@@ -488,10 +512,10 @@ export function setCharacterChatBalloon(id: number | undefined) {
 export function setCharacterName(name: string) {
   $currentInfoChanges.setKey('name', name);
 }
-export function setCharacterMedal(id: number | undefined) {
+export function setCharacterMedal(id: number | undefined | null) {
   $currentInfoChanges.setKey('medalId', id);
 }
-export function setCharacterNickTag(id: number | undefined) {
+export function setCharacterNickTag(id: number | undefined | null) {
   $currentInfoChanges.setKey('nickTagId', id);
 }
 export function toggleExtraPart(part: CharacterExtraPart) {

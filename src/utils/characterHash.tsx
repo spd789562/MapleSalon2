@@ -26,6 +26,7 @@ export function makeCharacterHash(character: CharacterData) {
       item.dye?.color,
       item.dye?.alpha,
       item.alpha,
+      item.visibleEffect,
     ]
       .filter((e) => !!e)
       .join(',');

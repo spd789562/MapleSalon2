@@ -193,6 +193,7 @@ export function saveCurrentCharacter(newId?: boolean) {
     newId || !currentCharacter.id
       ? createCharacterUniqueId()
       : currentCharacter.id;
+  console.log('saveCurrentCharacter', id, currentCharacter);
   const data: SaveCharacterData = {
     id,
     name: currentCharacter.name || 'name',
@@ -201,8 +202,8 @@ export function saveCurrentCharacter(newId?: boolean) {
     showNameTag: currentCharacter.showNameTag,
     nameTagId: currentCharacter.nameTagId,
     chatBalloonId: currentCharacter.chatBalloonId,
-    medalId: currentCharacter.medalId,
-    nickTagId: currentCharacter.nickTagId,
+    medalId: currentCharacter.medalId ?? undefined,
+    nickTagId: currentCharacter.nickTagId ?? undefined,
     extraParts: currentCharacter.extraParts,
     items: deepCloneCharacterItems(currentCharacter.items),
   };
