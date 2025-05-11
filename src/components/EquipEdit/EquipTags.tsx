@@ -16,7 +16,7 @@ export interface EquipTagsProps {
 export const EquipTags = (props: EquipTagsProps) => {
   const t = useTranslate();
   const getItemChangeById = createMemo(() =>
-    createGetItemChangeById(props.info!.id),
+    createGetItemChangeById(props.info?.id!),
   );
   const itemChange = useDynamicPureStore(getItemChangeById);
 
