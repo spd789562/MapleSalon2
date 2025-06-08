@@ -508,6 +508,7 @@ export class Character extends Container {
       if (this.isAnimating) {
         effectPieces.play();
       } else {
+        console.log(`put effect ${effectPieces.item.info.id} to frame 0`);
         effectPieces.gotoAndStop(0);
       }
     }
@@ -773,6 +774,13 @@ export class Character extends Container {
       try {
         await item.load();
         if (this.isAnimating) {
+          await item.prepareActionAnimatableResource(this.useAction);
+        } else {
+          // ByFrame kinda broken
+          // await item.prepareAnimatableResourceByFrame(
+          //   this.useAction,
+          //   this.frame,
+          // );
           await item.prepareActionAnimatableResource(this.useAction);
         }
       } catch (_) {
