@@ -62,7 +62,8 @@ class Loader {
       ['capBelowHair', 'hairBelowBody'], // 1004506
       ['capBelowBody', 'hairBelowBody'], // 1004962
       ['capBackHair', 'hairOverHead'], // 1006737
-      ['capBelowHead', 'armBelowHead'], // 1003975
+      // v0.8.12, it looks wrong in 1003934 using the armBelowHead, so after that it move more below
+      ['capBelowHead', 'capAccessoryBelowBody'], // 1003975
       ['capeArm', 'cape'], // 1103058
       ['capeBelowHair', 'hairBelowBody'], // 1102682
       ['capeBelowChest', 'mailChest'], // 1103098

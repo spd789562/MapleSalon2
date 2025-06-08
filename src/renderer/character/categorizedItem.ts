@@ -155,10 +155,10 @@ export abstract class CategorizedItem<Name extends string> {
   /** get piece name that validate in Zmap.img */
   resolveUseablePieceName(name: PieceName, z: string): PieceName {
     const zmap = CharacterLoader.zmap || [];
-    if (zmap.includes(z as PieceName)) {
+    if (CharacterLoader.zmapIndex.has(z as PieceName)) {
       return z as PieceName;
     }
-    if (zmap.includes(name)) {
+    if (CharacterLoader.zmapIndex.has(name)) {
       return name;
     }
     // try to resolve number z
