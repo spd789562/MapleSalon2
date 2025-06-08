@@ -10,7 +10,7 @@ import {
 } from './store';
 import { getUpdateItems, getCharacterSubCategory } from './utils';
 
-import { getSubCategory } from '@/utils/itemId';
+import { getSubCategory, isBodyId } from '@/utils/itemId';
 
 import type { EquipSubCategory } from '@/const/equipments';
 
@@ -111,7 +111,7 @@ export function createGetItemChangeById(id: number) {
   const c = getSubCategory(id);
   let category = c && getCharacterSubCategory(c);
   if (category === 'Skin') {
-    category = 'Head';
+    category = isBodyId(id) ? 'Body' : 'Head';
   }
   return computed($totalItems, (changes) => {
     if (!category) {

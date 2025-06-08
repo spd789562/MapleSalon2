@@ -22,10 +22,7 @@ export const EquipTags = (props: EquipTagsProps) => {
 
   function handleClickEffectTag() {
     const category = itemChange()?.category;
-    if (category === 'Head') {
-      toggleItemEffectVisiblity('Head');
-      toggleItemEffectVisiblity('Body');
-    } else if (category) {
+    if (category) {
       toggleItemEffectVisiblity(category);
     }
   }
