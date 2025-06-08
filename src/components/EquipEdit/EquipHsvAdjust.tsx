@@ -9,6 +9,7 @@ import {
 } from '@/store/character/action';
 import { createGetItemChangeById } from '@/store/character/selector';
 import { getCharacterSubCategory } from '@/store/character/utils';
+import { $equipmentDrawerSyncSkinChange } from '@/store/trigger';
 import { useDynamicPureStore } from '@/store';
 
 import ResetIcon from 'lucide-solid/icons/rotate-ccw';
@@ -35,15 +36,20 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
     (property: 'colorRange' | 'hue' | 'saturation' | 'brightness' | 'alpha') =>
     (value: number) => {
       const category = itemChange()?.category;
-      // TODO: maybe add a option to sync the head and the body item change
-      // if (category === 'Head') {
-      //   updateItemHsvInfo('Head', property, value);
-      //   updateItemHsvInfo('Body', property, value);
-      // }
-
-      if (category) {
-        updateItemHsvInfo(getCharacterSubCategory(category), property, value);
+      if (!category) {
+        return;
       }
+
+      if (
+        $equipmentDrawerSyncSkinChange.get() &&
+        (category === 'Head' || category === 'Body')
+      ) {
+        updateItemHsvInfo('Head', property, value);
+        updateItemHsvInfo('Body', property, value);
+        return;
+      }
+
+      updateItemHsvInfo(getCharacterSubCategory(category), property, value);
     };
 
   function handleResetAll() {

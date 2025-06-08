@@ -1,7 +1,10 @@
-import type { JSX } from 'solid-js';
+import { type JSX, Show } from 'solid-js';
 
 import { HStack } from 'styled-system/jsx/hstack';
 import { LoadableEquipIcon } from '@/components/elements/LoadableEquipIcon';
+import { SyncSkinChangeSwitch } from './SyncSkinChangeSwitch';
+
+import { isSkinPartId } from '@/utils/itemId';
 
 export interface EquipTitleProps {
   id: number;
@@ -16,6 +19,9 @@ export const EquipTitle = (props: EquipTitleProps) => {
         {props.name}
         {props.tags}
       </p>
+      <Show when={isSkinPartId(props.id)}>
+        <SyncSkinChangeSwitch />
+      </Show>
     </HStack>
   );
 };
