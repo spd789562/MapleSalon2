@@ -44,20 +44,20 @@ export interface CharacterData extends Record<string, unknown>, CharacterInfo {
 
 let DefaultItems: Partial<CharacterItems> = {
   Head: {
-    id: 2000,
+    id: 12000,
   },
   Body: {
-    id: 12000,
+    id: 2000,
   },
 };
 
 if (import.meta.env.DEV) {
   DefaultItems = {
     Head: {
-      id: 2000,
+      id: 12000,
     },
     Body: {
-      id: 12000,
+      id: 2000,
     },
     Face: {
       id: 56772,

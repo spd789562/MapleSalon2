@@ -32,11 +32,11 @@ const DEFAULT_CHARACTER: SaveCharacterData = {
   showNameTag: false,
   items: {
     Head: {
-      id: 2000,
+      id: 12000,
       name: '奶油皮膚',
     },
     Body: {
-      id: 12000,
+      id: 2000,
       name: '奶油皮膚',
     },
   },
@@ -193,7 +193,7 @@ export function saveCurrentCharacter(newId?: boolean) {
     newId || !currentCharacter.id
       ? createCharacterUniqueId()
       : currentCharacter.id;
-  console.log('saveCurrentCharacter', id, currentCharacter);
+
   const data: SaveCharacterData = {
     id,
     name: currentCharacter.name || 'name',

@@ -23,10 +23,10 @@ export const CharacterAvatar = (props: CharacterAvatarProps) => {
   const subCategory = createMemo(() => {
     const baseItems: Partial<CharacterItems> = {
       Head: {
-        id: 2000,
+        id: 12000,
       },
       Body: {
-        id: 12000,
+        id: 2000,
       },
     };
 
