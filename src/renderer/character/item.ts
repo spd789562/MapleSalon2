@@ -446,13 +446,17 @@ export class CharacterItem implements RenderItemInfo {
       this.info.alpha !== undefined;
 
     if (!hasAnyDye) {
-      this.filters.length = 0;
+      if (this.filters.length > 0) {
+        (this.filters[0] as HsvAdjustmentFilter).enabled = false;
+      }
       return;
     }
 
-    if (this.filters.length === 0 && hasAnyDye) {
+    if (this.filters.length === 0) {
       this.filters.push(new HsvAdjustmentFilter());
       this.applyFilter();
+    } else {
+      (this.filters[0] as HsvAdjustmentFilter).enabled = true;
     }
     const hsvFilter = this.filters[0] as HsvAdjustmentFilter;
 
