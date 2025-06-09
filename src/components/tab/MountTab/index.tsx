@@ -17,6 +17,7 @@ import { ExportSnapshotButton } from './ExportSnapshotButton';
 import { ExportSnapshotToClipboardButton } from './ExportSnapshotToClipboardButton';
 import { ExportProgress } from './ExportProgress';
 import { MountTabProvider } from './MountTabContext';
+import { ExportFrameButton } from './ExportFrameButton';
 
 export const MountTab = () => {
   return (
@@ -41,6 +42,7 @@ export const MountTab = () => {
           <ChatBalloonSwitch />
           <HStack>
             <ExportAnimationButton />
+            <ExportFrameButton />
             <ExportSnapshotButton />
             <ExportSnapshotToClipboardButton />
           </HStack>

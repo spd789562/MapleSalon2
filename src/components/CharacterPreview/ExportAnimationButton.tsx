@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { toaster } from '@/components/GlobalToast';
 import {
   getAnimatedCharacterBlob,
-  getCharacterFilenameSuffix,
+  getCharacterFilenamePrefix,
 } from '@/components/tab/ActionTab/helper';
 import { characterToCanvasFramesWithEffects } from '@/renderer/character/characterToCanvasFrames';
 import { downloadBlob, downloadCanvas } from '@/utils/download';
@@ -34,7 +34,7 @@ export function exportCharacterSnapshot(
     });
     return;
   }
-  const actualFileName = filename || getCharacterFilenameSuffix(character);
+  const actualFileName = filename || getCharacterFilenamePrefix(character);
   const frame = extractCanvas(character, app.renderer) as HTMLCanvasElement;
   downloadCanvas(frame, `${actualFileName}.png`);
 }

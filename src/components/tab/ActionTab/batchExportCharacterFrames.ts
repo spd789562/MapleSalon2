@@ -6,7 +6,7 @@ import type {
   CanvasFramesData,
 } from '@/renderer/makeCanvasFrame';
 import { toPaddedFrames } from '@/renderer/makeCanvasFrame';
-import { getCharacterFilenameSuffix } from './helper';
+import { getCharacterFilenamePrefix } from './helper';
 import {
   generateCharacterTimeline,
   generatePartsFrame,
@@ -165,10 +165,10 @@ function createCharacterDataSet(characters: Character[]) {
     character.currentDelta = 0;
     character.playBodyFrame();
 
-    const suffix = getCharacterFilenameSuffix(character);
+    const prefix = getCharacterFilenamePrefix(character);
     const { timelines } = generateCharacterTimeline(character);
     const singleTimeline = createMergedTimeline(timelines);
-    characterSet.set(suffix, {
+    characterSet.set(prefix, {
       character,
       timeline: singleTimeline,
       data: [],
@@ -189,7 +189,7 @@ function createSimpleCharacterDataSet(characters: Character[]) {
     character.currentDelta = 0;
     character.playBodyFrame();
 
-    const suffix = getCharacterFilenameSuffix(character);
+    const suffix = getCharacterFilenamePrefix(character);
     const timeline = character.currentInstructions.reduce((acc, frame) => {
       const prev = acc.length > 0 ? acc[acc.length - 1] : 0;
       acc.push(prev + (frame.delay ?? 100) * character.speed);

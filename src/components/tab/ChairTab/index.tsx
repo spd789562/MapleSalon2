@@ -19,6 +19,7 @@ import { ExportSnapshotToClipboardButton } from './ExportSnapshotToClipboardButt
 import { OpenCharacterSelectionButton } from './OpenCharacterSelectionButton';
 import { ExportProgress } from './ExportProgress';
 import { ChairTabProvider } from './ChairTabContext';
+import { ExportFrameButton } from './ExportFrameButton';
 
 export const ChairTab = () => {
   return (
@@ -40,6 +41,7 @@ export const ChairTab = () => {
           <ChatBalloonSwitch />
           <HStack>
             <ExportAnimationButton />
+            <ExportFrameButton />
             <ExportSnapshotButton />
             <ExportSnapshotToClipboardButton />
           </HStack>
