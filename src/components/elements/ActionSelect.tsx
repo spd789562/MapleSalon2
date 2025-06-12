@@ -53,7 +53,6 @@ const options = [
     CharacterAction.Shoot1,
     CharacterAction.Shoot2,
     CharacterAction.ShootF,
-    CharacterAction.Sit,
     CharacterAction.StabO1,
     CharacterAction.StabO2,
     CharacterAction.StabOF,
