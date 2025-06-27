@@ -33,6 +33,9 @@ export const dict = {
   freeResize: '自由調整視窗大小',
   resolution: '解析度',
   scale: '縮放',
+  scaleConfirm: '變更縮放',
+  scaleConfirmDesc:
+    '此設定過大時可能導致無法正常顯示，確認是否變更縮放至 {{resolution}}？',
   apply: '套用',
 
   themeTitle: '主題設定',
