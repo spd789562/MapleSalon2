@@ -41,9 +41,9 @@ const MapItemContainer = styled('button', {
       bg: 'gray.3',
     },
     _selected: {
-      bg: 'colorPalette.3',
+      bg: 'accent.3',
       '&:hover': {
-        bg: 'colorPalette.3',
+        bg: 'accent.3',
       },
     },
   },

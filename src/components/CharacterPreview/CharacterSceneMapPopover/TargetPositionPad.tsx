@@ -205,8 +205,8 @@ const TargetPositionPadContainer = styled('div', {
 const MapBoundRect = styled('div', {
   base: {
     border: '1px solid',
-    borderColor: 'colorPalette.6',
-    backgroundColor: 'colorPalette.2',
+    borderColor: 'accent.6',
+    backgroundColor: 'accent.2',
     position: 'absolute',
     borderRadius: 'sm',
     top: '50%',
@@ -220,7 +220,7 @@ const TargetPositionDot = styled('button', {
     position: 'absolute',
     border: '2px solid',
     borderRadius: '50%',
-    borderColor: 'colorPalette.8',
+    borderColor: 'accent.8',
     width: 2,
     height: 2,
     top: -1,

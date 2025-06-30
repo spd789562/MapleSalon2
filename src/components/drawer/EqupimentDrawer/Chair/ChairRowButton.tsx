@@ -30,10 +30,7 @@ export const ChairRowButton = (props: ChairRowButtonProps) => {
       <ChairId onClick={preventDefault}>
         <PureTextClipboard value={props.item.id.toString()} />
       </ChairId>
-      <ChairName
-        onClick={preventDefault}
-        style={{ 'font-size': rowFontSize(props.item.name) }}
-      >
+      <ChairName onClick={preventDefault} style={{'font-size': rowFontSize(props.item.name)}}>
         <PureTextClipboard value={props.item.name} />
       </ChairName>
     </ChairButtonContainer>
@@ -59,7 +56,7 @@ const ChairId = styled(Text, {
     width: '7rem',
     cursor: 'pointer',
     '&:hover': {
-      color: 'colorPalette.10',
+      color: 'accent.10',
     },
   },
 });
@@ -69,7 +66,7 @@ const ChairName = styled(Text, {
     textAlign: 'left',
     cursor: 'pointer',
     '&:hover': {
-      color: 'colorPalette.10',
+      color: 'accent.10',
     },
     lineHeight: '1',
   },
