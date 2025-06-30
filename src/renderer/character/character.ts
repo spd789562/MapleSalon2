@@ -508,7 +508,6 @@ export class Character extends Container {
       if (this.isAnimating) {
         effectPieces.play();
       } else {
-        console.log(`put effect ${effectPieces.item.info.id} to frame 0`);
         effectPieces.gotoAndStop(0);
       }
     }
