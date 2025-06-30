@@ -1,5 +1,6 @@
 import { type JSX, Index, splitProps } from 'solid-js';
-import { type Assign, SegmentGroup } from '@ark-ui/solid';
+import type { Assign } from '@ark-ui/solid';
+import { SegmentGroup } from '@ark-ui/solid/segment-group';
 import {
   type SegmentGroupVariantProps,
   segmentGroup,
@@ -41,7 +42,7 @@ export {
   SegmentGroupContext as Context,
   type SegmentGroupContextProps as ContextProps,
   type SegmentGroupValueChangeDetails as ValueChangeDetails,
-} from '@ark-ui/solid';
+} from '@ark-ui/solid/segment-group';
 
 export interface SimpleSegmentGroupProps<T extends string> extends RootProps {
   options: {

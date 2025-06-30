@@ -1,6 +1,6 @@
 import { createMemo } from 'solid-js';
 import { useStore } from '@nanostores/solid';
-import { useTranslate } from '@/context/i18n';
+import { useTranslate, useLocale } from '@/context/i18n';
 
 import { $mountAction, setMountAction } from '@/store/mount';
 
@@ -11,12 +11,14 @@ import { CharacterActionNames } from '@/const/actions';
 
 export const MountActionSelect = () => {
   const t = useTranslate();
+  const locale = useLocale();
   const [state, _] = useMountTab();
 
   const action = useStore($mountAction);
 
-  const options = createMemo(() =>
-    state.mountActions.map((action) => {
+  const options = createMemo(() => {
+    const _ = locale();
+    return state.mountActions.map((action) => {
       const actionLabelHasTranslate =
         CharacterActionNames[action as keyof typeof CharacterActionNames];
       return {
@@ -25,8 +27,8 @@ export const MountActionSelect = () => {
           : action,
         value: action,
       };
-    }),
-  );
+    });
+  });
 
   function handleActionChange(details: ValueChangeDetails) {
     details.value?.[0] && setMountAction(details.value[0] as string);

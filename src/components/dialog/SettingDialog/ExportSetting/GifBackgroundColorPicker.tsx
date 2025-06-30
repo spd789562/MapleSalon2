@@ -1,5 +1,4 @@
-import { Index } from 'solid-js';
-import { Portal } from 'solid-js/web';
+import { createMemo, Index } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 import { useTranslate } from '@/context/i18n';
 
@@ -9,7 +8,6 @@ import {
 } from '@/store/settingDialog';
 import { useHoverTrigger } from '@/hook/hoverTrigger';
 
-import PipetteIcon from 'lucide-solid/icons/pipette';
 import { HStack, Stack } from 'styled-system/jsx';
 import { Input } from '@/components/ui/input';
 import { Text } from '@/components/ui/text';
@@ -40,6 +38,8 @@ export const GifBackgroundColorPicker = () => {
 
   const color = useStore($gifBackgroundColor);
 
+  const parsedColor = createMemo(() => ColorPicker.parseColor(color()));
+
   const handleColorChange = (details: ColorPicker.ValueChangeDetails) => {
     setGifBackgroundColor(details.value.toString('rgba'));
   };
@@ -47,8 +47,8 @@ export const GifBackgroundColorPicker = () => {
   return (
     <ColorPicker.Root
       open={isOpen()}
-      value={color()}
-      defaultValue="#000000"
+      value={parsedColor()}
+      defaultValue={ColorPicker.parseColor('#000000')}
       onInteractOutside={handleOutsideClick}
       onValueChange={handleColorChange}
     >

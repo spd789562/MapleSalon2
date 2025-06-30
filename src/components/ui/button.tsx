@@ -1,4 +1,5 @@
-import { type Assign, type HTMLArkProps, ark } from '@ark-ui/solid';
+import type { Assign, HTMLArkProps } from '@ark-ui/solid';
+import { ark } from '@ark-ui/solid/factory';
 import { styled } from 'styled-system/jsx/factory';
 import { type ButtonVariantProps, button } from 'styled-system/recipes/button';
 import type { JsxStyleProps } from 'styled-system/types';

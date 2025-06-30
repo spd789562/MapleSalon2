@@ -1,8 +1,8 @@
+import type { Assign } from '@ark-ui/solid';
 import {
   NumberInput as ArkNumberInput,
-  type Assign,
   type NumberInputRootProps,
-} from '@ark-ui/solid';
+} from '@ark-ui/solid/number-input';
 import { Show, children, splitProps } from 'solid-js';
 import { css, cx } from 'styled-system/css';
 import { splitCssProps } from 'styled-system/jsx/is-valid-prop';
@@ -15,7 +15,7 @@ import type { JsxStyleProps } from 'styled-system/types';
 import ChevronUpIcon from 'lucide-solid/icons/chevron-up';
 import ChevronDownIcon from 'lucide-solid/icons/chevron-down';
 
-export { type NumberInputValueChangeDetails as ValueChangeDetails } from '@ark-ui/solid';
+export type { NumberInputValueChangeDetails as ValueChangeDetails } from '@ark-ui/solid/number-input';
 
 export interface NumberInputProps
   extends Assign<JsxStyleProps, NumberInputRootProps>,

@@ -1,4 +1,5 @@
-import { type Assign, RadioGroup } from '@ark-ui/solid';
+import type { Assign } from '@ark-ui/solid';
+import { RadioGroup } from '@ark-ui/solid/radio-group';
 import {
   type RadioButtonGroupVariantProps,
   radioButtonGroup,
@@ -41,4 +42,4 @@ export {
   RadioGroupContext as Context,
   type RadioGroupContextProps as ContextProps,
   type RadioGroupValueChangeDetails as ValueChangeDetails,
-} from '@ark-ui/solid';
+} from '@ark-ui/solid/radio-group';

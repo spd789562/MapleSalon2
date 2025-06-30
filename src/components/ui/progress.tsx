@@ -1,4 +1,5 @@
-import { type Assign, Progress } from '@ark-ui/solid';
+import type { Assign } from '@ark-ui/solid';
+import { Progress } from '@ark-ui/solid/progress';
 import { type ComponentProps, splitProps, children, Show } from 'solid-js';
 import {
   type ProgressVariantProps,
@@ -57,7 +58,7 @@ export const View = withContext<
   Assign<HTMLStyledProps<'span'>, Progress.ViewBaseProps>
 >(Progress.View, 'view');
 
-export { ProgressContext as Context } from '@ark-ui/solid';
+export { ProgressContext as Context } from '@ark-ui/solid/progress';
 
 export interface LineProgressProps extends RootProps {}
 export const LineProgress = (props: LineProgressProps) => {

@@ -1,4 +1,5 @@
-import { type Assign, Clipboard } from '@ark-ui/solid';
+import type { Assign } from '@ark-ui/solid';
+import { Clipboard } from '@ark-ui/solid/clipboard';
 import type { ComponentProps } from 'solid-js';
 import {
   type ClipboardVariantProps,
@@ -49,7 +50,7 @@ export const Trigger = withContext<
   Assign<HTMLStyledProps<'button'>, Clipboard.TriggerBaseProps>
 >(Clipboard.Trigger, 'trigger');
 
-export { ClipboardContext as Context } from '@ark-ui/solid';
+export { ClipboardContext as Context } from '@ark-ui/solid/clipboard';
 
 export const SimpleTextClipboard = (props: {
   value: string;

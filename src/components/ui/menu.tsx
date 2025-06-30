@@ -1,5 +1,6 @@
 import type { ComponentProps } from 'solid-js';
-import { type Assign, Menu } from '@ark-ui/solid';
+import type { Assign } from '@ark-ui/solid';
+import { Menu } from '@ark-ui/solid/menu';
 import { type MenuVariantProps, menu } from 'styled-system/recipes/menu';
 import type { JsxStyleProps } from 'styled-system/types';
 import { createStyleContext } from '@/utils/create-style-context';
@@ -97,4 +98,4 @@ export {
   type MenuContextProps as ContextProps,
   type MenuSelectionDetails as SelectionDetails,
   type MenuOpenChangeDetails as OpenChangeDetails,
-} from '@ark-ui/solid';
+} from '@ark-ui/solid/menu';

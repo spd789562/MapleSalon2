@@ -1,4 +1,4 @@
-import { ark } from '@ark-ui/solid';
+import { ark } from '@ark-ui/solid/factory';
 import type { ComponentProps } from 'solid-js';
 import { styled } from 'styled-system/jsx';
 import { link } from 'styled-system/recipes/link';

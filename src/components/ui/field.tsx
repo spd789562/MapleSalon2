@@ -1,5 +1,6 @@
 import { type ComponentProps, type JSX, splitProps, Show } from 'solid-js';
-import { type Assign, Field } from '@ark-ui/solid';
+import type { Assign } from '@ark-ui/solid';
+import { Field } from '@ark-ui/solid/field';
 import { styled } from 'styled-system/jsx';
 import { type FieldVariantProps, field } from 'styled-system/recipes/field';
 import { input } from 'styled-system/recipes/input';

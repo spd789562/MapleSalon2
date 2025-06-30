@@ -1,4 +1,5 @@
-import { type Assign, Toast } from '@ark-ui/solid';
+import type { Assign } from '@ark-ui/solid';
+import { Toast } from '@ark-ui/solid/toast';
 import { type ToastVariantProps, toast } from 'styled-system/recipes/toast';
 import type { JsxStyleProps } from 'styled-system/types';
 import { createStyleContext } from '@/utils/create-style-context';
@@ -33,4 +34,4 @@ export {
   createToaster,
   type ToastContextProps as ContextProps,
   type ToasterProps,
-} from '@ark-ui/solid';
+} from '@ark-ui/solid/toast';

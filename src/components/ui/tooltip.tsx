@@ -1,6 +1,7 @@
 import type { JSX } from 'solid-js';
 import { Portal } from 'solid-js/web';
-import { type Assign, Tooltip } from '@ark-ui/solid';
+import type { Assign } from '@ark-ui/solid';
+import { Tooltip } from '@ark-ui/solid/tooltip';
 import {
   type TooltipVariantProps,
   tooltip,
@@ -41,7 +42,7 @@ export const Trigger = withContext<Assign<JsxStyleProps, Tooltip.TriggerProps>>(
 export {
   TooltipContext as Context,
   type TooltipContextProps as ContextProps,
-} from '@ark-ui/solid';
+} from '@ark-ui/solid/tooltip';
 
 export interface SimpleTooltipProps {
   children: JSX.Element;

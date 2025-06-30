@@ -1,5 +1,5 @@
 import { createContext, useContext, type JSX } from 'solid-js';
-import { useMenu, type UseMenuReturn } from '@ark-ui/solid';
+import { useMenu, type UseMenuReturn } from '@ark-ui/solid/menu';
 import { useTranslate } from '@/context/i18n';
 
 import {
@@ -12,9 +12,7 @@ import { copyImage, copyText } from '@/utils/clipboard';
 
 export const ItemContextMenuContext = createContext<UseMenuReturn>();
 
-export function ItemContextMenuProvider(props: {
-  children: JSX.Element;
-}) {
+export function ItemContextMenuProvider(props: { children: JSX.Element }) {
   const t = useTranslate();
   const menu = useMenu({
     positioning: {

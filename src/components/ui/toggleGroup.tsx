@@ -1,5 +1,6 @@
 import { type JSX, Index, splitProps } from 'solid-js';
-import { type Assign, SegmentGroup, SegmentGroupContext } from '@ark-ui/solid';
+import type { Assign } from '@ark-ui/solid';
+import { SegmentGroup, SegmentGroupContext } from '@ark-ui/solid/segment-group';
 import {
   type ToggleGroupVariantProps,
   toggleGroup,
@@ -25,7 +26,7 @@ export {
   SegmentGroupContext as Context,
   type SegmentGroupContextProps as ContextProps,
   type SegmentGroupValueChangeDetails as ValueChangeDetails,
-} from '@ark-ui/solid';
+} from '@ark-ui/solid/segment-group';
 
 export interface SimpleToggleGroupProps<T extends string> extends RootProps {
   options: {
