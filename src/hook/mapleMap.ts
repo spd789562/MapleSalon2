@@ -1,4 +1,10 @@
-import { type Accessor, createEffect, onCleanup, untrack } from 'solid-js';
+import {
+  type Accessor,
+  createEffect,
+  onCleanup,
+  untrack,
+  from,
+} from 'solid-js';
 import { useStore } from '@nanostores/solid';
 
 import {
@@ -30,9 +36,9 @@ export function MapleMapMount(props: UseMapleMapProps) {
   const targetPosX = useStore($mapTargetPosX);
   const targetPosY = useStore($mapTargetPosY);
 
-  const tags = useStore($mapTags);
-  const backgroundTags = useStore($mapBackgroundTags);
-  const disabledLayerTags = useStore($disabledLayers);
+  const tags = from($mapTags);
+  const backgroundTags = from($mapBackgroundTags);
+  const disabledLayerTags = from($disabledLayers);
 
   let map: MapleMap | undefined;
 
@@ -80,7 +86,7 @@ export function MapleMapMount(props: UseMapleMapProps) {
   });
 
   createEffect(() => {
-    const tagList = tags();
+    const tagList = tags() || [];
     if (map) {
       map.toggleVisibilityByTags(
         tagList.filter((t) => t.disabled).map((t) => t.name),
@@ -88,7 +94,7 @@ export function MapleMapMount(props: UseMapleMapProps) {
     }
   });
   createEffect(() => {
-    const tagList = backgroundTags();
+    const tagList = backgroundTags() || [];
     if (map) {
       map.toggleVisibilityByTags(
         tagList.filter((t) => t.disabled).map((t) => t.name),
@@ -97,7 +103,7 @@ export function MapleMapMount(props: UseMapleMapProps) {
     }
   });
   createEffect(() => {
-    const tagList = disabledLayerTags();
+    const tagList = disabledLayerTags() || [];
     if (map) {
       map.toggleLayerVisibility([...tagList]);
     }
