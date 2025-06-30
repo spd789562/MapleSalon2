@@ -68,6 +68,42 @@ fn main() {
         .setup(move |app| {
             // ensure the store file is created
             let _ = app.store("setting.bin");
+
+            // enable below code to debug download function in macos
+            // also set tauri.config.json: app.windows[0].create = false
+            // and import those
+            // path::BaseDirectory,
+            // utils::config::{Csp, CspDirectiveSources, WebviewUrl},
+            // webview::{DownloadEvent, PageLoadEvent, WebviewWindowBuilder},
+
+            // let handle = app.handle();
+            // // `get(0)` assumes that we're talking about the first window in the tauri.conf.json window config array.
+            // WebviewWindowBuilder::from_config(
+            //     handle,
+            //     &app.config().app.windows.get(0).unwrap().clone(),
+            // )?
+            // .on_download(|webview, event| {
+            //     let download_path = webview
+            //         .app_handle()
+            //         .path()
+            //         .download_dir()
+            //         .unwrap_or_default();
+            //     match event {
+            //         DownloadEvent::Requested { url, destination } => {
+            //             println!(
+            //                 "downloading {} to {}",
+            //                 url,
+            //                 destination.clone().to_string_lossy()
+            //             );
+            //             *destination = download_path.join(&mut *destination);
+            //         }
+            //         _ => (),
+            //     }
+            //     // let the download start
+            //     true
+            // })
+            // .build()?;
+
             Ok(())
         })
         .on_page_load(move |webview, payload| {

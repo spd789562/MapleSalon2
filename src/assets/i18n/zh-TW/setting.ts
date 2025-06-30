@@ -33,6 +33,9 @@ export const dict = {
   freeResize: '自由調整視窗大小',
   resolution: '解析度',
   scale: '縮放',
+  scaleConfirm: '變更縮放',
+  scaleConfirmDesc:
+    '此設定過大時可能導致無法正常顯示，確認是否變更縮放至 {{resolution}}？',
   apply: '套用',
 
   themeTitle: '主題設定',
@@ -83,6 +86,7 @@ export const dict = {
   tagVersion: '標籤版本',
   tagVersionTip:
     '變更名牌、勳章及稱號的顯示邏輯，在不同遊戲版本中使用的邏輯不同，可嘗試切換版本以獲得適當的顯示效果',
+  syncSkinChange: '同步皮膚變更',
 
   otherTitle: '其他設定',
   saveFolder: '存檔資料夾',

@@ -37,7 +37,7 @@ export class SkeletonJsonV2 {
   attachmentLoader: AttachmentLoader;
 
   scale = 1;
-  private linkedMeshes = new Array<LinkedMesh>();
+  private linkedMeshes = [] as LinkedMesh[];
 
   constructor(attachmentLoader: AttachmentLoader) {
     this.attachmentLoader = attachmentLoader;
@@ -220,7 +220,7 @@ export class SkeletonJsonV2 {
   }
   readAnimation(map: any, name: string, skeletonData: SkeletonData) {
     const scale = this.scale;
-    const timelines = new Array<Timeline>();
+    const timelines: Timeline[] = [];
     if (map.slots) {
       for (const [slotName, slotMap] of Object.entries(
         map.slots as Record<string, any>,
@@ -431,7 +431,8 @@ export class SkeletonJsonV2 {
             break;
           }
           const time = getValue(nextMap, 'time', 0);
-          const angle = getValue(nextMap, 'angle', 0);
+          // not sure it's correct, but some time the map give the angle above 360 it's looks wrong
+          const angle = getValue(nextMap, 'angle', 0) % 360;
           const curve = prevMap.curve;
           if (curve) {
             // biome-ignore format: skip

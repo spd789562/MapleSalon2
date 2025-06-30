@@ -14,29 +14,30 @@ import { makeBlobsZipBlob } from '@/utils/exportImage/exportBlobToZip';
 import { extractCanvas, getBlobFromCanvas } from '@/utils/extract';
 
 /** return name-action or action */
-export function getCharacterFilenameSuffix(character: Character) {
-  const nameSuffix = character.name && `${character.name}-`;
-  return `${nameSuffix}${character.instruction || character.action}`;
+export function getCharacterFilenamePrefix(character: Character) {
+  const namePrefix = character.name && `${character.name}-`;
+  return `${namePrefix}${character.instruction || character.action}`;
 }
 
 export async function getCharacterFrameBlobs(
   data: CanvasFramesData,
   character: Character,
-  options?: { includeMoveJson?: boolean },
+  options?: { includeMoveJson?: boolean; prefix?: string },
 ) {
   if (Array.isArray(data.frames[0])) {
     return [];
   }
   const frames = data.frames as UniversalFrame[];
   const files: [Blob, string][] = [];
-  const fileNameSuffix = getCharacterFilenameSuffix(character);
+  const fileNamePrefix =
+    options?.prefix ?? getCharacterFilenamePrefix(character);
   for await (const [index, frame] of frames.entries()) {
     const blob = await new Promise<Blob>((resolve) => {
       frame.canvas.toBlob((blob) => {
         blob && resolve(blob);
       });
     });
-    files.push([blob, `${fileNameSuffix}-${index}.png`]);
+    files.push([blob, `${fileNamePrefix}-${index}.png`]);
   }
   if (options?.includeMoveJson) {
     const moveJson = frames.map((frame) => ({
@@ -47,7 +48,7 @@ export async function getCharacterFrameBlobs(
     const blob = new Blob([JSON.stringify(moveJson)], {
       type: 'application/json',
     });
-    files.push([blob, `${fileNameSuffix}.json`]);
+    files.push([blob, `${fileNamePrefix}.json`]);
   }
   return files;
 }
@@ -100,10 +101,10 @@ export async function getCharacterPartsBlobs(
   }
   const actions = data.frames as UniversalFrame[][];
   const files: [Blob, string][] = [];
-  const fileNameSuffix = getCharacterFilenameSuffix(character);
+  const fileNamePrefix = getCharacterFilenamePrefix(character);
   const addBlobs: Promise<void>[] = [];
   for (const [frameIndex, frames] of actions.entries()) {
-    const name = `${fileNameSuffix}_${frameIndex}.zip`;
+    const name = `${fileNamePrefix}_${frameIndex}.zip`;
     addBlobs.push(
       createActionPartZipBlob(frames).then((blob) => {
         files.push([blob, name]);

@@ -37,6 +37,9 @@ export const dict: SettingDictionary = {
   freeResize: 'Free Resize Window',
   resolution: 'Resolution',
   scale: 'Scale',
+  scaleConfirm: 'Change Scale',
+  scaleConfirmDesc:
+    'This setting may cause the application display normally, are you sure you want to change the scale to {{resolution}}?',
   apply: 'Apply',
 
   themeTitle: 'Theme Setting',
@@ -87,6 +90,7 @@ export const dict: SettingDictionary = {
   tagVersion: 'Tag Version',
   tagVersionTip:
     'The position of the name tag, medal and title display is different in verious game versions, try to switching versions to get the appropriate display',
+  syncSkinChange: 'Sync Skin',
 
   otherTitle: 'Other Setting',
   saveFolder: 'Save Folder',

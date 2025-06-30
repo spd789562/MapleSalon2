@@ -774,6 +774,13 @@ export class Character extends Container {
         await item.load();
         if (this.isAnimating) {
           await item.prepareActionAnimatableResource(this.useAction);
+        } else {
+          // ByFrame kinda broken
+          // await item.prepareAnimatableResourceByFrame(
+          //   this.useAction,
+          //   this.frame,
+          // );
+          await item.prepareActionAnimatableResource(this.useAction);
         }
       } catch (_) {
         return item.info;

@@ -109,7 +109,7 @@ export function applyCharacterChanges() {
     ...$currentCharacterInfo.get(),
     ...$currentInfoChanges.get(),
   });
-  console.log($currentCharacterInfo.get());
+
   resetCharacterChanges();
 }
 export function resetCharacterChanges() {

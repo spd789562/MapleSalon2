@@ -128,7 +128,7 @@ const SelectionToggleButton = styled('button', {
     cursor: 'pointer',
     justifyContent: 'center',
     _dark: {
-      color: 'accent.fg',
+      color: 'colorPalette.fg',
     },
     _closed: {
       transform: 'rotate(0)',
@@ -137,7 +137,7 @@ const SelectionToggleButton = styled('button', {
       transform: 'rotate(180deg)',
     },
     _hover: {
-      color: 'accent.emphasized',
+      color: 'colorPalette.emphasized',
     },
   },
 });

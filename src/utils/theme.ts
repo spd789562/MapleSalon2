@@ -7,7 +7,7 @@ type Context = {
 
 const syncColorPalette = (
   color: GrayColor | AccentColor,
-  name: 'accent' | 'gray',
+  name: 'color-palette' | 'gray',
   doc: Document,
 ) => {
   const root = doc.querySelector<HTMLHtmlElement>(':root');
@@ -45,13 +45,13 @@ export const syncAccentColor = (color: AccentColor, context?: Context) => {
   const root = doc.querySelector<HTMLHtmlElement>(':root');
   if (!root) return;
 
-  syncColorPalette(color, 'accent', doc);
+  syncColorPalette(color, 'color-palette', doc);
 
   if (color === 'neutral') {
-    root.style.removeProperty('--colors-accent-fg');
-    root.style.removeProperty('--colors-accent-default');
-    root.style.removeProperty('--colors-accent-emphasized');
-    root.style.removeProperty('--colors-accent-text');
+    root.style.removeProperty('--colors-color-palette-fg');
+    root.style.removeProperty('--colors-color-palette-default');
+    root.style.removeProperty('--colors-color-palette-emphasized');
+    root.style.removeProperty('--colors-color-palette-text');
 
     return;
   }
@@ -59,35 +59,38 @@ export const syncAccentColor = (color: AccentColor, context?: Context) => {
   /* thouse text might bkacl */
   if (['amber', 'lime', 'mint', 'sky', 'yellow'].includes(color)) {
     root.style.setProperty(
-      '--colors-accent-fg',
+      '--colors-color-palette-fg',
       token.var('colors.gray.light.12'),
     );
     root.style.setProperty(
-      '--colors-accent-default',
-      token.var('colors.accent.9'),
+      '--colors-color-palette-default',
+      token.var('colors.colorPalette.9'),
     );
     root.style.setProperty(
-      '--colors-accent-emphasized',
-      token.var('colors.accent.10'),
+      '--colors-color-palette-emphasized',
+      token.var('colors.colorPalette.10'),
     );
     root.style.setProperty(
-      '--colors-accent-text',
-      token.var('colors.accent.a11'),
+      '--colors-color-palette-text',
+      token.var('colors.colorPalette.a11'),
     );
     return;
   }
 
-  root.style.setProperty('--colors-accent-fg', token.var('colors.white'));
   root.style.setProperty(
-    '--colors-accent-default',
-    token.var('colors.accent.9'),
+    '--colors-color-palette-fg',
+    token.var('colors.white'),
   );
   root.style.setProperty(
-    '--colors-accent-emphasized',
-    token.var('colors.accent.10'),
+    '--colors-color-palette-default',
+    token.var('colors.colorPalette.9'),
   );
   root.style.setProperty(
-    '--colors-accent-text',
-    token.var('colors.accent.a11'),
+    '--colors-color-palette-emphasized',
+    token.var('colors.colorPalette.10'),
+  );
+  root.style.setProperty(
+    '--colors-color-palette-text',
+    token.var('colors.colorPalette.a11'),
   );
 };

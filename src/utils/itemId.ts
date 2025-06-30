@@ -246,6 +246,8 @@ export function getCategoryBySubCategory(
 ): EquipCategory | null {
   switch (subCategory) {
     case 'Skin':
+    case 'Head':
+    case 'Body':
       return EquipCategory.Skin;
     case 'Face':
       return EquipCategory.Face;

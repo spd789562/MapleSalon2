@@ -11,6 +11,7 @@ import type { EquipSubCategory } from '@/const/equipments';
 
 const CategoryList = [
   'Head',
+  'Body',
   'Weapon',
   'Cap',
   'Cape',

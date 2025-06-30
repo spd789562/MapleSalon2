@@ -20,7 +20,7 @@ import { ActionExportTypeExtensions } from '@/const/toolTab';
 
 import { toaster } from '@/components/GlobalToast';
 import { batchExportCharacterFrames } from './batchExportCharacterFrames';
-import { getAnimatedCharacterBlob, getCharacterFilenameSuffix } from './helper';
+import { getAnimatedCharacterBlob, getCharacterFilenamePrefix } from './helper';
 import { makeBlobsZipBlob } from '@/utils/exportImage/exportBlobToZip';
 import { downloadBlob } from '@/utils/download';
 import { nextTick } from '@/utils/eventLoop';
@@ -90,10 +90,10 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
           backgroundColor,
         });
         const blob = await getAnimatedCharacterBlob(frameData, exportType);
-        const fileNameSuffix = getCharacterFilenameSuffix(
+        const fileNamePrefix = getCharacterFilenamePrefix(
           characterRef.character,
         );
-        downloadBlob(blob, `${fileNameSuffix}${exportExt}`);
+        downloadBlob(blob, `${fileNamePrefix}${exportExt}`);
       } else {
         const exportCharacterData = await batchExportCharacterFrames(
           props.characterRefs.map((ref) => ref.character),
@@ -107,7 +107,7 @@ export const ExportAnimateButton = (props: ExportAnimateButtonProps) => {
         await Promise.all(
           exportCharacterData.map(async ([character, data]) => {
             const blob = await getAnimatedCharacterBlob(data, exportType);
-            const fileNameSuffix = getCharacterFilenameSuffix(character);
+            const fileNameSuffix = getCharacterFilenamePrefix(character);
             files.push([blob, `${fileNameSuffix}${exportExt}`]);
           }),
         );

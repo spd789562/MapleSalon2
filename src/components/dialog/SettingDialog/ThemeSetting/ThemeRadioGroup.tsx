@@ -50,7 +50,7 @@ export const ThemeRadioGroup = () => {
           {(option) => (
             <RadioButtonGroup.Item
               value={option().value}
-              color="accent.fg"
+              color="colorPalette.fg"
               width="6"
               height="6"
               padding="unset"

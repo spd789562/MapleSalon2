@@ -13,7 +13,7 @@ export const topBarToggle = defineRecipe({
     outline: 'none',
     background: 'bg.default',
     color: 'fg.default',
-    colorPalette: 'accent',
+    colorPalette: 'colorPalette',
     transitionDuration: 'normal',
     transitionProperty: 'background, border-color, color, box-shadow',
     transitionTimingFunction: 'default',
@@ -32,11 +32,11 @@ export const topBarToggle = defineRecipe({
       display: 'none',
     },
     _hover: {
-      color: 'accent.emphasized',
+      color: 'colorPalette.emphasized',
     },
     _focusVisible: {
       outline: '2px solid',
-      outlineColor: 'accent.default',
+      outlineColor: 'colorPalette.default',
       outlineOffset: '2px',
     },
     _disabled: {

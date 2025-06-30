@@ -9,6 +9,7 @@ import {
 } from '@/store/character/action';
 import { createGetItemChangeById } from '@/store/character/selector';
 import { getCharacterSubCategory } from '@/store/character/utils';
+import { $equipmentDrawerSyncSkinChange } from '@/store/trigger';
 import { useDynamicPureStore } from '@/store';
 
 import ResetIcon from 'lucide-solid/icons/rotate-ccw';
@@ -35,20 +36,29 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
     (property: 'colorRange' | 'hue' | 'saturation' | 'brightness' | 'alpha') =>
     (value: number) => {
       const category = itemChange()?.category;
-      if (category === 'Head') {
+      if (!category) {
+        return;
+      }
+
+      if (
+        $equipmentDrawerSyncSkinChange.get() &&
+        (category === 'Head' || category === 'Body')
+      ) {
         updateItemHsvInfo('Head', property, value);
         updateItemHsvInfo('Body', property, value);
-      } else if (category) {
-        updateItemHsvInfo(getCharacterSubCategory(category), property, value);
+        return;
       }
+
+      updateItemHsvInfo(getCharacterSubCategory(category), property, value);
     };
 
   function handleResetAll() {
     const category = itemChange()?.category;
-    if (category === 'Head') {
-      resetItemHsvInfo('Head');
-      resetItemHsvInfo('Body');
-    } else if (category) {
+    // if (category === 'Head') {
+    //   resetItemHsvInfo('Head');
+    //   resetItemHsvInfo('Body');
+    // } else
+    if (category) {
       const subCategory = getCharacterSubCategory(category);
       resetItemHsvInfo(subCategory);
     }
@@ -60,10 +70,12 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
       saturation: getRandomNumber(-100, 100),
       brightness: getRandomNumber(-100, 100),
     };
-    if (category === 'Head') {
-      batchUpdateItemHsvInfo('Head', data);
-      batchUpdateItemHsvInfo('Body', data);
-    } else if (category) {
+    // if (category === 'Head') {
+    //   batchUpdateItemHsvInfo('Head', data);
+    //   batchUpdateItemHsvInfo('Body', data);
+    // } else
+
+    if (category) {
       const subCategory = getCharacterSubCategory(category);
       batchUpdateItemHsvInfo(subCategory, data);
     }

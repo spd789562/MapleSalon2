@@ -35,7 +35,9 @@ export const RenderSetting = () => {
           <PreferScaleModeToggleGroup />
         </HStack>
         <HStack gap="2">
-          <Text wordBreak="keep-all">{t('setting.tagVersion')}</Text>
+          <Text wordBreak="keep-all" whiteSpace="nowrap">
+            {t('setting.tagVersion')}
+          </Text>
           <SettingTooltip tooltip={t('setting.tagVersionTip')} />
           <TagVersionSelect />
         </HStack>

@@ -3,6 +3,7 @@ import { atom } from 'nanostores';
 export const $equpimentDrawerOpen = atom<boolean>(false);
 export const $equpimentDrawerPin = atom<boolean>(false);
 export const $equpimentDrawerEditType = atom<'mixDye' | 'hsvAdjust'>('mixDye');
+export const $equipmentDrawerSyncSkinChange = atom<boolean>(false);
 
 export const $currentEquipmentDrawerOpen = atom<boolean>(false);
 export const $currentEquipmentDrawerPin = atom<boolean>(false);
