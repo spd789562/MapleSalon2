@@ -2,7 +2,8 @@ import { defineConfig } from '@pandacss/dev';
 import { createPreset } from '@park-ui/panda-preset';
 
 /* custom recripe */
-import { tokens } from './src/recipes/tokens';
+import { presetConfig } from './src/recipes/colors';
+import { tokens, semanticTokens } from './src/recipes/tokens';
 import { keyframes } from './src/recipes/keyframes';
 import { recipes, slotRecipes } from './src/recipes/recipes';
 
@@ -13,27 +14,9 @@ export default defineConfig({
   presets: [
     '@pandacss/preset-base',
     createPreset({
-      accentColor: 'iris',
-      grayColor: 'neutral',
-      borderRadius: 'sm',
-      additionalColors: [
-        /* accent */
-        'tomato',
-        'crimson',
-        'orange',
-        'yellow',
-        'amber',
-        'grass',
-        'cyan',
-        'sky',
-        'iris',
-        'plum',
-        /* grays */
-        'mauve',
-        'olive',
-        'sand',
-        'slate',
-      ],
+      accentColor: presetConfig.accentColor,
+      grayColor: presetConfig.grayColor,
+      radius: 'sm',
     }),
   ],
 
@@ -65,6 +48,7 @@ export default defineConfig({
     },
     extend: {
       tokens,
+      semanticTokens,
       slotRecipes,
       recipes,
       keyframes,

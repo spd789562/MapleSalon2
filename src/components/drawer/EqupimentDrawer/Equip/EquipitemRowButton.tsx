@@ -67,7 +67,7 @@ const EquipItemId = styled(Text, {
     width: '7rem',
     cursor: 'pointer',
     '&:hover': {
-      color: 'accent.10',
+      color: 'colorPalette.10',
     },
   },
 });
@@ -77,7 +77,7 @@ const EquipItemName = styled(Text, {
     textAlign: 'left',
     cursor: 'pointer',
     '&:hover': {
-      color: 'accent.10',
+      color: 'colorPalette.10',
     },
     lineHeight: '1',
   },
