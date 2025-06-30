@@ -4,6 +4,8 @@ import { cssTooltip } from './cssTooltip.recipe';
 import { topBarToggle } from './topBarToggle.recipe';
 import { topBarPositioner } from './topBarPositioner.recipe';
 
+import { tour } from './slotRecipes/tour.recipe';
+
 export const recipes: Record<string, Partial<RecipeConfig>> = {
   button: {
     jsx: ['Button', /.*Button$/],
@@ -16,6 +18,7 @@ export const recipes: Record<string, Partial<RecipeConfig>> = {
   cssTooltip,
   topBarToggle,
   topBarPositioner,
+  tour,
 };
 
 export const slotRecipes: Record<string, Partial<SlotRecipeConfig>> = {
