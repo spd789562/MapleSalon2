@@ -43,6 +43,6 @@ export const LatestVersionLink = () => {
 
 const Link = styled(Text, {
   base: {
-    color: 'colorPalette.default',
+    color: 'accent.default',
   },
 });

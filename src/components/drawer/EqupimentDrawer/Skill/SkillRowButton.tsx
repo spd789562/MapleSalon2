@@ -59,7 +59,7 @@ const SkillId = styled(Text, {
     width: '7rem',
     cursor: 'pointer',
     '&:hover': {
-      color: 'colorPalette.10',
+      color: 'accent.10',
     },
   },
 });
@@ -69,7 +69,7 @@ const SkillName = styled(Text, {
     textAlign: 'left',
     cursor: 'pointer',
     '&:hover': {
-      color: 'colorPalette.10',
+      color: 'accent.10',
     },
     lineHeight: '1',
   },

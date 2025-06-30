@@ -81,10 +81,10 @@ const CharacterContainer = styled('div', {
       _before: {
         borderWidth: '2px',
         borderRadius: 'md',
-        borderColor: 'colorPalette.8',
+        borderColor: 'accent.8',
       },
       '& > .select-index': {
-        backgroundColor: 'colorPalette.8',
+        backgroundColor: 'accent.8',
       },
     },
     _disabled: {
@@ -106,7 +106,7 @@ const CharacterSelectIndex = styled('div', {
     width: '1rem',
     height: '1rem',
     borderRadius: 'sm',
-    color: 'colorPalette.fg',
+    color: 'accent.fg',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

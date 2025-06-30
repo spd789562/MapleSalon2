@@ -109,10 +109,10 @@ const SelectableContainer = styled('button', {
       outlineOffset: '2px',
     },
     _on: {
-      borderColor: 'colorPalette.default',
-      color: 'colorPalette.fg',
+      borderColor: 'accent.default',
+      color: 'accent.fg',
       _hover: {
-        borderColor: 'colorPalette.emphasized',
+        borderColor: 'accent.emphasized',
       },
       '&> .check-icon': {
         display: 'block',
@@ -126,7 +126,7 @@ const CheckIconContainer = styled('div', {
     position: 'absolute',
     right: '-1',
     top: '-1',
-    backgroundColor: 'colorPalette.default',
+    backgroundColor: 'accent.default',
     display: 'none',
     borderRadius: '50%',
     padding: '0.5',

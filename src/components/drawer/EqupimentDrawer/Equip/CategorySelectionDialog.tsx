@@ -41,7 +41,7 @@ const contentStyle = css({
   p: 4,
   minWidth: 'unset',
   borderWidth: '2px',
-  borderColor: 'colorPalette.4',
+  borderColor: 'accent.4',
 });
 
 interface CategorySelectionDialogProps {

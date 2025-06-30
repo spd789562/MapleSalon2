@@ -37,7 +37,7 @@ export const MixDyeColorSelection = (props: MixDyeColorSelectionProps) => {
             <RadioButtonGroup.Item
               value={option().color.toString()}
               disabled={option().disabled}
-              color="colorPalette.fg"
+              color="accent.fg"
               width="8"
               height="8"
               padding="unset"

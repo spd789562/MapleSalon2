@@ -1,9 +1,7 @@
-import type { Tokens, SemanticTokens } from '@pandacss/dev';
+import type { Tokens } from '@pandacss/dev';
 import { animations } from './animations';
-import { colorTokens, colorSemanticTokens } from './colors';
 
 export const tokens: Tokens = {
-  colors: colorTokens,
   animations,
   zIndex: {
     /* 
@@ -64,8 +62,4 @@ export const tokens: Tokens = {
         'conic-gradient(#f76e6e, #f7f76e, #6ef76e, #6ef7f7, #6e6ef7, #f76ef7, #f76e6e)',
     },
   },
-};
-
-export const semanticTokens: SemanticTokens = {
-  colors: colorSemanticTokens,
 };
