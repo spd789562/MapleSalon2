@@ -7,6 +7,7 @@ import { dict as dyeDict } from './dye';
 import { dict as tabDict } from './tab';
 import { dict as commonDict } from './common';
 import { dict as errorDict } from './error';
+import { dict as tourDict } from './tour';
 
 export const dict = {
   initial: initialDict,
@@ -18,4 +19,5 @@ export const dict = {
   tab: tabDict,
   common: commonDict,
   error: errorDict,
+  tour: tourDict,
 };

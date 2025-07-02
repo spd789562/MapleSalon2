@@ -12,7 +12,7 @@ export const dict = {
   skillAssets: '個別匯出角色及技能素材',
   zip: '匯出(.zip)',
   sheet: '匯出表格圖',
-  format: '匯出格式',
+  format: '匯出動圖格式',
   animatFormat: '動圖格式',
   forceExportEffect: '強制匯出特效',
   forceExportEffectTip:
