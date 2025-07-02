@@ -57,6 +57,7 @@ export const CurrentEquipDrawer = (props: EquipDrawerProps) => {
       <Portal>
         <Positioner height="unset" width="xs" maxWidth="full" top="4">
           <Content
+            id="current-equipment-drawer-content"
             maxHeight="[90vh]"
             borderTopRightRadius="md"
             borderBottomRightRadius="md"

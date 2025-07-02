@@ -28,8 +28,12 @@ export const CharacterSelectionDrawerOpenButton = () => {
   return (
     <Portal>
       <TopBarPositioner data-state={isOpen() ? 'open' : 'close'}>
-        <TopBarToggle onClick={handleToggle}>
+        <TopBarToggle
+          id="button-character-selection-drawer-toggle"
+          onClick={handleToggle}
+        >
           <IconButton
+            id="button-character-selection-drawer-setting"
             onClick={handleClickSetting}
             variant="ghost"
             size="sm"

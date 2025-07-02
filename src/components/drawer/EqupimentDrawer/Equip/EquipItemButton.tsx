@@ -64,7 +64,7 @@ const EquipItemButtonContainer = styled('button', {
     '& .favorite-button': {
       visibility: 'hidden',
     },
-    '&:hover': {
+    '&:hover, &.hover': {
       '& .favorite-button': {
         visibility: 'visible',
       },

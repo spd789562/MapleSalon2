@@ -68,7 +68,7 @@ export const ToolTabsRadioGroup = () => {
         >
           <Index each={options}>
             {(option) => (
-              <RadioButtonGroup.Item value={option().value} minWidth="0">
+              <RadioButtonGroup.Item id={`tab-button-${option().value}`} value={option().value} minWidth="0">
                 <RadioButtonGroup.ItemControl />
                 <RadioButtonGroup.ItemHiddenInput />
                 <RadioButtonGroup.ItemText>

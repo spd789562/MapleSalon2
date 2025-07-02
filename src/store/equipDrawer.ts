@@ -46,7 +46,7 @@ export const $equipmentDrawerOnlyShowCash = atom(false);
 export const $equipmentDrawerGender = atom<Gender>(Gender.All);
 export const $equipmentDrawerHairColor = atom<HairColor>(HairColor.Black);
 export const $equipmentDrawerFaceColor = atom<FaceColor>(FaceColor.Black);
-export const $equipmentDrawerEquipCategorySelectionOpen = atom(true);
+export const $equipmentDrawerEquipCategorySelectionOpen = atom(false);
 
 export const $equipmentDrawerSearch = map<
   Partial<Record<EquipCategorySelections, string>>

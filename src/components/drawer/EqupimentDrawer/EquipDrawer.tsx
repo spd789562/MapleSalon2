@@ -49,7 +49,7 @@ export const EquipDrawer = (props: EquipDrawerProps) => {
     >
       <Portal>
         <Positioner>
-          <Content>
+          <Content id="equipment-drawer-content">
             <Header>
               {props.header}
               <HStack position="absolute" top="1" right="1">

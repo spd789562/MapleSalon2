@@ -9,7 +9,7 @@ export const CurrentEquipOpenButton = () => {
   }
 
   return (
-    <SideOpenButton direction="left" onClick={handleOpen}>
+    <SideOpenButton id="button-current-equipment-drawer-toggle" direction="left" onClick={handleOpen}>
       <ShirtIcon />
     </SideOpenButton>
   );

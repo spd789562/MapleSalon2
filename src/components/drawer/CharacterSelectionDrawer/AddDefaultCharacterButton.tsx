@@ -17,6 +17,7 @@ export const AddDefaultCharacterButton = () => {
 
   return (
     <Button
+      id="button-add-default-character"
       onClick={handleClick}
       title={t('setting.newCharacter')}
       variant="outline"
