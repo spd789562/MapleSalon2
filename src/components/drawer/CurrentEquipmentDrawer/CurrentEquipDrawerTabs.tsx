@@ -1,6 +1,5 @@
-import { createMemo } from 'solid-js';
 import { useStore } from '@nanostores/solid';
-import { useTranslate, useLocale } from '@/context/i18n';
+import { useLocalizedOptions } from '@/hook/useLocalizedOptions';
 
 import {
   $currentEquipDrawerTab,
@@ -13,26 +12,21 @@ import {
 } from '@/components/ui/toggleGroup';
 
 export const CurrentEquipDrawerTabs = () => {
-  const t = useTranslate();
-  const locale = useLocale();
   const equipTab = useStore($currentEquipDrawerTab);
 
   function handleChange(value: ValueChangeDetails) {
     $currentEquipDrawerTab.set(value.value as CurrentEquipDrawerTab);
   }
-  const options = createMemo(() => {
-    const _ = locale();
-    return [
-      {
-        value: CurrentEquipDrawerTab.Equip,
-        label: t('tab.currentEquipment'),
-      },
-      {
-        value: CurrentEquipDrawerTab.Setting,
-        label: t('tab.characterSetting'),
-      },
-    ];
-  });
+  const options = useLocalizedOptions([
+    {
+      value: CurrentEquipDrawerTab.Equip,
+      label: 'tab.currentEquipment',
+    },
+    {
+      value: CurrentEquipDrawerTab.Setting,
+      label: 'tab.characterSetting',
+    },
+  ]);
 
   return (
     <SimpleToggleGroup

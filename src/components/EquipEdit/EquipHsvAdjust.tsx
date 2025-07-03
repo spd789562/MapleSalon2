@@ -1,6 +1,7 @@
 import { Show, createMemo } from 'solid-js';
 import { css } from 'styled-system/css';
 import { useTranslate } from '@/context/i18n';
+import { useLocalizedOptions } from '@/hook/useLocalizedOptions';
 
 import {
   updateItemHsvInfo,
@@ -86,36 +87,36 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
   const handleBrightnessChange = createItemChange('brightness');
   const handleAlphaChange = createItemChange('alpha');
 
-  const ColorOtions = [
+  const colorOptions = useLocalizedOptions([
     {
-      label: t('dye.colorRangeAll'),
+      label: 'dye.colorRangeAll',
       value: ColorRange.All,
     },
     {
-      label: t('dye.colorRangeRed'),
+      label: 'dye.colorRangeRed',
       value: ColorRange.Red,
     },
     {
-      label: t('dye.colorRangeYellow'),
+      label: 'dye.colorRangeYellow',
       value: ColorRange.Yellow,
     },
     {
-      label: t('dye.colorRangeGreen'),
+      label: 'dye.colorRangeGreen',
       value: ColorRange.Green,
     },
     {
-      label: t('dye.colorRangeCyan'),
+      label: 'dye.colorRangeCyan',
       value: ColorRange.Cyan,
     },
     {
-      label: t('dye.colorRangeBlue'),
+      label: 'dye.colorRangeBlue',
       value: ColorRange.Blue,
     },
     {
-      label: t('dye.colorRangePurple'),
+      label: 'dye.colorRangePurple',
       value: ColorRange.Purple,
     },
-  ];
+  ]);
 
   const alphaBackgroundProperty =
     'linear-gradient(90deg, transparent, #fff), conic-gradient(white 90deg, #999 90deg, #999 180deg, white 180deg, white 270deg, #999 270deg, #999 360deg, white 360deg) 0% 0% / 8px 8px repeat';
@@ -131,7 +132,7 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
           <Select
             width="[40%]"
             placeholder={t('dye.colorRange')}
-            items={ColorOtions}
+            items={colorOptions()}
             positioning={{ sameWidth: true }}
             size="sm"
             value={[(itemChange()?.item.colorRange || 0) as unknown as string]}

@@ -1,6 +1,6 @@
-import { createMemo } from 'solid-js';
 import { useStore } from '@nanostores/solid';
-import { useTranslate, useLocale } from '@/context/i18n';
+import { useTranslate } from '@/context/i18n';
+import { useLocalizedOptions } from '@/hook/useLocalizedOptions';
 
 import { $currentExpression } from '@/store/character/selector';
 import { setCharacterExpression } from '@/store/character/action';
@@ -10,7 +10,6 @@ import { SimpleSelect, type ValueChangeDetails } from '@/components/ui/select';
 import { CharacterExpressions } from '@/const/emotions';
 
 export const ExpressionSelect = () => {
-  const locale = useLocale();
   const t = useTranslate();
   const action = useStore($currentExpression);
   function handleActionChange(details: ValueChangeDetails) {
@@ -18,107 +17,41 @@ export const ExpressionSelect = () => {
     firstItem && setCharacterExpression(firstItem as CharacterExpressions);
   }
 
-  const options = createMemo(() => {
-    const _ = locale();
-    return [
-      {
-        label: t('character.expressionDefault'),
-        value: CharacterExpressions.Default,
-      },
-      {
-        label: 'F1(hit)',
-        value: CharacterExpressions.Hit,
-      },
-      {
-        label: 'F2(smile)',
-        value: CharacterExpressions.Smile,
-      },
-      {
-        label: 'F3(troubled)',
-        value: CharacterExpressions.Troubled,
-      },
-      {
-        label: 'F4(cry)',
-        value: CharacterExpressions.Cry,
-      },
-      {
-        label: 'F5(angry)',
-        value: CharacterExpressions.Angry,
-      },
-      {
-        label: 'F6(bewildered)',
-        value: CharacterExpressions.Bewildered,
-      },
-      {
-        label: 'F7(stunned)',
-        value: CharacterExpressions.Stunned,
-      },
-      {
-        label: t('character.expressionHum'),
-        value: CharacterExpressions.Hum,
-      },
-      {
-        label: t('character.expressionDespair'),
-        value: CharacterExpressions.Despair,
-      },
-      {
-        label: t('character.expressionOops'),
-        value: CharacterExpressions.Oops,
-      },
-      {
-        label: t('character.expressionVomit'),
-        value: CharacterExpressions.Vomit,
-      },
-      {
-        label: t('character.expressionBowing'),
-        value: CharacterExpressions.Bowing,
-      },
-      {
-        label: t('character.expressionDam'),
-        value: CharacterExpressions.Dam,
-      },
-      {
-        label: t('character.expressionPain'),
-        value: CharacterExpressions.Pain,
-      },
-      {
-        label: t('character.expressionHot'),
-        value: CharacterExpressions.Hot,
-      },
-      {
-        label: t('character.expressionCheers'),
-        value: CharacterExpressions.Cheers,
-      },
-      {
-        label: t('character.expressionWink'),
-        value: CharacterExpressions.Wink,
-      },
-      {
-        label: t('character.expressionBlaze'),
-        value: CharacterExpressions.Blaze,
-      },
-      {
-        label: t('character.expressionChu'),
-        value: CharacterExpressions.Chu,
-      },
-      {
-        label: t('character.expressionShine'),
-        value: CharacterExpressions.Shine,
-      },
-      {
-        label: t('character.expressionGlitter'),
-        value: CharacterExpressions.Glitter,
-      },
-      {
-        label: t('character.expressionLove'),
-        value: CharacterExpressions.Love,
-      },
-      {
-        label: t('character.expressionQblue'),
-        value: CharacterExpressions.QBlue,
-      },
-    ];
-  });
+  const options = useLocalizedOptions([
+    {
+      label: 'character.expressionDefault',
+      value: CharacterExpressions.Default,
+    },
+    { label: 'F1(hit)', value: CharacterExpressions.Hit },
+    { label: 'F2(smile)', value: CharacterExpressions.Smile },
+    { label: 'F3(troubled)', value: CharacterExpressions.Troubled },
+    { label: 'F4(cry)', value: CharacterExpressions.Cry },
+    { label: 'F5(angry)', value: CharacterExpressions.Angry },
+    { label: 'F6(bewildered)', value: CharacterExpressions.Bewildered },
+    { label: 'F7(stunned)', value: CharacterExpressions.Stunned },
+    { label: 'character.expressionHum', value: CharacterExpressions.Hum },
+    {
+      label: 'character.expressionDespair',
+      value: CharacterExpressions.Despair,
+    },
+    { label: 'character.expressionOops', value: CharacterExpressions.Oops },
+    { label: 'character.expressionVomit', value: CharacterExpressions.Vomit },
+    { label: 'character.expressionBowing', value: CharacterExpressions.Bowing },
+    { label: 'character.expressionDam', value: CharacterExpressions.Dam },
+    { label: 'character.expressionPain', value: CharacterExpressions.Pain },
+    { label: 'character.expressionHot', value: CharacterExpressions.Hot },
+    { label: 'character.expressionCheers', value: CharacterExpressions.Cheers },
+    { label: 'character.expressionWink', value: CharacterExpressions.Wink },
+    { label: 'character.expressionBlaze', value: CharacterExpressions.Blaze },
+    { label: 'character.expressionChu', value: CharacterExpressions.Chu },
+    { label: 'character.expressionShine', value: CharacterExpressions.Shine },
+    {
+      label: 'character.expressionGlitter',
+      value: CharacterExpressions.Glitter,
+    },
+    { label: 'character.expressionLove', value: CharacterExpressions.Love },
+    { label: 'character.expressionQblue', value: CharacterExpressions.QBlue },
+  ]);
 
   return (
     <SimpleSelect

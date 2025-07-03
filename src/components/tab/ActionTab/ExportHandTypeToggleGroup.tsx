@@ -1,6 +1,5 @@
-import { createMemo } from 'solid-js';
 import { useStore } from '@nanostores/solid';
-import { useTranslate, useLocale } from '@/context/i18n';
+import { useLocalizedOptions } from '@/hook/useLocalizedOptions';
 
 import { $actionExportHandType } from '@/store/toolTab';
 
@@ -12,27 +11,22 @@ import {
 import { CharacterHandType } from '@/const/hand';
 
 export const ExportHandTypeToggleGroup = () => {
-  const locale = useLocale();
-  const t = useTranslate();
   const handType = useStore($actionExportHandType);
 
   function handleExportTypeChange(details: ValueChangeDetails) {
     const firstItem = details.value;
     firstItem && $actionExportHandType.set(firstItem as CharacterHandType);
   }
-  const options = createMemo(() => {
-    const _ = locale();
-    return [
-      {
-        label: t('character.handTypeNormal'),
-        value: CharacterHandType.SingleHand,
-      },
-      {
-        label: t('character.handTypeGun'),
-        value: CharacterHandType.Gun,
-      },
-    ];
-  });
+  const options = useLocalizedOptions([
+    {
+      label: 'character.handTypeNormal',
+      value: CharacterHandType.SingleHand,
+    },
+    {
+      label: 'character.handTypeGun',
+      value: CharacterHandType.Gun,
+    },
+  ]);
 
   return (
     <SimpleToggleGroup

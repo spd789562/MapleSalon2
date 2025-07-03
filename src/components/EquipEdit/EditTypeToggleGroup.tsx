@@ -1,6 +1,5 @@
-import { createMemo } from 'solid-js';
 import { useStore } from '@nanostores/solid';
-import { useTranslate, useLocale } from '@/context/i18n';
+import { useLocalizedOptions } from '@/hook/useLocalizedOptions';
 
 import { $equpimentDrawerEditType } from '@/store/trigger';
 
@@ -10,8 +9,6 @@ import {
 } from '@/components/ui/toggleGroup';
 
 export const EditTypeToggleGroup = () => {
-  const t = useTranslate();
-  const locale = useLocale();
   const editType = useStore($equpimentDrawerEditType);
 
   function handleChange(details: ValueChangeDetails) {
@@ -21,19 +18,16 @@ export const EditTypeToggleGroup = () => {
     }
   }
 
-  const options = createMemo(() => {
-    const _ = locale();
-    return [
-      {
-        label: t('dye.mixDye'),
-        value: 'mixDye',
-      },
-      {
-        label: t('dye.prism'),
-        value: 'hsvAdjust',
-      },
-    ];
-  });
+  const options = useLocalizedOptions([
+    {
+      label: 'dye.mixDye',
+      value: 'mixDye',
+    },
+    {
+      label: 'dye.prism',
+      value: 'hsvAdjust',
+    },
+  ]);
 
   return (
     <SimpleToggleGroup

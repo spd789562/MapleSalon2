@@ -85,7 +85,6 @@ function useGlobalTour(options: {
   }
 
   onMount(() => {
-    console.log('onMount', options.defaultShow, options.watchedAtom.get());
     if (options.defaultShow && !options.watchedAtom.get()) {
       options.openTour();
     }

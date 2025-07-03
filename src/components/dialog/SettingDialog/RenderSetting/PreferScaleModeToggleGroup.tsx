@@ -10,6 +10,8 @@ import {
   type ValueChangeDetails,
 } from '@/components/ui/toggleGroup';
 
+import { useLocalizedOptions } from '@/hook/useLocalizedOptions';
+
 export const PreferScaleModeToggleGroup = () => {
   const t = useTranslate();
   const renderer = useStore($preferScaleMode);
@@ -36,21 +38,21 @@ export const PreferScaleModeToggleGroup = () => {
     }
   }
 
-  const options = [
+  const options = useLocalizedOptions([
     {
-      label: t('setting.scaleModeLinear'),
+      label: 'setting.scaleModeLinear',
       value: 'linear',
     },
     {
-      label: t('setting.scaleModeNearest'),
+      label: 'setting.scaleModeNearest',
       value: 'nearest',
     },
-  ];
+  ]);
 
   return (
     <SimpleToggleGroup
       size="sm"
-      options={options}
+      options={options()}
       value={renderer()}
       onValueChange={handleChange}
     />

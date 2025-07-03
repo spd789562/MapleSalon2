@@ -1,6 +1,6 @@
-import { createMemo } from 'solid-js';
 import { useStore } from '@nanostores/solid';
-import { useTranslate, useLocale } from '@/context/i18n';
+import { useTranslate } from '@/context/i18n';
+import { useLocalizedOptions } from '@/hook/useLocalizedOptions';
 
 import { $equipmentDrawerGender } from '@/store/equipDrawer';
 
@@ -12,31 +12,27 @@ import { Gender } from '@/utils/itemId';
 
 export const GenderSelect = () => {
   const t = useTranslate();
-  const locale = useLocale();
 
   const gender = useStore($equipmentDrawerGender);
 
-  const options = createMemo(() => {
-    const _ = locale();
-    return [
-      {
-        label: t('character.genderAll'),
-        value: Gender.All.toString(),
-      },
-      {
-        label: t('character.genderMale'),
-        value: Gender.Male.toString(),
-      },
-      {
-        label: t('character.genderFemale'),
-        value: Gender.Female.toString(),
-      },
-      {
-        label: t('character.genderShare'),
-        value: Gender.Share.toString(),
-      },
-    ];
-  });
+  const options = useLocalizedOptions([
+    {
+      label: 'character.genderAll',
+      value: Gender.All.toString(),
+    },
+    {
+      label: 'character.genderMale',
+      value: Gender.Male.toString(),
+    },
+    {
+      label: 'character.genderFemale',
+      value: Gender.Female.toString(),
+    },
+    {
+      label: 'character.genderShare',
+      value: Gender.Share.toString(),
+    },
+  ]);
 
   function handleChange(details: ValueChangeDetails) {
     if (details.value?.[0]) {
