@@ -1,6 +1,6 @@
 import { useStore } from '@nanostores/solid';
 import { exists } from '@tauri-apps/plugin-fs';
-import { open } from '@tauri-apps/plugin-shell';
+import { openPath } from '@tauri-apps/plugin-opener';
 
 import { useTranslate } from '@/context/i18n';
 
@@ -39,7 +39,7 @@ export const OpenPathButton = (props: OpenPathButtonProps) => {
     /* D:/what/ever/Data/Base/Base.wz to D:/what/ever/Data/Base */
     const folder = path.replace(/\\/g, '/').replace(FilePathReg, '');
     try {
-      await open(folder);
+      await openPath(folder);
     } catch (_) {
       toaster.error({
         title: t('initial.openPathError'),

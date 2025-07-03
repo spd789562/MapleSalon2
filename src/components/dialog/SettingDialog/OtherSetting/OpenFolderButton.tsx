@@ -1,6 +1,6 @@
 import type { JSX } from 'solid-js';
 import { appCacheDir, appDataDir } from '@tauri-apps/api/path';
-import { open } from '@tauri-apps/plugin-shell';
+import { openPath } from '@tauri-apps/plugin-opener';
 import { useTranslate } from '@/context/i18n';
 
 import FolderIcon from 'lucide-solid/icons/folder-symlink';
@@ -24,7 +24,7 @@ export const OpenFolderButton = (props: OpenFolderButtonProps) => {
       ? appDataDir()
       : appCacheDir());
     try {
-      await open(folder);
+      await openPath(folder);
     } catch (_) {
       toaster.error({
         title: t('initial.openPathError'),
