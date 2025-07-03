@@ -3,6 +3,7 @@ import { defineSlotRecipe } from '@pandacss/dev';
 
 export const tour = defineSlotRecipe({
   className: 'tour',
+  jsx: ['Tour', /.*Tour$/],
   slots: [
     'actionTrigger',
     'arrow',
@@ -27,8 +28,8 @@ export const tour = defineSlotRecipe({
       borderLeftWidth: '1px',
     },
     backdrop: {
-      backdropFilter: 'blur(4px)',
-      zIndex: 'overlay',
+      backdropFilter: 'blur(1px)',
+      zIndex: 'tourModal',
       background: {
         _light: 'white.a10',
         _dark: 'black.a10',
@@ -52,8 +53,10 @@ export const tour = defineSlotRecipe({
       boxShadow: 'lg',
       display: 'flex',
       flexDirection: 'column',
-      maxWidth: 'sm',
+      minWidth: 'sm',
+      maxWidth: 'md',
       p: '5',
+      whiteSpace: 'pre-line',
     },
     control: {
       display: 'flex',
@@ -68,7 +71,7 @@ export const tour = defineSlotRecipe({
       alignItems: 'center',
       display: 'flex',
       justifyContent: 'center',
-      zIndex: 'modal!',
+      zIndex: 'tourModal!',
       "&[data-type='dialog']": {
         inset: 0,
         position: 'fixed',
@@ -85,11 +88,11 @@ export const tour = defineSlotRecipe({
       borderWidth: '3px',
       borderStyle: 'solid',
       borderColor: 'colorPalette.default',
-      zIndex: 'modal',
+      zIndex: 'tourModal',
     },
     title: {
       fontWeight: 'medium',
       textStyle: 'lg',
     },
   },
-})
+});

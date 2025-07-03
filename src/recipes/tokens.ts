@@ -43,6 +43,9 @@ export const tokens: Tokens = {
     itemContextMenu: {
       value: 2600,
     },
+    tourModal: {
+      value: 3000,
+    }
   },
   assets: {
     henesysBackground: {

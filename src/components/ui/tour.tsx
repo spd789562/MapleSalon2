@@ -1,9 +1,15 @@
 import type { ComponentProps } from 'solid-js';
+import { Portal, For } from 'solid-js/web';
 import type { Assign } from '@ark-ui/solid';
-import { Tour } from '@ark-ui/solid/tour';
-import { type TourVariantProps, tour } from 'styled-system/recipes';
+import { Tour, type TourStepDetails } from '@ark-ui/solid/tour';
+import { type TourVariantProps, tour } from 'styled-system/recipes/tour';
 import type { HTMLStyledProps } from 'styled-system/types';
 import { createStyleContext } from '@/utils/create-style-context';
+
+import CloseIcon from 'lucide-solid/icons/x';
+import { Stack } from 'styled-system/jsx/stack';
+import { IconButton } from './icon-button';
+import { Button } from './button';
 
 const { withRootProvider, withContext } = createStyleContext(tour);
 
@@ -60,12 +66,69 @@ export const Control = withContext<
   Assign<HTMLStyledProps<'div'>, Tour.ControlBaseProps>
 >(Tour.Control, 'control');
 
-export const Context = Tour.Context;
-export const Actions = Tour.Actions;
+export type TourStepAction = Required<TourStepDetails>['actions'][number];
 
 export {
   type TourContextProps as ContextProps,
-  TourContext,
-  TourActions,
+  TourContext as Context,
+  TourActions as Actions,
   type TourStepDetails,
+  useTour,
 } from '@ark-ui/solid/tour';
+
+export interface SimpleTourProps extends RootProps {}
+export function SimpleTour(props: SimpleTourProps) {
+  return (
+    <Root {...props}>
+      <Portal>
+        <Backdrop />
+        <Spotlight />
+        <Positioner>
+          <Content>
+            <Arrow>
+              <ArrowTip />
+            </Arrow>
+            <Stack gap="6">
+              <Stack gap="1">
+                <ProgressText />
+                <Title />
+                <Description />
+              </Stack>
+              <Control>
+                <Tour.Actions>
+                  {(actions) => (
+                    <For each={actions()}>
+                      {(action) => (
+                        <ActionTrigger
+                          action={action}
+                          asChild={(props) => (
+                            <Button
+                              size="sm"
+                              variant={
+                                action.action === 'prev' ? 'outline' : 'solid'
+                              }
+                              {...props()}
+                            >
+                              {action.label}
+                            </Button>
+                          )}
+                        />
+                      )}
+                    </For>
+                  )}
+                </Tour.Actions>
+              </Control>
+            </Stack>
+            <CloseTrigger
+              asChild={(props) => (
+                <IconButton size="sm" variant="link" {...props()}>
+                  <CloseIcon />
+                </IconButton>
+              )}
+            />
+          </Content>
+        </Positioner>
+      </Portal>
+    </Root>
+  );
+}
