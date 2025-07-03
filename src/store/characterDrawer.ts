@@ -100,10 +100,15 @@ export async function initializeSavedCharacter() {
         SAVE_CHARACTERS_KEY,
       );
     const validCharacters: SaveCharacterData[] = [];
+    const currentIds = new Set<string>();
     if (datas) {
       for (const [key, value] of Object.entries(datas)) {
         const index = Number.parseInt(key);
         if (!Number.isNaN(index) && verifySaveCharacterData(value)) {
+          if (currentIds.has(value.id)) {
+            value.id = createCharacterUniqueId();
+          }
+          currentIds.add(value.id);
           if (value.extraParts) {
             value.extraParts = value.extraParts.filter((p) =>
               isValidCharacterExtraPart(p),
