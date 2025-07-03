@@ -1,6 +1,6 @@
 [package]
 name = "maplesalon2"
-version = "0.8.12"
+version = "0.8.13"
 description = "MapleSalon2 - A tool for preview hair, face and item dye using MapleStory wz files."
 authors = ["Leo"]
 edition = "2021"
