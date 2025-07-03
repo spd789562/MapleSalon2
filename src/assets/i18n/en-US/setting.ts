@@ -93,6 +93,7 @@ export const dict: SettingDictionary = {
   syncSkinChange: 'Sync Skin',
 
   otherTitle: 'Other Setting',
+  watchTourAgain: 'Watch Tour',
   saveFolder: 'Save Folder',
   openSaveFolder: 'Open save folder',
   cacheFolder: 'Cache Folder',
