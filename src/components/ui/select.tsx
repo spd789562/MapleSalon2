@@ -1,8 +1,9 @@
-import { type Assign, Select } from '@ark-ui/solid';
+import type { Assign } from '@ark-ui/solid';
+import { Select, createListCollection } from '@ark-ui/solid/select';
 import { type SelectVariantProps, select } from 'styled-system/recipes/select';
 import type { JsxStyleProps } from 'styled-system/types';
 import { createStyleContext } from '@/utils/create-style-context';
-import { Index, Show, splitProps } from 'solid-js';
+import { Index, Show, splitProps, createMemo } from 'solid-js';
 import ChevronsUpDownIcon from 'lucide-solid/icons/chevrons-up-down';
 import CheckIcon from 'lucide-solid/icons/check';
 
@@ -78,7 +79,7 @@ export {
   type SelectValueChangeDetails as ValueChangeDetails,
 } from '@ark-ui/solid';
 
-export interface SimpleSelectProps<V> extends RootProps {
+export interface SimpleSelectProps<V> extends Omit<RootProps, 'collection'> {
   items: {
     label: string;
     value: V;
@@ -97,16 +98,16 @@ export const SimpleSelect = <V extends string | number>(
     'maxHeight',
   ]);
 
-  const itemToValue = (item: unknown) =>
-    (
-      item as {
-        label: string;
-        value: V;
-      }
-    ).value as string;
+  const collection = createMemo(() =>
+    createListCollection({
+      items: local.items,
+      itemToValue: (item) => item.value.toString(),
+      itemToString: (item) => item.label,
+    }),
+  );
 
   return (
-    <Root {...sliderRootProps} itemToValue={itemToValue} items={local.items}>
+    <Root {...sliderRootProps} collection={collection()}>
       <Control>
         <Trigger>
           <ValueText placeholder={local.placeholder} />

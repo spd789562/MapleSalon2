@@ -1,5 +1,7 @@
 import { type JSX, Index, splitProps } from 'solid-js';
-import { type Assign, ToggleGroup } from '@ark-ui/solid';
+import type { Assign } from '@ark-ui/solid';
+import { ToggleGroup } from '@ark-ui/solid/toggle-group';
+
 import {
   type ToggleGroupVariantProps,
   toggleGroup,

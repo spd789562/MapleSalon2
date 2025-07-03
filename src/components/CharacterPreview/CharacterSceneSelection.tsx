@@ -29,7 +29,7 @@ export const CharacterSceneSelection = () => {
 
   return (
     <Positioner>
-      <SelectionContainer data-state={isOpen() ? 'closed' : 'open'}>
+      <SelectionContainer id="character-preview-scene-selection" data-state={isOpen() ? 'closed' : 'open'}>
         <SelectionToggleButton
           title={t('scene.toggleSceneSelection')}
           data-state={isOpen() ? 'closed' : 'open'}

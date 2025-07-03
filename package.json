@@ -14,7 +14,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@ark-ui/solid": "3.5.0",
+    "@ark-ui/solid": "^5.15.4",
     "@esotericsoftware/spine-core": "4.2.66",
     "@esotericsoftware/spine-pixi-v8": "4.2.66",
     "@nanostores/solid": "0.4.2",

@@ -1,4 +1,5 @@
-import { type Assign, Popover } from '@ark-ui/solid';
+import type { Assign } from '@ark-ui/solid';
+import { Popover } from '@ark-ui/solid/popover';
 import type { ComponentProps } from 'solid-js';
 import {
   type PopoverVariantProps,

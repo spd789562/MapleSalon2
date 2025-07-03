@@ -9,7 +9,7 @@ export const EquipOpenButton = () => {
   }
 
   return (
-    <SideOpenButton onClick={handleOpen}>
+    <SideOpenButton id="button-equipment-drawer-toggle" onClick={handleOpen}>
       <HangerIcon
         style={{
           width: '1.2rem',

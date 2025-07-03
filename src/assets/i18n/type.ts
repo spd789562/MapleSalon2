@@ -11,6 +11,7 @@ export type DyeDictionary = RawDictionary['dye'];
 export type TabDictionary = RawDictionary['tab'];
 export type CommonDictionary = RawDictionary['common'];
 export type ErrorDictionary = RawDictionary['error'];
+export type TourDictionary = RawDictionary['tour'];
 
 export type Dictionary = Flatten<RawDictionary>;
 export type I18nKeys = keyof Dictionary;

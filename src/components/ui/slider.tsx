@@ -1,8 +1,8 @@
+import type { Assign } from '@ark-ui/solid';
 import {
   Slider as ArkSlider,
-  type Assign,
   type SliderRootProps,
-} from '@ark-ui/solid';
+} from '@ark-ui/solid/slider';
 import { Index, type JSX, Show, children, splitProps } from 'solid-js';
 import { css, cx } from 'styled-system/css';
 import { splitCssProps } from 'styled-system/jsx/is-valid-prop';

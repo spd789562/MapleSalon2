@@ -1,5 +1,5 @@
 import { useStore } from '@nanostores/solid';
-import { useTranslate } from '@/context/i18n';
+import { useLocalizedOptions } from '@/hook/useLocalizedOptions';
 
 import {
   $currentEquipDrawerTab,
@@ -12,26 +12,25 @@ import {
 } from '@/components/ui/toggleGroup';
 
 export const CurrentEquipDrawerTabs = () => {
-  const t = useTranslate();
   const equipTab = useStore($currentEquipDrawerTab);
 
   function handleChange(value: ValueChangeDetails) {
     $currentEquipDrawerTab.set(value.value as CurrentEquipDrawerTab);
   }
-  const options = [
+  const options = useLocalizedOptions([
     {
       value: CurrentEquipDrawerTab.Equip,
-      label: t('tab.currentEquipment'),
+      label: 'tab.currentEquipment',
     },
     {
       value: CurrentEquipDrawerTab.Setting,
-      label: t('tab.characterSetting'),
+      label: 'tab.characterSetting',
     },
-  ];
+  ]);
 
   return (
     <SimpleToggleGroup
-      options={options}
+      options={options()}
       value={equipTab()}
       onValueChange={handleChange}
       size="xs"

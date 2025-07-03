@@ -1,8 +1,8 @@
+import type { Assign } from '@ark-ui/solid';
 import {
   Switch as ArkSwitch,
-  type Assign,
   type SwitchRootProps,
-} from '@ark-ui/solid';
+} from '@ark-ui/solid/switch';
 import { Show, children, splitProps } from 'solid-js';
 import { css, cx } from 'styled-system/css';
 import { splitCssProps } from 'styled-system/jsx/is-valid-prop';
@@ -16,7 +16,7 @@ export interface SwitchProps
   extends Assign<JsxStyleProps, SwitchRootProps>,
     SwitchRecipeVariantProps {}
 
-export type { SwitchCheckedChangeDetails as ChangeDetails } from '@ark-ui/solid';
+export type { SwitchCheckedChangeDetails as ChangeDetails } from '@ark-ui/solid/switch';
 
 export const Switch = (props: SwitchProps) => {
   const [variantProps, switchProps] = switchRecipe.splitVariantProps(props);

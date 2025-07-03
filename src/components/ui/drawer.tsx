@@ -1,9 +1,6 @@
-import {
-  type Assign,
-  Dialog as Drawer,
-  type HTMLArkProps,
-  ark,
-} from '@ark-ui/solid';
+import type { Assign, HTMLArkProps } from '@ark-ui/solid';
+import { ark } from '@ark-ui/solid/factory';
+import { Dialog as Drawer } from '@ark-ui/solid/dialog';
 import { type DrawerVariantProps, drawer } from 'styled-system/recipes/drawer';
 import type { JsxStyleProps } from 'styled-system/types';
 import { createStyleContext } from '@/utils/create-style-context';
@@ -62,4 +59,4 @@ export const Trigger = withContext<Assign<JsxStyleProps, Drawer.TriggerProps>>(
 export {
   DialogContext as Context,
   type DialogContextProps as ContextProps,
-} from '@ark-ui/solid';
+} from '@ark-ui/solid/dialog';

@@ -14,6 +14,7 @@ import { createVirtualizer } from '@tanstack/solid-virtual';
 import { Flex } from 'styled-system/jsx/flex';
 
 export interface RowVirtualizerProps<Item> {
+  id?: string;
   columnCount: number;
   data: Item[];
   defaultItemHeight?: number;
@@ -64,7 +65,7 @@ export function RowVirtualizer<Item>(props: RowVirtualizerProps<Item>) {
   // const items = virtualizer.getVirtualItems();
 
   return (
-    <div ref={parentRef} style={{ height: '100%', overflow: 'auto' }}>
+    <div ref={parentRef} id={props.id} style={{ height: '100%', overflow: 'auto' }}>
       <div
         style={{
           height: `${virtualizer.getTotalSize()}px`,

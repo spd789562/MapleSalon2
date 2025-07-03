@@ -55,6 +55,7 @@ export const EquipList = () => {
 
   return (
     <RowVirtualizer
+      id="equipment-list"
       defaultItemHeight={defaultItemHeight()}
       columnCount={columnCount()}
       renderItem={(item, index) => (

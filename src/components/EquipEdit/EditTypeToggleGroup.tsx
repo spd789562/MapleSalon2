@@ -1,5 +1,5 @@
 import { useStore } from '@nanostores/solid';
-import { useTranslate } from '@/context/i18n';
+import { useLocalizedOptions } from '@/hook/useLocalizedOptions';
 
 import { $equpimentDrawerEditType } from '@/store/trigger';
 
@@ -9,7 +9,6 @@ import {
 } from '@/components/ui/toggleGroup';
 
 export const EditTypeToggleGroup = () => {
-  const t = useTranslate();
   const editType = useStore($equpimentDrawerEditType);
 
   function handleChange(details: ValueChangeDetails) {
@@ -19,21 +18,21 @@ export const EditTypeToggleGroup = () => {
     }
   }
 
-  const options = [
+  const options = useLocalizedOptions([
     {
-      label: t('dye.mixDye'),
+      label: 'dye.mixDye',
       value: 'mixDye',
     },
     {
-      label: t('dye.prism'),
+      label: 'dye.prism',
       value: 'hsvAdjust',
     },
-  ];
+  ]);
 
   return (
     <SimpleToggleGroup
       size="xs"
-      options={options}
+      options={options()}
       value={editType()}
       onValueChange={handleChange}
     />

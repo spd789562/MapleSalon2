@@ -1,4 +1,3 @@
-import { createMemo } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 import { useTranslate } from '@/context/i18n';
 
@@ -8,6 +7,7 @@ import { useMountTab } from './MountTabContext';
 import { SimpleSelect, type ValueChangeDetails } from '@/components/ui/select';
 
 import { CharacterActionNames } from '@/const/actions';
+import { useLocalizedOptions } from '@/hook/useLocalizedOptions';
 
 export const MountActionSelect = () => {
   const t = useTranslate();
@@ -15,14 +15,12 @@ export const MountActionSelect = () => {
 
   const action = useStore($mountAction);
 
-  const options = createMemo(() =>
+  const options = useLocalizedOptions(
     state.mountActions.map((action) => {
       const actionLabelHasTranslate =
         CharacterActionNames[action as keyof typeof CharacterActionNames];
       return {
-        label: actionLabelHasTranslate
-          ? (t(actionLabelHasTranslate) as string)
-          : action,
+        label: actionLabelHasTranslate || action,
         value: action,
       };
     }),

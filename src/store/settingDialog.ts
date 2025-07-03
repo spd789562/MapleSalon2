@@ -76,6 +76,7 @@ export interface AppSetting extends Record<string, unknown> {
   gifBackgroundColor: string;
   /* other */
   lang: string;
+  mainTourWatched: boolean;
   clearCacheWhenLoad: boolean;
   preservePin: boolean;
   currentEquipDrawerPin: boolean;
@@ -102,6 +103,7 @@ const DEFAULT_SETTING: AppSetting = {
   addBlackBgWhenExportGif: false,
   gifBackgroundColor: '#000000',
   lang: window.__LANG__,
+  mainTourWatched: false,
   clearCacheWhenLoad: true,
   preservePin: true,
   currentEquipDrawerPin: false,
@@ -183,6 +185,10 @@ export const $exportBackgroundColor = computed(
   },
 );
 export const $lang = computed($appSetting, (setting) => setting.lang);
+export const $mainTourWatched = computed(
+  $appSetting,
+  (setting) => setting.mainTourWatched,
+);
 export const $clearCacheWhenLoad = computed(
   $appSetting,
   (setting) => setting.clearCacheWhenLoad,
@@ -282,6 +288,7 @@ export async function initializeSavedSetting() {
       if (isValidLocale(setting.lang)) {
         $appSetting.setKey('lang', setting.lang);
       }
+      $appSetting.setKey('mainTourWatched', !!setting.mainTourWatched);
       if (setting.clearCacheWhenLoad !== undefined) {
         $appSetting.setKey('clearCacheWhenLoad', !!setting.clearCacheWhenLoad);
       } else {
@@ -373,6 +380,10 @@ export function setClearCacheWhenLoad(value: boolean) {
 }
 export function setPreservePin(value: boolean) {
   $appSetting.setKey('preservePin', value);
+}
+export function setMainTourWatched(value: boolean) {
+  $appSetting.setKey('mainTourWatched', value);
+  saveSetting();
 }
 export function setEquipDrawerPin(value: boolean) {
   $appSetting.setKey('equipDrawerPin', value);

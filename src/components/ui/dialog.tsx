@@ -1,4 +1,5 @@
-import { type Assign, Dialog } from '@ark-ui/solid';
+import type { Assign } from '@ark-ui/solid';
+import { Dialog } from '@ark-ui/solid/dialog';
 import { type DialogVariantProps, dialog } from 'styled-system/recipes/dialog';
 import type { JsxStyleProps } from 'styled-system/types';
 import { createStyleContext } from '@/utils/create-style-context';
@@ -43,4 +44,4 @@ export {
   DialogContext as Context,
   type DialogContextProps as ContextProps,
   type DialogOpenChangeDetails as OpenChangeDetails,
-} from '@ark-ui/solid';
+} from '@ark-ui/solid/dialog';

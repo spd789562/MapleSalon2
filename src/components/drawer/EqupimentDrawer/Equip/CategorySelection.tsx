@@ -93,7 +93,7 @@ export const CategorySelectionToggle = () => {
 
   return (
     <Show when={isShowing()}>
-      <Button variant="outline" w={32} onClick={handleClick}>
+      <Button id="button-equipment-category-selection" variant="outline" w={32} onClick={handleClick}>
         <CategoryIcon category={option().id} size={20} />
         {t(option().label) as string}
       </Button>

@@ -1,4 +1,5 @@
-import { type Assign, ColorPicker } from '@ark-ui/solid';
+import type { Assign } from '@ark-ui/solid';
+import { ColorPicker } from '@ark-ui/solid/color-picker';
 import type { ComponentProps } from 'solid-js';
 import {
   type ColorPickerVariantProps,
@@ -129,4 +130,5 @@ export {
   ColorPickerContext as Context,
   ColorPickerHiddenInput as HiddenInput,
   type ColorPickerValueChangeDetails as ValueChangeDetails,
-} from '@ark-ui/solid';
+  parseColor,
+} from '@ark-ui/solid/color-picker';

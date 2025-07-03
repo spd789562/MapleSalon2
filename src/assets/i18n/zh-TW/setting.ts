@@ -89,6 +89,7 @@ export const dict = {
   syncSkinChange: '同步皮膚變更',
 
   otherTitle: '其他設定',
+  watchTourAgain: '觀看基本教學',
   saveFolder: '存檔資料夾',
   openSaveFolder: '開啟存檔資料夾',
   cacheFolder: '暫存資料夾',

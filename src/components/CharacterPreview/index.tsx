@@ -26,7 +26,7 @@ import { CharacterPreviewProvider } from './CharacterPreviewContext';
 export const CharacterPreview = () => {
   return (
     <CharacterPreviewProvider>
-      <CharacterPreviewCard gridTemplateRows="auto 1fr auto auto">
+      <CharacterPreviewCard id="character-preview-scene" gridTemplateRows="auto 1fr auto auto">
         <HStack justify="center" mb="2" flexWrap="wrap">
           <ExtraPartsPopover />
           <HandTypeToggleGroup />
@@ -50,13 +50,13 @@ export const CharacterPreview = () => {
           <ChatBalloonSwitch />
         </HStack>
         <HStack mt="2" pl="2" flexWrap="wrap">
-          <HStack>
+          <HStack id="character-preview-export-buttons">
             <ExportAnimationButton />
             <ExportFrameButton />
             <ExportSnapshotButton />
             <ExportSnapshotToClipboardButton />
           </HStack>
-          <HStack marginLeft="auto">
+          <HStack id="character-preview-save-buttons" marginLeft="auto">
             <ResetButton />
             <SaveButton />
           </HStack>

@@ -1,4 +1,5 @@
-import { type Assign, Checkbox, CheckboxHiddenInput } from '@ark-ui/solid';
+import type { Assign } from '@ark-ui/solid';
+import { Checkbox, CheckboxHiddenInput } from '@ark-ui/solid/checkbox';
 import { type ComponentProps, Show, children } from 'solid-js';
 import {
   type CheckboxVariantProps,
@@ -47,7 +48,7 @@ export {
   CheckboxContext as Context,
   CheckboxHiddenInput as HiddenInput,
   type CheckboxCheckedChangeDetails as CheckedChangeDetails,
-} from '@ark-ui/solid';
+} from '@ark-ui/solid/checkbox';
 
 export interface SimpleCheckboxProps extends RootProps {}
 export const SimpleCheckbox = (props: SimpleCheckboxProps) => {

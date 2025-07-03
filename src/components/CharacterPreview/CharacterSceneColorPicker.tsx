@@ -1,4 +1,4 @@
-import { Index, type JSX, createSignal } from 'solid-js';
+import { Index, type JSX, createSignal, createMemo } from 'solid-js';
 import { Portal } from 'solid-js/web';
 import { useStore } from '@nanostores/solid';
 import { useTranslate } from '@/context/i18n';
@@ -35,6 +35,8 @@ export const CharacterSceneColorPicker = (
   const color = useStore($sceneCustomColor);
   const [isOpen, setIsOpen] = createSignal(false);
 
+  const parsedColor = createMemo(() => ColorPicker.parseColor(color()));
+
   const handleHoverTrigger = () => {
     if (isOpen()) {
       return;
@@ -57,8 +59,8 @@ export const CharacterSceneColorPicker = (
   return (
     <ColorPicker.Root
       open={isOpen()}
-      value={color()}
-      defaultValue="#ffffff"
+      value={parsedColor()}
+      defaultValue={ColorPicker.parseColor('#ffffff')}
       positioning={{
         strategy: 'fixed',
         placement: 'top-end',

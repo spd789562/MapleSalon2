@@ -36,7 +36,10 @@ export const CharacterSelectionDrawer = (
           position="absolute"
           zIndex="topDrawer"
         >
-          <Content borderBottomRadius="md">
+          <Content
+            id="character-selection-drawer-content"
+            borderBottomRadius="md"
+          >
             <Body p={2}>{props.body}</Body>
           </Content>
         </Positioner>

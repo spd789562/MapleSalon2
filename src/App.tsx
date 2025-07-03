@@ -9,6 +9,7 @@ import { AppContainer } from './components/AppContainer';
 import { GlobalToast } from './components/GlobalToast';
 import { GlobalConfirmDialog } from './components/GlobalConfirmDialog';
 import { GlobalItemContextMenu } from './components/GlobalItemContextMenu';
+import { MainTour } from './components/GlobalTour';
 
 import { InitialScreen } from './components/InitialScreen';
 import { ToolTabsRadioGroup } from './components/ToolTabsRadioGroup';
@@ -56,6 +57,7 @@ function App() {
         <SettingDialog />
         <CharacterInfoDialog />
         <MapSelectionDialog />
+        <MainTour />
       </Show>
       <GlobalToast />
       <GlobalConfirmDialog />
