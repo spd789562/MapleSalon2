@@ -31,8 +31,8 @@ export const tour = defineSlotRecipe({
       backdropFilter: 'blur(1px)',
       zIndex: 'tourModal',
       background: {
-        _light: 'white.a10',
-        _dark: 'black.a10',
+        _light: 'black.a6',
+        _dark: 'black.a6',
       },
       _open: {
         animation: 'backdrop-in',
@@ -87,7 +87,7 @@ export const tour = defineSlotRecipe({
     spotlight: {
       borderWidth: '3px',
       borderStyle: 'solid',
-      borderColor: 'colorPalette.default',
+      borderColor: 'accent.emphasized',
       zIndex: 'tourModal',
     },
     title: {

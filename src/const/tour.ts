@@ -79,16 +79,6 @@ export const MainTourSteps: UnTranslatedTourStepDetails[] = [
     placement: 'top',
     target: () => document.querySelector('#equipment-list button'),
     actions: [{ label: 'tour.next', action: 'next' }],
-    effect: ({ show }) => {
-      show();
-      return () => {
-        setTimeout(() => {
-          if (!$equpimentDrawerPin.get()) {
-            $equpimentDrawerOpen.set(false);
-          }
-        }, 500);
-      };
-    },
   },
   {
     id: 'current-equipment-drawer-step-0',
@@ -99,6 +89,15 @@ export const MainTourSteps: UnTranslatedTourStepDetails[] = [
     target: () =>
       document.getElementById('button-current-equipment-drawer-toggle'),
     actions: [{ label: 'tour.next', action: 'next' }],
+    effect: ({ show }) => {
+      setTimeout(() => {
+        if (!$equpimentDrawerPin.get()) {
+          $equpimentDrawerOpen.set(false);
+        }
+      }, 500);
+      show();
+      return () => {};
+    },
   },
   {
     id: 'tab-button-character-preview',
@@ -203,6 +202,9 @@ export const MainTourSteps: UnTranslatedTourStepDetails[] = [
     actions: [
       {
         label: 'tour.again',
+        attrs: {
+          variant: 'outline',
+        },
         action: ({ goto }) => {
           goto(1 as unknown as string);
         },
