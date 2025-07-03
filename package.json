@@ -1,6 +1,6 @@
 {
   "name": "maplecharactercreator",
-  "version": "0.8.12",
+  "version": "0.8.13",
   "description": "",
   "type": "module",
   "scripts": {
@@ -28,6 +28,7 @@
     "@tauri-apps/api": ">=2.6.0",
     "@tauri-apps/plugin-dialog": "2.3.0",
     "@tauri-apps/plugin-fs": "2.4.0",
+    "@tauri-apps/plugin-opener": "^2.4.0",
     "@tauri-apps/plugin-shell": "2.3.0",
     "@tauri-apps/plugin-store": "2.3.0",
     "@tauri-apps/plugin-window-state": "2.3.0",

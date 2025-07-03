@@ -21,15 +21,26 @@
     "core:webview:allow-clear-all-browsing-data",
     {
       "identifier": "fs:allow-exists",
-      "allow": [{ "path": "**" }]
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
     },
-    "shell:allow-open",
     "dialog:allow-open",
     "window-state:allow-save-window-state",
     "store:allow-load",
     "store:allow-set",
     "store:allow-get",
     "store:allow-save",
-    "store:allow-delete"
+    "store:allow-delete",
+    {
+      "identifier": "opener:allow-open-path",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    }
   ]
 }

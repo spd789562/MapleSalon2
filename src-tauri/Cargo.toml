@@ -1,6 +1,6 @@
 [package]
 name = "maplesalon2"
-version = "0.8.12"
+version = "0.8.13"
 description = "MapleSalon2 - A tool for preview hair, face and item dye using MapleStory wz files."
 authors = ["Leo"]
 edition = "2021"
@@ -31,3 +31,4 @@ axum = "0.7.5"
 tower-http = { version = "0.5.2", features = ["cors"] }
 webp-animation = "0.9.0"
 sys-locale = "0.3.2"
+tauri-plugin-opener = "2"
