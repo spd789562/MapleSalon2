@@ -103,7 +103,7 @@ export const dict: SettingDictionary = {
     'When changing the game version and data have not been updated, you can use this function to clear the cache. This setting needs to be refreshed after changing',
   clearCacheConfirm: 'Do you want to clear the cache?',
   clearCacheDesc:
-    'If you surly seeing the old data or data missing, click confirm to clear the cache and refresh the page',
+    "If you're seeing old or missing data, click confirm to clear the cache and refresh the page",
   preservePinStatus: 'Preserve Pin Status',
   preservePinStatusTip:
     'Preserve the current equipment and equipment selection pin status so no need to re-pin next time',
