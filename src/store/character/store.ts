@@ -114,7 +114,7 @@ export const $currentCharacterItems =
 export const $currentCharacterInfo = deepMap<
   CharacterInfo & Record<string, unknown>
 >({
-  id: 'default',
+  id: '',
   name: 'default',
   frame: 0,
   nameTagId: undefined,
