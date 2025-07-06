@@ -41,10 +41,9 @@ export class BaseNameTag extends Container {
         fontFamily: 'SimSun, MingLiU, sans-serif',
         align: 'center',
       },
-      resolution: window.devicePixelRatio || 2,
       textureStyle: {
-        scaleMode: 'nearest'
-      }
+        scaleMode: 'nearest',
+      },
     });
     this.nameTagPosition = position;
     this.textNode.zIndex = 10;

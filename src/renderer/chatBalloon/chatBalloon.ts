@@ -31,7 +31,6 @@ export class ChatBalloon extends Container {
         wordWrap: true,
         wordWrapWidth: 90,
       },
-      resolution: window.devicePixelRatio || 2,
       textureStyle: {
         scaleMode: 'nearest',
       },
