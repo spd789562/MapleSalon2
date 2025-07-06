@@ -1,7 +1,8 @@
-import { createMemo, Show } from 'solid-js';
+import { createMemo, Show, from, onMount } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
 
 import { useDynamicPureStore } from '@/store';
+import { $currentCharacterId } from '@/store/character/selector';
 import { $characterInfoDialogOpen } from '@/store/trigger';
 import { changeCurrentCharacterInfo } from '@/store/characterInfo';
 
@@ -25,6 +26,8 @@ export interface CharacterItemProps {
   onSelect: (data: SaveCharacterData) => void;
 }
 export const CharacterItem = (props: CharacterItemProps) => {
+  let ref!: HTMLDivElement;
+  const currentCharacterId = from($currentCharacterId);
   const getCharacterById = createMemo(() => createGetCharacterById(props.id));
   const characterData = useDynamicPureStore(getCharacterById);
 
@@ -73,10 +76,19 @@ export const CharacterItem = (props: CharacterItemProps) => {
     }
   };
 
+  onMount(() => {
+    if (currentCharacterId() === props.id) {
+      ref.scrollIntoView();
+    }
+  });
+
   return (
     <Show when={characterData()}>
       {(character) => (
-        <CharacterItemContainer>
+        <CharacterItemContainer
+          ref={ref}
+          active={currentCharacterId() === character().id}
+        >
           <CharacterItemImage onClick={handleSelect}>
             <CharacterItemPositioner>
               <SimpleCharacter
@@ -125,6 +137,14 @@ const CharacterItemContainer = styled('div', {
     position: 'relative',
     boxShadow: 'md',
     borderRadius: 'md',
+  },
+  variants: {
+    active: {
+      true: {
+        boxShadowColor: 'accent.8',
+        boxShadow: '0 0 4px 2px var(--shadow-color)',
+      },
+    },
   },
 });
 

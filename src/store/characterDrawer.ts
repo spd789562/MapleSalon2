@@ -4,6 +4,7 @@ import { map, computed, atom, onSet } from 'nanostores';
 import { load } from '@tauri-apps/plugin-store';
 
 import type { CharacterData, CharacterItems } from './character/store';
+import { $currentCharacterInfo } from './character/store';
 import { $previewCharacter } from './character/selector';
 import { changeCurrentCharacter } from './character/action';
 import { deepCloneCharacterItems } from './character/utils';
@@ -194,10 +195,12 @@ export async function cloneCharacter(id: string) {
 }
 export function saveCurrentCharacter(newId?: boolean) {
   const currentCharacter = $previewCharacter.get();
-  const id =
-    newId || !currentCharacter.id
-      ? createCharacterUniqueId()
-      : currentCharacter.id;
+  const needId = newId || !currentCharacter.id;
+  const id = needId ? createCharacterUniqueId() : currentCharacter.id!;
+
+  if (needId) {
+    $currentCharacterInfo.setKey('id', id);
+  }
 
   const data: SaveCharacterData = {
     id,
