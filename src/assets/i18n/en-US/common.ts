@@ -12,7 +12,7 @@ export const dict: CommonDictionary = {
   copy: 'Copy',
   download: 'Download',
   delete: 'Delete',
-  detail: 'Detail',
+  detail: 'Details',
 
   clear: 'Clear',
   clearSearch: 'Clear Search',
@@ -21,18 +21,18 @@ export const dict: CommonDictionary = {
   equipCash: 'Cash',
   equipDyeable: 'Dyeable',
   equipEffect: 'Effect',
-  onlyShowCash: 'Only show cash equipment',
+  onlyShowCash: 'Show cash equipment only',
 
   // search list related
-  equipmentSearchPlaceholder: 'name、id',
-  chairSearchPlaceholder: 'chair name、id',
-  mountSearchPlaceholder: 'mount name、id',
-  skillSearchPlaceholder: 'skill name、id',
-  switchListTypeRow: 'Swith to Row',
-  switchListTypeGrid: 'Swith to Grid',
+  equipmentSearchPlaceholder: 'Equip name, ID',
+  chairSearchPlaceholder: 'Chair name, ID',
+  mountSearchPlaceholder: 'Mount name, ID',
+  skillSearchPlaceholder: 'Skill name, ID',
+  switchListTypeRow: 'Switch to List',
+  switchListTypeGrid: 'Switch to Grid',
   switchListTypeUnknown: 'Unknown List Type',
 
   selectShareCharacter: 'Pick Characters',
   selectShareCharacterTip:
-    'Select the character you want to sit together, only applicable to chairs and mounts that have multiple seats',
+    'Select characters to share the mount/chair with. Only applicable to mounts and chairs that support multiple seats.',
 };

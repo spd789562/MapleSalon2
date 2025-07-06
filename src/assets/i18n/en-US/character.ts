@@ -19,7 +19,7 @@ export const dict: CharacterDictionary = {
   genderAll: 'All',
   genderMale: 'Male',
   genderFemale: 'Female',
-  genderShare: 'Share',
+  genderShare: 'Shared',
 
   handType: 'Hand Type',
   handTypeNormal: 'Normal',

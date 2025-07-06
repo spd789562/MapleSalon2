@@ -2,30 +2,32 @@ import type { ErrorDictionary } from '@/assets/i18n/type';
 import { template } from '@solid-primitives/i18n';
 
 export const dict: ErrorDictionary = {
-  initTitle: 'Initialize Error',
-  initBaseWzTitle: 'Initialize Base.wz Error',
+  initTitle: 'Initialization Error',
+  initBaseWzTitle: 'Base.wz Initialization Error',
   initDescPermission:
-    "Can't not create or load save file, please check the permissions and restart the app.",
+    'Cannot create or load save file. Please check application permissions and restart.',
   initEquipError:
-    "Can't not load equipment data, please check the wz data is fully function.",
+    'Cannot load equipment data. Please check that the wz data is complete.',
   initChairError:
-    "Can't not load chair data, please check the wz data is fully function.",
-  initRendererError: 'Initialize renderer failed, please update the webview2.',
+    'Cannot load chair data. Please check that the wz data is complete.',
+  initRendererError: 'Failed to initialize renderer. Please update WebView2.',
 
-  gpuInitializeError: 'Initialize WebGPU Error',
+  gpuInitializeError: 'WebGPU Initialization Error',
   gpuInitializeDesc:
-    'Please make sure your webview version support WebGPU. Or try to update the GPU driver.',
+    'Please ensure your WebView version supports WebGPU, or try updating your GPU drivers.',
 
   equipmentLoadFailed: 'Equipment Load Failed',
   equipmentLoadFailedDesc: template<{ errorNames: string }>(
-    'The errors equipments: {{ errorNames }}',
+    'Failed to load the following equipment: {{ errorNames }}',
   ),
 
   chairLoadFailed: 'Chair Load Failed',
-  chairLoadFailedDesc: 'This chair might not supported or damaged',
+  chairLoadFailedDesc:
+    'This chair may not be supported or the file may be incomplete',
 
   mountLoadFailed: 'Mount Load Failed',
-  mountLoadFailedDesc: 'This mount might not supported or damaged',
+  mountLoadFailedDesc:
+    'This mount may not be supported or the file may be incomplete',
 
   message: template<{ text: string }>('Error message: {{ text }}'),
   unknownError: 'Unknown Error',

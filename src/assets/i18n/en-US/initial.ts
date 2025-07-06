@@ -4,27 +4,27 @@ export const dict: InitialDictionary = {
   selectWzTitle: 'Load New Base.wz',
   selectNewFile: 'New File',
   wzPositionTip:
-    'Base.wz usually exist in {path of maplestory.exe}/Data/Base/Base.wz, note that you still need the complete game files to use this app not just Base.wz',
-  loadNewBaseWz: 'Select Base.wz',
+    'Base.wz is typically located at {MapleStory folder path}/Data/Base/Base.wz. Note that this file is only the entry point for game data - you still need complete game files to use this application properly.',
+  loadNewBaseWz: 'Load New Base.wz',
 
-  loadPorgressSaveFile: 'Initialize and load saving...',
+  loadPorgressSaveFile: 'Initializing and loading save data...',
   loadPorgressInitWz: 'Parsing wz file...',
   loadPorgressInitString: 'Processing equipment data...',
   loadPorgressInitItem: 'Processing chair data...',
-  loadPorgressDone: 'Almost there...',
+  loadPorgressDone: 'Almost done...',
 
-  loadOption: 'Load Option',
+  loadOption: 'Load Options',
   clearCache: 'Clear Cache',
   clearCacheTip:
-    'Clear the cache before loading data to avoid problems when switching versions or upgrad the application',
+    'Clear the cache before loading data to avoid issues when switching versions or upgrading the application',
 
   historyTitle: 'Load History',
-  emptyHistoryText: 'No history',
+  emptyHistoryText: 'No history available',
   historyPathTitle: 'Path',
 
   openPathTip: 'Open Path',
-  fileOrPathNotExist: 'File or path is not exist',
-  openPathError: 'Something went wrong when opening path',
+  fileOrPathNotExist: 'File or path does not exist',
+  openPathError: 'Error occurred while opening path',
 
   loadExistBaseWz: 'Load',
 
