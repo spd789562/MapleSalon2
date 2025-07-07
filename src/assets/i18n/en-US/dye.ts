@@ -35,16 +35,16 @@ export const dict: DyeDictionary = {
   dyeAction: 'Action',
   dyeFrame: 'Frame',
   dyeCount: 'Count',
-  onlyShowDyeable: 'Only show dyeable',
+  onlyShowDyeable: 'Show dyeable only',
   preserveOriginalDye: 'Preserve Dye',
   preserveOriginalDyeTip:
-    'Preserve original dye, so dye will not beening reset',
+    'Preserve original equipment dye. When disabled, all dye will be reset before applying dye preview',
   generateDyeTable: 'Generate',
 
-  emptyEquipSelection: 'Please select the equipments you want to dye',
-  emptyTypeSelection: 'Please select the dye type',
-  emptyDyeCount: 'Please input the dye count',
+  emptyEquipSelection: 'Please select equipment to preview dye',
+  emptyTypeSelection: 'Please select dye type to preview',
+  emptyDyeCount: 'Please enter dye count',
 
-  dyeResult: 'Result',
-  columnCountPreRow: 'Column Count',
+  dyeResult: 'Dye Result',
+  columnCountPreRow: 'Columns per Row',
 };

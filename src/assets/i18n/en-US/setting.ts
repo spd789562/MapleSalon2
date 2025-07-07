@@ -2,19 +2,19 @@ import type { SettingDictionary } from '@/assets/i18n/type';
 
 export const dict: SettingDictionary = {
   save: 'Save',
-  saveSuccess: 'Saved',
+  saveSuccess: 'Saved successfully',
   saveAsNew: 'Save as new character',
-  saveCharacterSuccess: 'Saved',
+  saveCharacterSuccess: 'Character saved',
   saveAsNewCharacterSuccess: 'Saved as new character',
   cancel: 'Cancel',
   cancelChanges: 'Cancel changes',
   cancelChangesDesc:
-    'This operation cannot be undone, are you sure you want to cancel the changes?',
-  cancelCharacterChanges: 'Cancel any character changes',
+    'This operation cannot be undone. Are you sure you want to cancel the changes?',
+  cancelCharacterChanges: 'Cancel any unsaved character changes',
   abandonCharacterChanges: 'Yes',
   abandonCharacterChangesDesc:
-    'The current character changes have not been save, are your sure want change chaaracter anyway?',
-  abandonCharacterChangesTitle: 'Character changes not saved',
+    'Current changes have not been saved. Do you want to discard the changes?',
+  abandonCharacterChangesTitle: 'Confirm discard unsaved changes',
   upload: 'Upload',
   uploadFailed: 'Upload failed',
   uploadCharacter: 'Upload character',
@@ -27,8 +27,8 @@ export const dict: SettingDictionary = {
   refreshNow: 'Refresh Now',
   refreshLater: 'Refresh Later',
 
-  open: 'Open Setting',
-  title: 'Setting',
+  open: 'Open Settings',
+  title: 'Settings',
 
   language: 'Language',
   selectLanguage: 'Select Language',
@@ -39,10 +39,10 @@ export const dict: SettingDictionary = {
   scale: 'Scale',
   scaleConfirm: 'Change Scale',
   scaleConfirmDesc:
-    'This setting may cause the application display normally, are you sure you want to change the scale to {{resolution}}?',
+    'This setting may cause display issues if too large. Are you sure you want to change the scale to {{resolution}}?',
   apply: 'Apply',
 
-  themeTitle: 'Theme Setting',
+  themeTitle: 'Theme Settings',
   theme: 'Theme',
   color: 'Color Mode',
   colorLight: 'Light',
@@ -52,61 +52,61 @@ export const dict: SettingDictionary = {
   exportTitle: 'Export Setting',
   frameRemainSpace: 'Padding Space',
   frameRemainSpaceTip:
-    'The frame will be unified to the same size, if uncheck this, the exported zip will contain json files for each frame',
-  gifWithBackground: 'Gif Background',
+    'Frames will be unified to the same size for better playback. If unchecked, the exported zip will contain JSON files for each frame positioning',
+  gifWithBackground: 'GIF Background',
   gitWithBackgroundTip:
-    'This setting will make the exported Gif have background color, improving the problem of black and white when exporting some equipment as semi-transparent',
+    'This setting will add background color to exported GIFs, improving issues with black and white artifacts when exporting semi-transparent equipment',
 
-  renderTitle: 'Render Setting',
+  renderTitle: 'Render Settings',
   renderer: 'Renderer',
   rendererTip:
-    'The default is WebGPU, in some cases it may fail to render. This setting needs to be refreshed after changing',
+    'Default is WebGPU. In some cases, it may fail to render sometime. Page refresh required after changing this setting',
   changeRendererConfirm: 'Change Renderer',
   changeRendererConfirmDesc:
-    'The page needs to be reloaded to apply the new renderer settings, do you want to reload the page now?',
+    'Page needs to be reloaded to apply new renderer settings. Do you want to refresh the page now?',
   scaleMode: 'Scale Mode',
   scaleModeTip:
-    'The default is linear, changing to nearest will retain the pixel effect when zooming. This setting needs to be refreshed after changing',
+    'Default is linear. Changing to nearest will preserve pixel effects when zooming. Page refresh required after changing this setting',
   scaleModeLinear: 'Linear',
   scaleModeNearest: 'Nearest',
   scaleModeConfirm: 'Change Scale Mode',
   scaleModeConfirmDesc:
-    'The page needs to be reloaded to apply the new scale settings, do you want to reload the page now?',
+    'Page needs to be reloaded to apply new scale settings. Do you want to refresh the page now?',
   experimentalUpscale: 'Experimental Upscale',
   experimentalUpscaleTip:
-    'Add new switch to apply anime4k on character preview, please make sure you have enough computer resources to use this feature',
+    'Add button to show upscaled character preview using Anime4K. This feature may impact performance - please ensure you have sufficient computer resources',
   characterRender: 'Character',
   characterRenderTip:
-    'Render hair and face directly into character, can have better experience, but may use a lot of RAM',
+    'Render hair and face directly into character for better preview experience, but may use significant RAM',
   defaultCharacterRender: 'Default Character Render',
   defaultCharacterRenderTip:
-    'When browsing hair/face, render them directly into character, can have better experience, but may use a lot of RAM',
+    'When browsing hair/face, render them directly into character for better preview experience, but may use significant RAM',
   characterConcurrentRender: 'Character Concurrent Count',
   characterConcurrentRenderTip:
-    'Increase or decrease the number of character rendered at the same time, too many may cause the application to render slowly',
+    'Increase or decrease the number of characters rendered simultaneously. Too many may cause slow application rendering',
   showItemGender: 'Show Gender',
   showItemDyeable: 'Show Dyeable',
   onlyShowDyeable: 'Only Show Dyeable',
   tagVersion: 'Tag Version',
   tagVersionTip:
-    'The position of the name tag, medal and title display is different in verious game versions, try to switching versions to get the appropriate display',
+    'Change the display logic for name tags, medals, and titles. Different game versions use different logic - try switching versions for appropriate display',
   syncSkinChange: 'Sync Skin',
 
   otherTitle: 'Other Setting',
-  watchTourAgain: 'Watch Tour',
+  watchTourAgain: 'Watch Tutorial',
   saveFolder: 'Save Folder',
   openSaveFolder: 'Open save folder',
   cacheFolder: 'Cache Folder',
   openCacheFolder: 'Open cache folder',
   clearCache: 'Clear Cache',
   clearCacheTip:
-    'When changing the game version and data have not been updated, you can use this function to clear the cache. This setting needs to be refreshed after changing',
+    "Use this function to clear cache when version updates don't show latest data. Page refresh required after changing this setting",
   clearCacheConfirm: 'Do you want to clear the cache?',
   clearCacheDesc:
-    'If you surly seeing the old data or data missing, click confirm to clear the cache and refresh the page',
+    'Use this function only when data is confirmed to be outdated or missing. Clicking confirm will clear cache and refresh the page',
   preservePinStatus: 'Preserve Pin Status',
   preservePinStatusTip:
-    'Preserve the current equipment and equipment selection pin status so no need to re-pin next time',
+    "Preserve current equipment and equipment selection pin status so you don't need to re-pin next time",
 
   currentVersion: 'Current Version',
   newVersion: 'New Version',

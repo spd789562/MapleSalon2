@@ -4,62 +4,62 @@ export const dict: TourDictionary = {
   next: 'Next',
   close: 'Close',
   skip: 'Skip',
-  again: 'Again',
+  again: 'Restart',
 
   progress: '{{ current }} of {{ total }}',
 
-  mainTourStartTitle: 'Main Tour',
+  mainTourStartTitle: 'Basic Tutorial',
   mainTourStartDescription:
-    'Welcome to MapleSalon2, it seems you are opening this program for the first time, do you want to watch the simple tour?\nThis tour can be closed at any time and re-watch in the settings.',
+    'Welcome to MapleSalon2! It looks like this is your first time opening this software. Would you like to watch the basic tutorial?\nThis tutorial can be closed at any time and reopened in settings.',
   equipmentDrawerOpenTitle: 'Equipment Browser',
   equipmentDrawerOpenDescription:
-    'Click here to open the equipment list and adjustment tool.',
+    'Click here to open the equipment browser and adjustment panel.',
 
-  equipmentDrawerCategorySelectionTitle: 'Equipment Category',
+  equipmentDrawerCategorySelectionTitle: 'Equipment Category Selection',
   equipmentDrawerCategorySelectionDescription:
-    'Click here to select the equipment category.',
+    'Click here to select equipment categories.',
 
   equipmentDrawerSaveTitle: 'Saved Equipment',
   equipmentDrawerSaveDescription:
-    'When the mouse over the item, click the star in the upper right corner to save and view in the saved page.',
+    'When hovering over equipment, click the star in the top right corner to add to save and view in the saved tab.',
 
-  currentEquipmentDrawerTitle: 'Current Equipment',
+  currentEquipmentDrawerTitle: 'View Current Equipment',
   currentEquipmentDrawerDescription:
-    'Click here to open the current equipment list, modify or delete the equipment.',
+    'Click here to open the current equipment list, modify or delete equipment.',
 
-  tabButtonCharacterPreviewTitle: 'Character Tab',
+  tabButtonCharacterPreviewTitle: 'Character Preview Tab',
   tabButtonCharacterPreviewDescription:
-    "The default tab, you can adjust the character's appearance, action, expression, etc.",
+    'The default tab where you can adjust character appearance, actions, expressions, and more.',
 
-  tabButtonCharacterAllActionsTitle: 'Actions Tab',
+  tabButtonCharacterAllActionsTitle: 'All Actions Tab',
   tabButtonCharacterAllActionsDescription:
-    'This tab can preview all actions of the current character and export materials at once.',
+    'This tab allows you to preview all actions of the current character and export materials at once.',
 
   characterPreviewSceneSelectionTitle: 'Scene Selection',
   characterPreviewSceneSelectionDescription:
-    'Here you can select different backgrounds, upload images, or select the map.',
+    'Here you can select different backgrounds, upload custom images, or choose in-game maps.',
 
   characterPreviewExportButtonsTitle: 'Export Buttons',
   characterPreviewExportButtonsDescription:
-    'Here you can export character animations, image, and copy the snapshots to your clipboard for quick sharing with others!',
+    'Here you can export character animations, images, and copy snapshots to your clipboard for quick sharing!',
 
   characterPreviewSaveButtonsTitle: 'Save Buttons',
   characterPreviewSaveButtonsDescription:
-    "Don't forget to save your changes before closing window or switching characters.",
+    "Don't forget to save your changes before closing the window or switching characters.",
 
-  characterSelectionDrawerOpenButtonTitle: 'Character Selection',
+  characterSelectionDrawerOpenButtonTitle: 'Character Menu',
   characterSelectionDrawerOpenButtonDescription:
-    'Click here to open or close the saved character list.',
+    'Click here to open or close the saved character menu.',
 
-  characterSelectionAddDefaultCharacterTitle: 'Add Default Character',
+  characterSelectionAddDefaultCharacterTitle: 'Add Character',
   characterSelectionAddDefaultCharacterDescription:
     'Click here to add a default character.',
 
-  characterSelectionDrawerCharacterMenuTitle: 'Character Selection',
+  characterSelectionDrawerCharacterMenuTitle: 'Character Operation Menu',
   characterSelectionDrawerCharacterMenuDescription:
-    'Click the top right corner of the character to open the menu, you can copy or delete the character.',
+    'Click the top right corner of saved characters to open the menu for copying or deleting specific characters.',
 
-  finishTourTitle: 'Finish',
+  finishTourTitle: 'Complete',
   finishTourDescription:
-    'Congratulations on watching this tour, you can start creating your character freely!',
+    'Congratulations on completing the basic tutorial! You can now start creating your characters freely!',
 };

@@ -145,25 +145,26 @@ const getColorItemUseSameColor =
   ) =>
   (item: { id: number; name: string }) => {
     const currentItemColor = getCurrentColor();
+
     const itemColor = getColorId(item.id);
 
     const itemInfo = Object.assign({}, item);
 
     if (itemColor !== currentItemColor) {
       itemInfo.id = changeColorId(item.id, currentItemColor);
+
       const avaiableColorIds = getAvailableColorIds(item.id);
 
-      /* if color is not available, use the first one */
-      if (
-        avaiableColorIds.length > 0 &&
-        !avaiableColorIds.includes(itemInfo.id)
-      ) {
-        itemInfo.id = avaiableColorIds[0];
-      } else {
-        /* if not, just use original one */
-        itemInfo.id = item.id;
-      }
+      const isItemColorAvailable = avaiableColorIds.includes(itemInfo.id);
 
+      /* if color is not available, use the first one */
+      if (!isItemColorAvailable) {
+        if (avaiableColorIds.length > 0) {
+          itemInfo.id = avaiableColorIds[0];
+        } else {
+          itemInfo.id = item.id;
+        }
+      }
       const newEquipInfo = getEquipById(itemInfo.id);
 
       if (newEquipInfo) {
