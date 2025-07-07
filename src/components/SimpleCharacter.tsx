@@ -207,6 +207,7 @@ export const SimpleCharacter = (props: SimpleCharacterProps) => {
         style={{
           ...maxWidthStyle,
           transform: `translate(${offset()[0]}px, ${offset()[1]}px)`,
+          'image-rendering': 'pixelated',
         }}
         onContextMenu={handleContextMenu}
         ref={props.ref}
