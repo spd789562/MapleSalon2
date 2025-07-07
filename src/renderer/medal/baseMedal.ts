@@ -48,9 +48,6 @@ export class BaseMedal extends Container {
         fontFamily: 'SimSun, MingLiU, sans-serif',
         align: 'center',
       },
-      textureStyle: {
-        scaleMode: 'nearest',
-      },
     });
     this.textNode.zIndex = 10;
     this.type = medalType as MedalType;

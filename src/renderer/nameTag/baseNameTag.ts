@@ -41,9 +41,6 @@ export class BaseNameTag extends Container {
         fontFamily: 'SimSun, MingLiU, sans-serif',
         align: 'center',
       },
-      textureStyle: {
-        scaleMode: 'nearest',
-      },
     });
     this.nameTagPosition = position;
     this.textNode.zIndex = 10;
@@ -134,6 +131,7 @@ export class BaseNameTag extends Container {
     id?: number,
     position?: NameTagPosition,
   ) {
+    console.log('updateNameTagData', name, id, position);
     this.name = name;
     if (position) {
       this.nameTagPosition = position;

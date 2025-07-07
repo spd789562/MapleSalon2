@@ -31,9 +31,6 @@ export class ChatBalloon extends Container {
         wordWrap: true,
         wordWrapWidth: 90,
       },
-      textureStyle: {
-        scaleMode: 'nearest',
-      },
     });
     this.textNode.zIndex = 10;
     this.background = new ChatBalloonBackground();
