@@ -135,7 +135,7 @@ export const EquipHsvAdjust = (props: EquipHsvAdjustProps) => {
             items={colorOptions()}
             positioning={{ sameWidth: true }}
             size="sm"
-            value={[(itemChange()?.item.colorRange || 0) as unknown as string]}
+            value={[(itemChange()?.item.colorRange || 0).toString()]}
             onValueChange={(detail) => {
               handleColorRangeChange(Number(detail.value[0]));
             }}
