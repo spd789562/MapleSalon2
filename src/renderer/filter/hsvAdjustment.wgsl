@@ -30,7 +30,13 @@ fn mainFragment(
     let origin_s: f32 = tohsv.y;
     let origin_v: f32 = tohsv.z;
 
-    if (origin_h >= uColorStart && origin_h <= uColorEnd) {
+    // fix the red has weird range, 0-0.11 and 0.915-1
+    var oh_to_compared: f32 = origin_h;
+    if (oh_to_compared > 0.915) {
+      oh_to_compared -= 0.915;
+    }
+
+    if (oh_to_compared >= uColorStart && oh_to_compared <= uColorEnd) {
         // hue
         resultRGB = hueShift(resultRGB, hue);
 

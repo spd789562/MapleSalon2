@@ -88,6 +88,12 @@ void main() {
     //   }
     // }
 
+    // fix the red has weird range, 0-0.11 and 0.915-1
+    float oHToCompared = originH;
+    if (oHToCompared > 0.915) {
+      oHToCompared -= 0.915;
+    }
+
     if (originH >= uColorStart && originH <= uColorEnd) {
         // hue
         resultRGB = hueShift(resultRGB, hue);
