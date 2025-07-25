@@ -15,12 +15,12 @@ export enum ColorRange {
 
 const MapleColorRange = {
   [ColorRange.All]: [0, 1],
-  [ColorRange.Red]: [0, 0.1],
-  [ColorRange.Yellow]: [0.1, 0.25],
-  [ColorRange.Green]: [0.25, 0.42],
-  [ColorRange.Cyan]: [0.42, 0.59],
-  [ColorRange.Blue]: [0.59, 0.75],
-  [ColorRange.Purple]: [0.75, 1],
+  [ColorRange.Red]: [0, 0.11],
+  [ColorRange.Yellow]: [0.12, 0.25],
+  [ColorRange.Green]: [0.26, 0.42],
+  [ColorRange.Cyan]: [0.43, 0.59],
+  [ColorRange.Blue]: [0.6, 0.75],
+  [ColorRange.Purple]: [0.76, 0.915],
 };
 
 /**
