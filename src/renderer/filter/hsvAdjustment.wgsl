@@ -24,51 +24,51 @@ fn mainFragment(
     let uColorStart: f32 = hsvUniforms.uColorStart;
     let uColorEnd: f32 = hsvUniforms.uColorEnd;
 
-    var tohsv: vec3<f32> = rgb2hsv(resultRGB);
+    var resultHSV: vec3<f32> = rgb2hsv(resultRGB);
 
-    let origin_h: f32 = tohsv.x;
-    let origin_s: f32 = tohsv.y;
-    let origin_v: f32 = tohsv.z;
+    let origin_h: f32 = resultHSV.x;
+    let origin_s: f32 = resultHSV.y;
+    let origin_v: f32 = resultHSV.z;
 
-    // fix the red has weird range, 0-0.11 and 0.915-1
+    // fix the red has weird range, 0-0.11 and 0.9166-1
     var oh_to_compared: f32 = origin_h;
-    if (oh_to_compared > 0.915) {
-      oh_to_compared -= 0.915;
+    if (oh_to_compared > 0.9166) {
+      oh_to_compared -= 0.9166;
     }
 
     if (oh_to_compared >= uColorStart && oh_to_compared <= uColorEnd) {
         // hue
         resultRGB = hueShift(resultRGB, hue);
 
-        tohsv = rgb2hsv(resultRGB);
+        resultHSV = rgb2hsv(resultRGB);
         // all related of brightness modification will need to multiply with color.a, 
         // prevent alpha channel from being modified and been to bright
 
         // saturation
         if (saturation > 0.0) {
           // weird, but it really works
-          if (tohsv.y > 0.1 && origin_v < 0.80) {
-            tohsv.y = clamp(tohsv.y + saturation, 0.0, 1.0);
+          if (resultHSV.y > 0.1 && origin_v < 0.80) {
+            resultHSV.y = clamp(resultHSV.y + saturation, 0.0, 1.0);
             // it also incress the brightness
-            tohsv.z = clamp(tohsv.z + saturation * 0.2 * origin_v * color.a, 0.0, 1.0);
+            resultHSV.z = clamp(resultHSV.z + saturation * 0.2 * origin_v * color.a, 0.0, 1.0);
           }
         } else if (saturation < 0.0) {
-          tohsv.y = clamp(tohsv.y + (tohsv.y * saturation * 0.8), 0.0, 1.0);
+          resultHSV.y = clamp(resultHSV.y + (resultHSV.y * saturation * 0.8), 0.0, 1.0);
           // it also decress the brightness
-          tohsv.z = clamp(tohsv.z + (saturation * 0.5 * origin_s) * color.a, 0.0, 1.0);
+          resultHSV.z = clamp(resultHSV.z + (saturation * 0.5 * origin_s) * color.a, 0.0, 1.0);
         }
 
         // value
         if (value < 0.0) {
           // in order to make sure the lower saturate will less effect
-          tohsv.z += origin_v * value * origin_s;
+          resultHSV.z += origin_v * value * origin_s;
         } else if (value > 0.0) {
           // * (1. - s) means the higher saturation of original color will less effect
-          tohsv.z = clamp(tohsv.z + value * color.a * (1. - origin_s) * 0.6, 0., 1.);
+          resultHSV.z = clamp(resultHSV.z + value * color.a * (1. - origin_s) * 0.6, 0., 1.);
           // also decrease the saturation but not too much
-          tohsv.y = tohsv.y * max((1. - value), 0.05);
+          resultHSV.y = resultHSV.y * max((1. - value), 0.05);
         }
-        resultRGB = hsv2rgb(tohsv);
+        resultRGB = hsv2rgb(resultHSV);
     }
 
     return mix(color, vec4<f32>(resultRGB, color.a), 1) * hsvUniforms.uAlpha;

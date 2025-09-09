@@ -56,11 +56,11 @@ void main() {
     float saturation = uHsv[1];
     float value = uHsv[2];
 
-    vec3 tohsv = rgb2hsv(resultRGB);
+    vec3 resultHSV = rgb2hsv(resultRGB);
     
-    float originH = tohsv.x;
-    float originS = tohsv.y;
-    float originV = tohsv.z;
+    float originH = resultHSV.x;
+    float originS = resultHSV.y;
+    float originV = resultHSV.z;
 
     // vec2 currSat = getSatAndValue(resultRGB);
     // if (h >= uColorStart && h <= uColorEnd) {
@@ -71,8 +71,8 @@ void main() {
     //     resultRGB += value * currSat.x * currSat.y;
     //     // rgbSaturation += rgbSaturation * value * rgbValue;
     //   } else if (value > 0.) {
-    //     // tohsv.y *= max(.0, .82 - value);
-    //     // tohsv.z += value * 0.4 * color.a;
+    //     // resultHSV.y *= max(.0, .82 - value);
+    //     // resultHSV.z += value * 0.4 * color.a;
     //     resultRGB *= 1. + value * color.a;
     //     resultRGB += (average - color.rgb) * value;
     //   }
@@ -88,17 +88,17 @@ void main() {
     //   }
     // }
 
-    // fix the red has weird range, 0-0.11 and 0.915-1
+    // fix the red has weird range, 0-0.11 and 0.9166-1
     float oHToCompared = originH;
-    if (oHToCompared > 0.915) {
-      oHToCompared -= 0.915;
+    if (oHToCompared > 0.9166) {
+      oHToCompared -= 0.9166;
     }
 
     if (originH >= uColorStart && originH <= uColorEnd) {
         // hue
         resultRGB = hueShift(resultRGB, hue);
         
-        tohsv = rgb2hsv(resultRGB);
+        resultHSV = rgb2hsv(resultRGB);
 
         // all related of brightness modification will need to multiply with color.a, 
         // prevent alpha channel from being modified and been to bright
@@ -106,28 +106,28 @@ void main() {
         // saturation
         if (saturation > 0.) {
           // weird, but it really works
-          if (tohsv.y > 0.1 && originV < 0.80) {
-            tohsv.y = clamp(tohsv.y + saturation, 0.0, 1.0);
-            // it also incress the brightness
-            tohsv.z = clamp(tohsv.z + saturation * 0.2 * originV * color.a, 0.0, 1.0);
+          if (resultHSV.y > 0.1 && originV < 0.80) {
+            resultHSV.y = clamp(resultHSV.y + saturation, 0.0, 1.0);
+            // it also increase the brightness
+            resultHSV.z = clamp(resultHSV.z + saturation * 0.2 * originV * color.a, 0.0, 1.0);
           }
         } else if (saturation < 0.) {
-          tohsv.y = clamp(tohsv.y + (tohsv.y * saturation * 0.8), 0.0, 1.0);
-          // it also decress the brightness
-          tohsv.z = clamp(tohsv.z + (saturation * 0.5 * originS) * color.a, 0.0, 1.0);
+          resultHSV.y = clamp(resultHSV.y + (resultHSV.y * saturation * 0.8), 0.0, 1.0);
+          // it also decrease the brightness
+          resultHSV.z = clamp(resultHSV.z + (saturation * 0.5 * originS) * color.a, 0.0, 1.0);
         }
 
         // value
         if (value < 0.) {
           // in order to make sure the lower saturate will less effect
-          tohsv.z += originV * value * originS;
+          resultHSV.z += originV * value * originS;
         } else if (value > 0.) {
           // * (1. - s) means the higher saturation of original color will less effect
-          tohsv.z = clamp(tohsv.z + value * color.a * (1. - originS) * 0.6, 0., 1.);
+          resultHSV.z = clamp(resultHSV.z + value * color.a * (1. - originS) * 0.6, 0., 1.);
           // also decrease the saturation but not too much
-          tohsv.y = tohsv.y * max((1. - value), 0.05);
+          resultHSV.y = resultHSV.y * max((1. - value), 0.05);
         }
-        resultRGB = hsv2rgb(tohsv);
+        resultRGB = hsv2rgb(resultHSV);
     }
   
     finalColor = mix(color, vec4(resultRGB, color.a), 1.) * uAlpha;
