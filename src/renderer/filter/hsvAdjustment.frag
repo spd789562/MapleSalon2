@@ -113,33 +113,38 @@ void main() {
         if (saturation > 0.) {
           // weird, but it really works
           if (resultHSV.y > 0.1 && originV < 0.80) {
-            resultHSV.y = clamp(resultHSV.y + saturation, 0.0, 1.0);
+            resultHSV.y += saturation;
             // it also increase the brightness
-            resultHSV.z = clamp(resultHSV.z + saturation * 0.2 * originV * color.a, 0.0, 1.0);
+            resultHSV.z += saturation * 0.2 * originV * color.a;
           }
         } else if (saturation < 0.) {
-          resultHSV.y = clamp(resultHSV.y + (resultHSV.y * saturation * 0.8), 0.0, 1.0);
+          resultHSV.y += (resultHSV.y * saturation * 0.8);
           // it also decrease the brightness
-          resultHSV.z = clamp(resultHSV.z + (saturation * 0.5 * originS) * color.a, 0.0, 1.0);
+          resultHSV.z += (saturation * 0.5 * originS) * color.a;
         }
 
         // apply negative brightness
         if (value < 0.) {
           // in order to make sure the lower saturate will less effect
           resultHSV.z += originV * value * originS;
+        } else if (value > 0.) {
+          // * (1. - s) means the higher saturation of original color will less effect
+          resultHSV.z = resultHSV.z + value * color.a * (1. - resultHSV.y) * 0.6;
+          // also decrease the saturation but not too much
+          resultHSV.y *= max((1. - value), 0.05);
         }
-        resultRGB = hsv2rgb(resultHSV);
+        resultRGB = hsv2rgb(clamp(resultHSV, 0.0, 1.0));
 
-        // apply positive brightness
-        if (value > 0.) {
-          if (resultHSV.z > 0.9999 || resultHSV.y < 0.0001) {
-            resultRGB += (1.0 - resultRGB) * value * color.a;
-          } else {
-            // try to implement https://github.com/seotbeo/WzComparerR2/blob/91916d092efd2fab2307ddd338f96205abc28fd0/WzComparerR2/AvatarCommon/Prism.cs#L265
-            float amount = (1.0 - resultHSV.z) * resultHSV.y * 0.2 + resultHSV.z;
-            resultRGB += (amount - resultRGB) * value * color.a;
-          }
-        }
+        // wzcr2's positive brightness implementation
+        // from https://github.com/seotbeo/WzComparerR2/blob/91916d092efd2fab2307ddd338f96205abc28fd0/WzComparerR2/AvatarCommon/Prism.cs#L265
+        // if (value > 0.) {
+        //   if (resultHSV.z > 0.9999 || resultHSV.y < 0.0001) {
+        //     resultRGB += (1.0 - resultRGB) * value * color.a;
+        //   } else {
+        //     float amount = (1.0 - resultHSV.z) * resultHSV.y * 0.2 + resultHSV.z;
+        //     resultRGB += (amount - resultRGB) * value * color.a;
+        //   }
+        // }
         resultRGB = clamp(resultRGB, vec3(0.0), bound);
     }
   
