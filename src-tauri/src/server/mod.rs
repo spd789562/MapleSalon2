@@ -30,10 +30,15 @@ pub async fn app(node: WzNodeArc, string_dict: StringDict, port: u16) -> crate::
         .route_layer(axum::middleware::from_fn(
             middlewares::cache_control_from_query_middleware,
         ))
-        .route_layer(CorsLayer::new().allow_methods([Method::GET]).allow_origin([
-            HeaderValue::from_static("http://localhost:1420"),
-            HeaderValue::from_static("http://tauri.localhost"),
-        ]))
+        .route_layer(
+            CorsLayer::new()
+                .allow_methods([Method::GET, Method::OPTIONS])
+                .allow_origin([
+                    HeaderValue::from_static("http://localhost:1420"),
+                    HeaderValue::from_static("http://tauri.localhost"),
+                    HeaderValue::from_static("tauri://localhost"),
+                ]),
+        )
         .with_state((node, string_dict));
 
     let host = format!("127.0.0.1:{port}");
