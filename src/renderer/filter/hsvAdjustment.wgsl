@@ -39,8 +39,8 @@ fn mainFragment(
     if (
       oh_to_compared >= uColorStart && 
       oh_to_compared <= uColorEnd &&
-      color.rgb != vec3(0.0) &&
-      color.rgb != vec3(1.0)
+      any(color.rgb != vec3(0.0)) &&
+      any(color.rgb != vec3(1.0))
     ) {
         // hue
         resultRGB = hueShift(resultRGB, hue);

@@ -70,7 +70,7 @@ export class DyeableSprite extends Container {
         },
         fragment: {
           entryPoint: 'mainFrag',
-          source: mixDyeFragGlsl,
+          source: mixDyeVertWgsl,
         },
       },
       resources: {
