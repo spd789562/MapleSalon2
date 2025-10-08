@@ -29,6 +29,7 @@ import { $isMapleMapScene } from '@/store/scene';
 import { usePureStore } from '@/store';
 
 import { useChatBalloonText } from '@/components/CharacterPreview/useChatBalloonText';
+import { useCharacterFlip } from '@/components/CharacterPreview/useCharacterFlip';
 import { useCharacterVisible } from '@/components/tab/ChairTab/CharacterVisibleSwitch';
 import { useCharacterEffectVisible } from '@/components/tab/ChairTab/EffectSwitch';
 import { useSkillTab } from './SkillTabContext';
@@ -61,7 +62,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   let skill: Skill | undefined;
   let viewport: ZoomContainer | undefined;
   const character = new Character();
-
+  useCharacterFlip([character]);
   useChatBalloonText(character);
   useCharacterVisible([character]);
   useCharacterEffectVisible([character], () => false);

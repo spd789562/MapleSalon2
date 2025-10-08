@@ -5,6 +5,7 @@ import { $previewCharacter } from '@/store/character/selector';
 import { $actionExportHandType, $forceExportEffect } from '@/store/toolTab';
 
 import { useChatBalloonText } from '@/components/CharacterPreview/useChatBalloonText';
+import { useCharacterFlip } from '@/components/CharacterPreview/useCharacterFlip';
 
 import type { Application } from 'pixi.js';
 import { Character } from '@/renderer/character/character';
@@ -47,7 +48,7 @@ export const ActionCharacter = (props: ActionCharacterProps) => {
   const canvasFrameCache: { current?: CanvasFramesData } = {};
   const character = new Character();
   useChatBalloonText(character);
-
+  useCharacterFlip([character]);
   function makeCharacterFrames(options?: {
     padWhiteSpace?: boolean;
     backgroundColor?: string;
