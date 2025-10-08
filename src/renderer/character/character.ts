@@ -954,6 +954,13 @@ export class Character extends Container {
 
   updateFlip(flip: boolean) {
     this.characterFlip = flip;
+    const scaleX = this.forceScale * (this.flip ? -1 : 1);
+    this.bodyContainer.scale.x = scaleX;
+    this.bodyContainer.scale.y = this.forceScale;
+    // skill also need to update it's flip
+    // but is should not apply all skill thou, fix it later
+    this.backSkillContainer.scale.x = scaleX;
+    this.frontSkillContainer.scale.x = scaleX;
   }
 
   private getActionByHandType(
