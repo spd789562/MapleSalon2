@@ -121,4 +121,9 @@ export const dict = {
   partHoyoungEars: '虎影耳朵',
   partHoyoungTail: '虎影尾巴',
   partLaraHorn: '拉拉山羊角',
+
+  facing: '面向',
+  facingTip: '角色面向方向',
+  facingLeft: '左',
+  facingRight: '右',
 };

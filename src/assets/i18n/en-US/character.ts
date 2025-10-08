@@ -123,4 +123,9 @@ export const dict: CharacterDictionary = {
   partHoyoungEars: 'Hoyoung Ears',
   partHoyoungTail: 'Hoyoung Tail',
   partLaraHorn: 'Lara Horn',
+
+  facing: 'Facing',
+  facingTip: 'Character Facing Direction',
+  facingLeft: 'Left',
+  facingRight: 'Right',
 };
