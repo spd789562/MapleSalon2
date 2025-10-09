@@ -30,6 +30,7 @@ import { $isMapleMapScene } from '@/store/scene';
 import { $showPreviousCharacter } from '@/store/trigger';
 import { usePureStore } from '@/store';
 import { useChatBalloonText } from './useChatBalloonText';
+import { useCharacterFlip } from './useCharacterFlip';
 import { useResizableApp } from '@/hook/resizableApp';
 import { MapleMapMount } from '@/hook/mapleMap';
 
@@ -71,6 +72,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   characterContainer.addChild(ch);
   props.ref?.(ch);
   useChatBalloonText(ch);
+  useCharacterFlip([ch, originalCh]);
   useResizableApp({
     viewport,
     container: () => container,

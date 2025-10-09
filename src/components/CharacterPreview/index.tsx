@@ -3,6 +3,7 @@ import { styled } from 'styled-system/jsx/factory';
 import { HStack } from 'styled-system/jsx/hstack';
 import { Box } from 'styled-system/jsx/box';
 import { ExtraPartsPopover } from './ExtraPartsPopover';
+import { FacingToggleGroup } from './FacingToggleGroup';
 import { HandTypeToggleGroup } from './HandTypeToggleGroup';
 import { EarTypeToggleGroup } from './EarTypeToggleGroup';
 import { ExpressionSelect } from './ExpressionSelect';
@@ -26,9 +27,13 @@ import { CharacterPreviewProvider } from './CharacterPreviewContext';
 export const CharacterPreview = () => {
   return (
     <CharacterPreviewProvider>
-      <CharacterPreviewCard id="character-preview-scene" gridTemplateRows="auto 1fr auto auto">
+      <CharacterPreviewCard
+        id="character-preview-scene"
+        gridTemplateRows="auto 1fr auto auto"
+      >
         <HStack justify="center" mb="2" flexWrap="wrap">
           <ExtraPartsPopover />
+          <FacingToggleGroup />
           <HandTypeToggleGroup />
           <EarTypeToggleGroup />
           <Box width="32">

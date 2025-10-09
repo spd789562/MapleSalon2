@@ -421,10 +421,12 @@ export class Chair extends Container {
         isAnimating: characters[0][1].isAnimating,
       });
       await character.loadItems();
-      if (gd.flip) {
-        character.forceFlip = true;
+      if (gd.flip === true) {
+        character.fixedFlip = 'right';
+      } else if (gd.flip === false) {
+        character.fixedFlip = 'left';
       } else {
-        character.forceFlip = false;
+        character.fixedFlip = undefined;
       }
       const tamingMob = this.tamingMobs[index];
       if (hasTaming && tamingMob) {

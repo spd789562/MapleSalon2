@@ -1,6 +1,6 @@
 [package]
 name = "maplesalon2"
-version = "0.8.15"
+version = "0.8.16"
 description = "MapleSalon2 - A tool for preview hair, face and item dye using MapleStory wz files."
 authors = ["Leo"]
 edition = "2021"
@@ -22,7 +22,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 thiserror = "1.0"
 rayon = "1.9.0"
-wz_reader = { version = "0.0.14", features = ["json"] }
+wz_reader = { version = "0.0.16", features = ["json"] }
 image = { version = "0.25.0", default-features = false, features = ["rayon", "bmp", "webp"] }
 tokio = { version = "1", features = ["net", "fs"] }
 futures = { version = "0.3.30" }

@@ -28,9 +28,9 @@ import { CharacterExpressions } from '@/const/emotions';
 import { CharacterEarType } from '@/const/ears';
 import { CharacterHandType } from '@/const/hand';
 import { CharacterExtraPartIdMap } from '@/const/extraParts';
-import { BaseNameTag, NameTagPosition } from '../nameTag/baseNameTag';
+import { BaseNameTag, type NameTagPosition } from '../nameTag/baseNameTag';
 import { ChatBalloon } from '../chatBalloon/chatBalloon';
-import { BaseMedal, MedalPosition } from '../medal/baseMedal';
+import { BaseMedal, type MedalPosition } from '../medal/baseMedal';
 // import { NickTag } from '../nickTag/nickTag';
 import { Skill } from '../skill/skill';
 
@@ -80,8 +80,12 @@ export class Character extends Container {
   #_handType = CharacterHandType.DoubleHand;
   #_speed = 1;
   #_renderId = '';
-  flip = false;
-  forceFlip = false;
+
+  characterFlip = false;
+  actionFlip = false;
+  // flip that doesn't affect by character flip or action flip
+  fixedFlip?: 'left' | 'right';
+
   forceScale = 1;
 
   zmapLayers = new Map<PieceSlot, CharacterZmapContainer>();
@@ -207,6 +211,12 @@ export class Character extends Container {
       this.useAction = ins[0].action;
       this.currentInstructions = ins;
     }
+  }
+  get flip() {
+    if (this.fixedFlip) {
+      return this.fixedFlip === 'right';
+    }
+    return this.actionFlip !== this.characterFlip;
   }
 
   async update(characterData: CharacterData) {
@@ -656,7 +666,7 @@ export class Character extends Container {
     if (!instruction || this.destroyed) {
       return;
     }
-    this.updateFlip(instruction.flip === 1);
+    this.actionFlip = instruction.flip === 1;
     const bodyFrame = this.getBodyFrameByInstruction(instruction);
     const faceFrame = this.getFaceFrameByInstruction(instruction);
     bodyFrame?.renderPieces();
@@ -848,7 +858,6 @@ export class Character extends Container {
         await item.prepareAllActionResource();
       } catch (_) {
         console.error('some error when load face assets', item.info.id);
-        continue;
       }
     }
   }
@@ -944,11 +953,14 @@ export class Character extends Container {
   }
 
   updateFlip(flip: boolean) {
-    const actualFlip = this.forceFlip === true ? true : flip;
-    if (this.flip === actualFlip) {
-      return;
-    }
-    this.flip = actualFlip;
+    this.characterFlip = flip;
+    const scaleX = this.forceScale * (this.flip ? -1 : 1);
+    this.bodyContainer.scale.x = scaleX;
+    this.bodyContainer.scale.y = this.forceScale;
+    // skill also need to update it's flip
+    // but is should not apply all skill thou, fix it later
+    this.backSkillContainer.scale.x = scaleX;
+    this.frontSkillContainer.scale.x = scaleX;
   }
 
   private getActionByHandType(

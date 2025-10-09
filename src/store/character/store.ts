@@ -149,6 +149,8 @@ export const $currentInfoChanges = deepMap<Partial<CharacterInfo>>({});
 
 export const $chatBalloonContent = atom<string>('');
 
+export const $characterFlip = atom<boolean>(false);
+
 export const $characterExtraParts = atom<
   {
     part: CharacterExtraPart;

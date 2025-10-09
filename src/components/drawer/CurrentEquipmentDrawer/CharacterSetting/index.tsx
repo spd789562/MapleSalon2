@@ -7,6 +7,7 @@ import { NameTagSwitch } from '@/components/CharacterPreview/NameTagSwitch';
 import { ChatBalloonInput } from '@/components/CharacterPreview/ChatBalloonInput';
 import { ChatBalloonSwitch } from '@/components/CharacterPreview/ChatBalloonSwitch';
 import { ExtraPartsPopover } from '@/components/CharacterPreview/ExtraPartsPopover';
+import { FacingToggleGroup } from '@/components/CharacterPreview/FacingToggleGroup';
 import { HandTypeToggleGroup } from '@/components/CharacterPreview/HandTypeToggleGroup';
 import { EarTypeToggleGroup } from '@/components/CharacterPreview/EarTypeToggleGroup';
 import { ExpressionSelect } from '@/components/CharacterPreview/ExpressionSelect';
@@ -28,6 +29,9 @@ export const CharacterSetting = () => {
         <ActionFrameNumberInput />
       </SimpleField>
       <ExtraPartsPopover />
+      <SimpleField label={t('character.facing')}>
+        <FacingToggleGroup />
+      </SimpleField>
       <SimpleField label={t('character.handType')}>
         <HandTypeToggleGroup />
       </SimpleField>

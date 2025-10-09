@@ -107,7 +107,10 @@ export const MixDyeAdjust = (props: MixDyeAdjustProps) => {
   function handleMixDyeAlphaChange(value: number) {
     const currentItemChange = itemChange()?.item;
     if (currentItemChange?.dye) {
-      $currentItemChanges.setKey(`${props.category}.dye.alpha`, value);
+      $currentItemChanges.setKey(`${props.category}.dye`, {
+        ...currentItemChange.dye,
+        alpha: value,
+      });
     }
   }
 
