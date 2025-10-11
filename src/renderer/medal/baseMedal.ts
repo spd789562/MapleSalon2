@@ -132,12 +132,16 @@ export class BaseMedal extends Container {
     }
   }
   private applyPositionV2() {
-    if (this.background && this.type === MedalType.NickTag) {
-      this.background.pivot.y = 0;
-    }
     if (this.animation && this.background) {
       this.animation.pivot.y = this.background.center.pivot.y;
       this.animation.pivot.x = this.background.pivot.x;
+    }
+    if (this.background && this.type === MedalType.NickTag) {
+      this.background.pivot.y = 0;
+      // using left piece's y seems more accurate then the center one.
+      if (this.animation) {
+        this.animation.pivot.y = this.background.left.pivot.y;
+      }
     }
   }
   applyPosition() {
