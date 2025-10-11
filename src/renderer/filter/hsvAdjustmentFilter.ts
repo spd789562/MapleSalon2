@@ -13,14 +13,15 @@ export enum ColorRange {
   Purple = 6,
 }
 
+// maybe i should just hardcode in the shader instead :/
 const MapleColorRange = {
   [ColorRange.All]: [0, 1],
-  [ColorRange.Red]: [0, 0.8332],
-  [ColorRange.Yellow]: [0.8333, 0.25],
-  [ColorRange.Green]: [0.26, 0.4166],
-  [ColorRange.Cyan]: [0.4167, 0.5833],
-  [ColorRange.Blue]: [0.5834, 0.75],
-  [ColorRange.Purple]: [0.76, 0.9166],
+  [ColorRange.Red]: [-0.08334, 0.11], // 0.91666 - 1 && 0 - 0.11
+  [ColorRange.Yellow]: [0.07825, 0.25],
+  [ColorRange.Green]: [0.24875, 0.42],
+  [ColorRange.Cyan]: [0.41, 0.59],
+  [ColorRange.Blue]: [0.58, 0.75],
+  [ColorRange.Purple]: [0.75, 0.922],
 };
 
 /**
