@@ -74,6 +74,7 @@ class AnimatedBackground extends AnimatedSprite {
     super(textures);
     this.loop = true;
     this.origins = pieces.map((piece) => piece.origin);
+    this.onFrameChange(0);
   }
   get timeline() {
     /* @ts-ignore */

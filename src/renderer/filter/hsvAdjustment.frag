@@ -88,13 +88,24 @@ void main() {
     //   }
     // }
 
-    // fix the red has weird range, 0-0.11 and 0.9166-1
-    float oHToCompared = originH;
-    if (oHToCompared > 0.9166) {
-      oHToCompared -= 0.9166;
+    // fix the red has some range in purple/pink
+    // turn the negative value to positive like -0.1 will become 0.9
+    float normalizedColorStart = 1.0 - step(0.0, uColorStart) + uColorStart;
+    float hueToCompared = originH;
+
+    // then if get a negative value, force the color in the range become valid value
+    // so the color can be in the range of uColorStart and uColorEnd
+    // like if uColorStart is -0.1, and origin_h is 0.91, then hue_to_compared will become 0.91 - 1.0 * -1 = -0.09 which is greater then -0.1
+    if (uColorStart < 0.0 && originH >= normalizedColorStart) {
+      hueToCompared = (originH - 1.0) * -1.0;
     }
 
-    if (originH >= uColorStart && originH <= uColorEnd && color.rgb != vec3(0.0) && color.rgb != vec3(1.0)) {
+    if (
+      hueToCompared >= uColorStart && 
+      hueToCompared <= uColorEnd && 
+      color.rgb != vec3(0.0) && 
+      color.rgb != vec3(1.0)
+    ) {
         // hue
         resultRGB = hueShift(resultRGB, hue);
 

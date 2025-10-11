@@ -30,15 +30,22 @@ fn mainFragment(
     let origin_s: f32 = resultHSV.y;
     let origin_v: f32 = resultHSV.z;
 
-    // fix the red has weird range, 0-0.11 and 0.9166-1
-    var oh_to_compared: f32 = origin_h;
-    if (oh_to_compared > 0.9166) {
-      oh_to_compared -= 0.9166;
+    // fix the red has some range in purple/pink
+    // turn the negative value to positive like -0.1 will become 0.9
+    let normalizedColorStart: f32 = 1.0 - step(0.0, uColorStart) + uColorStart;
+    var hue_to_compared: f32 = origin_h;
+
+    // then if get a negative value, force the color in the range become valid value
+    // so the color can be in the range of uColorStart and uColorEnd
+    // like if uColorStart is -0.1, and origin_h is 0.91, then hue_to_compared will become 0.91 - 1.0 * -1 = -0.09 which is greater then -0.1
+    if (uColorStart < 0.0 && origin_h >= normalizedColorStart) {
+      hue_to_compared = (origin_h - 1.0) * -1;
     }
 
     if (
-      oh_to_compared >= uColorStart && 
-      oh_to_compared <= uColorEnd &&
+      hue_to_compared >= uColorStart && 
+      hue_to_compared <= uColorEnd &&
+      // vec3(bool) need to use any to cmp with single bool
       any(color.rgb != vec3(0.0)) &&
       any(color.rgb != vec3(1.0))
     ) {
