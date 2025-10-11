@@ -131,7 +131,6 @@ export class BaseNameTag extends Container {
     id?: number,
     position?: NameTagPosition,
   ) {
-    console.log('updateNameTagData', name, id, position);
     this.name = name;
     if (position) {
       this.nameTagPosition = position;

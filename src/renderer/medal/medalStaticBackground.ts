@@ -13,6 +13,9 @@ export class MedalStaticBackground extends Container {
   right: Sprite;
   nameWidth;
   type = 'static';
+
+  isEmptyCenter = false;
+
   constructor(wz: WzMedalData, nameWidth: number) {
     super();
     this.left = new Sprite();
@@ -35,10 +38,12 @@ export class MedalStaticBackground extends Container {
       this.rightPiece,
     ].flatMap((piece) => piece?.getResource() || []);
 
-    for (const res of resource) {
-      if (res) {
-        await Assets.load(res);
-      }
+    await Assets.load(resource);
+
+    const centerTexture = this.centerPiece?.getTexture();
+    if (centerTexture) {
+      this.isEmptyCenter =
+        centerTexture.width === 1 && centerTexture.height === 1;
     }
   }
   renderBackground() {

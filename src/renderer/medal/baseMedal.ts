@@ -136,7 +136,7 @@ export class BaseMedal extends Container {
       this.background.pivot.y = 0;
     }
     if (this.animation && this.background) {
-      this.animation.pivot.y = -this.background.center.pivot.y;
+      this.animation.pivot.y = this.background.center.pivot.y;
       this.animation.pivot.x = this.background.pivot.x;
     }
   }
@@ -157,6 +157,11 @@ export class BaseMedal extends Container {
     this.applyPosition();
     this.textNode.pivot.x = this.textNode.width / 2;
     this.textNode.style.fill = this.textColor;
+    if (this.background?.isEmptyCenter) {
+      this.textNode.visible = false;
+    } else {
+      this.textNode.visible = true;
+    }
     this.pivot.y = -(this.background?.topOffset || 0);
   }
 }
