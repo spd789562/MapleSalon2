@@ -32,6 +32,11 @@ export enum CharacterExtraPart {
   HoyoungTail = 'HoyoungTail',
 
   LaraHorn = 'LaraHorn',
+
+  RenEarType1 = 'RenEarType1',
+  RenEarType2 = 'RenEarType2',
+  RenDeco1 = 'RenDeco1',
+  RenDeco2 = 'RenDeco2',
 }
 
 export const CharacterExtraPartNames: Record<CharacterExtraPart, I18nKeys> = {
@@ -67,6 +72,11 @@ export const CharacterExtraPartNames: Record<CharacterExtraPart, I18nKeys> = {
   [CharacterExtraPart.HoyoungTail]: 'character.partHoyoungTail',
 
   [CharacterExtraPart.LaraHorn]: 'character.partLaraHorn',
+
+  [CharacterExtraPart.RenEarType1]: 'character.partRenEarType1',
+  [CharacterExtraPart.RenEarType2]: 'character.partRenEarType2',
+  [CharacterExtraPart.RenDeco1]: 'character.partRenDeco1',
+  [CharacterExtraPart.RenDeco2]: 'character.partRenDeco2',
 };
 
 export const CharacterExtraPartIdMap: Record<CharacterExtraPart, number> = {
@@ -101,6 +111,11 @@ export const CharacterExtraPartIdMap: Record<CharacterExtraPart, number> = {
   [CharacterExtraPart.HoyoungTail]: 5010176,
 
   [CharacterExtraPart.LaraHorn]: 5010193,
+
+  [CharacterExtraPart.RenEarType1]: 5010362,
+  [CharacterExtraPart.RenEarType2]: 5010368,
+  [CharacterExtraPart.RenDeco1]: 5010367,
+  [CharacterExtraPart.RenDeco2]: 5010369,
 };
 
 export const CharacterExtraPartIdToPartMap: Record<string, CharacterExtraPart> =
@@ -136,6 +151,11 @@ export const CharacterExtraPartIdToPartMap: Record<string, CharacterExtraPart> =
     [5010176]: CharacterExtraPart.HoyoungTail,
 
     [5010193]: CharacterExtraPart.LaraHorn,
+
+    [5010362]: CharacterExtraPart.RenEarType1,
+    [5010368]: CharacterExtraPart.RenEarType2,
+    [5010367]: CharacterExtraPart.RenDeco1,
+    [5010369]: CharacterExtraPart.RenDeco2,
   };
 
 export function isValidCharacterExtraPart(
