@@ -6,3 +6,4 @@ styled-system-studio
 
 src-tauri/Microsoft.WebView2*
 add_command.exe
+target/rust-analyzer
