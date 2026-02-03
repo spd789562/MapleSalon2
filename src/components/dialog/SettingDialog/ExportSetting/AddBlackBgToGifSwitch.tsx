@@ -28,7 +28,7 @@ export const AddBlackBgToGifSwitch = () => {
       >
         <HStack gap="1">
           <Text>{t('setting.gifWithBackground')}</Text>
-          <SettingTooltip tooltip={t('setting.gitWithBackgroundTip')} />
+          <SettingTooltip tooltip={t('setting.gifWithBackgroundTip')} />
         </HStack>
       </Switch>
       <GifBackgroundColorPicker />

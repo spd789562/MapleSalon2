@@ -20,7 +20,7 @@ export const dict: SettingDictionary = {
   uploadCharacter: 'Upload character',
   fileFormatError: 'File format error',
   newCharacter: 'New character',
-  openCrrentEquipment: 'Current Equipment',
+  openCurrentEquipment: 'Current Equipment',
   applyUpscale: 'Apply Upscale',
   showCompare: 'Compare',
   refreshPage: 'Refresh Page',
@@ -54,7 +54,7 @@ export const dict: SettingDictionary = {
   frameRemainSpaceTip:
     'Frames will be unified to the same size for better playback. If unchecked, the exported zip will contain JSON files for each frame positioning',
   gifWithBackground: 'GIF Background',
-  gitWithBackgroundTip:
+  gifWithBackgroundTip:
     'This setting will add background color to exported GIFs, improving issues with black and white artifacts when exporting semi-transparent equipment',
 
   renderTitle: 'Render Settings',

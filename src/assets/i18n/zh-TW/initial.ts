@@ -5,11 +5,11 @@ export const dict = {
     'Base.wz 通常存在於 {楓之谷資料夾路徑}/Data/Base/Base.wz，注意此檔案僅為遊戲資料進入點，仍需足夠完整的遊戲檔案才可正常使用本應用',
   loadNewBaseWz: '載入新 Base.wz',
 
-  loadPorgressSaveFile: '初始化並載入存檔...',
-  loadPorgressInitWz: '解析 wz 檔案...',
-  loadPorgressInitString: '預處理裝備資料...',
-  loadPorgressInitItem: '預處理椅子資料...',
-  loadPorgressDone: '即將完成',
+  loadProgressSaveFile: '初始化並載入存檔...',
+  loadProgressInitWz: '解析 wz 檔案...',
+  loadProgressInitString: '預處理裝備資料...',
+  loadProgressInitItem: '預處理椅子資料...',
+  loadProgressDone: '即將完成',
 
   loadOption: '載入選項',
   clearCache: '清除快取',

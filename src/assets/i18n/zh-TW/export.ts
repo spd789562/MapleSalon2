@@ -13,7 +13,7 @@ export const dict = {
   zip: '匯出(.zip)',
   sheet: '匯出表格圖',
   format: '匯出動圖格式',
-  animatFormat: '動圖格式',
+  animateFormat: '動圖格式',
   forceExportEffect: '強制匯出特效',
   forceExportEffectTip:
     '動畫及分鏡將會有完整的特效呈現(如披風)，但動圖將會無法無縫循環播放',

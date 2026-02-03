@@ -33,7 +33,7 @@ export const ActionTabTitle = (props: ActionTabTitleProps) => {
           </HStack>
           <Divider height="2rem" orientation="vertical" />
           <HStack>
-            <div>{t('export.animatFormat')}</div>
+            <div>{t('export.animateFormat')}</div>
             <ExportTypeToggleGroup />
           </HStack>
         </HStack>

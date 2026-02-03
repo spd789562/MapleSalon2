@@ -106,7 +106,7 @@ export const dict: CharacterDictionary = {
   partKaiserWing2: 'Kaiser Wing(phase 2)',
   partKaiserTail2: 'Kaiser Tail(phase 2)',
   partKaiserWing3: 'Kaiser Wing(phase 3)',
-  partKaiserTail3: 'Kaiser Tail(phase 3',
+  partKaiserTail3: 'Kaiser Tail(phase 3)',
   partAngelicBusterWing: 'Angelic Buster Wing',
   partAngelicBusterTransformWing: 'Angelic Buster Wing(Dress-up)',
   partBeastTamerBrownEar: 'Beast Tamer Ear(Brown)',

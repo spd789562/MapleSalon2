@@ -9,13 +9,14 @@ export const dict: ExportDictionary = {
   frames: 'Export Frames',
   animationFrames: 'Export animation frames',
   parts: 'Export Layered',
-  partsDesc: 'Export Layerd SpriteShee, need PDN Plugin(ZIP Archive) to use it',
+  partsDesc:
+    'Export Layered SpriteSheet, need PDN Plugin(ZIP Archive) to use it',
   assets: 'Export Assets',
   skillAssets: 'Export character and skill assets separately',
   zip: 'Export (.zip)',
   sheet: 'Export Sheet',
   format: 'Format',
-  animatFormat: 'Format',
+  animateFormat: 'Format',
   forceExportEffect: 'Force Export Effect',
   forceExportEffectTip:
     'Animation and frames will have complete effects (like capes), but the animation will not loop seamlessly',
