@@ -123,9 +123,9 @@ export const dict: CharacterDictionary = {
   partHoyoungEars: 'Hoyoung Ears',
   partHoyoungTail: 'Hoyoung Tail',
   partLaraHorn: 'Lara Horn',
+  partRenEarType1: 'Ren Ear(Male)',
+  partRenEarType2: 'Ren Ear(Female)',
   // temporary names
-  partRenEarType1: 'Ren Ear(A)',
-  partRenEarType2: 'Ren Ear(B)',
   partRenDeco1: 'Ren Deco(A)',
   partRenDeco2: 'Ren Deco(B)',
 

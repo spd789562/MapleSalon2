@@ -121,9 +121,9 @@ export const dict = {
   partHoyoungEars: '虎影耳朵',
   partHoyoungTail: '虎影尾巴',
   partLaraHorn: '拉拉山羊角',
+  partRenEarType1: '蓮耳朵(男)',
+  partRenEarType2: '蓮耳朵(女)',
   // temporary names
-  partRenEarType1: '蓮耳朵(A)',
-  partRenEarType2: '蓮耳朵(B)',
   partRenDeco1: '蓮裝飾(A)',
   partRenDeco2: '蓮裝飾(B)',
 
