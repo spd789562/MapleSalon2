@@ -7,11 +7,11 @@ import { $initLoadProgress, InitLoadProgress } from '@/store/initialize';
 import { Text } from '@/components/ui/text';
 
 const TextMap = {
-  [InitLoadProgress.SaveFile]: 'initial.loadPorgressSaveFile',
-  [InitLoadProgress.InitWz]: 'initial.loadPorgressInitWz',
-  [InitLoadProgress.InitString]: 'initial.loadPorgressInitString',
-  [InitLoadProgress.InitItem]: 'initial.loadPorgressInitItem',
-  [InitLoadProgress.Done]: 'initial.loadPorgressDone',
+  [InitLoadProgress.SaveFile]: 'initial.loadProgressSaveFile',
+  [InitLoadProgress.InitWz]: 'initial.loadProgressInitWz',
+  [InitLoadProgress.InitString]: 'initial.loadProgressInitString',
+  [InitLoadProgress.InitItem]: 'initial.loadProgressInitItem',
+  [InitLoadProgress.Done]: 'initial.loadProgressDone',
 };
 
 export const LoadText = () => {

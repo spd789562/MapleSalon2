@@ -4,8 +4,8 @@ use std::sync::Arc;
 use tokio::fs::{self, DirEntry};
 
 use wz_reader::{
-    util::maple_crypto_constants, version::WzMapleVersion, SharedWzMutableKey, WzNode, WzNodeArc,
-    WzNodeCast,
+    util::maple_crypto_constants,util::node_util, version::WzMapleVersion, SharedWzMutableKey, WzDirectory, WzNode,
+    WzNodeArc, WzNodeCast,
 };
 
 use super::{block_parse, block_parse_with_parent};
@@ -44,6 +44,32 @@ pub async fn get_root_wz_file_path(dir: &DirEntry) -> Option<String> {
     None
 }
 
+fn get_parsed_root(
+    dir: &str,
+    version: Option<WzMapleVersion>,
+    patch_version: Option<i32>,
+    parent: Option<WzNodeArc>,
+    default_keys: Option<SharedWzMutableKey>) -> Option<WzNodeArc> {
+    let node = WzNode::from_wz_file_full(
+        dir,
+        version,
+        patch_version,
+        parent.as_ref(),
+        default_keys.as_ref(),
+    ).ok()?.into_lock();
+
+    let is_parse_error = node_util::parse_node(&node).is_err();
+
+    // sometime header file is not valid, we just ignore it and continue read the index series like _Canvas_000.wz
+    if is_parse_error {
+        let name = Path::new(dir).file_stem().unwrap().to_str().unwrap();
+            let directory = WzDirectory::new(0, 0, &Arc::default(), true);
+            Some(WzNode::from_str(name, directory, parent.as_ref()).into_lock())
+    } else {
+        Some(node)
+    }
+}
+
 pub fn resolve_root_wz_file_dir<'a>(
     dir: String,
     version: Option<WzMapleVersion>,
@@ -52,17 +78,9 @@ pub fn resolve_root_wz_file_dir<'a>(
     default_keys: Option<SharedWzMutableKey>,
 ) -> BoxFuture<'a, Result<WzNodeArc>> {
     async move {
-        let root_node: WzNodeArc = WzNode::from_wz_file_full(
-            &dir,
-            version,
-            patch_version,
-            parent.as_ref(),
-            default_keys.as_ref(),
-        )?
-        .into();
-        let wz_dir = Path::new(&dir).parent().unwrap();
+        let root_node = get_parsed_root(&dir, version, patch_version, parent, default_keys.clone()).ok_or(Error::InitWzFailed)?;
 
-        block_parse(&root_node).await?;
+        let wz_dir = Path::new(&dir).parent().unwrap();
 
         {
             let mut entries = fs::read_dir(wz_dir).await?;

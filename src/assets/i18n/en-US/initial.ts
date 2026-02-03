@@ -7,11 +7,11 @@ export const dict: InitialDictionary = {
     'Base.wz is typically located at {MapleStory folder path}/Data/Base/Base.wz. Note that this file is only the entry point for game data - you still need complete game files to use this application properly.',
   loadNewBaseWz: 'Load New Base.wz',
 
-  loadPorgressSaveFile: 'Initializing and loading save data...',
-  loadPorgressInitWz: 'Parsing wz file...',
-  loadPorgressInitString: 'Processing equipment data...',
-  loadPorgressInitItem: 'Processing chair data...',
-  loadPorgressDone: 'Almost done...',
+  loadProgressSaveFile: 'Initializing and loading save data...',
+  loadProgressInitWz: 'Parsing wz file...',
+  loadProgressInitString: 'Processing equipment data...',
+  loadProgressInitItem: 'Processing chair data...',
+  loadProgressDone: 'Almost done...',
 
   loadOption: 'Load Options',
   clearCache: 'Clear Cache',

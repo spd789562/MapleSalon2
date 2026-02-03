@@ -16,7 +16,7 @@ export const dict = {
   uploadCharacter: '上傳角色',
   fileFormatError: '檔案格式錯誤',
   newCharacter: '新增角色',
-  openCrrentEquipment: '查看當前裝備',
+  openCurrentEquipment: '查看當前裝備',
   applyUpscale: '套用高清化',
   showCompare: '顯示比對',
   refreshPage: '重新載入頁面',
@@ -50,7 +50,7 @@ export const dict = {
   frameRemainSpaceTip:
     '分鏡將會統一角色圖片大小，以利播放，若取消勾選時，匯出的 zip 將會含有每張分鏡角色定位的 json 檔',
   gifWithBackground: 'Gif 背景色',
-  gitWithBackgroundTip:
+  gifWithBackgroundTip:
     '此設定將會使匯出的 Gif 有背景色，改善部分裝備為半透明時會導致匯出時黑時白的問題',
 
   renderTitle: '渲染設定',

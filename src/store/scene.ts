@@ -86,6 +86,13 @@ export function refreshUploadSceneImageKeys() {
   );
 }
 
+export function refreshUploadSceneLocalStorage() {
+  refreshUploadSceneImageKeys();
+  for (const [key, url] of $userUploadedSceneImages.get()) {
+    window.localStorage.setItem(`${IMAGE_STORE_PREFIX}-${key}`, url);
+  }
+}
+
 export function uploadSceneImage(url: string) {
   const id = Date.now().toString();
   const currentImages = $userUploadedSceneImages.get();

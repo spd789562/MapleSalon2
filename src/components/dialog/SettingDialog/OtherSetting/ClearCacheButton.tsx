@@ -3,6 +3,7 @@ import { useTranslate } from '@/context/i18n';
 
 import { refreshPage } from '@/store/action';
 import { openDialog, DialogType } from '@/store/confirmDialog';
+import { refreshUploadSceneLocalStorage } from '@/store/scene';
 
 import Trash2Icon from 'lucide-solid/icons/trash-2';
 import { Button } from '@/components/ui/button';
@@ -20,6 +21,7 @@ export const ClearCacheButton = () => {
         onClick: async () => {
           const webview = getCurrentWebview();
           await webview.clearAllBrowsingData();
+          refreshUploadSceneLocalStorage(); // prevent user uploaded image been cleared
           await refreshPage();
         },
       },

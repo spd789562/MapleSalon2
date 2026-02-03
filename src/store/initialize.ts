@@ -21,7 +21,10 @@ import { initializeSavedEquipmentHistory } from '@/store/equipHistory';
 import { initializeSavedEquipmentFavorite } from '@/store/equipFavorite';
 import { prepareAndFetchEquipStrings } from '@/store/string';
 import { initialGlobalRenderer } from '@/store/renderer';
-import { initialUserUploadedSceneImages } from '@/store/scene';
+import {
+  initialUserUploadedSceneImages,
+  refreshUploadSceneLocalStorage,
+} from '@/store/scene';
 
 import { toaster } from '@/components/GlobalToast';
 import { nextTick } from '@/utils/eventLoop';
@@ -59,6 +62,7 @@ export async function initApp(t: AppTranslator) {
     await initializeSavedSetting();
     await initializeSavedEquipmentHistory();
     await initializeSavedEquipmentFavorite();
+    initialUserUploadedSceneImages();
   } catch (_) {
     toaster.error({
       title: t('error.initTitle'),
@@ -112,6 +116,7 @@ export async function initByWzBase(path: string, t: AppTranslator) {
   }
   if (isNeedClearCache) {
     await getCurrentWebview().clearAllBrowsingData();
+    refreshUploadSceneLocalStorage(); // prevent user uploaded image been cleared
   }
 
   const isSuccess = await initStringAndRenderer(t);
@@ -139,8 +144,6 @@ export async function initStringAndRenderer(t: AppTranslator) {
     });
     return false;
   }
-
-  initialUserUploadedSceneImages();
 
   $initLoadProgress.set(InitLoadProgress.Done);
   await nextTick();

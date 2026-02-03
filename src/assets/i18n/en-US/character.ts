@@ -106,7 +106,7 @@ export const dict: CharacterDictionary = {
   partKaiserWing2: 'Kaiser Wing(phase 2)',
   partKaiserTail2: 'Kaiser Tail(phase 2)',
   partKaiserWing3: 'Kaiser Wing(phase 3)',
-  partKaiserTail3: 'Kaiser Tail(phase 3',
+  partKaiserTail3: 'Kaiser Tail(phase 3)',
   partAngelicBusterWing: 'Angelic Buster Wing',
   partAngelicBusterTransformWing: 'Angelic Buster Wing(Dress-up)',
   partBeastTamerBrownEar: 'Beast Tamer Ear(Brown)',
@@ -123,6 +123,11 @@ export const dict: CharacterDictionary = {
   partHoyoungEars: 'Hoyoung Ears',
   partHoyoungTail: 'Hoyoung Tail',
   partLaraHorn: 'Lara Horn',
+  partRenEarType1: 'Ren Ear(Male)',
+  partRenEarType2: 'Ren Ear(Female)',
+  // temporary names
+  partRenDeco1: 'Ren Deco(A)',
+  partRenDeco2: 'Ren Deco(B)',
 
   facing: 'Facing',
   facingTip: 'Character Facing Direction',
