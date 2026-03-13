@@ -15,6 +15,7 @@ export function getItemFolderFromId(id: number): string {
     case 3:
     case 4:
     case 6:
+    case 7:
       return 'Hair/';
     case 100:
       return 'Cap/';
