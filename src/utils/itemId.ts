@@ -34,7 +34,7 @@ export function isFaceId(id: number): boolean {
 }
 
 export function isHairId(id: number): boolean {
-  return (id >= 30000 && id < 50000) || (id >= 60000 && id < 70000);
+  return (id >= 30000 && id < 50000) || (id >= 60000 && id < 80000);
 }
 
 export function isCapId(id: number): boolean {
@@ -187,6 +187,7 @@ export function getSubCategory(id: number): EquipSubCategory | null {
     case 3:
     case 4:
     case 6:
+    case 7:
       return 'Hair';
     case 100:
       return 'Cap';
