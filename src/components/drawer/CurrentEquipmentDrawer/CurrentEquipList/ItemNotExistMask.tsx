@@ -2,6 +2,7 @@ import { Show, createMemo } from 'solid-js';
 import { styled } from 'styled-system/jsx/factory';
 
 import { Text } from '@/components/ui/text';
+import { useTranslate } from '@/context/i18n';
 
 import { CharacterLoader } from '@/renderer/character/loader';
 
@@ -9,13 +10,14 @@ export interface ItemNotExistMaskProps {
   id: number;
 }
 export const ItemNotExistMask = (props: ItemNotExistMaskProps) => {
+  const t = useTranslate();
   const isExistInCurrentVersion = createMemo(() => {
     return !!CharacterLoader.getPiecePathIfExist(props.id);
   });
   return (
     <Show when={!isExistInCurrentVersion()}>
       <Mask>
-        <Text>裝備不存在此版本或無法讀取</Text>
+        <Text>{t('common.itemNotInVersionOrUnreadable')}</Text>
       </Mask>
     </Show>
   );

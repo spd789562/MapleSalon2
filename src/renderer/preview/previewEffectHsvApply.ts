@@ -1,5 +1,3 @@
-import type { Container } from 'pixi.js';
-
 import type { Chair } from '@/renderer/chair/chair';
 import {
   ColorRange,
