@@ -4,7 +4,7 @@ use std::sync::Arc;
 use tokio::fs::{self, DirEntry};
 
 use wz_reader::{
-    util::maple_crypto_constants,util::node_util, version::WzMapleVersion, SharedWzMutableKey, WzDirectory, WzNode,
+    util::node_util, version::WzMapleVersion, SharedWzStringDecryptor, WzDirectory, WzNode,
     WzNodeArc, WzNodeCast,
 };
 
@@ -21,15 +21,6 @@ const WZ_ROOT_FOLDER_NEED_LOAD: [&str; 8] = [
     "Map",
     "Item",
 ];
-
-fn iv_to_version(iv: &[u8; 4]) -> Option<WzMapleVersion> {
-    match iv {
-        &maple_crypto_constants::WZ_GMSIV => Some(WzMapleVersion::GMS),
-        &maple_crypto_constants::WZ_MSEAIV => Some(WzMapleVersion::EMS),
-        &[0, 0, 0, 0] => Some(WzMapleVersion::BMS),
-        _ => None,
-    }
-}
 
 pub async fn get_root_wz_file_path(dir: &DirEntry) -> Option<String> {
     let dir_name = dir.file_name();
@@ -49,22 +40,25 @@ fn get_parsed_root(
     version: Option<WzMapleVersion>,
     patch_version: Option<i32>,
     parent: Option<WzNodeArc>,
-    default_keys: Option<SharedWzMutableKey>) -> Option<WzNodeArc> {
+    default_keys: Option<SharedWzStringDecryptor>,
+) -> Option<WzNodeArc> {
     let node = WzNode::from_wz_file_full(
         dir,
         version,
         patch_version,
         parent.as_ref(),
         default_keys.as_ref(),
-    ).ok()?.into_lock();
+    )
+    .ok()?
+    .into_lock();
 
     let is_parse_error = node_util::parse_node(&node).is_err();
 
     // sometime header file is not valid, we just ignore it and continue read the index series like _Canvas_000.wz
     if is_parse_error {
         let name = Path::new(dir).file_stem().unwrap().to_str().unwrap();
-            let directory = WzDirectory::new(0, 0, &Arc::default(), true);
-            Some(WzNode::from_str(name, directory, parent.as_ref()).into_lock())
+        let directory = WzDirectory::new(0, 0, &Arc::default(), true);
+        Some(WzNode::from_str(name, directory, parent.as_ref()).into_lock())
     } else {
         Some(node)
     }
@@ -75,10 +69,11 @@ pub fn resolve_root_wz_file_dir<'a>(
     version: Option<WzMapleVersion>,
     patch_version: Option<i32>,
     parent: Option<WzNodeArc>,
-    default_keys: Option<SharedWzMutableKey>,
+    default_keys: Option<SharedWzStringDecryptor>,
 ) -> BoxFuture<'a, Result<WzNodeArc>> {
     async move {
-        let root_node = get_parsed_root(&dir, version, patch_version, parent, default_keys.clone()).ok_or(Error::InitWzFailed)?;
+        let root_node = get_parsed_root(&dir, version, patch_version, parent, default_keys.clone())
+            .ok_or(Error::InitWzFailed)?;
 
         let wz_dir = Path::new(&dir).parent().unwrap();
 
@@ -89,12 +84,13 @@ pub fn resolve_root_wz_file_dir<'a>(
                 let file_type = entry.file_type().await?;
                 let name = entry.file_name();
 
-                let target_node = {
-                    let root_node = root_node.read().unwrap();
-                    root_node.at(name.to_str().unwrap())
-                };
+                /* remove the check for KMS */
+                // let target_node = {
+                //     let root_node = root_node.read().unwrap();
+                //     root_node.at(name.to_str().unwrap())
+                // };
 
-                if file_type.is_dir() && target_node.is_some() {
+                if file_type.is_dir() {
                     if let Some(file_path) = get_root_wz_file_path(&entry).await {
                         let dir_node = resolve_root_wz_file_dir(
                             file_path,
@@ -180,7 +176,6 @@ pub async fn load_wz_by_base(
             root_path,
         )
     };
-    let version = iv_to_version(&keys.read().unwrap().iv);
 
     let first_parent = Path::new(&path).parent().unwrap();
 
@@ -226,7 +221,7 @@ pub async fn load_wz_by_base(
             if let Some(file_path) = wz_path {
                 set.spawn(resolve_root_wz_file_dir(
                     file_path,
-                    version,
+                    None,
                     Some(patch_version),
                     Some(Arc::clone(&base_node)),
                     Some(Arc::clone(&keys)),

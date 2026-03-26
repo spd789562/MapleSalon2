@@ -10,6 +10,8 @@ import type { WzMedal } from '../medal/wz';
 import { getItemFolderFromId } from '@/utils/itemFolder';
 import { isCashEffectId, isNickTagId } from '@/utils/itemId';
 
+const LAYER_PREP_REGEX = /(Below|Under|Over|Above)/gi;
+
 class Loader {
   zmap?: Zmap = [];
   smap?: Smap;
@@ -281,6 +283,31 @@ class Loader {
 
   getRaw(path: string) {
     return fetch(`${this.apiHost}/node/raw/${path}?force_parse=true`);
+  }
+
+  isPossiblyResolvableLayer(layer: string): false | number {
+    const lowerCasedLayer = layer.toLowerCase();
+    const hasPrep = LAYER_PREP_REGEX.test(lowerCasedLayer);
+    if (!hasPrep) {
+      return false;
+    }
+    const split = lowerCasedLayer.split(LAYER_PREP_REGEX);
+    // split string must be odd like ['head', 'below', 'body']
+    if (split.length % 2 === 0) {
+      return false;
+    }
+    let index = this.zmapIndex.get(split[0]) || 0;
+    for (let i = 1; i < split.length; i += 2) {
+      const prep = split[i];
+      const targetIndex = this.zmapIndex.get(split[i + 1]) || 0;
+      if (prep === 'below' || prep === 'under') {
+        index = targetIndex - 1;
+      } else {
+        index = targetIndex + 1;
+      }
+    }
+    this.zmapIndex.set(layer, index);
+    return index;
   }
 
   /**
