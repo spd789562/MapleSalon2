@@ -165,6 +165,10 @@ export abstract class CategorizedItem<Name extends string> {
     if (!Number.isNaN(Number(z))) {
       return zmap[zmap.length - 10 - Number(z)];
     }
+    const index = CharacterLoader.isPossiblyResolvableLayer(name);
+    if (index && index !== 0) {
+      return name;
+    }
     return this.mainItem.islot[0];
   }
 
