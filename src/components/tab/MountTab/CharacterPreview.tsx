@@ -7,6 +7,8 @@ import {
   onMount,
   Show,
 } from 'solid-js';
+import { $previewMountEffectHsv } from '@/store/previewEffectHsv';
+import { syncMountPreviewEffectHsv } from '@/renderer/preview/previewEffectHsvApply';
 import { styled } from 'styled-system/jsx/factory';
 import { useTranslate } from '@/context/i18n';
 
@@ -53,6 +55,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   const t = useTranslate();
 
   const zoomInfo = usePureStore($previewChairZoomInfo);
+  const previewMountHsv = from($previewMountEffectHsv);
   const characterData = from($previewCharacter);
   const mountData = usePureStore($currentMount);
   const mountAction = usePureStore($mountAction);
@@ -168,6 +171,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     // removing mount
     if (!data) {
       mount?.destroy();
+      mount = undefined;
       viewport?.addChild(mainCharacter);
       await mainCharacter.update(mainCharacterData);
       return;
@@ -197,6 +201,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     await mount.sitCharacter(sitData, action);
     mount.playByInstructions();
     viewport?.addChild(mount);
+    syncMountPreviewEffectHsv(mount, $previewMountEffectHsv.get());
 
     if ($isMapleMapScene.get()) {
       setMapTarget(mount);
@@ -215,6 +220,14 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
       viewport.scaled = scaled;
       viewport.moveCenter(center);
     }
+  });
+
+  createEffect(() => {
+    const hsv = previewMountHsv();
+    if (!mount || !hsv) {
+      return;
+    }
+    syncMountPreviewEffectHsv(mount, hsv);
   });
 
   return (

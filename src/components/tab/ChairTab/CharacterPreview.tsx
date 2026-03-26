@@ -7,6 +7,8 @@ import {
   onMount,
   Show,
 } from 'solid-js';
+import { $previewChairEffectHsv } from '@/store/previewEffectHsv';
+import { syncChairPreviewEffectHsv } from '@/renderer/preview/previewEffectHsvApply';
 import { styled } from 'styled-system/jsx/factory';
 import { useTranslate } from '@/context/i18n';
 
@@ -55,6 +57,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   const t = useTranslate();
 
   const zoomInfo = usePureStore($previewChairZoomInfo);
+  const previewChairHsv = from($previewChairEffectHsv);
   const characterData = from($previewCharacter);
   const chairData = usePureStore($currentChair);
   const otherCharacters = usePureStore($otherCharacters);
@@ -172,6 +175,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     // removing chair
     if (!data) {
       chair?.destroy();
+      chair = undefined;
       viewport?.addChild(mainCharacter);
       await mainCharacter.update(mainCharacterData);
       return;
@@ -190,6 +194,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
         description: t('error.chairLoadFailedDesc'),
       });
       chair.destroy();
+      chair = undefined;
       return;
     }
     if (characters.length < others.length) {
@@ -214,6 +219,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
     }
     await chair.sitCharacter(sitData);
     chair.play();
+    syncChairPreviewEffectHsv(chair, $previewChairEffectHsv.get());
     if ($isMapleMapScene.get()) {
       setMapTarget(chair);
     } else {
@@ -230,6 +236,14 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
       viewport.scaled = scaled;
       viewport.moveCenter(center);
     }
+  });
+
+  createEffect(() => {
+    const hsv = previewChairHsv();
+    if (!chair || !hsv) {
+      return;
+    }
+    syncChairPreviewEffectHsv(chair, hsv);
   });
 
   return (

@@ -6,6 +6,8 @@ import {
   on,
   Show,
 } from 'solid-js';
+import { $previewSkillEffectHsv } from '@/store/previewEffectHsv';
+import { syncSkillPreviewEffectHsv } from '@/renderer/preview/previewEffectHsvApply';
 import { styled } from 'styled-system/jsx/factory';
 import { useTranslate } from '@/context/i18n';
 
@@ -51,6 +53,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
   const t = useTranslate();
 
   const zoomInfo = usePureStore($previewChairZoomInfo);
+  const previewSkillHsv = from($previewSkillEffectHsv);
   const characterData = from($previewCharacter);
   const skillData = usePureStore($currentSkill);
   const isRendererInitialized = usePureStore($isGlobalRendererInitialized);
@@ -158,6 +161,7 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
 
     await character.update({ ...mainCharacterData, skillId: data?.id });
     setSkillRef(character.skill);
+    syncSkillPreviewEffectHsv(character.skill, $previewSkillEffectHsv.get());
 
     props.onLoaded();
   });
@@ -171,6 +175,14 @@ export const CharacterPreviewView = (props: CharacterPreviewViewProps) => {
       viewport.scaled = scaled;
       viewport.moveCenter(center);
     }
+  });
+
+  createEffect(() => {
+    const hsv = previewSkillHsv();
+    if (!character.skill || !hsv) {
+      return;
+    }
+    syncSkillPreviewEffectHsv(character.skill, hsv);
   });
 
   return (
