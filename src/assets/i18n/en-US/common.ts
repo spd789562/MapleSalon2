@@ -36,5 +36,5 @@ export const dict: CommonDictionary = {
   selectShareCharacterTip:
     'Select characters to share the mount/chair with. Only applicable to mounts and chairs that support multiple seats.',
 
-  itemNotInVersionOrUnreadable: 'Item no available in file',
+  itemNotInVersionOrUnreadable: 'Item not available with this version',
 };
