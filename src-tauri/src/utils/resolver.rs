@@ -84,12 +84,13 @@ pub fn resolve_root_wz_file_dir<'a>(
                 let file_type = entry.file_type().await?;
                 let name = entry.file_name();
 
-                let target_node = {
-                    let root_node = root_node.read().unwrap();
-                    root_node.at(name.to_str().unwrap())
-                };
+                /* remove the check for KMS */
+                // let target_node = {
+                //     let root_node = root_node.read().unwrap();
+                //     root_node.at(name.to_str().unwrap())
+                // };
 
-                if file_type.is_dir() && target_node.is_some() {
+                if file_type.is_dir() {
                     if let Some(file_path) = get_root_wz_file_path(&entry).await {
                         let dir_node = resolve_root_wz_file_dir(
                             file_path,
