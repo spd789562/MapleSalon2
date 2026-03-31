@@ -305,7 +305,7 @@ export function replaceIdInPath(path: string, id: number): string {
 export function getIconPath(id: number, folder?: string) {
   let getfolder = folder;
   if (isAnyChairId(id)) {
-    return `${$apiHost.get()}/node/image_unparsed/${getChairIconPath(id, folder as string)}/info/icon`;
+    return `${$apiHost.get()}/node/icon/${getChairIconPath(id, folder as string)}/info/icon`;
   }
 
   if (!folder) {
@@ -314,11 +314,11 @@ export function getIconPath(id: number, folder?: string) {
   let iconPath = 'info/icon';
 
   if (isCashEffectId(id)) {
-    return `${$apiHost.get()}/node/image_unparsed/Item/Cash/0501.img/${id.toString().padStart(8, '0')}/${iconPath}`;
+    return `${$apiHost.get()}/node/icon/Item/Cash/0501.img/${id.toString().padStart(8, '0')}/${iconPath}`;
   }
 
   if (isNickTagId(id)) {
-    return `${$apiHost.get()}/node/image_unparsed/Item/Install/0370.img/${id.toString().padStart(8, '0')}/${iconPath}`;
+    return `${$apiHost.get()}/node/icon/Item/Install/0370.img/${id.toString().padStart(8, '0')}/${iconPath}`;
   }
 
   if (getfolder === 'Face/') {
@@ -332,7 +332,7 @@ export function getIconPath(id: number, folder?: string) {
       iconPath = 'front/head';
     }
   }
-  return `${$apiHost.get()}/node/image_unparsed/Character/${getfolder}${id
+  return `${$apiHost.get()}/node/icon/Character/${getfolder}${id
     .toString()
     .padStart(8, '0')}.img/${iconPath}`;
 }
