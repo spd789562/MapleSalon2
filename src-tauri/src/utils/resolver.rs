@@ -187,10 +187,9 @@ pub async fn load_wz_by_base(
         first_parent
     };
 
-    let string_node_path = wz_root_path.join("String/String_000.img");
+    let string_node_path = wz_root_path.join("String/String_000.wz");
 
     if let Ok(test_node) = WzNode::from_wz_file(string_node_path.to_str().unwrap(), None) {
-        println!("String_000.img detected try to resolve it to create the cache");
         let node = test_node.into_lock();
         let _ = block_parse(&node).await?;
     }

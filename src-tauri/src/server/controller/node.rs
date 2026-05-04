@@ -65,22 +65,18 @@ pub async fn get_icon(
     State(root): State<AppState>,
     Path(full_path): Path<String>,
 ) -> Result<impl IntoResponse> {
-    let icon_raw_fallback = full_path.ends_with("/icon").then(|| {
-        format!(
-            "{}/iconRaw",
-            full_path.strip_suffix("/icon").expect("ends_with /icon")
-        )
-    });
+    let (image_node, path) =
+        node_util::get_image_node_from_path(&root.0, &full_path).ok_or(Error::NodeNotFound)?;
 
-    let (image_node, path) = match node_util::get_image_node_from_path(&root.0, &full_path) {
-        Some(pair) => pair,
-        None => {
-            let alt = icon_raw_fallback.as_ref().ok_or(Error::NodeNotFound)?;
-            node_util::get_image_node_from_path(&root.0, alt).ok_or(Error::NodeNotFound)?
-        }
-    };
-
-    let image = handlers::resolve_png_unparsed(&image_node, &path, Some(&root.0))?;
+    let image =
+        handlers::resolve_png_unparsed(&image_node, &path, Some(&root.0)).or_else(|_| {
+            if path.ends_with("/icon") {
+                let alt_path = format!("{}/iconRaw", path.strip_suffix("/icon").expect("ends_with /icon"));
+                handlers::resolve_png_unparsed(&image_node, &alt_path, Some(&root.0))
+            } else {
+                Err(Error::NodeNotFound)
+            }
+        })?;
 
     let mut buf = BufWriter::new(Cursor::new(Vec::new()));
     image
