@@ -27,7 +27,7 @@ import {
 } from '@/store/scene';
 
 import { toaster } from '@/components/GlobalToast';
-import { nextTick } from '@/utils/eventLoop';
+import { nextTick, sleep } from '@/utils/eventLoop';
 
 export enum InitLoadProgress {
   SaveFile = 'save_file',
@@ -92,6 +92,17 @@ export async function initByWzBase(path: string, t: AppTranslator) {
   $initLoadProgress.set(InitLoadProgress.InitWz);
   await nextTick();
   let version = 0;
+
+  let is_loaded = false;
+
+  sleep(10000).then(() => {
+    if (!is_loaded) {
+      toaster.create({
+        title: t('initial.loadLongHint'),
+      });
+    }
+  });
+
   try {
     version = await initialWzBase(path);
   } catch (e) {
@@ -105,6 +116,8 @@ export async function initByWzBase(path: string, t: AppTranslator) {
     });
     $isWzLoading.set(false);
     return false;
+  } finally {
+    is_loaded = true;
   }
 
   const pathHash = `${path}#${version}`;
