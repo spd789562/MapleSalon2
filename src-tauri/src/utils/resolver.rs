@@ -22,6 +22,16 @@ const WZ_ROOT_FOLDER_NEED_LOAD: [&str; 8] = [
     "Item",
 ];
 
+const PKG2_DETECT_FILES: [&str; 7] = [
+    "Character",
+    "Effect",
+    "String",
+    "UI",
+    "Skill",
+    "Map",
+    "Item",
+];
+
 pub async fn get_root_wz_file_path(dir: &DirEntry) -> Option<String> {
     let dir_name = dir.file_name();
     let mut inner_wz_name = dir_name.to_str().unwrap().to_string();
@@ -187,11 +197,13 @@ pub async fn load_wz_by_base(
         first_parent
     };
 
-    let string_node_path = wz_root_path.join("String/String_000.wz");
-
-    if let Ok(test_node) = WzNode::from_wz_file(string_node_path.to_str().unwrap(), None) {
-        let node = test_node.into_lock();
-        let _ = block_parse(&node).await?;
+    // test parsing some base file to generate the version cache
+    for file in PKG2_DETECT_FILES {
+        let file_path = wz_root_path.join(file).join(format!("{file}_000.wz"));
+        if let Ok(test_node) = WzNode::from_wz_file(file_path.to_str().unwrap(), None) {
+            let node = test_node.into_lock();
+            let _ = block_parse(&node).await?;
+        }
     }
 
     let mut entries = fs::read_dir(wz_root_path).await?;
