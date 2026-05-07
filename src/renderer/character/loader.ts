@@ -1,27 +1,30 @@
 import { Assets, Sprite, type Texture } from 'pixi.js';
 import { $apiHost } from '@/store/const';
 
-import type { Zmap, Smap } from './const/data';
+import type { Smap } from './const/data';
 import type { WzItem, WzEffectItem, WzActionInstruction } from './const/wz';
 import type { WzNameTag } from '../nameTag/wz';
 import type { WzChatBalloon } from '../chatBalloon/wz';
 import type { WzMedal } from '../medal/wz';
 
+import { ZmapIndex } from './zmapIndex';
+
 import { getItemFolderFromId } from '@/utils/itemFolder';
 import { isCashEffectId, isNickTagId } from '@/utils/itemId';
 
-const LAYER_PREP_REGEX = /(Below|Under|Over|Above)/gi;
-
 class Loader {
-  zmap?: Zmap = [];
   smap?: Smap;
-  zmapIndex = new Map<string, number>();
+  zmapIndex = new ZmapIndex([]);
   wzImageFolder = new Set<string>();
   setMap = new Map<string, string>();
   loadingMap = new Map<string, Promise<unknown>>();
   pathExistCache = new Map<number, string>();
   instructionMap = new Map<string, WzActionInstruction[]>();
   noEffectMap = new Set<number>();
+
+  get zmap() {
+    return this.zmapIndex.zmap;
+  }
 
   init() {
     return Promise.all([
@@ -41,61 +44,13 @@ class Loader {
     return await fetch(`${this.apiHost}/node/parse/UI/NameTag.img`);
   }
   async loadZmap() {
-    this.zmap = await fetch(`${this.apiHost}/mapping/zmap`).then((res) =>
+    const zmap = await fetch(`${this.apiHost}/mapping/zmap`).then((res) =>
       res.json(),
     );
-    if (!this.zmap) {
+    if (!zmap) {
       return;
     }
-    for (let i = 0; i < this.zmap.length; i++) {
-      this.zmapIndex.set(this.zmap[i], i);
-    }
-
-    this.zmap.reverse();
-    // manually add a lot of missing layer, wtf?
-    this.fixLayers([
-      ['accessoryFaceOverCap', 'accessoryEyeOverCap'], // 1012781
-      ['backBelowBody', 'backShieldBelowBody'], // 1402233
-      ['backCapAcssesary', 'backHairBelowCap'], // 1012418
-      ['backCapBelowHair', 'backCap'], // 1003169
-      ['backCapBelowHead', 'backMailChestOverPants'], // 1004482
-      ['backCapeBelowHead', 'backMailChestOverPants'], // 1103741
-      ['backWeaponBelowGlove', 'backWeaponOverGlove'], // 1472196 it a Knuckler wtf?
-      ['capBelowHair', 'hairBelowBody'], // 1004506
-      ['capBelowBody', 'hairBelowBody'], // 1004962
-      ['capBackHair', 'hairOverHead'], // 1006737
-      // v0.8.12, it looks wrong in 1003934 using the armBelowHead, so after that it move more below
-      ['capBelowHead', 'capAccessoryBelowBody'], // 1003975
-      ['capeArm', 'cape'], // 1103058
-      ['capeBelowHair', 'hairBelowBody'], // 1102682
-      ['capeBelowChest', 'mailChest'], // 1103098
-      ['capeBelowBodyOverPants', 'pants'], // 1052597 it a overall...
-      ['capeOverHeadOverCap', 'capAccessory'], // 1012032
-      ['capeUnderBody', 'capeBelowBody'], // 1102270
-      ['capeWeapon', 'weaponOverBody'], // 1702592
-      ['gloveBelowHair', 'hair'], // 1082738
-      ['hairBelowHead', 'mailArmBelowHead'], // 33525
-      ['mailChestBelowBody', 'weaponBelowBody'], // 1053813
-      ['shieldBelowArm', 'weaponBelowArm'], // 1092062
-      ['weapnBelowBody', 'weaponBelowBody'], // 1702891
-      ['weponBelowBody', 'weaponBelowBody'], // 1402235 what is this typo?
-      ['weaponBelowArmOverHead', 'head'], // 1332168
-      ['weaponBelowGlove', 'gloveWristOverBody'], // 1703541
-      ['weaponBelowHand', 'weaponOverArmBelowHead'], // 1702012
-      ['weaponBelowHandOverBody', 'weaponOverArmBelowHead'], // 1702288
-      ['weaponBelowHead', 'weaponOverArmBelowHead'], // Blaster's weapon
-      ['weaponBelowbody', 'weaponBelowBody'], // 1703234
-      ['weaponBodyBelow', 'weaponBelowBody'], // 1412004
-      ['weaponOverArmBelowBody', 'weaponOverArmBelowHead'], // 1342028
-      ['weaponOverBelowArm', 'weaponOverArmBelowHead'], // 1703029
-      ['weaponOverGloveBelowMailArm', 'mailArm'], // 1702443
-      ['weaponOverHead', 'hairOverHead'], // 1703236
-      ['weaponWrist', 'gloveWrist'], // 1472152
-      ['weaponback', 'backWeapon'], // 1702556
-    ]);
-
-    this.zmap.push('effect');
-    this.zmapIndex.set('effect', this.zmap.length - 1);
+    this.zmapIndex = new ZmapIndex(zmap);
   }
   async loadSmap() {
     this.smap = await fetch(`${this.apiHost}/mapping/smap`).then((res) =>
@@ -126,7 +81,7 @@ class Loader {
     for (const action in data) {
       const instructions = data[action];
       /* at lease has two frame */
-      if (!instructions || !instructions[0]?.action) {
+      if (!instructions?.[0]?.action) {
         continue;
       }
       const frames: WzActionInstruction[] = [];
@@ -283,51 +238,6 @@ class Loader {
 
   getRaw(path: string) {
     return fetch(`${this.apiHost}/node/raw/${path}?force_parse=true`);
-  }
-
-  isPossiblyResolvableLayer(layer: string): false | number {
-    const lowerCasedLayer = layer.toLowerCase();
-    const hasPrep = LAYER_PREP_REGEX.test(lowerCasedLayer);
-    if (!hasPrep) {
-      return false;
-    }
-    const split = lowerCasedLayer.split(LAYER_PREP_REGEX);
-    // split string must be odd like ['head', 'below', 'body']
-    if (split.length % 2 === 0) {
-      return false;
-    }
-    let index = this.zmapIndex.get(split[0]) || 0;
-    for (let i = 1; i < split.length; i += 2) {
-      const prep = split[i];
-      const targetIndex = this.zmapIndex.get(split[i + 1]) || 0;
-      if (prep === 'below' || prep === 'under') {
-        index = targetIndex - 1;
-      } else {
-        index = targetIndex + 1;
-      }
-    }
-    this.zmapIndex.set(layer, index);
-    return index;
-  }
-
-  /**
-   * fix certain layer index with one exist layer when it not exist
-   */
-  private fixLayers(layers: [string, string][]) {
-    if (!this.zmap) {
-      return;
-    }
-    for (const [layer, alterLayer] of layers) {
-      const alterIndex = this.zmap.indexOf(alterLayer);
-      if (alterIndex > -1) {
-        this.zmap = [
-          ...this.zmap.slice(0, alterIndex),
-          layer,
-          ...this.zmap.slice(alterIndex),
-        ];
-        this.zmapIndex.set(layer, this.zmapIndex.get(alterLayer) || 0);
-      }
-    }
   }
 }
 
