@@ -62,10 +62,7 @@ export class CharacterItemPiece implements AnimatableFrame {
     this.ancher = defaultAncher.navel;
     this.noAncher = noAncher;
     this.item = item;
-    this.zIndex =
-      CharacterLoader.zmapIndex.get(this.z) ||
-      CharacterLoader.zmapIndex.get(this.slotName) ||
-      0;
+    this.zIndex = CharacterLoader.zmapIndex.getZIndex([this.z, this.slotName]);
     this.isIndepened = Object.keys(this.map).length === 1 || noAncher;
     if (noAncher) {
       this.isAncherBuilt = true;

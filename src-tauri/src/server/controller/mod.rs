@@ -18,6 +18,7 @@ pub fn node_router() -> Router<AppState> {
     Router::new()
         .route("/image/*path", get(node::get_image))
         .route("/image_unparsed/*path", get(node::get_image_unparsed))
+        .route("/icon/*path", get(node::get_icon))
         .route("/json/*path", get(node::get_json))
         .route("/raw/*path", get(node::get_raw))
         .route("/parse/*path", get(node::parse))

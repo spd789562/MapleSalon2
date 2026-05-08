@@ -165,7 +165,7 @@ export abstract class CategorizedItem<Name extends string> {
     if (!Number.isNaN(Number(z))) {
       return zmap[zmap.length - 10 - Number(z)];
     }
-    const index = CharacterLoader.isPossiblyResolvableLayer(name);
+    const index = CharacterLoader.zmapIndex.isPossiblyResolvableLayer(name);
     if (index && index !== 0) {
       return name;
     }
@@ -551,10 +551,10 @@ function appendItems<T extends string>(
 ) {
   const existItem = item[fields].get(name as PieceName);
   if (existItem) {
-    /* @ts-ignore */
+    /* @ts-expect-error */
     existItem.push(...items);
   } else {
-    /* @ts-ignore */
+    /* @ts-expect-error */
     item[fields].set(name as PieceName, items);
   }
 }

@@ -12,6 +12,8 @@ export const dict: InitialDictionary = {
   loadProgressInitString: 'Processing equipment data...',
   loadProgressInitItem: 'Processing chair data...',
   loadProgressDone: 'Almost done...',
+  loadLongHint:
+    'New version of file need take sometime to process, please wait...',
 
   loadOption: 'Load Options',
   clearCache: 'Clear Cache',

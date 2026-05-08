@@ -10,6 +10,7 @@ export const dict = {
   loadProgressInitString: '預處理裝備資料...',
   loadProgressInitItem: '預處理椅子資料...',
   loadProgressDone: '即將完成',
+  loadLongHint: '新版本檔案需要較長時間處理，請稍候...',
 
   loadOption: '載入選項',
   clearCache: '清除快取',

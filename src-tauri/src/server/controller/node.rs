@@ -61,6 +61,39 @@ pub async fn get_image_unparsed(
     ))
 }
 
+pub async fn get_icon(
+    State(root): State<AppState>,
+    Path(full_path): Path<String>,
+) -> Result<impl IntoResponse> {
+    let (image_node, path) =
+        node_util::get_image_node_from_path(&root.0, &full_path).ok_or(Error::NodeNotFound)?;
+
+    let image =
+        handlers::resolve_png_unparsed(&image_node, &path, Some(&root.0)).or_else(|_| {
+            if path.ends_with("/icon") {
+                let alt_path = format!("{}/iconRaw", path.strip_suffix("/icon").expect("ends_with /icon"));
+                handlers::resolve_png_unparsed(&image_node, &alt_path, Some(&root.0))
+            } else {
+                Err(Error::NodeNotFound)
+            }
+        })?;
+
+    let mut buf = BufWriter::new(Cursor::new(Vec::new()));
+    image
+        .write_to(&mut buf, ImageFormat::WebP)
+        .map_err(|_| Error::ImageSendError)?;
+
+    let body = Body::from(buf.into_inner().unwrap().into_inner());
+
+    Ok((
+        [
+            (header::CONTENT_TYPE, "image/webp"),
+            (header::CACHE_CONTROL, "max-age=3600"),
+        ],
+        body,
+    ))
+}
+
 pub async fn get_raw(TargetNodeExtractor(node): TargetNodeExtractor) -> Result<impl IntoResponse> {
     let buffer: Vec<u8>;
 
