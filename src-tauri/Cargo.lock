@@ -2207,7 +2207,7 @@ checksum = "c41e0c4fef86961ac6d6f8a82609f55f31b05e4fce149ac5710e439df7619ba4"
 
 [[package]]
 name = "maplesalon2"
-version = "0.8.20"
+version = "0.8.21"
 dependencies = [
  "axum",
  "futures",
@@ -5674,9 +5674,9 @@ dependencies = [
 
 [[package]]
 name = "wz_reader"
-version = "0.0.19"
+version = "0.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d477ea67c35e4ed20a1012fa9b9ddb41cb6f627c16a13a4b7523002d9df355e4"
+checksum = "06e00bde9c0d193117dc1d588a79c797abbdf1b28f13cf40f0744950fc7cf14b"
 dependencies = [
  "aes",
  "c2-chacha",
