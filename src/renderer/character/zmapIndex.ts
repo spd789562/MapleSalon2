@@ -36,10 +36,10 @@ export class ZmapIndex {
       ['capeBelowBodyOverPants', 'pants'], // 1052597 it a overall...
       ['capeOverHeadOverCap', 'capAccessory'], // 1012032
       ['capeUnderBody', 'capeBelowBody'], // 1102270
-      ['capeWeapon', 'weaponOverBody'], // 1702592
+      ['capeWeapon', 'capeOverHead'], // 1702592
       ['gloveBelowHair', 'hair'], // 1082738
       ['hairBelowHead', 'mailArmBelowHead'], // 33525
-      ['mailChestBelowBody', 'weaponBelowBody'], // 1053813
+      ['mailChestBelowBody', 'gloveWristBelowBody'], // 1053813
       ['shieldBelowArm', 'weaponBelowArm'], // 1092062
       ['weapnBelowBody', 'weaponBelowBody'], // 1702891
       ['weponBelowBody', 'weaponBelowBody'], // 1402235 what is this typo?
@@ -52,18 +52,18 @@ export class ZmapIndex {
       ['weaponBodyBelow', 'weaponBelowBody'], // 1412004
       ['weaponOverArmBelowBody', 'weaponOverArmBelowHead'], // 1342028
       ['weaponOverBelowArm', 'weaponOverArmBelowHead'], // 1703029
-      ['weaponOverGloveBelowMailArm', 'mailArm'], // 1702443
+      ['weaponOverGloveBelowMailArm', 'glove'], // 1702443
       ['weaponOverHead', 'hairOverHead'], // 1703236
       ['weaponWrist', 'gloveWrist'], // 1472152
       ['weaponback', 'backWeapon'], // 1702556
       // v0.8.20
-      ['weaponWristOverGloveOverArm', 'gloveWrist'],
-      ['backbackWeapon', 'backWeapon'],
-      ['capeOverBody', 'capAccessory'],
-      ['capeBelowHead', 'capAccessory'],
-      ['rglove', 'gloveWrist'],
-      ['weaponEffecctOver', 'weaponOverBody'],
-      ['capeOverArm', 'cape'],
+      ['weaponWristOverGloveOverArm', 'weaponOverArm'], // 1703635
+      ['weaponEffecctOver', 'weaponOverBody'], // 1702800
+      ['backbackWeapon', 'backWeapon'], // 1703758
+      ['capeOverBody', 'weaponOverBody'], // 1102613, 1102665
+      ['capeBelowHead', 'armBelowHead'], // 1102657, 1102323
+      ['capeOverArm', 'gloveWrist'], // 1102335
+      ['rglove', 'gloveWrist'], // 1082800
     ]);
 
     this.zmap.push('effect');
@@ -72,11 +72,8 @@ export class ZmapIndex {
 
   getZIndex(names: string[]) {
     for (const name of names) {
-      const index =
-        this.get(name) ||
-        this.get(name.toLowerCase()) ||
-        this.isPossiblyResolvableLayer(name);
-      if (index !== undefined && Number.isInteger(index)) {
+      const index = this.get(name);
+      if (index !== undefined) {
         return index as number;
       }
     }
@@ -84,7 +81,7 @@ export class ZmapIndex {
   }
 
   has(z: string) {
-    return this.indexMap.has(z) || this.indexMap.has(z.toLowerCase());
+    return this.indexMap.has(z);
   }
 
   get(z: string) {
