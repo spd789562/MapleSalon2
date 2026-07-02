@@ -383,6 +383,9 @@ pub fn resolve_equip_string(
                         item.0 = EquipCategory::Medal;
                     }
                 }
+                if item.0 == EquipCategory::Weapon && item.3 {
+                    item.5 = true;
+                }
                 // item has effect
                 if effect_node
                     .read()
