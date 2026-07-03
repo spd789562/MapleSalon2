@@ -30,14 +30,14 @@ pub async fn prepare_equip(
             node_util::parse_node(&effect_node)?;
         }
     }
+    
+    handlers::apply_equip_string_patch(&equip_string_node, &patch_node);
 
     let string_node = equip_string_node
         .read()
         .unwrap()
         .at("Eqp")
         .ok_or(Error::NodeNotFound)?;
-
-    handlers::apply_equip_string_patch(&equip_node, &patch_node);
 
     if let Ok(ref mut string_read) = string_dict.write() {
         if string_read.len() == 0 {

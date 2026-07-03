@@ -26,7 +26,7 @@ impl AppStore {
         )
     }
     pub fn replace_patch_node(&self, another: &WzNodeArc) {
-        swap_node(&self.node, another);
+        swap_node(&self.patch_node, another);
     }
     pub fn replace_root(&self, another: &WzNodeArc) {
         swap_node(&self.node, another);

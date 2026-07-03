@@ -345,6 +345,7 @@ pub async fn resolve_patch(base_wz_path: &str) -> Result<WzNodeArc> {
         // assume it a Data folder inside the Maplestory folder
         let mut parent_iter = first_parent.ancestors();
         parent_iter.next();
+        parent_iter.next();
         parent_iter.next().ok_or(Error::ResolvePatchFailed)?
     } else {
         // older structure do not have hot-fix patch
