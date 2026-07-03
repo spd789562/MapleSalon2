@@ -334,3 +334,53 @@ pub async fn resolve_base(path: &str, version: Option<WzMapleVersion>) -> Result
 
     Ok(base_node)
 }
+
+pub async fn resolve_patch(base_wz_path: &str) -> Result<WzNodeArc> {
+    let first_parent = Path::new(&base_wz_path)
+        .parent()
+        .ok_or(Error::ResolvePatchFailed)?;
+
+    // if wz in /Base/Base.wz then it newer structure
+    let maplestory_path = if first_parent.file_stem().unwrap() == "Base" {
+        // assume it a Data folder inside the Maplestory folder
+        let mut parent_iter = first_parent.ancestors();
+        parent_iter.next();
+        parent_iter.next().ok_or(Error::ResolvePatchFailed)?
+    } else {
+        // older structure do not have hot-fix patch
+        return Err(Error::ResolvePatchFailed);
+    };
+
+    let patch_path = maplestory_path.join("Data.wz");
+
+    if fs::try_exists(&patch_path).await? {
+        let patch_node = WzNode::from_img_file(patch_path, None, None)?.into_lock();
+
+        let child = {
+            let node = patch_node.read().unwrap();
+
+            let image = node.try_as_image().ok_or(crate::Error::NodeNotFound)?;
+
+            let (mut child, _) = image
+                .resolve_children(Some(&patch_node))
+                .map_err(wz_reader::node::Error::from)?;
+
+            for (name, child) in child.iter_mut() {
+                // patch's key usually contains \ or / so we need to normalize it
+                *name = name.replace("\\", "/").into();
+                child.write().unwrap().name = name.clone();
+            }
+
+            child
+        };
+
+        {
+            let mut node_write = patch_node.write().unwrap();
+            node_write.children.extend(child.into_iter());
+        }
+
+        Ok(patch_node)
+    } else {
+        Err(Error::ResolvePatchFailed)
+    }
+}

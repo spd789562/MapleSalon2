@@ -28,7 +28,7 @@ where
             .await
             .map_err(IntoResponse::into_response)?;
 
-        let (root, _) = AppState::from_ref(state);
+        let (root, _, _) = AppState::from_ref(state);
 
         let root = root.read().unwrap();
 
@@ -72,7 +72,7 @@ where
             .await
             .map_err(IntoResponse::into_response)?;
 
-        let (root, _) = AppState::from_ref(state);
+        let (root, _, _) = AppState::from_ref(state);
 
         let root = root.read().unwrap();
 

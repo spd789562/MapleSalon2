@@ -7,9 +7,6 @@ pub struct GetJsonParam {
     pub simple: Option<bool>,
     /// force parse the wz file alogn the way
     pub force_parse: Option<bool>,
-    /// sort the json response
-    pub sort: Option<bool>,
-    pub resolve_uol: Option<bool>,
     /// how long to cache for resoponse header
     pub cache: Option<u32>,
 }

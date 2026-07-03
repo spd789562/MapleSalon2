@@ -29,11 +29,13 @@ fn main() {
     let string_dict = StringDict::default();
 
     let root_node = WzNode::empty().into_lock();
+    let patch_node = WzNode::empty().into_lock();
 
     let default_lang = Arc::new(sys_locale::get_locale().unwrap_or_else(|| String::from("en-US")));
 
     async_runtime::spawn(server::app(
         Arc::clone(&root_node),
+        Arc::clone(&patch_node),
         Arc::clone(&string_dict),
         port,
     ));
@@ -54,6 +56,7 @@ fn main() {
         )
         .manage(AppStore {
             node: root_node,
+            patch_node: patch_node,
             string: string_dict,
             port,
         })

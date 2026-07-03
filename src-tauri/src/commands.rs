@@ -66,6 +66,10 @@ pub(crate) async fn init<R: Runtime>(
 
     state.replace_root(&base_node);
 
+    if let Ok(patch_node) = utils::resolve_patch(&path).await {
+        state.replace_patch_node(&patch_node);
+    }
+
     let version = state
         .node
         .read()
