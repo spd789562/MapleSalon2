@@ -2,7 +2,7 @@ use rayon::prelude::*;
 use wz_reader::{
     property::{resolve_string_from_node, WzString},
     util::node_util,
-    WzNodeArc, WzNodeCast,
+    WzNodeArc, WzNodeCast, WzNodeName,
 };
 
 use super::item::{
@@ -16,7 +16,10 @@ use super::path::{
 
 use serde::Serialize;
 
-use crate::store::{StringDictInner, StringDictItem};
+use crate::{
+    store::{StringDictInner, StringDictItem},
+    utils::{node::split_path_after_img, swap_node},
+};
 use crate::{Error, Result};
 
 const EQUIP_CATEGORY_NEEDS: [&str; 14] = [
@@ -431,4 +434,34 @@ pub fn resolve_equip_string(
     }
 
     Ok(result)
+}
+
+pub fn apply_equip_string_patch(equip_node: &WzNodeArc, patch_node: &WzNodeArc) {
+    let equip_node = equip_node.read().unwrap();
+
+    let mut applied_keys: Vec<WzNodeName> = Vec::new();
+
+    for (name, node) in patch_node
+        .read()
+        .unwrap()
+        .children
+        .iter()
+        .filter(|(key, _)| key.starts_with(EQUIP_STRING_PATH))
+    {
+        let rest_path = split_path_after_img(name);
+        if rest_path.is_none() {
+            continue;
+        }
+        if let Some(equip_node) = equip_node.at_path(rest_path.unwrap()) {
+            applied_keys.push(name.clone());
+            {
+                node.write().unwrap().parent = equip_node.read().unwrap().parent.clone();
+            }
+            swap_node(&equip_node, &node);
+        }
+    }
+
+    for key in applied_keys {
+        patch_node.write().unwrap().children.remove(&key);
+    }
 }
