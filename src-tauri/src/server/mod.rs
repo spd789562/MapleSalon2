@@ -14,9 +14,14 @@ use axum::{
 use tower_http::cors::CorsLayer;
 use wz_reader::WzNodeArc;
 
-pub type AppState = (WzNodeArc, StringDict);
+pub type AppState = (WzNodeArc, WzNodeArc, StringDict);
 
-pub async fn app(node: WzNodeArc, string_dict: StringDict, port: u16) -> crate::Result<()> {
+pub async fn app(
+    node: WzNodeArc,
+    patch_node: WzNodeArc,
+    string_dict: StringDict,
+    port: u16,
+) -> crate::Result<()> {
     let layer_state = node.clone();
     let app = Router::new()
         .route("/", get(hello))
@@ -39,7 +44,7 @@ pub async fn app(node: WzNodeArc, string_dict: StringDict, port: u16) -> crate::
                     HeaderValue::from_static("tauri://localhost"),
                 ]),
         )
-        .with_state((node, string_dict));
+        .with_state((node, patch_node, string_dict));
 
     let host = format!("127.0.0.1:{port}");
 
@@ -65,13 +70,14 @@ impl IntoResponse for Error {
             | Error::ImageSendError => {
                 (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()).into_response()
             }
-            Error::InitWzFailed => (StatusCode::BAD_REQUEST, self.to_string()).into_response(),
-            Error::NotInitialized => (StatusCode::FORBIDDEN, self.to_string()).into_response(),
-            Error::NodeError(_) => (StatusCode::BAD_REQUEST, self.to_string()).into_response(),
-            Error::NodeNotFound => (StatusCode::NOT_FOUND, self.to_string()).into_response(),
-            Error::NodeTypeMismatch(_) => {
+            Error::InitWzFailed
+            | Error::NodeError(_)
+            | Error::NodeTypeMismatch(_)
+            | Error::ResolvePatchFailed => {
                 (StatusCode::BAD_REQUEST, self.to_string()).into_response()
             }
+            Error::NotInitialized => (StatusCode::FORBIDDEN, self.to_string()).into_response(),
+            Error::NodeNotFound => (StatusCode::NOT_FOUND, self.to_string()).into_response(),
         }
     }
 }

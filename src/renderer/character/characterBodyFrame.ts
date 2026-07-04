@@ -101,8 +101,9 @@ export class CharacterBodyFrame {
     if (!zmap) {
       return;
     }
-    this.clearnContainerChild();
+    this.clearContainerChild();
 
+    const effectPieces = [];
     for (const [layer, pieces] of this.pieces) {
       const container = this.character.getOrCreatZmapLayer(zmap, layer);
 
@@ -133,9 +134,16 @@ export class CharacterBodyFrame {
         }
 
         container.addCharacterPart(piece);
+        if (
+          piece.frameData.isKindOfEffect &&
+          piece.frameData.info.visibleEffect !== undefined
+        ) {
+          effectPieces.push(piece);
+        }
       }
-
-      container.refreshLock();
+    }
+    for (const effectPiece of effectPieces) {
+      effectPiece.visible = Boolean(effectPiece.frameData.info.visibleEffect);
     }
 
     this.updateEffectAncher();
@@ -179,9 +187,9 @@ export class CharacterBodyFrame {
   }
 
   reset() {
-    this.clearnContainerChild();
+    this.clearContainerChild();
   }
-  clearnContainerChild() {
+  clearContainerChild() {
     for (const container of this.character.zmapLayers.values()) {
       container.removeChildren();
     }
@@ -253,7 +261,7 @@ export class CharacterBodyFrame {
   }
 
   destroy() {
-    this.clearnContainerChild();
+    this.clearContainerChild();
     this.anchers.clear();
   }
 }

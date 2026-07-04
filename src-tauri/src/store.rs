@@ -5,6 +5,7 @@ use wz_reader::version::WzMapleVersion;
 use wz_reader::{property::WzValue, WzNodeArc, WzObjectType};
 
 use crate::handlers::EquipCategory;
+use crate::utils::swap_node;
 
 /* Category, Id, Name, isCash, isColor, hasEffect, isNameTag, isChatBalloon  */
 pub type StringDictItem = (EquipCategory, String, String, bool, bool, bool);
@@ -13,6 +14,7 @@ pub type StringDict = Arc<RwLock<StringDictInner>>;
 
 pub struct AppStore {
     pub node: WzNodeArc,
+    pub patch_node: WzNodeArc,
     pub string: StringDict,
     pub port: u16,
 }
@@ -23,9 +25,11 @@ impl AppStore {
             WzObjectType::Value(WzValue::Null)
         )
     }
+    pub fn replace_patch_node(&self, another: &WzNodeArc) {
+        swap_node(&self.patch_node, another);
+    }
     pub fn replace_root(&self, another: &WzNodeArc) {
-        let mut node = self.node.write().unwrap();
-        std::mem::swap(&mut *node, &mut *another.write().unwrap());
+        swap_node(&self.node, another);
     }
     pub fn init_root(&self, path: &str, version: Option<WzMapleVersion>) -> crate::Result<()> {
         let root = resolve_base(path, version).map_err(|_| crate::Error::InitWzFailed)?;

@@ -27,6 +27,8 @@ pub enum Error {
     NodeTypeMismatch(&'static str),
     #[error("json parse error")]
     JsonParseError(#[from] serde_json::Error),
+    #[error("fail to resolve patch")]
+    ResolvePatchFailed,
     #[cfg(mobile)]
     #[error(transparent)]
     PluginInvoke(#[from] tauri::plugin::mobile::PluginInvokeError),

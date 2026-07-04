@@ -75,6 +75,10 @@ export class CharacterItemPiece implements AnimatableFrame {
     }
   }
 
+  get isKindOfEffect() {
+    return this.slot === 'effect' || this.z === 'effect';
+  }
+
   get slotName() {
     return this.slot === 'default' ? this.z : this.z || this.slot;
   }

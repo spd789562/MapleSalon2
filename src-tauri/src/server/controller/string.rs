@@ -12,7 +12,7 @@ use super::super::models::GetEquipListParam;
 use super::super::AppState;
 
 pub async fn prepare_equip(
-    State((root, string_dict)): State<AppState>,
+    State((root, patch_node, string_dict)): State<AppState>,
     Query(GetEquipListParam { extra }): Query<GetEquipListParam>,
 ) -> Result<impl IntoResponse> {
     let equip_string_node = handlers::get_equip_string(&root)?;
@@ -30,6 +30,8 @@ pub async fn prepare_equip(
             node_util::parse_node(&effect_node)?;
         }
     }
+    
+    handlers::apply_equip_string_patch(&equip_string_node, &patch_node);
 
     let string_node = equip_string_node
         .read()
@@ -51,7 +53,7 @@ pub async fn prepare_equip(
     Ok(())
 }
 
-pub async fn get_equip(State((_, string_dict)): State<AppState>) -> Result<impl IntoResponse> {
+pub async fn get_equip(State((_, _, string_dict)): State<AppState>) -> Result<impl IntoResponse> {
     let string_list = string_dict
         .read()
         .unwrap()
@@ -74,7 +76,7 @@ pub async fn get_equip(State((_, string_dict)): State<AppState>) -> Result<impl 
     ))
 }
 
-pub async fn get_chairs(State((root, _)): State<AppState>) -> Result<impl IntoResponse> {
+pub async fn get_chairs(State((root, _, _)): State<AppState>) -> Result<impl IntoResponse> {
     let result = handlers::resolve_chair_string(&root)?;
 
     let result = result
@@ -94,7 +96,7 @@ pub async fn get_chairs(State((root, _)): State<AppState>) -> Result<impl IntoRe
     ))
 }
 
-pub async fn get_mounts(State((root, _)): State<AppState>) -> Result<impl IntoResponse> {
+pub async fn get_mounts(State((root, _, _)): State<AppState>) -> Result<impl IntoResponse> {
     let result = handlers::resolve_mount_string(&root)?;
 
     let result = result
@@ -113,7 +115,7 @@ pub async fn get_mounts(State((root, _)): State<AppState>) -> Result<impl IntoRe
     ))
 }
 
-pub async fn get_skills(State((root, _)): State<AppState>) -> Result<impl IntoResponse> {
+pub async fn get_skills(State((root, _, _)): State<AppState>) -> Result<impl IntoResponse> {
     let result = handlers::resolve_skill_string(&root)?;
 
     let result = result
@@ -133,7 +135,7 @@ pub async fn get_skills(State((root, _)): State<AppState>) -> Result<impl IntoRe
     ))
 }
 
-pub async fn get_maps(State((root, _)): State<AppState>) -> Result<impl IntoResponse> {
+pub async fn get_maps(State((root, _, _)): State<AppState>) -> Result<impl IntoResponse> {
     let result = handlers::resolve_map_string(&root)?;
 
     let result = result
