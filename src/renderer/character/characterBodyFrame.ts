@@ -141,6 +141,7 @@ export class CharacterBodyFrame {
           effectPieces.push(piece);
         }
       }
+      container.refreshLock();
     }
     for (const effectPiece of effectPieces) {
       effectPiece.visible = Boolean(effectPiece.frameData.info.visibleEffect);
