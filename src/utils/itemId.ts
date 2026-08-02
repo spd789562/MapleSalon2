@@ -30,11 +30,19 @@ export function isHeadId(id: number): boolean {
 }
 
 export function isFaceId(id: number): boolean {
-  return (id >= 20000 && id < 30000) || (id >= 50000 && id < 60000);
+  return (
+    (id >= 20000 && id < 30000) ||
+    (id >= 50000 && id < 60000) ||
+    (id >= 80000 && id < 90000)
+  );
 }
 
 export function isHairId(id: number): boolean {
-  return (id >= 30000 && id < 50000) || (id >= 60000 && id < 80000);
+  return (
+    (id >= 30000 && id < 50000) ||
+    (id >= 60000 && id < 80000) ||
+    (id >= 90000 && id < 100000)
+  );
 }
 
 export function isCapId(id: number): boolean {
@@ -183,11 +191,13 @@ export function getSubCategory(id: number): EquipSubCategory | null {
   switch (partOfId) {
     case 2:
     case 5:
+    case 8:
       return 'Face';
     case 3:
     case 4:
     case 6:
     case 7:
+    case 9:
       return 'Hair';
     case 100:
       return 'Cap';
