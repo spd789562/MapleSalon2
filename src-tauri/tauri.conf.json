@@ -1,6 +1,6 @@
 {
   "productName": "MapleSalon2",
-  "version": "0.8.24",
+  "version": "0.8.25",
   "identifier": "com.maplesalon.io",
   "build": {
     "beforeDevCommand": "npm run dev",
