@@ -37,7 +37,8 @@ export const dict: CommonDictionary = {
     'Select characters to share the mount/chair with. Only applicable to mounts and chairs that support multiple seats.',
 
   browseCharacters: 'Browse',
-  browseCharactersTip: 'Browse and search characters in a grid',
+  browseCharactersTip:
+    'Open the character selection modal to browse all characters',
   browseCharactersTitle: 'Select Character',
   characterSearchPlaceholder: 'Character name',
 
