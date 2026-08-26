@@ -5,6 +5,8 @@ import { useStore } from '@nanostores/solid';
 import {
   $equipmentDrawerEquipListType,
   $equipmentDrawerExperimentCharacterRender,
+  $equipmentDrawerExtraColumns,
+  getEquipDrawerColumnCount,
   EquipListType,
 } from '@/store/equipDrawer';
 import type { EquipItem } from '@/store/string';
@@ -33,12 +35,6 @@ const $equipRenderType = computed(
   },
 );
 
-const ColumnCountMap = {
-  [EquipListType.Row]: 1,
-  [EquipListType.Icon]: 7,
-  [EquipListType.Character]: 5,
-};
-
 const DefaultHeightMap = {
   [EquipListType.Row]: 36,
   [EquipListType.Icon]: 45,
@@ -47,9 +43,12 @@ const DefaultHeightMap = {
 
 export const FavoriteList = () => {
   const equipRenderType = useStore($equipRenderType);
+  const extraColumns = useStore($equipmentDrawerExtraColumns);
   const equipStrings = from($equipmentFavoriteEquipFilteredString);
 
-  const columnCount = createMemo(() => ColumnCountMap[equipRenderType()]);
+  const columnCount = createMemo(() =>
+    getEquipDrawerColumnCount(equipRenderType(), extraColumns()),
+  );
   const defaultItemHeight = createMemo(
     () => DefaultHeightMap[equipRenderType()],
   );

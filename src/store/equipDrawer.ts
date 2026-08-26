@@ -1,5 +1,11 @@
 import { atom, map, computed, onSet } from 'nanostores';
 
+import {
+  getCharacterColumnCount,
+  getEquipDrawerWidth,
+  getIconColumnCount,
+} from '@/const/equipDrawer';
+
 import { $equipmentStrings } from './string';
 import { $equipmentHistory, saveHistory } from './equipHistory';
 
@@ -54,6 +60,36 @@ export const $equipmentDrawerSearch = map<
 
 /** enable character rendering feater in equipment drawer */
 export const $equipmentDrawerExperimentCharacterRender = atom(false);
+
+/** extra icon columns beyond the default 7; also drives drawer width */
+export const $equipmentDrawerExtraColumns = atom(0);
+export const $equipmentDrawerResizing = atom(false);
+
+export const $equipmentDrawerWidth = computed(
+  $equipmentDrawerExtraColumns,
+  (extra) => getEquipDrawerWidth(extra),
+);
+export const $equipmentDrawerIconColumnCount = computed(
+  $equipmentDrawerExtraColumns,
+  (extra) => getIconColumnCount(extra),
+);
+export const $equipmentDrawerCharacterColumnCount = computed(
+  $equipmentDrawerExtraColumns,
+  (extra) => getCharacterColumnCount(extra),
+);
+
+export function getEquipDrawerColumnCount(
+  listType: EquipListType,
+  extraColumns: number,
+) {
+  if (listType === EquipListType.Row) {
+    return 1;
+  }
+  if (listType === EquipListType.Character) {
+    return getCharacterColumnCount(extraColumns);
+  }
+  return getIconColumnCount(extraColumns);
+}
 
 /* effect */
 onSet($equipmentDrawerEquipTab, () => {

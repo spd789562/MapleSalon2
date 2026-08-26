@@ -24,6 +24,8 @@ export const $characterInfoDialogOpen = atom<boolean>(false);
 
 export const $chairCharacterSelectionDialogOpen = atom<boolean>(false);
 
+export const $characterBrowseDialogOpen = atom<boolean>(false);
+
 export const $mapSelectionDialogOpen = atom<boolean>(false);
 
 /* a interaction lock use to prevent particular action */

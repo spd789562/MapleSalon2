@@ -5,18 +5,14 @@ import { usePureStore } from '@/store';
 import { $chairFilterdStrings } from '@/store/chair';
 import {
   $equipmentDrawerEquipListType,
+  $equipmentDrawerExtraColumns,
+  getEquipDrawerColumnCount,
   EquipListType,
 } from '@/store/equipDrawer';
 
 import { RowVirtualizer } from '@/components/ui/rowVirtualizer';
 import { ChairButton } from './ChairButton';
 import { ChairRowButton } from './ChairRowButton';
-
-const ColumnCountMap = {
-  [EquipListType.Row]: 1,
-  [EquipListType.Icon]: 7,
-  [EquipListType.Character]: 5,
-};
 
 const DefaultHeightMap = {
   [EquipListType.Row]: 36,
@@ -26,9 +22,12 @@ const DefaultHeightMap = {
 
 export const ChairList = () => {
   const equipRenderType = useStore($equipmentDrawerEquipListType);
+  const extraColumns = useStore($equipmentDrawerExtraColumns);
   const chairStrings = usePureStore($chairFilterdStrings);
 
-  const columnCount = createMemo(() => ColumnCountMap[equipRenderType()]);
+  const columnCount = createMemo(() =>
+    getEquipDrawerColumnCount(equipRenderType(), extraColumns()),
+  );
   const defaultItemHeight = createMemo(
     () => DefaultHeightMap[equipRenderType()],
   );

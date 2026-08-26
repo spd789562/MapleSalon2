@@ -1,7 +1,7 @@
 import { useTranslate } from '@/context/i18n';
 
 import UploadIcon from 'lucide-solid/icons/upload';
-import { Button } from '@/components/ui/button';
+import { Button, type ButtonProps } from '@/components/ui/button';
 
 import {
   type SaveCharacterData,
@@ -15,8 +15,14 @@ import { toaster } from '@/components/GlobalToast';
 
 import { getHeadIdFromBodyId, isBodyId } from '@/utils/itemId';
 
-export const UploadCharacterButton = () => {
+export interface UploadCharacterButtonProps {
+  inputId?: string;
+  size?: ButtonProps['size'];
+  variant?: ButtonProps['variant'];
+}
+export const UploadCharacterButton = (props: UploadCharacterButtonProps) => {
   const t = useTranslate();
+  const inputId = () => props.inputId ?? 'uploadCharacter';
 
   const handleUpload = (event: Event) => {
     const target = event.target as HTMLInputElement;
@@ -70,9 +76,14 @@ export const UploadCharacterButton = () => {
   };
 
   return (
-    <Button as="label" title={t('setting.uploadCharacter')} size="xs">
+    <Button
+      as="label"
+      title={t('setting.uploadCharacter')}
+      size={props.size ?? 'xs'}
+      variant={props.variant}
+    >
       <input
-        id="uploadCharacter"
+        id={inputId()}
         type="file"
         accept=".json"
         style={{ display: 'none' }}

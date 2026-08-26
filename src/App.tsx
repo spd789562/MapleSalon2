@@ -24,6 +24,7 @@ import { CharacterSelectionDrawerOpenButton } from './components/drawer/Characte
 
 import { SettingDialog } from './components/dialog/SettingDialog';
 import { CharacterInfoDialog } from './components/dialog/CharacterInfoDialog';
+import { CharacterBrowseDialog } from './components/dialog/CharacterBrowseDialog';
 import { MapSelectionDialog } from './components/dialog/MapSelectionDialog';
 
 import './store/effects';
@@ -56,6 +57,7 @@ function App() {
         <CharacterSelectionDrawerOpenButton />
         <SettingDialog />
         <CharacterInfoDialog />
+        <CharacterBrowseDialog />
         <MapSelectionDialog />
         <MainTour />
       </Show>

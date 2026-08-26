@@ -93,6 +93,27 @@ export const $getCharacterIds = computed($characterList, (characters) => {
     .filter(Boolean) as string[];
 });
 
+/** search text for character browse dialog */
+export const $characterBrowseSearch = atom<string>('');
+
+export const $filteredCharacterIds = computed(
+  [$characterList, $characterBrowseSearch],
+  (characters, search) => {
+    const keyword = search.trim().toLowerCase();
+    return characters
+      .filter((character) => {
+        if (!character) {
+          return false;
+        }
+        if (!keyword) {
+          return true;
+        }
+        return character.name.toLowerCase().includes(keyword);
+      })
+      .map((character) => character!.id);
+  },
+);
+
 /* actions */
 export async function initializeSavedCharacter() {
   try {

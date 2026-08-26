@@ -2,7 +2,8 @@ import { deepMap, computed, onSet } from 'nanostores';
 
 import { load } from '@tauri-apps/plugin-store';
 
-import { $equipmentDrawerExperimentCharacterRender } from './equipDrawer';
+import { $equipmentDrawerExperimentCharacterRender, $equipmentDrawerExtraColumns } from './equipDrawer';
+import { clampEquipDrawerExtraColumns } from '@/const/equipDrawer';
 import { $preferRenderer as $rendererPreference } from './renderer';
 import { $actionExportType } from './toolTab';
 import { updateBackgroundColorBaseOnColorMode } from './scene';
@@ -81,6 +82,7 @@ export interface AppSetting extends Record<string, unknown> {
   preservePin: boolean;
   currentEquipDrawerPin: boolean;
   equipDrawerPin: boolean;
+  equipDrawerExtraColumns: number;
 }
 
 const DEFAULT_SETTING: AppSetting = {
@@ -108,6 +110,7 @@ const DEFAULT_SETTING: AppSetting = {
   preservePin: true,
   currentEquipDrawerPin: false,
   equipDrawerPin: false,
+  equipDrawerExtraColumns: 0,
 };
 
 export const $appSetting = deepMap<AppSetting>(DEFAULT_SETTING);
@@ -306,6 +309,13 @@ export async function initializeSavedSetting() {
         $currentEquipmentDrawerPin.set(currentEquipDrawerPin);
         $currentEquipmentDrawerOpen.set(currentEquipDrawerPin);
       }
+      if (typeof setting.equipDrawerExtraColumns === 'number') {
+        const extra = clampEquipDrawerExtraColumns(
+          setting.equipDrawerExtraColumns,
+        );
+        $appSetting.setKey('equipDrawerExtraColumns', extra);
+        $equipmentDrawerExtraColumns.set(extra);
+      }
     }
   } catch (e) {
     console.error(e);
@@ -405,4 +415,7 @@ onSet($currentEquipmentDrawerPin, ({ newValue }) => {
   if ($preservePin.get()) {
     $appSetting.setKey('currentEquipDrawerPin', newValue);
   }
+});
+onSet($equipmentDrawerExtraColumns, ({ newValue }) => {
+  $appSetting.setKey('equipDrawerExtraColumns', newValue);
 });
