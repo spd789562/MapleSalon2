@@ -5,18 +5,14 @@ import { usePureStore } from '@/store';
 import { $skillFilterdStrings } from '@/store/skill';
 import {
   $equipmentDrawerEquipListType,
+  $equipmentDrawerExtraColumns,
+  getEquipDrawerColumnCount,
   EquipListType,
 } from '@/store/equipDrawer';
 
 import { RowVirtualizer } from '@/components/ui/rowVirtualizer';
 import { SkillButton } from './SkillButton';
 import { SkillRowButton } from './SkillRowButton';
-
-const ColumnCountMap = {
-  [EquipListType.Row]: 1,
-  [EquipListType.Icon]: 7,
-  [EquipListType.Character]: 5,
-};
 
 const DefaultHeightMap = {
   [EquipListType.Row]: 36,
@@ -26,9 +22,12 @@ const DefaultHeightMap = {
 
 export const SkillList = () => {
   const equipRenderType = useStore($equipmentDrawerEquipListType);
+  const extraColumns = useStore($equipmentDrawerExtraColumns);
   const skillStrings = usePureStore($skillFilterdStrings);
 
-  const columnCount = createMemo(() => ColumnCountMap[equipRenderType()]);
+  const columnCount = createMemo(() =>
+    getEquipDrawerColumnCount(equipRenderType(), extraColumns()),
+  );
   const defaultItemHeight = createMemo(
     () => DefaultHeightMap[equipRenderType()],
   );

@@ -37,7 +37,7 @@ export const EquipEdit = () => {
   const isHairOrFace = () => isHair() || isFace();
 
   return (
-    <Box h="13.5rem" position="relative">
+    <Box h="13.5rem" maxW="25rem" position="relative">
       <Show when={item()}>
         {(item) => (
           <>
@@ -46,11 +46,7 @@ export const EquipEdit = () => {
               name={itemInfo()?.name ?? item().name}
               tags={<EquipTags info={itemInfo()} />}
             />
-            <Switch
-              fallback={
-                <EquipHsvAdjust id={item().id} hasRandom={!isHairOrFace()} />
-              }
-            >
+            <Switch fallback={<EquipHsvAdjust id={item().id} hasRandom={!isHairOrFace()} />}>
               <Match when={isHair() && editType() === 'mixDye'}>
                 <MixDyeAdjust id={item().id} category="Hair" />
               </Match>

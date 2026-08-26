@@ -4,6 +4,7 @@ import { useStore } from '@nanostores/solid';
 import { useTranslate } from '@/context/i18n';
 
 import { $equpimentDrawerOpen, $equpimentDrawerPin } from '@/store/trigger';
+import { $equipmentDrawerResizing, $equipmentDrawerWidth } from '@/store/equipDrawer';
 
 import { useMediaQuery } from '@/hook/mediaQuery';
 
@@ -11,14 +12,9 @@ import CloseIcon from 'lucide-solid/icons/x';
 import { Box } from 'styled-system/jsx/box';
 import { HStack } from 'styled-system/jsx/hstack';
 import { IconButton } from '@/components/ui/icon-button';
-import {
-  Root,
-  Positioner,
-  Content,
-  Header,
-  Body,
-} from '@/components/ui/drawer';
+import { Root, Positioner, Content, Header, Body } from '@/components/ui/drawer';
 import { PinIconButton } from '@/components/elements/PinIconButton';
+import { EquipDrawerResizeHandle } from './EquipDrawerResizeHandle';
 
 interface EquipDrawerProps {
   header: JSX.Element;
@@ -28,6 +24,8 @@ export const EquipDrawer = (props: EquipDrawerProps) => {
   const t = useTranslate();
   const isOpen = useStore($equpimentDrawerOpen);
   const isPinned = useStore($equpimentDrawerPin);
+  const isResizing = useStore($equipmentDrawerResizing);
+  const drawerWidth = useStore($equipmentDrawerWidth);
   const isMatch = useMediaQuery('(min-width: 64rem)');
 
   function handleClose(_: unknown) {
@@ -48,8 +46,15 @@ export const EquipDrawer = (props: EquipDrawerProps) => {
       preventScroll={false}
     >
       <Portal>
-        <Positioner>
-          <Content id="equipment-drawer-content">
+        <Positioner
+          style={{
+            width: `${drawerWidth()}px`,
+            'max-width': '100vw',
+            transition: isResizing() ? 'none' : undefined,
+          }}
+        >
+          <Content id="equipment-drawer-content" position="relative" overflow="visible">
+            <EquipDrawerResizeHandle />
             <Header>
               {props.header}
               <HStack position="absolute" top="1" right="1">

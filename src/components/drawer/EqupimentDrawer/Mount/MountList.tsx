@@ -5,18 +5,14 @@ import { usePureStore } from '@/store';
 import { $mountFilterdStrings } from '@/store/mount';
 import {
   $equipmentDrawerEquipListType,
+  $equipmentDrawerExtraColumns,
+  getEquipDrawerColumnCount,
   EquipListType,
 } from '@/store/equipDrawer';
 
 import { RowVirtualizer } from '@/components/ui/rowVirtualizer';
 import { MountButton } from './MountButton';
 import { MountRowButton } from './MountRowButton';
-
-const ColumnCountMap = {
-  [EquipListType.Row]: 1,
-  [EquipListType.Icon]: 7,
-  [EquipListType.Character]: 5,
-};
 
 const DefaultHeightMap = {
   [EquipListType.Row]: 36,
@@ -26,9 +22,12 @@ const DefaultHeightMap = {
 
 export const MountList = () => {
   const equipRenderType = useStore($equipmentDrawerEquipListType);
+  const extraColumns = useStore($equipmentDrawerExtraColumns);
   const mountStrings = usePureStore($mountFilterdStrings);
 
-  const columnCount = createMemo(() => ColumnCountMap[equipRenderType()]);
+  const columnCount = createMemo(() =>
+    getEquipDrawerColumnCount(equipRenderType(), extraColumns()),
+  );
   const defaultItemHeight = createMemo(
     () => DefaultHeightMap[equipRenderType()],
   );

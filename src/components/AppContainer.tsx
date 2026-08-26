@@ -6,6 +6,7 @@ import {
   $currentEquipmentDrawerPin,
   $equpimentDrawerPin,
 } from '@/store/trigger';
+import { $equipmentDrawerWidth } from '@/store/equipDrawer';
 
 export interface AppContainerProps {
   children: JSX.Element;
@@ -13,6 +14,7 @@ export interface AppContainerProps {
 export const AppContainer = (props: AppContainerProps) => {
   const isLeftDrawerPin = useStore($currentEquipmentDrawerPin);
   const isRightDrawerPin = useStore($equpimentDrawerPin);
+  const rightDrawerWidth = useStore($equipmentDrawerWidth);
   return (
     <div
       class={css({
@@ -25,11 +27,14 @@ export const AppContainer = (props: AppContainerProps) => {
           ? { base: 2, lg: '{sizes.xs}' }
           : { base: 2, '2xl': '{sizes.xs}' },
         paddingRight: isRightDrawerPin()
-          ? { base: 2, lg: '{sizes.sm}' }
+          ? { base: 2, lg: 'var(--equip-drawer-width)' }
           : { base: 2, '2xl': '{sizes.sm}' },
         display: 'grid',
         gridTemplateRows: 'auto 1fr',
       })}
+      style={{
+        '--equip-drawer-width': `${rightDrawerWidth()}px`,
+      }}
     >
       {props.children}
     </div>

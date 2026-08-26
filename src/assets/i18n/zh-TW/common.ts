@@ -34,4 +34,6 @@ export const dict = {
   selectShareCharacterTip: '選擇要共乘的角色，僅適用於可多人乘坐的椅子及坐騎',
 
   itemNotInVersionOrUnreadable: '裝備不存在此版本或無法讀取',
+
+  resizeEquipDrawer: '拖曳以調整寬度',
 };

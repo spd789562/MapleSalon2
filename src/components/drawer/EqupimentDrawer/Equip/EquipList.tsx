@@ -7,6 +7,8 @@ import {
   $equipmentDrawerEquipTab,
   $equipmentDrawerEquipListType,
   $equipmentDrawerExperimentCharacterRender,
+  $equipmentDrawerExtraColumns,
+  getEquipDrawerColumnCount,
   EquipTab,
   EquipListType,
 } from '@/store/equipDrawer';
@@ -32,12 +34,6 @@ const $equipRenderType = computed(
   },
 );
 
-const ColumnCountMap = {
-  [EquipListType.Row]: 1,
-  [EquipListType.Icon]: 7,
-  [EquipListType.Character]: 5,
-};
-
 const DefaultHeightMap = {
   [EquipListType.Row]: 36,
   [EquipListType.Icon]: 45,
@@ -47,8 +43,11 @@ const DefaultHeightMap = {
 export const EquipList = () => {
   const equipStrings = from($equipmentDrawerEquipFilteredString);
   const equipRenderType = useStore($equipRenderType);
+  const extraColumns = useStore($equipmentDrawerExtraColumns);
 
-  const columnCount = createMemo(() => ColumnCountMap[equipRenderType()]);
+  const columnCount = createMemo(() =>
+    getEquipDrawerColumnCount(equipRenderType(), extraColumns()),
+  );
   const defaultItemHeight = createMemo(
     () => DefaultHeightMap[equipRenderType()],
   );
