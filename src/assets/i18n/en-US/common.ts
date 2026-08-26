@@ -36,6 +36,11 @@ export const dict: CommonDictionary = {
   selectShareCharacterTip:
     'Select characters to share the mount/chair with. Only applicable to mounts and chairs that support multiple seats.',
 
+  browseCharacters: 'Browse',
+  browseCharactersTip: 'Browse and search characters in a grid',
+  browseCharactersTitle: 'Select Character',
+  characterSearchPlaceholder: 'Character name',
+
   itemNotInVersionOrUnreadable: 'Item not available with this version',
 
   resizeEquipDrawer: 'Drag to resize the equipment drawer',

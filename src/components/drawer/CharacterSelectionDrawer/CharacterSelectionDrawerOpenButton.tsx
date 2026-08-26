@@ -3,11 +3,13 @@ import { useStore } from '@nanostores/solid';
 import { useTranslate } from '@/context/i18n';
 
 import {
+  $characterBrowseDialogOpen,
   $characterSelectionDrawerOpen,
   $settingDialogOpen,
 } from '@/store/trigger';
 
 import ChevronDownIcon from 'lucide-solid/icons/chevron-down';
+import LayoutGridIcon from 'lucide-solid/icons/layout-grid';
 import SettingIcon from 'lucide-solid/icons/settings';
 import { TopBarPositioner, TopBarToggle } from '@/components/ui/topBarToggle';
 import { IconButton } from '@/components/ui/icon-button';
@@ -25,6 +27,11 @@ export const CharacterSelectionDrawerOpenButton = () => {
     $settingDialogOpen.set(true);
   }
 
+  function handleClickBrowse(event: Event) {
+    event.stopPropagation();
+    $characterBrowseDialogOpen.set(true);
+  }
+
   return (
     <Portal>
       <TopBarPositioner data-state={isOpen() ? 'open' : 'close'}>
@@ -40,6 +47,16 @@ export const CharacterSelectionDrawerOpenButton = () => {
             marginLeft="-1"
           >
             <SettingIcon size={24} style={{ 'margin-left': 'unset' }} />
+          </IconButton>
+          <IconButton
+            id="button-open-character-browse"
+            onClick={handleClickBrowse}
+            variant="ghost"
+            size="sm"
+            title={t('common.browseCharactersTip')}
+            aria-label={t('common.browseCharacters')}
+          >
+            <LayoutGridIcon size={24} style={{ 'margin-left': 'unset' }} />
           </IconButton>
           <span>{t('tab.characterList')}</span>
           <ChevronDownIcon size={24} />
