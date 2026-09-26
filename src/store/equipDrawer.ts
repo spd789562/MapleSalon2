@@ -1,7 +1,11 @@
 import { atom, map, computed, onSet } from 'nanostores';
 
 import {
+  EquipDrawerItemSize,
+  extraColumnsForPreservedWidth,
   getCharacterColumnCount,
+  getEquipDrawerCharacterSizeConfig,
+  getEquipDrawerIconSizeConfig,
   getEquipDrawerWidth,
   getIconColumnCount,
 } from '@/const/equipDrawer';
@@ -65,30 +69,90 @@ export const $equipmentDrawerExperimentCharacterRender = atom(false);
 export const $equipmentDrawerExtraColumns = atom(0);
 export const $equipmentDrawerResizing = atom(false);
 
+export const $equipmentDrawerIconSize = atom<EquipDrawerItemSize>(
+  EquipDrawerItemSize.Small,
+);
+export const $equipmentDrawerCharacterSize = atom<EquipDrawerItemSize>(
+  EquipDrawerItemSize.Medium,
+);
+
+export const $equipmentDrawerIconSizeConfig = computed(
+  $equipmentDrawerIconSize,
+  (size) => ({ ...getEquipDrawerIconSizeConfig(size) }),
+);
+export const $equipmentDrawerCharacterSizeConfig = computed(
+  $equipmentDrawerCharacterSize,
+  (size) => ({ ...getEquipDrawerCharacterSizeConfig(size) }),
+);
+
 export const $equipmentDrawerWidth = computed(
-  $equipmentDrawerExtraColumns,
-  (extra) => getEquipDrawerWidth(extra),
+  [$equipmentDrawerExtraColumns, $equipmentDrawerIconSizeConfig],
+  (extra, iconConfig) => getEquipDrawerWidth(extra, iconConfig.columnWidth),
 );
 export const $equipmentDrawerIconColumnCount = computed(
   $equipmentDrawerExtraColumns,
   (extra) => getIconColumnCount(extra),
 );
 export const $equipmentDrawerCharacterColumnCount = computed(
-  $equipmentDrawerExtraColumns,
-  (extra) => getCharacterColumnCount(extra),
+  [
+    $equipmentDrawerExtraColumns,
+    $equipmentDrawerIconSizeConfig,
+    $equipmentDrawerCharacterSizeConfig,
+  ],
+  (extra, iconConfig, characterConfig) =>
+    getCharacterColumnCount(
+      extra,
+      iconConfig.columnWidth,
+      characterConfig.columnWidth,
+    ),
 );
 
 export function getEquipDrawerColumnCount(
   listType: EquipListType,
   extraColumns: number,
+  iconSize: EquipDrawerItemSize,
+  characterSize: EquipDrawerItemSize,
 ) {
   if (listType === EquipListType.Row) {
     return 1;
   }
   if (listType === EquipListType.Character) {
-    return getCharacterColumnCount(extraColumns);
+    const iconConfig = getEquipDrawerIconSizeConfig(iconSize);
+    const characterConfig = getEquipDrawerCharacterSizeConfig(characterSize);
+    return getCharacterColumnCount(
+      extraColumns,
+      iconConfig.columnWidth,
+      characterConfig.columnWidth,
+    );
   }
   return getIconColumnCount(extraColumns);
+}
+
+export function getEquipDrawerItemHeight(
+  listType: EquipListType,
+  iconSize: EquipDrawerItemSize,
+  characterSize: EquipDrawerItemSize,
+) {
+  if (listType === EquipListType.Row) {
+    return getEquipDrawerIconSizeConfig(iconSize).displaySize;
+  }
+  if (listType === EquipListType.Character) {
+    return getEquipDrawerCharacterSizeConfig(characterSize).rowHeight;
+  }
+  return getEquipDrawerIconSizeConfig(iconSize).rowHeight;
+}
+
+export function setEquipmentDrawerIconSize(size: EquipDrawerItemSize) {
+  const prevConfig = $equipmentDrawerIconSizeConfig.get();
+  const prevWidth = getEquipDrawerWidth(
+    $equipmentDrawerExtraColumns.get(),
+    prevConfig.columnWidth,
+  );
+  const nextConfig = getEquipDrawerIconSizeConfig(size);
+  $equipmentDrawerIconSize.set(size);
+  $equipmentDrawerExtraColumns.set(
+    extraColumnsForPreservedWidth(prevWidth, nextConfig.columnWidth),
+  );
 }
 
 /* effect */

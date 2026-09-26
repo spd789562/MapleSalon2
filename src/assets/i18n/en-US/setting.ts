@@ -87,6 +87,12 @@ export const dict: SettingDictionary = {
   showItemGender: 'Show Gender',
   showItemDyeable: 'Show Dyeable',
   onlyShowDyeable: 'Only Show Dyeable',
+  equipIconSize: 'Equip Icon Size',
+  equipCharacterSize: 'Character Preview Size',
+  equipDrawerItemSizeSmall: 'Small',
+  equipDrawerItemSizeMedium: 'Medium',
+  equipDrawerItemSizeBig: 'Big',
+  equipDrawerItemSizeExtraBig: 'Extra Big',
   tagVersion: 'Tag Version',
   tagVersionTip:
     'Change the display logic for name tags, medals, and titles. Different game versions use different logic - try switching versions for appropriate display',
