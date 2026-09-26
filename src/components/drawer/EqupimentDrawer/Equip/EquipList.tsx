@@ -1,4 +1,4 @@
-import { createMemo, Switch, Match, from } from 'solid-js';
+import { Switch, Match, from } from 'solid-js';
 import { computed } from 'nanostores';
 import { useStore } from '@nanostores/solid';
 
@@ -7,12 +7,11 @@ import {
   $equipmentDrawerEquipTab,
   $equipmentDrawerEquipListType,
   $equipmentDrawerExperimentCharacterRender,
-  $equipmentDrawerExtraColumns,
-  getEquipDrawerColumnCount,
   EquipTab,
   EquipListType,
 } from '@/store/equipDrawer';
 import type { EquipItem } from '@/store/string';
+import { useEquipDrawerListLayout } from '@/hook/equipDrawerList';
 import { RowVirtualizer } from '@/components/ui/rowVirtualizer';
 import { EquipItemButton } from './EquipItemButton';
 import { EquipItemRowButton } from './EquipitemRowButton';
@@ -34,28 +33,15 @@ const $equipRenderType = computed(
   },
 );
 
-const DefaultHeightMap = {
-  [EquipListType.Row]: 36,
-  [EquipListType.Icon]: 45,
-  [EquipListType.Character]: 90,
-};
-
 export const EquipList = () => {
   const equipStrings = from($equipmentDrawerEquipFilteredString);
   const equipRenderType = useStore($equipRenderType);
-  const extraColumns = useStore($equipmentDrawerExtraColumns);
-
-  const columnCount = createMemo(() =>
-    getEquipDrawerColumnCount(equipRenderType(), extraColumns()),
-  );
-  const defaultItemHeight = createMemo(
-    () => DefaultHeightMap[equipRenderType()],
-  );
+  const { columnCount, itemHeight } = useEquipDrawerListLayout(equipRenderType);
 
   return (
     <RowVirtualizer
       id="equipment-list"
-      defaultItemHeight={defaultItemHeight()}
+      defaultItemHeight={itemHeight()}
       columnCount={columnCount()}
       renderItem={(item, index) => (
         <Switch>

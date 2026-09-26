@@ -3,7 +3,7 @@ import { styled } from 'styled-system/jsx/factory';
 import { selectMount, type MountItem } from '@/store/mount';
 
 import { CssTooltip } from '@/components/ui/cssTooltip';
-import { LoadableEquipIcon } from '@/components/elements/LoadableEquipIcon';
+import { EquipDrawerSizedIcon } from '@/components/drawer/EqupimentDrawer/EquipDrawerSizedIcon';
 
 export interface MountButtonProps {
   item: MountItem;
@@ -29,7 +29,7 @@ export const MountButton = (props: MountButtonProps) => {
         }
         data-tooltip-content={props.item.name}
       >
-        <LoadableEquipIcon
+        <EquipDrawerSizedIcon
           id={props.item.id}
           name={props.item.name}
         />

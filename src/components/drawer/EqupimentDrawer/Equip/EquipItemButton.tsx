@@ -5,7 +5,7 @@ import type { EquipItem } from '@/store/string';
 import { selectNewItem } from '@/store/character/action';
 
 import { CssTooltip } from '@/components/ui/cssTooltip';
-import { LoadableEquipIcon } from '@/components/elements/LoadableEquipIcon';
+import { EquipDrawerSizedIcon } from '@/components/drawer/EqupimentDrawer/EquipDrawerSizedIcon';
 import { CharacterAvatar } from './CharacterAvatar';
 import { AddToFavoriteButton } from './AddToFavoriteButton';
 
@@ -39,7 +39,7 @@ export const EquipItemButton = (props: EquipItemButtonProps) => {
             <CharacterAvatar id={props.item.id} name={props.item.name} />
           </Match>
           <Match when={props.type === 'icon'}>
-            <LoadableEquipIcon
+            <EquipDrawerSizedIcon
               id={props.item.id}
               name={props.item.name}
               isDyeable={props.item.isDyeable}

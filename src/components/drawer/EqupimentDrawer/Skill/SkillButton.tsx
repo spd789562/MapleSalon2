@@ -3,7 +3,7 @@ import { styled } from 'styled-system/jsx/factory';
 import { selectSkill, type SkillItem } from '@/store/skill';
 
 import { CssTooltip } from '@/components/ui/cssTooltip';
-import { LoadableSkillIcon } from '@/components/elements/LoadableSkillIcon';
+import { EquipDrawerSizedSkillIcon } from '@/components/drawer/EqupimentDrawer/EquipDrawerSizedIcon';
 
 export interface SkillButtonProps {
   item: SkillItem;
@@ -29,7 +29,7 @@ export const SkillButton = (props: SkillButtonProps) => {
         }
         data-tooltip-content={props.item.name}
       >
-        <LoadableSkillIcon
+        <EquipDrawerSizedSkillIcon
           id={props.item.id}
           name={props.item.name}
           folder={props.item.folder}

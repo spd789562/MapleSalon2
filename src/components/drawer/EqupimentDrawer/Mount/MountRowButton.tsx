@@ -2,7 +2,7 @@ import { styled } from 'styled-system/jsx/factory';
 
 import { selectMount, type MountItem } from '@/store/mount';
 
-import { LoadableEquipIcon } from '@/components/elements/LoadableEquipIcon';
+import { EquipDrawerSizedIcon } from '@/components/drawer/EqupimentDrawer/EquipDrawerSizedIcon';
 import { Text } from '@/components/ui/text';
 import { PureTextClipboard } from '@/components/ui/clipboard';
 
@@ -22,7 +22,7 @@ export const MountRowButton = (props: MountRowButtonProps) => {
 
   return (
     <MountButtonContainer type="button" onClick={handleClick}>
-      <LoadableEquipIcon id={props.item.id} name={props.item.name} />
+      <EquipDrawerSizedIcon id={props.item.id} name={props.item.name} />
       <MountId onClick={preventDefault}>
         <PureTextClipboard value={props.item.id.toString()} />
       </MountId>

@@ -3,7 +3,7 @@ import { styled } from 'styled-system/jsx/factory';
 import { selectChair, type ChairItem } from '@/store/chair';
 
 import { CssTooltip } from '@/components/ui/cssTooltip';
-import { LoadableEquipIcon } from '@/components/elements/LoadableEquipIcon';
+import { EquipDrawerSizedIcon } from '@/components/drawer/EqupimentDrawer/EquipDrawerSizedIcon';
 
 export interface ChairButtonProps {
   item: ChairItem;
@@ -29,7 +29,7 @@ export const ChairButton = (props: ChairButtonProps) => {
         }
         data-tooltip-content={props.item.name}
       >
-        <LoadableEquipIcon
+        <EquipDrawerSizedIcon
           id={props.item.id}
           name={props.item.name}
           folder={props.item.folder}
