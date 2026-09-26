@@ -1,40 +1,26 @@
-import { createMemo, Switch, Match } from 'solid-js';
+import { Switch, Match } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 import { usePureStore } from '@/store';
 
 import { $skillFilterdStrings } from '@/store/skill';
 import {
   $equipmentDrawerEquipListType,
-  $equipmentDrawerExtraColumns,
-  getEquipDrawerColumnCount,
   EquipListType,
 } from '@/store/equipDrawer';
+import { useEquipDrawerListLayout } from '@/hook/equipDrawerList';
 
 import { RowVirtualizer } from '@/components/ui/rowVirtualizer';
 import { SkillButton } from './SkillButton';
 import { SkillRowButton } from './SkillRowButton';
 
-const DefaultHeightMap = {
-  [EquipListType.Row]: 36,
-  [EquipListType.Icon]: 45,
-  [EquipListType.Character]: 90,
-};
-
 export const SkillList = () => {
   const equipRenderType = useStore($equipmentDrawerEquipListType);
-  const extraColumns = useStore($equipmentDrawerExtraColumns);
   const skillStrings = usePureStore($skillFilterdStrings);
-
-  const columnCount = createMemo(() =>
-    getEquipDrawerColumnCount(equipRenderType(), extraColumns()),
-  );
-  const defaultItemHeight = createMemo(
-    () => DefaultHeightMap[equipRenderType()],
-  );
+  const { columnCount, itemHeight } = useEquipDrawerListLayout(equipRenderType);
 
   return (
     <RowVirtualizer
-      defaultItemHeight={defaultItemHeight()}
+      defaultItemHeight={itemHeight()}
       columnCount={columnCount()}
       renderItem={(item, index) => (
         <Switch>

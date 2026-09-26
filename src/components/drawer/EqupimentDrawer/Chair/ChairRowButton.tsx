@@ -2,7 +2,7 @@ import { styled } from 'styled-system/jsx/factory';
 
 import { selectChair, type ChairItem } from '@/store/chair';
 
-import { LoadableEquipIcon } from '@/components/elements/LoadableEquipIcon';
+import { EquipDrawerSizedIcon } from '@/components/drawer/EqupimentDrawer/EquipDrawerSizedIcon';
 import { Text } from '@/components/ui/text';
 import { PureTextClipboard } from '@/components/ui/clipboard';
 
@@ -22,7 +22,7 @@ export const ChairRowButton = (props: ChairRowButtonProps) => {
 
   return (
     <ChairButtonContainer type="button" onClick={handleClick}>
-      <LoadableEquipIcon
+      <EquipDrawerSizedIcon
         id={props.item.id}
         name={props.item.name}
         folder={props.item.folder}

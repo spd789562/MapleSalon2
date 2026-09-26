@@ -9,6 +9,10 @@ import { DefaultCharacterRenderingSwitch } from './DefaultCharacterRenderingSwit
 import { ShowItemGenderSwitch } from './ShowItemGenderSwitch';
 import { ShowItemDyeableSwitch } from './ShowItemDyeableSwitch';
 import { ItemEffectPreview } from './ItemEffectPreview';
+import {
+  EquipCharacterSizeSelect,
+  EquipIconSizeSelect,
+} from './EquipIconSizeSelect';
 import { UpscaleSwitch } from './UpscaleSwitch';
 import { PreferRendererToggleGroup } from './PreferRendererToggleGroup';
 import { PreferScaleModeToggleGroup } from './PreferScaleModeToggleGroup';
@@ -54,6 +58,10 @@ export const RenderSetting = () => {
         <ShowItemGenderSwitch />
         <ShowItemDyeableSwitch />
         <ItemEffectPreview />
+      </HStack>
+      <HStack gap="8">
+        <EquipIconSizeSelect />
+        <EquipCharacterSizeSelect />
       </HStack>
     </Stack>
   );

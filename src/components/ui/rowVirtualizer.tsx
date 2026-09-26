@@ -28,8 +28,6 @@ export function RowVirtualizer<Item>(props: RowVirtualizerProps<Item>) {
     Math.ceil(props.data.length / props.columnCount),
   );
 
-  const columnWidth = createMemo(() => 100 / props.columnCount);
-
   const timesArray = createMemo(() =>
     Array.from({ length: props.columnCount }),
   );
@@ -46,8 +44,13 @@ export function RowVirtualizer<Item>(props: RowVirtualizerProps<Item>) {
   });
 
   createEffect(() => {
-    const _ = count();
+    count();
     virtualizer.scrollToOffset(0);
+  });
+
+  createEffect(() => {
+    defaultItemHeight();
+    virtualizer.measure();
   });
 
   onMount(() => {

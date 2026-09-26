@@ -2,8 +2,13 @@ import { deepMap, computed, onSet } from 'nanostores';
 
 import { load } from '@tauri-apps/plugin-store';
 
-import { $equipmentDrawerExperimentCharacterRender, $equipmentDrawerExtraColumns } from './equipDrawer';
-import { clampEquipDrawerExtraColumns } from '@/const/equipDrawer';
+import { $equipmentDrawerExperimentCharacterRender, $equipmentDrawerExtraColumns, $equipmentDrawerIconSize, $equipmentDrawerCharacterSize, setEquipmentDrawerIconSize } from './equipDrawer';
+import {
+  clampEquipDrawerExtraColumns,
+  EquipDrawerItemSize,
+  getEquipDrawerIconSizeConfig,
+  isValidEquipDrawerItemSize,
+} from '@/const/equipDrawer';
 import { $preferRenderer as $rendererPreference } from './renderer';
 import { $actionExportType } from './toolTab';
 import { updateBackgroundColorBaseOnColorMode } from './scene';
@@ -83,6 +88,8 @@ export interface AppSetting extends Record<string, unknown> {
   currentEquipDrawerPin: boolean;
   equipDrawerPin: boolean;
   equipDrawerExtraColumns: number;
+  equipDrawerIconSize: EquipDrawerItemSize;
+  equipDrawerCharacterSize: EquipDrawerItemSize;
 }
 
 const DEFAULT_SETTING: AppSetting = {
@@ -111,6 +118,8 @@ const DEFAULT_SETTING: AppSetting = {
   currentEquipDrawerPin: false,
   equipDrawerPin: false,
   equipDrawerExtraColumns: 0,
+  equipDrawerIconSize: EquipDrawerItemSize.Small,
+  equipDrawerCharacterSize: EquipDrawerItemSize.Medium,
 };
 
 export const $appSetting = deepMap<AppSetting>(DEFAULT_SETTING);
@@ -309,9 +318,24 @@ export async function initializeSavedSetting() {
         $currentEquipmentDrawerPin.set(currentEquipDrawerPin);
         $currentEquipmentDrawerOpen.set(currentEquipDrawerPin);
       }
+      if (isValidEquipDrawerItemSize(setting.equipDrawerIconSize)) {
+        $appSetting.setKey('equipDrawerIconSize', setting.equipDrawerIconSize);
+        $equipmentDrawerIconSize.set(setting.equipDrawerIconSize);
+      }
+      if (isValidEquipDrawerItemSize(setting.equipDrawerCharacterSize)) {
+        $appSetting.setKey(
+          'equipDrawerCharacterSize',
+          setting.equipDrawerCharacterSize,
+        );
+        $equipmentDrawerCharacterSize.set(setting.equipDrawerCharacterSize);
+      }
       if (typeof setting.equipDrawerExtraColumns === 'number') {
+        const iconWidth = getEquipDrawerIconSizeConfig(
+          $equipmentDrawerIconSize.get(),
+        ).columnWidth;
         const extra = clampEquipDrawerExtraColumns(
           setting.equipDrawerExtraColumns,
+          iconWidth,
         );
         $appSetting.setKey('equipDrawerExtraColumns', extra);
         $equipmentDrawerExtraColumns.set(extra);
@@ -404,6 +428,12 @@ export function setCurrentEquipDrawerPin(value: boolean) {
 export function setTagVersion(value: TagVersion) {
   $appSetting.setKey('tagVersion', value);
 }
+export function setEquipDrawerIconSize(value: EquipDrawerItemSize) {
+  setEquipmentDrawerIconSize(value);
+}
+export function setEquipDrawerCharacterSize(value: EquipDrawerItemSize) {
+  $equipmentDrawerCharacterSize.set(value);
+}
 
 /* effect for pin, so we don't get recrusively import */
 onSet($equpimentDrawerPin, ({ newValue }) => {
@@ -418,4 +448,10 @@ onSet($currentEquipmentDrawerPin, ({ newValue }) => {
 });
 onSet($equipmentDrawerExtraColumns, ({ newValue }) => {
   $appSetting.setKey('equipDrawerExtraColumns', newValue);
+});
+onSet($equipmentDrawerIconSize, ({ newValue }) => {
+  $appSetting.setKey('equipDrawerIconSize', newValue);
+});
+onSet($equipmentDrawerCharacterSize, ({ newValue }) => {
+  $appSetting.setKey('equipDrawerCharacterSize', newValue);
 });

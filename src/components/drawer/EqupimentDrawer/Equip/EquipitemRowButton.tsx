@@ -3,7 +3,7 @@ import { styled } from 'styled-system/jsx/factory';
 import type { EquipItem } from '@/store/string';
 import { selectNewItem } from '@/store/character/action';
 
-import { LoadableEquipIcon } from '@/components/elements/LoadableEquipIcon';
+import { EquipDrawerSizedIcon } from '@/components/drawer/EqupimentDrawer/EquipDrawerSizedIcon';
 import { Text } from '@/components/ui/text';
 import { PureTextClipboard } from '@/components/ui/clipboard';
 import { AddToFavoriteButton } from './AddToFavoriteButton';
@@ -29,7 +29,7 @@ export const EquipItemRowButton = (props: EquipItemRowButtonProps) => {
 
   return (
     <EquipItemButtonContainer type="button" onClick={handleClick}>
-      <LoadableEquipIcon
+      <EquipDrawerSizedIcon
         id={props.item.id}
         name={props.item.name}
         isDyeable={props.item.isDyeable}

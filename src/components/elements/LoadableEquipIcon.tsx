@@ -7,7 +7,10 @@ import { $showItemGender } from '@/store/settingDialog';
 
 import CircleHelpIcon from 'lucide-solid/icons/circle-help';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Flex } from 'styled-system/jsx/flex';
+import {
+  IconContainer,
+  IconImage,
+} from '@/components/elements/LoadableIcon';
 
 import { useItemContextTrigger } from '@/context/itemContextMenu';
 
@@ -23,6 +26,7 @@ export interface LoadableEquipIconProps {
   width?: string;
   height?: string;
   folder?: string;
+  fill?: boolean;
 }
 export const LoadableEquipIcon = (props: LoadableEquipIconProps) => {
   const [isLoaded, setIsLoaded] = createSignal(false);
@@ -67,18 +71,21 @@ export const LoadableEquipIcon = (props: LoadableEquipIconProps) => {
     >
       <IconContainer
         gender={gender()}
-        width={props.width}
-        height={props.height}
+        style={
+          props.width || props.height
+            ? { width: props.width, height: props.height }
+            : undefined
+        }
       >
         <Show when={!isError()} fallback={<CircleHelpIcon />}>
-          <img
+          <IconImage
             {...contextTriggerProps}
             onContextMenu={handleContextMenu}
             src={iconPath()}
             alt={props.name || props.id.toString()}
             onLoad={onLoad}
             onError={onError}
-            style={{ 'max-height': '100%' }}
+            fill={props.fill}
           />
         </Show>
         <Show when={props.isDyeable}>
@@ -88,35 +95,6 @@ export const LoadableEquipIcon = (props: LoadableEquipIconProps) => {
     </Skeleton>
   );
 };
-
-const IconContainer = styled(Flex, {
-  base: {
-    p: '1',
-    width: '9',
-    height: '9',
-    position: 'relative',
-    justifyContent: 'center',
-    alignItems: 'center',
-    color: 'fg.muted',
-    borderRadius: 'md',
-  },
-  variants: {
-    gender: {
-      0: {
-        backgroundColor: 'iris.a4',
-      },
-      1: {
-        backgroundColor: 'tomato.a4',
-      },
-      2: {
-        backgroundColor: 'transparent',
-      },
-      3: {
-        backgroundColor: 'transparent',
-      },
-    },
-  },
-});
 
 const DyeableLabel = styled('img', {
   base: {

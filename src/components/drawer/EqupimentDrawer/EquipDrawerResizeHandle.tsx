@@ -1,12 +1,15 @@
 import { Index, onCleanup } from 'solid-js';
 import { css } from 'styled-system/css';
 
-import { $equipmentDrawerExtraColumns, $equipmentDrawerResizing } from '@/store/equipDrawer';
+import {
+  $equipmentDrawerExtraColumns,
+  $equipmentDrawerIconSizeConfig,
+  $equipmentDrawerResizing,
+} from '@/store/equipDrawer';
 import { saveSetting } from '@/store/settingDialog';
 import {
   clampEquipDrawerExtraColumns,
   EQUIP_DRAWER_RESIZE_THRESHOLD,
-  ICON_COLUMN_WIDTH,
 } from '@/const/equipDrawer';
 
 import { useTranslate } from '@/context/i18n';
@@ -57,7 +60,11 @@ export const EquipDrawerResizeHandle = () => {
       $equipmentDrawerResizing.set(true);
       document.body.style.cursor = 'col-resize';
     }
-    const extra = clampEquipDrawerExtraColumns(startExtra + delta / ICON_COLUMN_WIDTH);
+    const iconColumnWidth = $equipmentDrawerIconSizeConfig.get().columnWidth;
+    const extra = clampEquipDrawerExtraColumns(
+      startExtra + delta / iconColumnWidth,
+      iconColumnWidth,
+    );
     if (extra !== $equipmentDrawerExtraColumns.get()) {
       $equipmentDrawerExtraColumns.set(extra);
     }

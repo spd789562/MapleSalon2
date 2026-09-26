@@ -2,7 +2,7 @@ import { styled } from 'styled-system/jsx/factory';
 
 import { selectSkill, type SkillItem } from '@/store/skill';
 
-import { LoadableSkillIcon } from '@/components/elements/LoadableSkillIcon';
+import { EquipDrawerSizedSkillIcon } from '@/components/drawer/EqupimentDrawer/EquipDrawerSizedIcon';
 import { Text } from '@/components/ui/text';
 import { PureTextClipboard } from '@/components/ui/clipboard';
 
@@ -22,7 +22,7 @@ export const SkillRowButton = (props: SkillRowButtonProps) => {
 
   return (
     <SkillButtonContainer type="button" onClick={handleClick}>
-      <LoadableSkillIcon
+      <EquipDrawerSizedSkillIcon
         id={props.item.id}
         name={props.item.name}
         folder={props.item.folder}
